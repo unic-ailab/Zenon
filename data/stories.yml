@@ -1,0 +1,208 @@
+version: "2.0"
+
+stories:
+    - story: Agent receives positive sentiment, user agrees to inform doctors # Works fine
+      steps:
+          - intent: greet
+          - action: action_utter_greet
+          - intent: inform
+          - slot_was_set:
+                - sentiment: pos
+          - action: utter_inform_doctor
+          - intent: affirm
+          - action: utter_confirm_doctor
+
+    - story: Agent receives positive sentiment, user doesn't agree to inform doctors. # Works fine
+      steps:
+          - intent: greet
+          - action: action_utter_greet
+          - intent: inform
+          - slot_was_set:
+                - sentiment: pos
+          - action: utter_inform_doctor
+          - intent: deny
+          - action: action_utter_handle_user_deny_to_inform_doctors
+          - intent: affirm
+          - action: utter_no_problem
+
+    - story: Agent receives negative sentiment # Works fine
+      steps:
+          - intent: greet
+          - action: action_utter_greet
+          - intent: inform
+          - slot_was_set:
+                - sentiment: neg
+          - action: utter_inform_doctor
+          - intent: affirm
+          - action: utter_confirm_doctor
+
+    - story: Agent receives negative sentiment, user doesn't agree to inform doctors. # Works fine
+      steps:
+          - intent: greet
+          - action: action_utter_greet
+          - intent: inform
+          - slot_was_set:
+                - sentiment: neg
+          - action: utter_inform_doctor
+          - intent: deny
+          - action: action_utter_handle_user_deny_to_inform_doctors
+          - intent: affirm
+          - action: utter_no_problem
+
+    - story: Agent doesn't want to answer open questionnaire ACTIVLIM
+      steps:
+          - intent: greet
+          - action: action_utter_greet
+          - action: action_utter_ask_activlim_start
+          - intent: deny
+          - action: utter_how_to_help
+
+    - story: Agent doesn't want to answer open questionnaire PSQI
+      steps:
+          - intent: greet
+          - action: action_utter_greet
+          - action: action_utter_ask_psqi_start
+          - intent: deny
+          - action: utter_how_to_help
+
+    - story: ACTIVLIM Questionnaire open - happy path
+      steps:
+          - intent: greet
+          - action: action_utter_greet
+          - action: action_utter_ask_activlim_start
+          - intent: activLim_start
+          - action: activlim_form
+          - active_loop: activlim_form
+          - slot_was_set:
+                - requested_slot: doorbell
+          - slot_was_set:
+                - doorbell: impossible
+          - slot_was_set:
+                - requested_slot: heavyLoad
+          - slot_was_set:
+                - heavyLoad: impossible
+          - slot_was_set:
+                - requested_slot: pickFromFloor
+          - slot_was_set:
+                - pickFromFloor: impossible
+          - slot_was_set:
+                - requested_slot: walking
+          - slot_was_set:
+                - walking: impossible
+          - slot_was_set:
+                - requested_slot: null
+          - active_loop: null
+          - action: utter_confirm_questionnaire_finished
+
+    - story: ACTIVLIM Questionnaire open - unhappy path
+      steps:
+          - intent: greet
+          - action: action_utter_greet
+          - action: action_utter_ask_activlim_start
+          - intent: activLim_start
+          - action: activlim_form
+          - active_loop: activlim_form
+          - slot_was_set:
+                - requested_slot: doorbell
+          - slot_was_set:
+                - doorbell: impossible
+          - slot_was_set:
+                - requested_slot: heavyLoad
+          - intent: cancel
+          - action: utter_confirm_cancellation
+          - or:
+                - intent: affirm
+                - intent: cancel
+          - action: action_deactivate_loop
+          - active_loop: null
+          - slot_was_set:
+                - requested_slot: null
+          - action: utter_process_cancelled
+
+    - story: ACTIVLim with Interruption - 1
+      steps:
+          - intent: greet
+          - action: action_utter_greet
+          - action: action_utter_ask_activlim_start
+          - intent: activLim_start
+          - action: activlim_form
+          - active_loop: activlim_form
+          - slot_was_set:
+                - requested_slot: doorbell
+          - slot_was_set:
+                - doorbell: difficult
+          - slot_was_set:
+                - requested_slot: heavyLoad
+          - intent: bot_challenge
+          - action: utter_iamabot
+          - action: activlim_form
+          - slot_was_set:
+                - requested_slot: heavyLoad
+          - slot_was_set:
+                - heavyLoad: easy
+          - slot_was_set:
+                - requested_slot: pickFromFloor
+          - slot_was_set:
+                - pickFromFloor: impossible
+          - slot_was_set:
+                - requested_slot: walking
+          - slot_was_set:
+                - walking: impossible
+          - slot_was_set:
+                - requested_slot: null
+          - active_loop: null
+          - action: utter_confirm_questionnaire_finished
+
+    - story: PSQI Questionnaire open - happy path
+      steps:
+          - intent: greet
+          - action: action_utter_greet
+          - action: action_utter_ask_psqi_start
+          - intent: psqi_start
+          - action: psqi_form
+          - active_loop: psqi_form
+          - slot_was_set:
+                - requested_slot: usualBedTime
+          - slot_was_set:
+                - usualBedTime: 10 p.m
+          - slot_was_set:
+                - requested_slot: numberOfMinutes
+          - slot_was_set:
+                - numberOfMinutes: 35
+          - slot_was_set:
+                - requested_slot: usualGettingUpTime
+          - slot_was_set:
+                - usualGettingUpTime: 6 a.m
+          - slot_was_set:
+                - requested_slot: hoursPerSleepNight
+          - slot_was_set:
+                - hoursPerSleepNight: 4
+          - slot_was_set:
+                - requested_slot: null
+          - active_loop: null
+          - action: utter_confirm_questionnaire_finished
+
+    - story: ACTIVLIM Questionnaire open - unhappy path
+      steps:
+          - intent: greet
+          - action: action_utter_greet
+          - action: action_utter_ask_psqi_start
+          - intent: psqi_start
+          - action: psqi_form
+          - active_loop: psqi_form
+          - slot_was_set:
+                - requested_slot: usualBedTime
+          - slot_was_set:
+                - usualBedTime: 17
+          - slot_was_set:
+                - requested_slot: numberOfMinutes
+          - intent: cancel
+          - action: utter_confirm_cancellation
+          - or:
+                - intent: affirm
+                - intent: cancel
+          - action: action_deactivate_loop
+          - active_loop: null
+          - slot_was_set:
+                - requested_slot: null
+          - action: utter_process_cancelled

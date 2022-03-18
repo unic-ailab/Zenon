@@ -1,0 +1,12 @@
+version: "2.0"
+
+rules:
+  - rule: Show language buttons
+    steps:
+      - intent: change_language
+      - action: action_utter_ask_language
+
+  - rule: Set new language
+    steps:
+      - intent: set_language
+      - action: action_utter_set_language

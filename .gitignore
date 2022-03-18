@@ -1,0 +1,13 @@
+# Files
+story_graph.dot
+.db
+.db-shm
+.db-wal
+
+# Folders
+__pycache__/
+.idea/
+
+# Files in folders
+actions/__pycache__
+models/*.tar.gz

@@ -1,0 +1,50 @@
+version: "2.0"
+nlu:
+  - intent: set_language
+    examples: |
+      - set language to [Greek](language)
+      - set language to [english]{"entity": "language", "value": "English"}
+      - [english]{"entity": "language", "value": "English"}
+      - [ENGLISH]{"entity": "language", "value": "English"}
+      - set language to [Italian](language)
+      - [romanian]{"entity": "language", "value": "Romanian"}
+      - [greek]{"entity": "language", "value": "Greek"}
+      - [ROMANIAN]{"entity": "language", "value": "Romanian"}
+      - [GREEK]{"entity": "language", "value": "Greek"}
+      - [italian]{"entity": "language", "value": "Italian"}
+      - [ITALIAN]{"entity": "language", "value": "Italian"}
+      - θέσε γλώσσα σε [Ελληνικά]{"entity": "language", "value": "Greek"}
+      - [Ελληνικά]{"entity": "language", "value": "Greek"}
+      - setează limba la [Greacă]{"entity": "language", "value": "Greek"}
+      - setează limba la [Engleză]{"entity": "language", "value": "English"}
+      - setează limba la [Italiană]{"entity": "language", "value": "Italian"}
+      - setează limba la [Română]{"entity": "language", "value": "Romanian"}
+      - [Română]{"entity": "language", "value": "Romanian"}
+      - [Greacă]{"entity": "language", "value": "Greek"}
+      - [Engleză]{"entity": "language", "value": "English"}
+      - [Italiană]{"entity": "language", "value": "Italian"}
+      - set lang to [english]{"entity": "language", "value": "English"}
+      - set lang to [eng]{"entity": "language", "value": "English"}
+      - set lang to [english]{"entity": "language", "value": "English"}
+  - intent: change_language
+    examples: |
+      - change the language to [greek]{"entity": "language", "value": "Greek"}
+      - please change language to [english]{"entity": "language", "value": "English"}
+      - I want to change the language to [Italian](language)
+      - change to [Romanian](language)
+      - change language to [greek]{"entity": "language", "value": "Greek"}
+      - άλλαξε γλώσσα σε [Ελληνικά]{"entity": "language", "value": "Greek"}
+      - γύρνα την γλώσσα σε [Ελληνικά]{"entity": "language", "value": "Greek"}
+      - θέλω να αλλάξει η γλώσσα σε [Ελληνικά]{"entity": "language", "value": "Greek"}
+      - schimbă limba în [Greacă]{"entity": "language", "value": "Greek"}
+      - schimbă limba în [Engleză]{"entity": "language", "value": "English"}
+      - schimbă limba în [Italiană]{"entity": "language", "value": "Italian"}
+      - schimbă limba în [Română]{"entity": "language", "value": "Romanian"}
+      - Te rog, schimbă limba în [Greacă]{"entity": "language", "value": "Greek"}
+      - Te rog, schimbă limba în [Engleză]{"entity": "language", "value": "English"}
+      - Te rog, schimbă limba în [Italiană]{"entity": "language", "value": "Italian"}
+      - Te rog, schimbă limba în [Română]{"entity": "language", "value": "Romanian"}
+      - schimbă în [Greacă]{"entity": "language", "value": "Greek"}
+      - schimbă în [Engleză]{"entity": "language", "value": "English"}
+      - schimbă în [Italiană]{"entity": "language", "value": "Italian"}
+      - schimbă în [Română]{"entity": "language", "value": "Romanian"}

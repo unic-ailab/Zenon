@@ -1,0 +1,25 @@
+version: "2.0"
+nlu:
+  - intent: questionnaire_open
+    examples: |
+      - [activlim]{"entity": "questionnaire", "value": "ACTIVLIM"} questionnare is open
+      - [MuscleTone](questionnaire) questionnare is open
+      - [dizziness]{"entity": "questionnaire", "value": "DizzinessAndBalance"} questionnare is open
+      - [activlim]{"entity": "questionnaire", "value": "ACTIVLIM"} open
+      - [PSQI]{"entity":"questionnaire", "value": "PSQI"} open
+      - [psqi]{"entity":"questionnaire", "value": "PSQI"} is open
+  - intent: activLim_start
+    examples: |
+      - start activLim questionnaire
+      - initialize ACTIVLIM q
+      - go on for activlim
+  - intent: muscletone_start
+    examples: |
+      - start MuscleTone questionnaire
+      - initialize muscle tone questionnaire
+      - go on for Muscle Tone
+  - intent: psqi_start
+    examples: |
+      - start psqi questionnaire
+      - go on for PSQI
+      - initialize Psqi questionnaire
