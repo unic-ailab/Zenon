@@ -16,6 +16,7 @@ intents:
   - thank_you
   - change_language
   - out_of_scope
+  - need_help
   - muscletone_start
   - psqi_start
 entities:
@@ -61,6 +62,54 @@ slots:
   pickFromFloor: # ACTIVLIM
     type: any
     influence_conversation: false
+  usingToilet: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  outOfBed: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  brushTeeth: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  takingShower: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  puttinSocks: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  outOfCar: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  turnInBed: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  tyingLaces: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  takeOffTshirt: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  openDoor: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  sweepVaccum: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  dishesInCupboard: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  getUpFromChair: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  standingNoSupport: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  walkingUpstairs: # ACTIVLIM
+    type: any
+    influence_conversation: false
+  putKey: # ACTIVLIM
+    type: any
+    influence_conversation: false
   usualBedTime: # PSQI
     type: any
     influence_conversation: false
@@ -77,6 +126,17 @@ slots:
     type: unfeaturized
     influence_conversation: false
 responses:
+  utter_ACTIVLIM_intro_question:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: Could you, please, indicate how difficult you perceive each of the following activities?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Ați putea, vă rog, să indicați cât de dificil percepeți fiecare dintre următoarele activități?
   utter_ask_walking:
     - condition:
         - type: slot
@@ -89,7 +149,23 @@ responses:
           title: Difficult
         - payload: /inform{{"given_answer":"easy"}}
           title: Easy
-      text: Could you, please, indicate how difficult you perceive walking more than one kilometer?
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Walking more than one kilometer.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Mersul pe jos mai mult de un kilometru.
   utter_ask_doorbell:
     - condition:
         - type: slot
@@ -102,7 +178,23 @@ responses:
           title: Difficult
         - payload: /inform{{"given_answer":"easy"}}
           title: Easy
-      text: Could you, please, indicate how difficult you perceive ringing a doorbell?
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Ringing a doorbell.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Apasarea soneriei unei usi.
   utter_ask_heavyLoad:
     - condition:
         - type: slot
@@ -115,7 +207,23 @@ responses:
           title: Difficult
         - payload: /inform{{"given_answer":"easy"}}
           title: Easy
-      text: Could you, please, indicate how difficult you perceive carrying a heavy load?
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Carrying a heavy load?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Transportarea unei greutati
   utter_ask_pickFromFloor:
     - condition:
         - type: slot
@@ -128,7 +236,500 @@ responses:
           title: Difficult
         - payload: /inform{{"given_answer":"easy"}}
           title: Easy
-      text: Could you, please, indicate how difficult you perceive picking up something from the floor?
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Picking up something from the floor?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Ridicarea unui obiect de pe podea
+  utter_ask_usingToilet:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+      text: Using the toilet
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+      text: Utilizarea toaletei.
+  utter_ask_outOfBed:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Getting out of bed.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Coborarea din pat
+  utter_ask_brushTeeth:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Brushing one's teeth.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Periajul  dintilor.
+  utter_ask_takingShower:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Taking a shower.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: A face duș.
+  utter_ask_puttinSocks:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Putting on socks.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Incaltarea șosetelor.
+  utter_ask_outOfCar:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Getting out of a car.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Coborarea dintr-o masina.
+  utter_ask_turnInBed:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Turning in bed.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Întoarcerea în pat.
+  utter_ask_tyingLaces:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Tying one’s laces.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Legarea șireturilor.
+  utter_ask_takeOffTshirt:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Taking off a t-shirt.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Dezbracarea unui tricou.
+  utter_ask_openDoor:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Opening a door.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Deschiderea unei uși.
+  utter_ask_sweepVaccum:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Sweeping or vacuuming.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Măturarea sau aspirarea prafului in casa.
+  utter_ask_dishesInCupboard:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Putting the dishes in the cupboard.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Punerea felurilor de mâncare pe masa.
+  utter_ask_getUpFromChair:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Getting up from a chair.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Ridicarea de pe un scaun.
+  utter_ask_standingNoSupport:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Standing for a long time without support.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Statul in picioare pentru o lungă perioadă de timp, fără sprijin.
+  utter_ask_walkingUpstairs:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Walking upstairs.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Urcarea scarilor.
+  utter_ask_putKey:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Putting a key in a lock.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"imposibil"}}
+          title: Impossible
+        - payload: /inform{{"given_answer":"dificil"}}
+          title: Difficult
+        - payload: /inform{{"given_answer":"ușor"}}
+          title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
+      text: Introducerea unei chei in broasca.
+  utter_help:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+        - type: slot
+          name: questionnaire
+          value: ACTIVLIM
+      text: Tick “?” for unfamiliar activities you cannot estimate the difficulty (because you never need to do them, not because they are impossible).
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+        - type: slot
+          name: questionnaire
+          value: ACTIVLIM
+      text: Bifați "?" pentru activități necunoscute carora nu le puteți estima dificultatea (pentru că nu trebuie să le faceți niciodată, nu pentru că sunt imposibile).
   utter_greet:
     - condition:
         - type: slot
@@ -444,7 +1045,7 @@ forms:
         - type: from_text
       hoursPerSleepNight:
         - type: from_text
-  activlim_form:
+  activlim_form: # ACTIVLIM
     required_slots:
       doorbell:
         - entity: given_answer
@@ -456,5 +1057,53 @@ forms:
         - entity: given_answer
           type: from_entity
       walking:
+        - entity: given_answer
+          type: from_entity
+      usingToilet: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      outOfBed: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      brushTeeth: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      takingShower: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      puttinSocks: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      outOfCar: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      turnInBed: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      tyingLaces: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      takeOffTshirt: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      openDoor: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      sweepVaccum: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      dishesInCupboard: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      getUpFromChair: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      standingNoSupport: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      walkingUpstairs: # ACTIVLIM
+        - entity: given_answer
+          type: from_entity
+      putKey: # ACTIVLIM
         - entity: given_answer
           type: from_entity

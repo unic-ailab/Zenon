@@ -7,6 +7,7 @@ rules:
       - intent: activLim_start
       - slot_was_set:
           - questionnaire: ACTIVLIM
+      - action: utter_ACTIVLIM_intro_question
       - action: activlim_form
       - active_loop: activlim_form
 
@@ -25,6 +26,17 @@ rules:
     steps:
       - intent: out_of_scope
       - action: utter_handle_out_of_scope
+      - action: activlim_form
+      - active_loop: activlim_form
+
+  - rule: Interruption in ACTIVLim Questionnaire - 3
+    condition:
+      - active_loop: activlim_form
+    steps:
+      - intent: need_help
+      - slot_was_set:
+          - questionnaire: ACTIVLIM
+      - action: utter_help
       - action: activlim_form
       - active_loop: activlim_form
 

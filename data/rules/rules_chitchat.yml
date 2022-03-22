@@ -15,3 +15,8 @@ rules:
     steps:
       - intent: bot_challenge
       - action: utter_iamabot
+
+  - rule: Help anytime user ask for help
+    steps:
+      - intent: need_help
+      - action: utter_help

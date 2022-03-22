@@ -281,7 +281,6 @@ class ActionUtterGreet(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        followup_action = None
 
         if (
             tracker.get_slot("questionnaire") == "ACTIVLIM"
@@ -295,7 +294,9 @@ class ActionUtterGreet(Action):
                     "Hei acolo. Doar să rețineți că chestionarul ACTIVLim este disponibil pentru a-i răspunde.",
                 ],
             )
-            followup_action = "action_utter_ask_activlim_start"
+            print("\nBOT:", text)
+            dispatcher.utter_message(text=text)
+            return [FollowupAction("action_utter_ask_activlim_start")]
 
         elif tracker.get_slot("questionnaire") == "PSQI":
             text = get_text_from_lang(
@@ -307,7 +308,9 @@ class ActionUtterGreet(Action):
                     "Hei, doar să rețineți că chestionarul PSQI este disponibil pentru a-i răspunde.",
                 ],
             )
-            followup_action = "action_utter_ask_psqi_start"
+            print("\nBOT:", text)
+            dispatcher.utter_message(text=text)
+            return [FollowupAction("action_utter_ask_psqi_start")]
 
         else:
             text = get_text_from_lang(
@@ -319,12 +322,8 @@ class ActionUtterGreet(Action):
                     "Hei acolo. Cu ce ​​vă pot ajuta?",
                 ],
             )
-
-        print("\nBOT:", text)
-        dispatcher.utter_message(text=text)
-        if followup_action:
-            return [FollowupAction(followup_action)]
-        else:
+            print("\nBOT:", text)
+            dispatcher.utter_message(text=text)
             return []
 
 

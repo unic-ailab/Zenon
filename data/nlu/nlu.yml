@@ -61,6 +61,8 @@ nlu:
       - Αδύνατον
       - Αδυνατο
       - αδυνατο
+      - imposibil
+      - Imposibil
   - synonym: difficult
     examples: |
       - Difficult
@@ -68,6 +70,8 @@ nlu:
       - Δύσκολο
       - hard
       - δυσκολο
+      - dificil
+      - Dificil
   - synonym: easy
     examples: |
       - Easy
@@ -76,3 +80,5 @@ nlu:
       - Εύκολο
       - εύκολο
       - Ευκολο
+      - ușor
+      - Ușor

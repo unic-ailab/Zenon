@@ -420,3 +420,10 @@ nlu:
       - e vre-o problema?
       - este vre-o problema?
       - ce?
+  - intent: need_help
+    examples: |
+      - help
+      - need some help here
+      - I don't know what to do
+      - what should I answer here?
+      - any suggestions?
