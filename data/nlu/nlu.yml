@@ -1,0 +1,84 @@
+version: "2.0"
+nlu:
+  - synonym: ACTIVLIM
+    examples: |
+      - activlim
+      - Activlim
+      - ACTIVLim
+      - ACTIVlim
+      - activLim
+      - activelim
+      - ACTIVElim
+      - ActiveLim
+  - synonym: DizzinessAndBalance
+    examples: |
+      - dizziness
+      - dizziness and balance
+      - Dizziness and Balance
+      - Balance and Dizziness
+      - balance and dizziness
+      - dizz n balance
+      - dizzy-balance
+  - synonym: English
+    examples: |
+      - english
+      - ENGLISH
+      - Engleză
+      - eng
+  - synonym: Romanian
+    examples: |
+      - romanian
+      - ROMANIAN
+      - Română
+  - synonym: Greek
+    examples: |
+      - greek
+      - GREEK
+      - Ελληνικά
+      - Greacă
+  - synonym: Italian
+    examples: |
+      - italian
+      - ITALIAN
+      - Italiană
+  - synonym: MuscleTone
+    examples: |
+      - Muscle Tone
+      - muscle tone
+      - self-asssesd muscle tone
+      - MUSCLE TONE
+      - mascle tone
+  - synonym: language
+    examples: |
+      - lang
+      - tongue
+      - γλώσσα
+      - γλωσσα
+  - synonym: impossible
+    examples: |
+      - Impossible
+      - αδύνατον
+      - Αδύνατον
+      - Αδυνατο
+      - αδυνατο
+      - imposibil
+      - Imposibil
+  - synonym: difficult
+    examples: |
+      - Difficult
+      - δύσκολο
+      - Δύσκολο
+      - hard
+      - δυσκολο
+      - dificil
+      - Dificil
+  - synonym: easy
+    examples: |
+      - Easy
+      - isy
+      - ευκολο
+      - Εύκολο
+      - εύκολο
+      - Ευκολο
+      - ușor
+      - Ușor
