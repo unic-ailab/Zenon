@@ -2,6 +2,7 @@ import random
 
 from typing import Any, Dict, List, Text
 from urllib import response
+from matplotlib.pyplot import text
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.events import SlotSet, FollowupAction
@@ -15,10 +16,10 @@ lang_list = ["English", "Greek", "Italian", "Romanian"]  # Same as slot values
 psqi_start_text = ["During the past month,", " ", " ", "In ultima luna,"]
 
 buttons_psqi = [
-    {"title": "Not during the past month", "payload": " "},
-    {"title": "Less than once a week", "payload": " "},
-    {"title": "Once or twice a week", "payload": " "},
-    {"title": "Three or more times a week", "payload": " "},
+    {"title": "Not during the past month", "payload": "/inform"},
+    {"title": "Less than once a week", "payload": "/inform"},
+    {"title": "Once or twice a week", "payload": "/inform"},
+    {"title": "Three or more times a week", "payload": "/inform"},
 ]
 
 psqi_q5 = [
@@ -418,9 +419,9 @@ class ActionUtterPSQIStart(Action):  # PSQI Questionnaire
         return []
 
 
-class ActionAskUsualBedTime(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ1(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_usualBedTime"
+        return "action_ask_psqiQ1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -446,9 +447,9 @@ class ActionAskUsualBedTime(Action):  # PSQI Questionnaire
         return []
 
 
-class ActionAskHoursPerSleepNight(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ2(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_hoursPerSleepNight"
+        return "action_ask_psqiQ2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -474,9 +475,9 @@ class ActionAskHoursPerSleepNight(Action):  # PSQI Questionnaire
         return []
 
 
-class ActionAskUsualGettingUpTime(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ3(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_usualGettingUpTime"
+        return "action_ask_psqiQ3"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -502,9 +503,9 @@ class ActionAskUsualGettingUpTime(Action):  # PSQI Questionnaire
         return []
 
 
-class ActionAskNumberOfMinutes(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ4(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_numberOfMinutes"
+        return "action_ask_psqiQ4"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -529,6 +530,444 @@ class ActionAskNumberOfMinutes(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
+class ActionAskPSQIQ5a(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ5a"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        entry_text = get_text_from_lang(
+            tracker, psqi_q5
+        )
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                " cannot get to sleep within 30 minutes?",
+                " ",
+                " ",
+                " nu ati reusit sa adormiti in 30 minute?",
+            ],
+        )
+
+        text = entry_text + text
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        return []
+
+class ActionAskPSQIQ5b(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ5b"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        entry_text = get_text_from_lang(
+            tracker, psqi_q5
+        )
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                " wake up in the middle of the night or early morning?",
+                " ",
+                " ",
+                " v-ati trezit in mijlocul noptii sau dimineata devreme?",
+            ],
+        )
+
+        text = entry_text + text
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        return []
+
+class ActionAskPSQIQ5c(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ5c"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        entry_text = get_text_from_lang(
+            tracker, psqi_q5
+        )
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                " have to get up to use the bathroom?",
+                " ",
+                " ",
+                " a trebuit sa va treziti pentru a merge la baie ?",
+            ],
+        )
+
+        text = entry_text + text
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        return []
+
+class ActionAskPSQIQ5d(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ5d"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        entry_text = get_text_from_lang(
+            tracker, psqi_q5
+        )
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                " cannot breathe comfortably?",
+                " ",
+                " ",
+                " nu ati putut respira confortabil?",
+            ],
+        )
+
+        text = entry_text + text
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        return []
+
+class ActionAskPSQIQ5e(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ5e"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        entry_text = get_text_from_lang(
+            tracker, psqi_q5
+        )
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                " cough or snore loudly?",
+                " ",
+                " ",
+                " ati tusit sau sforait zgmotos?",
+            ],
+        )
+
+        text = entry_text + text
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        return []
+
+class ActionAskPSQIQ5f(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ5f"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        entry_text = get_text_from_lang(
+            tracker, psqi_q5
+        )
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                " feel too cold?",
+                " ",
+                " ",
+                " v-a fost frig?",
+            ],
+        )
+
+        text = entry_text + text
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        return []
+
+class ActionAskPSQIQ5g(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ5g"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        entry_text = get_text_from_lang(
+            tracker, psqi_q5
+        )
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                " feel too hot?",
+                " ",
+                " ",
+                " v-a fost cald?",
+            ],
+        )
+
+        text = entry_text + text
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        return []
+
+class ActionAskPSQIQ5h(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ5h"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        entry_text = get_text_from_lang(
+            tracker, psqi_q5
+        )
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                " had bad dreams?",
+                " ",
+                " ",
+                " ati avut cosmaruri?",
+            ],
+        )
+
+        text = entry_text + text
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        return []
+
+class ActionAskPSQIQ5i(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ5i"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        entry_text = get_text_from_lang(
+            tracker, psqi_q5
+        )
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                " have pain?",
+                " ",
+                " ",
+                " ati avut dureri?",
+            ],
+        )
+
+        text = entry_text + text
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        return []
+
+class ActionAskPSQIQ5j(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ5j"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        entry_text = get_text_from_lang(
+            tracker, psqi_q5
+        )
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                " other reason? (please describe)",
+                " ",
+                " ",
+                " alte motive?",
+            ],
+        )
+
+        text = entry_text + text
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskPSQIQ5k(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ5k"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often during the past month have you had trouble sleeping beacuse of this?",
+                " ",
+                " ",
+                "Cat de des in ultima luna ati avut probleme cu somnul din cauza lucrurilor mai sus mentionate?",
+            ],
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        return []
+
+class ActionAskPSQIQ6(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ6"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        entry_text = get_text_from_lang(
+            tracker, psqi_start_text
+        )
+
+        text = get_text_from_lang(
+            tracker, [
+                " how would you rate your sleep quality overall?",
+                " ",
+                " ",
+                " ce calificativ ati putea da calitatii somnului dumneavoastra in general?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Very good", "Fairly good", "Fairly bad", "Very bad"],
+                [" ", " "],
+                [" ", " "],
+                ["Foarte bun", "Satisfacator", "Nesatisfacator", "Foarte rau"],
+            ],
+            ["/inform", "/inform", "/inform", "/inform"],
+        )
+
+        text = entry_text + text
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+        
+class ActionAskPSQIQ7(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ7"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        entry_text = get_text_from_lang(
+            tracker, psqi_start_text
+        )
+
+        text = get_text_from_lang(
+            tracker, [
+                " how often have you taken medicine (prescribed or \"over the counter\") to help you sleep?",
+                " ",
+                " ",
+                " cat de des ati avut nevoie de medicamente (luate fara recomandarea unui medic) pentru a va ajuta sa dormiti?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week"],
+                [" ", " "],
+                [" ", " "],
+                ["Nu in ultima luna", "Mai putin de o data pe saptamana", "O data sau de 2 ori pe saptamana", "De 3 sau mai multe ori pe saptamana"],
+            ],
+            ["/inform", "/inform", "/inform", "/inform"],
+        )
+
+        text = entry_text + text
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskPSQIQ8(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ8"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        entry_text = get_text_from_lang(
+            tracker, psqi_start_text
+        )
+
+        text = get_text_from_lang(
+            tracker, [
+                " how often have you had trouble staying awake while driving, eating meals, or engaging in social activity?",
+                " ",
+                " ",
+                " cat de des ati intampinat probleme in a va mentine treaz in timp ce conduceati, mancati sau erati implicati in alte activitati sociale?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week"],
+                [" ", " "],
+                [" ", " "],
+                ["Nu in ultima luna", "Mai putin de o data pe saptamana", "O data sau de 2 ori pe saptamana", "De 3 sau mai multe ori pe saptamana"],
+            ],
+            ["/inform", "/inform", "/inform", "/inform"],
+        )
+
+        text = entry_text + text
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskPSQIQ9(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqiQ9"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        entry_text = get_text_from_lang(
+            tracker, psqi_start_text
+        )
+
+        text = get_text_from_lang(
+            tracker, [
+                " how much of a problem has it been for you to keep up enough enthousiasm to get things done?",
+                " ",
+                " ",
+                " cat de dificil a fost pentru dumneavoastra sa va mentineti entuziasmul pentru a rezolva problemele zilnice?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["No problem at all", "Only a very slight problem", "Somewhat of a problem", "A very big problem"],
+                [" ", " "],
+                [" ", " "],
+                ["Nu a fost o problema", "A fost doar putin dificil", "A fost o problema intr-o oarecare masura", "A fost foarte dificil"],
+            ],
+            ["/inform", "/inform", "/inform", "/inform"],
+        )
+
+        text = entry_text + text
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
 
 class ActionUtterDnBStart(Action):  # DnB Questionnaire
     def name(self):
