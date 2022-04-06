@@ -326,12 +326,26 @@ class ActionUtterGreet(Action):
                     "Hey, just to note that the Dizziness - Balance questionnaire is available to answer it.",
                     " ",
                     " ",
-                    "Hei, doar să rețineți că chestionarul Dizziness - Balance este disponibil pentru a-i răspunde.",
+                    "Hei, doar să rețineți că chestionarul al evaluarii ametelii si echilibrului este disponibil pentru a-i răspunde.",
                 ],
             )
             print("\nBOT:", text)
             dispatcher.utter_message(text=text)
             return [FollowupAction("action_utter_ask_dNb_start")]
+
+        elif tracker.get_slot("questionnaire") == "EatingHabits":
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "Hey, just to note that the Eating Habits questionnaire is available to answer it.",
+                    " ",
+                    " ",
+                    "Hei, doar să rețineți că chestionarul obiceiuri alimentare este disponibil pentru a-i răspunde.",
+                ],
+            )
+            print("\nBOT:", text)
+            dispatcher.utter_message(text=text)
+            return [FollowupAction("action_utter_ask_diet_start")]
 
         else:
             text = get_text_from_lang(
@@ -349,11 +363,11 @@ class ActionUtterGreet(Action):
 
 
 ####################################################################################################
-# Questionnaires                                                                                   #
+# ACTIVLIM Questionnaire                                                                           #
 ####################################################################################################
 
 
-class ActionUtterActivlimStart(Action):  # ACTIVLIM Questionnaire
+class ActionUtterActivlimStart(Action):
     def name(self):
         return "action_utter_ask_activlim_start"
 
@@ -385,8 +399,11 @@ class ActionUtterActivlimStart(Action):  # ACTIVLIM Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
+####################################################################################################
+# PSQI Questionnaire                                                                               #
+####################################################################################################
 
-class ActionUtterPSQIStart(Action):  # PSQI Questionnaire
+class ActionUtterPSQIStart(Action):
     def name(self):
         return "action_utter_ask_psqi_start"
 
@@ -969,6 +986,10 @@ class ActionAskPSQIQ9(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
+####################################################################################################
+# Dizziness and Balance Questionnaire                                                              #
+####################################################################################################
+
 class ActionUtterDnBStart(Action):  # DnB Questionnaire
     def name(self):
         return "action_utter_ask_dNb_start"
@@ -1087,6 +1108,461 @@ class ValidateDnBForm(FormValidationAction):
 
         return slots_mapped_in_domain
 
+####################################################################################################
+# Eating Habits Questionnaire                                                                      #
+####################################################################################################
+
+class ActionUtterDietStart(Action):
+    def name(self):
+        return "action_utter_ask_diet_start"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Would you like to fill it? It shouldn't take more than 7 minutes.",
+                " ",
+                " ",
+                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Start Eating Habits Questionnaire", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Porniți chestionarul obiceiuri alimentare", "Nu"],
+            ],
+            ["/diet_start", "/deny"],
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDietQ1(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ1"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "When you eat chicken, how often did you prepare it in the oven or boiled?",
+                " ",
+                " ",
+                "Cand mancati carne de pui, cat de des o pregatiti la cuptor sau fiarta?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ2(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ2"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "When you eat chicken, how often did you take off the skin?",
+                " ",
+                " ",
+                "Cand mancati carne de pui, cat de des renuntati la piele?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ3(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ3"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "When you eat red meat, how frequently did you choose to eat only small portions?",
+                " ",
+                " ",
+                "Cand mancati carne rosie, cat de frecvent alegeti sa mancati doar portii mici?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ4(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ4"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "When you eat red meat, how frequently did you trim all visible fat?",
+                " ",
+                " ",
+                "Cand mancati carne rosie, cat de frecvent separati carnea de portiunile vizibile de grasime?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ5(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ5"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often did you replace red meat with chicken or fish?",
+                " ",
+                " ",
+                "Cat de des inlocuiti carnea rosie cu pui sau peste?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ6(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ6"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often did you choose to put butter or margarine over cooked vegetables?",
+                " ",
+                " ",
+                "Cat de des alegeti sa puneti unt sau margarina peste legumele gatite?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ7(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ7"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often did you eat boiled or baked potatoes without adding butter or margarine?",
+                " ",
+                " ",
+                "Cat de des mancati cartofi fierti sau copti fara a adauga unt sau margarina?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ8(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ8"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often did you put sour cream, cheese or other sauces over cooked vegetables?",
+                " ",
+                " ",
+                "Cat de des puneti smantana, branza sau alte sosuri peste legumele gatite?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ9(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ9"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often did you eat bread, muffins without associating them with butter / margarine?",
+                " ",
+                " ",
+                "Cat de des mancati paine, briose fara a le asocia cu unt/margarina?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ10(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ10"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often did you use a tomato sauce without meat on pasta (spaghetti or noodles)?",
+                " ",
+                " ",
+                "Cat de des folositi un sos de rosii fara carne pe paste (spaghetti sau noodles)?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ11(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ11"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often did you have vegetarian meal?",
+                " ",
+                " ",
+                "Cat de des aveti mese doar pe baza de produse vegetale?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ12(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ12"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often did you use yogurt instead of sour cream?",
+                " ",
+                " ",
+                "Cat de des folositi iaurt in loc de smantana?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ13(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ13"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How frequently did you use very low-fat milk or 100% skimmed milk?",
+                " ",
+                " ",
+                "Cat de frecvent folositi lapte cu continut foarte scazut de grasimi sau lapte 100% degresat?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ14(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ14"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How frequently did you consume dietary products (low-fat foods0 or dietary cheese)?",
+                " ",
+                " ",
+                "Cat de frecvent consumati produse dietetice (alimente cu continut redus de grasimi sau branza dietetica)?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ15(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ15"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often did you eat ice milk, frozen yogurt or sherbet, instead of ice cream?",
+                " ",
+                " ",
+                "Cat de des preferati in detrimentul inghetatei sherbet, iaurt sau lapte congelat?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ16(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ16"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often did you use low-calorie instead of regular salad dressing?",
+                " ",
+                " ",
+                "Cat de des folositi dressing pentru salate cu continut redus de calorii in locul celui normal?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ17(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ17"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often did you use PAM or another non-stick spray when cooking?",
+                " ",
+                " ",
+                "Cat de des folositi produse pe baza de uleiuri/grasimi concentrate (de exemplu sub forma de spray) cand gatiti?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ18(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ18"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often did you have only fruit for dessert?",
+                " ",
+                " ",
+                "Cat de des optati doar pentru fructe ca desert?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ19(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ19"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often did you eat at least two vegetables (not green salad) for dinner?",
+                " ",
+                " ",
+                "Cat de des mancati cel putin doua legume (altele decat salata verde) la cina?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDietQ20(Action):
+    def name(self) -> Text:
+        return "action_ask_dietQ20"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often did you prefer raw vegetables as a snack instead of potato chips or popcorn?",
+                " ",
+                " ",
+                "Cat de des preferati legume crude ca snack in locul chips urilor din cartofi sau popcorn ului?",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
 
 ####################################################################################################
 # Handle User's Deny                                                                               #

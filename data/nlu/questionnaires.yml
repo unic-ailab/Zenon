@@ -12,6 +12,8 @@ nlu:
       - [balance]{"entity":"questionnaire", "value": "DizzinessAndBalance"} is open
       - [dizziness and balance]{"entity":"questionnaire", "value": "DizzinessAndBalance"} open
       - [dizz'nbalance]{"entity":"questionnaire", "value": "DizzinessAndBalance"} is open
+      - [diet]{"entity":"questionnaire", "value":"EatingHabits"} is open
+      - [eating habits]{"entity":"questionnaire", "value":"EatingHabits"} questionnaire open
   - intent: activLim_start
     examples: |
       - start activLim questionnaire
@@ -33,3 +35,9 @@ nlu:
       - go on for dizziness and balance
       - initialize Dizziness questionnaire
       - initialize Balance questionnaire
+  - intent: diet_start
+    examples: |
+      - start eating habits questionnaire
+      - go on for diet questionnaire
+      - initialize Eating habits questionnaire
+      - initialize Diet questionnaire

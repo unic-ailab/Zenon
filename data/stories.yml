@@ -170,21 +170,21 @@ stories:
                   - action: psqi_form
                   - active_loop: psqi_form
                   - slot_was_set:
-                            - requested_slot: usualBedTime
+                            - requested_slot: psqiQ1
                   - slot_was_set:
-                            - usualBedTime: 10 p.m
+                            - psqiQ1: 10 p.m
                   - slot_was_set:
-                            - requested_slot: numberOfMinutes
+                            - requested_slot: psqiQ2
                   - slot_was_set:
-                            - numberOfMinutes: 35
+                            - psqiQ2: 35
                   - slot_was_set:
-                            - requested_slot: usualGettingUpTime
+                            - requested_slot: psqiQ3
                   - slot_was_set:
-                            - usualGettingUpTime: 6 a.m
+                            - psqiQ3: 6 a.m
                   - slot_was_set:
-                            - requested_slot: hoursPerSleepNight
+                            - requested_slot: psqiQ4
                   - slot_was_set:
-                            - hoursPerSleepNight: 4
+                            - psqiQ4: 4
                   - slot_was_set:
                             - requested_slot: null
                   - active_loop: null
@@ -199,11 +199,11 @@ stories:
                   - action: psqi_form
                   - active_loop: psqi_form
                   - slot_was_set:
-                            - requested_slot: usualBedTime
+                            - requested_slot: psqiQ1
                   - slot_was_set:
-                            - usualBedTime: 17
+                            - psqiQ1: 17
                   - slot_was_set:
-                            - requested_slot: numberOfMinutes
+                            - requested_slot: psqiQ2
                   - intent: cancel
                   - action: utter_confirm_cancellation
                   - or:
@@ -289,3 +289,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: utter_process_cancelled
+
+        - story: Eating Habits happy path
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - action: action_utter_ask_diet_start
+                  - intent: diet_start

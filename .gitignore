@@ -3,6 +3,10 @@ story_graph.dot
 .db
 .db-shm
 .db-wal
+index.html
+webchat.js
+showdown.min.js
+github-markdown.css
 
 # Folders
 __pycache__/

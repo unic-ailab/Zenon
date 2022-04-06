@@ -107,3 +107,22 @@ rules:
           - requested_slot: null
       - active_loop: null
       - action: utter_confirm_questionnaire_finished
+
+  # Eating Habits - Start
+  - rule: Start Eating Habits questionnaire
+    steps:
+      - intent: diet_start
+      - slot_was_set:
+          - questionnaire: EatingHabits
+      - action: diet_form
+      - active_loop: diet_form
+
+  - rule: Submit - diet_form
+    condition:
+      - active_loop: diet_form
+    steps:
+      - action: diet_form
+      - slot_was_set:
+          - requested_slot: null
+      - active_loop: null
+      - action: utter_confirm_questionnaire_finished
