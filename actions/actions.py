@@ -463,7 +463,6 @@ class ActionUtterPSQIStart(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-
 class ActionAskPSQIQ1(Action):  # PSQI Questionnaire
     def name(self) -> Text:
         return "action_ask_psqiQ1"
@@ -490,7 +489,6 @@ class ActionAskPSQIQ1(Action):  # PSQI Questionnaire
         print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []
-
 
 class ActionAskPSQIQ2(Action):  # PSQI Questionnaire
     def name(self) -> Text:
@@ -519,7 +517,6 @@ class ActionAskPSQIQ2(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-
 class ActionAskPSQIQ3(Action):  # PSQI Questionnaire
     def name(self) -> Text:
         return "action_ask_psqiQ3"
@@ -546,7 +543,6 @@ class ActionAskPSQIQ3(Action):  # PSQI Questionnaire
         print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []
-
 
 class ActionAskPSQIQ4(Action):  # PSQI Questionnaire
     def name(self) -> Text:
@@ -1099,9 +1095,9 @@ class ActionUtterDnBStart(Action):  # DnB Questionnaire
         return []
 
 
-class ActionAskDnBStartDate(Action):  # DnB Questionnaire
+class ActionAskDnBQ1(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNb_startDate"
+        return "action_ask_dNbQ1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1121,9 +1117,9 @@ class ActionAskDnBStartDate(Action):  # DnB Questionnaire
         return []
 
 
-class ActionAskDnBRelatedEvent(Action):  # DnB Questionnaire
+class ActionAskDnBQ2(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNb_relatedEvent"
+        return "action_ask_dNbQ2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1154,9 +1150,9 @@ class ActionAskDnBRelatedEvent(Action):  # DnB Questionnaire
         return []
 
 
-class ActionAskDnBRelatedEventNAME(Action):  # DnB Questionnaire
+class ActionAskDnBQ2i(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNb_relatedEventNAME"
+        return "action_ask_dNbQ2i"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1170,6 +1166,42 @@ class ActionAskDnBRelatedEventNAME(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
+class ActionAskDnBSymptoms(Action):
+    def name(self) -> Text:
+        return "action_ask_dNbSymptoms"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text_json = [
+            {
+            "text": "SYMPTOMS: Check all that apply:",
+            "custom": [
+                "Dizziness", "Spinning/Vertigo", "Lightheadedness", "Rocking/tilting",
+                "Visual changes", "Headache", "Fatigue", "Unsteadiness", "Falling",
+                "Ringing/noise in ears", "Fullness in ears", "Motion sensitive",
+                "Hearing loss", "Double vision", "Brain fog", "Imbalance/Disequilibrium"
+            ]
+        }, " ", " ",
+            {
+            "text": "Simptome (bifati simptomele care se regasesc in cazul dumneavoastra) :",
+            "custom": [
+                "Ameteala", "Senzatie de urechi infundate", "Tulburare de vedere", "Senzatie de ‘cap tulbure’",
+                "Caderi ", "Senzatia de rotire a lucrurilor din jur", "Pierdere a auzului", "Rau de miscare", "Durere de cap",
+                "Nesiguranta la mers", "Zgomote in urechi", "Oboseala",
+                "Vedere dubla", "Tulburare de echilibru", "Brain fog", "Imbalance/Disequilibrium"
+            ]
+        }
+        ]
+
+        text = get_text_from_lang(
+            tracker, text_json
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(json_message=text)
+        return []
+
 
 class ValidateDnBForm(FormValidationAction):
     def name(self) -> Text:
@@ -1179,8 +1211,8 @@ class ValidateDnBForm(FormValidationAction):
         self, slots_mapped_in_domain, dispatcher, tracker, domain,
     ) -> List[Text]:
 
-        if not tracker.get_slot("dNb_relatedEvent"):
-            slots_mapped_in_domain.remove("dNb_relatedEventNAME")
+        if not tracker.get_slot("dNbQ2"):
+            slots_mapped_in_domain.remove("dNbQ2i")
 
         return slots_mapped_in_domain
 

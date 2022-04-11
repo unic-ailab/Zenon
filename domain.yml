@@ -174,13 +174,16 @@ slots:
     type: any
     influence_conversation: false
   # Dizziness and Balance - Related slots
-  dNb_startDate:
+  dNbQ1:
     type: any
     influence_conversation: false
-  dNb_relatedEvent:
+  dNbQ2:
     type: any
     influence_conversation: false
-  dNb_relatedEventNAME:
+  dNbQ2i:
+    type: any
+    influence_conversation: false
+  dNbSymptoms:
     type: any
     influence_conversation: false
   requested_slot:
@@ -1226,9 +1229,10 @@ actions:
   - action_ask_psqiQ1
   - action_utter_ask_diet_start
   - action_utter_ask_muscle_start
-  - action_ask_dNb_relatedEvent
-  - action_ask_dNb_relatedEventNAME
-  - action_ask_dNb_startDate
+  - action_ask_dNbQ2
+  - action_ask_dNbQ2i
+  - action_ask_dNbQ1
+  - action_ask_dNbSymptoms
   - action_ask_hoursPerSleepNight
   - action_ask_numberOfMinutes
   - action_ask_usualBedTime
@@ -1311,16 +1315,18 @@ forms:
         - type: from_text
   dizznbalance_form:
     required_slots:
-      dNb_startDate:
+      dNbQ1:
         - type: from_text
-      dNb_relatedEvent:
+      dNbQ2:
         - type: from_intent
           intent: affirm
           value: true
         - type: from_intent
           intent: deny
           value: false
-      dNb_relatedEventNAME:
+      dNbQ2i:
+        - type: from_text
+      dNbSymptoms:
         - type: from_text
   psqi_form:
     required_slots:

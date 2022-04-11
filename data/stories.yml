@@ -240,19 +240,19 @@ stories:
                   - action: dizznbalance_form
                   - active_loop: dizznbalance_form
                   - slot_was_set:
-                            - requested_slot: dNb_startDate
+                            - requested_slot: dNbQ1
                   - slot_was_set:
-                            - dNb_startDate: a month ago
+                            - dNbQ1: a month ago
                   - slot_was_set:
-                            - requested_slot: dNb_relatedEvent
+                            - requested_slot: dNbQ2
                   - slot_was_set:
-                            - dNb_relatedEvent: true
+                            - dNbQ2: true
                   - slot_was_set:
-                            - requested_slot: dNb_relatedEventNAME
+                            - requested_slot: dNbQ2i
                   - slot_was_set:
                             - sentiment: neg
                   - slot_was_set:
-                            - dNb_relatedEventNAME: I fell down the stairs and hit my head
+                            - dNbQ2i: I fell down the stairs and hit my head
                   - slot_was_set:
                             - requested_slot: null
                   - active_loop: null
@@ -267,13 +267,13 @@ stories:
                   - action: dizznbalance_form
                   - active_loop: dizznbalance_form
                   - slot_was_set:
-                            - requested_slot: dNb_startDate
+                            - requested_slot: dNbQ1
                   - slot_was_set:
-                            - dNb_startDate: a month ago
+                            - dNbQ1: a month ago
                   - slot_was_set:
-                            - requested_slot: dNb_relatedEvent
+                            - requested_slot: dNbQ2
                   - slot_was_set:
-                            - dNb_relatedEvent: false
+                            - dNbQ2: false
                   - slot_was_set:
                             - requested_slot: null
                   - active_loop: null
@@ -288,11 +288,11 @@ stories:
                   - action: dizznbalance_form
                   - active_loop: dizznbalance_form
                   - slot_was_set:
-                            - requested_slot: dNb_startDate
+                            - requested_slot: dNbQ1
                   - slot_was_set:
-                            - dNb_startDate: January 2022
+                            - dNbQ1: January 2022
                   - slot_was_set:
-                            - requested_slot: dNb_relatedEvent
+                            - requested_slot: dNbQ2
                   - intent: cancel
                   - action: utter_confirm_cancellation
                   - or:
