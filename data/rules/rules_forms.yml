@@ -126,3 +126,22 @@ rules:
           - requested_slot: null
       - active_loop: null
       - action: utter_confirm_questionnaire_finished
+
+  # Muscle Tone - Start
+  - rule: Start Muscle tone questionnaire
+    steps:
+      - intent: muscletone_start
+      - slot_was_set:
+          - questionnaire: muscletone
+      - action: muscletone_form
+      - active_loop: muscletone_form
+
+  - rule: Submit - muscletone_form
+    condition:
+      - active_loop: muscletone_form
+    steps:
+      - action: muscletone_form
+      - slot_was_set:
+          - requested_slot: null
+      - active_loop: null
+      - action: utter_confirm_questionnaire_finished

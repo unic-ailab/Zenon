@@ -15,11 +15,18 @@ lang_list = ["English", "Greek", "Italian", "Romanian"]  # Same as slot values
 # PSQI Questionnaire
 psqi_start_text = ["During the past month,", " ", " ", "In ultima luna,"]
 
+# buttons_psqi = [
+#     {"title": "Not during the past month", "payload": "/inform"},
+#     {"title": "Less than once a week", "payload": "/inform"},
+#     {"title": "Once or twice a week", "payload": "/inform"},
+#     {"title": "Three or more times a week", "payload": "/inform"},
+# ]
+
 buttons_psqi = [
-    {"title": "Not during the past month", "payload": "/inform"},
-    {"title": "Less than once a week", "payload": "/inform"},
-    {"title": "Once or twice a week", "payload": "/inform"},
-    {"title": "Three or more times a week", "payload": "/inform"},
+    ["Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week"],
+    [" ", " ", " ", ""],
+    [" ", " ", " ", ""],
+    ["Nu in ultima luna", "Mai putin de o data pe saptamana", "O data sau de 2 ori pe saptamana", "De 3 sau mai multe ori pe saptamana"]
 ]
 
 psqi_q5 = [
@@ -28,6 +35,13 @@ psqi_q5 = [
     " ",
     "In ultima luna cat de des ati avut probleme cu somnul deoarece nu "
     ]
+
+muscletone_buttons = [
+    ["Yes", "No", "Don't know/ refused"],
+    [" ", " ", ""],
+    [" ", " ", ""],
+    ["Da", "Nu", "Nu stiu/ refuz sa raspund"]
+]
 
 ####################################################################################################
 # DEBUGGING                                                                                        #
@@ -347,6 +361,20 @@ class ActionUtterGreet(Action):
             dispatcher.utter_message(text=text)
             return [FollowupAction("action_utter_ask_diet_start")]
 
+        elif tracker.get_slot("questionnaire") == "muscletone":
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "Hey, just to note that the Muscle Tone questionnaire is available to answer it.",
+                    " ",
+                    " ",
+                    "Hei, doar să rețineți că chestionarul pentru tonusul muscular este disponibil pentru a răspunde.",
+                ],
+            )
+            print("\nBOT:", text)
+            dispatcher.utter_message(text=text)
+            return [FollowupAction("action_utter_ask_muscle_start")]
+
         else:
             text = get_text_from_lang(
                 tracker,
@@ -568,10 +596,16 @@ class ActionAskPSQIQ5a(Action):  # PSQI Questionnaire
             ],
         )
 
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_psqi
+            ["/inform", "/inform", "/inform", "/inform"],
+        )
+
         text = entry_text + text
 
         print("\nBOT:", text)
-        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskPSQIQ5b(Action):  # PSQI Questionnaire
@@ -595,10 +629,16 @@ class ActionAskPSQIQ5b(Action):  # PSQI Questionnaire
             ],
         )
 
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_psqi
+            ["/inform", "/inform", "/inform", "/inform"],
+        )
+
         text = entry_text + text
 
         print("\nBOT:", text)
-        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskPSQIQ5c(Action):  # PSQI Questionnaire
@@ -678,8 +718,14 @@ class ActionAskPSQIQ5e(Action):  # PSQI Questionnaire
 
         text = entry_text + text
 
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_psqi
+            ["/inform", "/inform", "/inform", "/inform"],
+        )
+
         print("\nBOT:", text)
-        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskPSQIQ5f(Action):  # PSQI Questionnaire
@@ -705,8 +751,14 @@ class ActionAskPSQIQ5f(Action):  # PSQI Questionnaire
 
         text = entry_text + text
 
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_psqi
+            ["/inform", "/inform", "/inform", "/inform"],
+        )
+
         print("\nBOT:", text)
-        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskPSQIQ5g(Action):  # PSQI Questionnaire
@@ -732,8 +784,14 @@ class ActionAskPSQIQ5g(Action):  # PSQI Questionnaire
 
         text = entry_text + text
 
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_psqi
+            ["/inform", "/inform", "/inform", "/inform"],
+        )
+
         print("\nBOT:", text)
-        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskPSQIQ5h(Action):  # PSQI Questionnaire
@@ -759,8 +817,14 @@ class ActionAskPSQIQ5h(Action):  # PSQI Questionnaire
 
         text = entry_text + text
 
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_psqi
+            ["/inform", "/inform", "/inform", "/inform"],
+        )
+
         print("\nBOT:", text)
-        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskPSQIQ5i(Action):  # PSQI Questionnaire
@@ -786,8 +850,14 @@ class ActionAskPSQIQ5i(Action):  # PSQI Questionnaire
 
         text = entry_text + text
 
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_psqi
+            ["/inform", "/inform", "/inform", "/inform"],
+        )
+
         print("\nBOT:", text)
-        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskPSQIQ5j(Action):  # PSQI Questionnaire
@@ -834,8 +904,14 @@ class ActionAskPSQIQ5k(Action):  # PSQI Questionnaire
             ],
         )
 
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_psqi
+            ["/inform", "/inform", "/inform", "/inform"],
+        )
+
         print("\nBOT:", text)
-        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskPSQIQ6(Action):  # PSQI Questionnaire
@@ -1562,6 +1638,321 @@ class ActionAskDietQ20(Action):
 
         print("\nBot:", text)
         dispatcher.utter_message(text=text)
+        return []
+
+####################################################################################################
+# Muscle Tone Questionnaire                                                                        #
+####################################################################################################
+
+class ActionUtterMuscleToneStart(Action):
+    def name(self):
+        return "action_utter_ask_muscle_start"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Would you like to fill it? It shouldn't take more than 7 minutes.",
+                " ",
+                " ",
+                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Start Muscle Tone Questionnaire", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Începeți chestionarul pentru tonusul muscular", "Nu"],
+            ],
+            ["/muscletone_start", "/deny"],
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskMTQ1(Action):
+    def name(self) -> Text:
+        return "action_ask_mtQ1"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Have you ever had pain or aching in your low back, either at rest or when moving, on most days for at least a month?",
+                " ",
+                " ",
+                "Ați avut vreodată dureri (de exemplu, dureri în zona lombară), în repaus sau in timpul mișcarii, în majoritatea zilelor timp de cel puțin o lună?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            muscletone_buttons,
+            ["/affirm", "/deny", "/inform"]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskMTQ2(Action):
+    def name(self) -> Text:
+        return "action_ask_mtQ2"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Have you ever had stiffness in your low back, when first getting out of bed in the morning, on most days for at least a month?",
+                " ",
+                " ",
+                "Ați avut vreodată rigiditate în zona lombară, când vă ridicați din pat dimineața, în majoritatea zilelor, timp de cel puțin o lună?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            muscletone_buttons,
+            ["/affirm", "/deny", "/inform"]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+class ActionAskMTQ3(Action):
+    def name(self) -> Text:
+        return "action_ask_mtQ3"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Have you ever had pain or aching in your hips, either at rest or when moving, on most days for at least a month?",
+                " ",
+                " ",
+                "Ați avut vreodată dureri (de exemplu dureri în șolduri), fie în repaus, fie in timpul miscarii în majoritatea zilelor, timp de cel puțin o lună?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            muscletone_buttons,
+            ["/affirm", "/deny", "/inform"]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskMTQ4(Action):
+    def name(self) -> Text:
+        return "action_ask_mtQ4"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Have you ever had stiffness in your hip joints or muscles, when first getting out of bed in the morning, on most days for at least a month?",
+                " ",
+                " ",
+                "Ați avut vreodată rigiditate în articulațiile șoldului sau în mușchi, prima dată când vă ridicați din pat dimineața, în majoritatea zilelor, timp de cel puțin o lună?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            muscletone_buttons,
+            ["/affirm", "/deny", "/inform"]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskMTQ5(Action):
+    def name(self) -> Text:
+        return "action_ask_mtQ5"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Have you ever had pain, aching or stiffness in your knees, either at rest or when moving, on most days for at least a month?",
+                " ",
+                " ",
+                "Ați avut vreodată dureri sau rigiditate la genunchi, fie în repaus, fie când vă mișcați, în majoritatea zilelor timp de cel puțin o lună?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            muscletone_buttons,
+            ["/affirm", "/deny", "/inform"]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskMTQ6(Action):
+    def name(self) -> Text:
+        return "action_ask_mtQ6"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "On most days, do you have pain, aching or stiffness in either of your feet?",
+                " ",
+                " ",
+                "În majoritatea zilelor, aveți dureri sau rigiditate la oricare dintre picioare?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["No", "Yes, left foot", "Yes, right foot", "Yes, both feet", "Yes, not sure what side", "Not applicable (e.g. amputee)", "Don’t know"],
+                [" ", " ", " ", " ", " ", " ", " "],                
+                [" ", " ", " ", " ", " ", " ", " "],                
+                ["Nu", "Da, la nivelul piciorului stang", "Da, la nivelul piciorului drept", "Da, la nivelul ambelor picioare", "Da, dar nu stiu exact pe care parte", "Nu se aplica (ex. membru amputat)", "Nu stiu"]
+            ],
+            ["/inform", "/inform", "/inform", "/inform", "/inform", "/inform", "/inform"]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskMTQ7(Action):
+    def name(self) -> Text:
+        return "action_ask_mtQ7"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Have you ever had pain or aching in your shoulder, either at rest or when moving, on most days for at least a month?",
+                " ",
+                " ",
+                "Ați avut vreodată dureri la nivelul umărului, fie în repaus, fie când vă mișcați, în majoritatea zilelor timp de cel puțin o lună?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            muscletone_buttons,
+            ["/affirm", "/deny", "/inform"]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskMTQ8(Action):
+    def name(self) -> Text:
+        return "action_ask_mtQ8"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Have you ever had stiffness in your shoulder, when first getting out of bed in the morning, on most days for at least a month?",
+                " ",
+                " ",
+                "Ați avut vreodată rigiditate la umăr, prima dată când vă ridicați din pat dimineața, în majoritatea zilelor, timp de cel puțin o lună?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            muscletone_buttons,
+            ["/affirm", "/deny", "/inform"]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskMTQ9(Action):
+    def name(self) -> Text:
+        return "action_ask_mtQ9"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Have you had pain, aching or stiffness in your hands, either at rest or when using them, on most days for at least a month?",
+                " ",
+                " ",
+                "Ați avut dureri sau rigiditate în mâini, fie în repaus, fie in timpul miscarii, în majoritatea zilelor timp de cel puțin o lună?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            muscletone_buttons,
+            ["/affirm", "/deny", "/inform"]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskMTQ10(Action):
+    def name(self) -> Text:
+        return "action_ask_mtQ10"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Have you ever been told by a doctor that you have arthritis?",
+                " ",
+                " ",
+                "V-a spus vreodată un medic că ai artrită? Daca da, ce tip ?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Osteoarthritis", "Rheumatoid arthritis", "Yes, other (specify)", "Yes, don’t know type", "No, don’t have arthritis", "Don't know / refused"],
+                [" ", " ", " ", " ", " ", " "],
+                [" ", " ", " ", " ", " ", " "],
+                ["Osteoartrita", "Poliartrita reumatoida", "Da, altele (specificati)", "Da, dar nu stiu exact ce tip", "Nu, nu am artrita", "Nu stiu/ refuz sa raspund"]
+            ],
+            ["/inform", "/inform", "/inform", "/inform", "/inform", "/inform"]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 ####################################################################################################

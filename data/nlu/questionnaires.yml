@@ -3,7 +3,10 @@ nlu:
   - intent: questionnaire_open
     examples: |
       - [activlim]{"entity": "questionnaire", "value": "ACTIVLIM"} questionnare is open
-      - [MuscleTone](questionnaire) questionnare is open
+      - [MuscleTone]{"entity":"questionnaire", "value":"muscletone"} questionnare is open
+      - [muscle tone]{"entity":"questionnaire", "value":"muscletone"} questionnare is open
+      - [muscle tone]{"entity":"questionnaire", "value":"muscletone"} open
+      - [Muscle Tone]{"entity":"questionnaire", "value":"muscletone"} questionnare is open
       - [dizziness]{"entity": "questionnaire", "value": "DizzinessAndBalance"} questionnare is open
       - [activlim]{"entity": "questionnaire", "value": "ACTIVLIM"} open
       - [PSQI]{"entity":"questionnaire", "value": "PSQI"} open

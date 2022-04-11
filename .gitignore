@@ -7,6 +7,9 @@ index.html
 webchat.js
 showdown.min.js
 github-markdown.css
+requirements.txt
+requirements_pip.txt
+alameda-chatbot.yml
 
 # Folders
 __pycache__/

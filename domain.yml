@@ -54,6 +54,7 @@ slots:
       - greek
       - italian
       - romanian
+  # ACTIVLim - Related slots
   walking:
     type: any
     influence_conversation: false
@@ -244,6 +245,37 @@ slots:
     type: any
     influence_conversation: false
   dietQ20:
+    type: any
+    influence_conversation: false
+  # Muscle Tone - Related slots
+  mtQ1:
+    type: any
+    influence_conversation: false
+  mtQ2:
+    type: any
+    influence_conversation: false
+  mtQ3:
+    type: any
+    influence_conversation: false
+  mtQ4:
+    type: any
+    influence_conversation: false
+  mtQ5:
+    type: any
+    influence_conversation: false
+  mtQ6:
+    type: any
+    influence_conversation: false
+  mtQ7:
+    type: any
+    influence_conversation: false
+  mtQ8:
+    type: any
+    influence_conversation: false
+  mtQ9:
+    type: any
+    influence_conversation: false
+  mtQ10:
     type: any
     influence_conversation: false
 responses:
@@ -1143,6 +1175,16 @@ responses:
           value: Italian
       text: Come posso aiutarti?
 actions:
+  - action_ask_mtQ1
+  - action_ask_mtQ2
+  - action_ask_mtQ3
+  - action_ask_mtQ4
+  - action_ask_mtQ5
+  - action_ask_mtQ6
+  - action_ask_mtQ7
+  - action_ask_mtQ8
+  - action_ask_mtQ9
+  - action_ask_mtQ10
   - action_ask_dietQ1
   - action_ask_dietQ2
   - action_ask_dietQ3
@@ -1183,6 +1225,7 @@ actions:
   - action_ask_psqiQ2
   - action_ask_psqiQ1
   - action_utter_ask_diet_start
+  - action_utter_ask_muscle_start
   - action_ask_dNb_relatedEvent
   - action_ask_dNb_relatedEventNAME
   - action_ask_dNb_startDate
@@ -1202,6 +1245,28 @@ actions:
   - utter_confirm_questionnaire_finished
   - validate_dizznbalance_form
 forms:
+  muscletone_form:
+    required_slots:
+      mtQ1:
+        - type: from_text
+      mtQ2:
+        - type: from_text
+      mtQ3:
+        - type: from_text
+      mtQ4:
+        - type: from_text
+      mtQ5:
+        - type: from_text
+      mtQ6:
+        - type: from_text
+      mtQ7:
+        - type: from_text
+      mtQ8:
+        - type: from_text
+      mtQ9:
+        - type: from_text
+      mtQ10:
+        - type: from_text
   diet_form:
     required_slots:
       dietQ1:
