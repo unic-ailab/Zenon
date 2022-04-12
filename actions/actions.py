@@ -1170,17 +1170,17 @@ class ActionAskDnBSymptoms(Action):
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
 
-        text_json = {
-            "text": "SYMPTOMS: Check all that apply:",
-            "custom": {
-                "choices": [
-                    "Dizziness", "Spinning/Vertigo", "Lightheadedness", "Rocking/tilting",
-                    "Visual changes", "Headache", "Fatigue", "Unsteadiness", "Falling",
-                    "Ringing/noise in ears", "Fullness in ears", "Motion sensitive",
-                    "Hearing loss", "Double vision", "Brain fog", "Imbalance/Disequilibrium"
-                ]
-            }
-        }
+        # text_json = {
+        #     "text": "SYMPTOMS: Check all that apply:",
+        #     "custom": {
+        #         "choices": [
+        #             "Dizziness", "Spinning/Vertigo", "Lightheadedness", "Rocking/tilting",
+        #             "Visual changes", "Headache", "Fatigue", "Unsteadiness", "Falling",
+        #             "Ringing/noise in ears", "Fullness in ears", "Motion sensitive",
+        #             "Hearing loss", "Double vision", "Brain fog", "Imbalance/Disequilibrium"
+        #         ]
+        #     }
+        # }
 
         # text_json = [
         #     {
@@ -1207,8 +1207,15 @@ class ActionAskDnBSymptoms(Action):
         #     tracker, text_json
         # )
 
-        print("\nBOT:", text_json)
-        dispatcher.utter_message(json_message=text_json)
+        # print("\nBOT:", text_json)
+        dispatcher.utter_message(text= "SYMPTOMS: Check all that apply:", json_message={
+                "choices": [
+                    "Dizziness", "Spinning/Vertigo", "Lightheadedness", "Rocking/tilting",
+                    "Visual changes", "Headache", "Fatigue", "Unsteadiness", "Falling",
+                    "Ringing/noise in ears", "Fullness in ears", "Motion sensitive",
+                    "Hearing loss", "Double vision", "Brain fog", "Imbalance/Disequilibrium"
+                ]
+            })
         return []
 
 
