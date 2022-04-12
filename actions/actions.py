@@ -1169,53 +1169,40 @@ class ActionAskDnBSymptoms(Action):
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
+        
+        text = get_text_from_lang(
+            tracker, [
+                "SYMPTOMS: Check all that apply:",
+                " ",
+                " ",
+                "Simptome (bifati simptomele care se regasesc in cazul dumneavoastra) :"
+            ]
+        )
 
-        # text_json = {
-        #     "text": "SYMPTOMS: Check all that apply:",
-        #     "custom": {
-        #         "choices": [
-        #             "Dizziness", "Spinning/Vertigo", "Lightheadedness", "Rocking/tilting",
-        #             "Visual changes", "Headache", "Fatigue", "Unsteadiness", "Falling",
-        #             "Ringing/noise in ears", "Fullness in ears", "Motion sensitive",
-        #             "Hearing loss", "Double vision", "Brain fog", "Imbalance/Disequilibrium"
-        #         ]
-        #     }
-        # }
-
-        # text_json = [
-        #     {
-        #     "text": "SYMPTOMS: Check all that apply:",
-        #     "custom": [
-        #         "Dizziness", "Spinning/Vertigo", "Lightheadedness", "Rocking/tilting",
-        #         "Visual changes", "Headache", "Fatigue", "Unsteadiness", "Falling",
-        #         "Ringing/noise in ears", "Fullness in ears", "Motion sensitive",
-        #         "Hearing loss", "Double vision", "Brain fog", "Imbalance/Disequilibrium"
-        #     ]
-        # }, " ", " ",
-        #     {
-        #     "text": "Simptome (bifati simptomele care se regasesc in cazul dumneavoastra) :",
-        #     "custom": [
-        #         "Ameteala", "Senzatie de urechi infundate", "Tulburare de vedere", "Senzatie de ‘cap tulbure’",
-        #         "Caderi ", "Senzatia de rotire a lucrurilor din jur", "Pierdere a auzului", "Rau de miscare", "Durere de cap",
-        #         "Nesiguranta la mers", "Zgomote in urechi", "Oboseala",
-        #         "Vedere dubla", "Tulburare de echilibru", "Brain fog", "Imbalance/Disequilibrium"
-        #     ]
-        # }
-        # ]
-
-        # text = get_text_from_lang(
-        #     tracker, text_json
-        # )
-
-        # print("\nBOT:", text_json)
-        dispatcher.utter_message(text= "SYMPTOMS: Check all that apply:", json_message={
+        data = get_text_from_lang(
+            tracker,[
+                {
                 "choices": [
                     "Dizziness", "Spinning/Vertigo", "Lightheadedness", "Rocking/tilting",
                     "Visual changes", "Headache", "Fatigue", "Unsteadiness", "Falling",
                     "Ringing/noise in ears", "Fullness in ears", "Motion sensitive",
                     "Hearing loss", "Double vision", "Brain fog", "Imbalance/Disequilibrium"
                 ]
-            })
+            },
+            " ", " ",
+                {
+                "choices": [
+                    "Ameteala", "Senzatie de urechi infundate", "Tulburare de vedere", "Senzatie de ‘cap tulbure’",
+                    "Caderi ", "Senzatia de rotire a lucrurilor din jur", "Pierdere a auzului", "Rau de miscare", "Durere de cap",
+                    "Nesiguranta la mers", "Zgomote in urechi", "Oboseala", "Vedere dubla", "Tulburare de echilibru", "Brain fog",
+                    "Imbalance/Disequilibrium"
+                ]
+            }
+            ]
+        )
+
+        print("\nBOT:", text + "\n" + data)
+        dispatcher.utter_message(text=text, json_message=data)
         return []
 
 
