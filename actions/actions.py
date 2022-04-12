@@ -1179,18 +1179,17 @@ class ActionAskDnBSymptoms(Action):
             ]
         )
 
-        data = get_text_from_lang(
-            tracker,[
-                {
-                "choices": [
-                    "Dizziness", "Spinning/Vertigo", "Lightheadedness", "Rocking/tilting",
-                    "Visual changes", "Headache", "Fatigue", "Unsteadiness", "Falling",
-                    "Ringing/noise in ears", "Fullness in ears", "Motion sensitive",
-                    "Hearing loss", "Double vision", "Brain fog", "Imbalance/Disequilibrium"
-                ]
-            },
-            " ", " ",
-                {
+        if tracker.get_slot("language") == "English":
+            data = {
+                    "choices": [
+                        "Dizziness", "Spinning/Vertigo", "Lightheadedness", "Rocking/tilting",
+                        "Visual changes", "Headache", "Fatigue", "Unsteadiness", "Falling",
+                        "Ringing/noise in ears", "Fullness in ears", "Motion sensitive",
+                        "Hearing loss", "Double vision", "Brain fog", "Imbalance/Disequilibrium"
+                    ]
+                }
+        elif tracker.get_slot("language") == "Romanian":
+            data = {
                 "choices": [
                     "Ameteala", "Senzatie de urechi infundate", "Tulburare de vedere", "Senzatie de ‘cap tulbure’",
                     "Caderi ", "Senzatia de rotire a lucrurilor din jur", "Pierdere a auzului", "Rau de miscare", "Durere de cap",
@@ -1198,8 +1197,6 @@ class ActionAskDnBSymptoms(Action):
                     "Imbalance/Disequilibrium"
                 ]
             }
-            ]
-        )
 
         print("\nBOT:", text + "\n" + data)
         dispatcher.utter_message(text=text, json_message=data)
