@@ -1188,6 +1188,7 @@ class ActionAskDnBSymptoms(Action):
                         "Hearing loss", "Double vision", "Brain fog", "Imbalance/Disequilibrium"
                     ]
                 }
+
         elif tracker.get_slot("language") == "Romanian":
             data = {
                 "choices": [
@@ -1198,7 +1199,7 @@ class ActionAskDnBSymptoms(Action):
                 ]
             }
 
-        print("\nBOT:", text + "\n" + data)
+        print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
