@@ -591,7 +591,7 @@ class ActionAskPSQIQ5a(Action):  # PSQI Questionnaire
 
         buttons = get_buttons_from_lang(
             tracker,
-            buttons_psqi
+            buttons_psqi,
             ["/inform", "/inform", "/inform", "/inform"],
         )
 
@@ -1204,7 +1204,7 @@ class ActionAskDnBQ3i(Action):  # DnB Questionnaire
 
         text = get_text_from_lang(
             tracker,
-            ["(describe)", " ", " ", "(detaliati)",],
+            ["describe", " ", " ", "detaliati",],
         )
 
         print("\nBot:", text)
@@ -1231,12 +1231,12 @@ class ActionAskDnBQ4(Action):  # DnB Questionnaire
         buttons = get_buttons_from_lang(
             tracker,
             [
-                ["constant", "variable (i.e. come and go in attacks)"],
+                ["constant", "variable i.e. come and go in attacks"],
                 [" ", " "],
                 [" ", " "],
-                ["constante", "variabile (de exemplu, apar si dispar)"]
+                ["constante", "variabile de exemplu, apar si dispar"]
             ],
-            ["/affirm", "/deny"]
+            ["/deny", "/affirm"]
         )
 
         print("\nBot:", text, buttons)
@@ -1433,7 +1433,7 @@ class ValidateDnBForm(FormValidationAction):
         if not tracker.get_slot("dNbQ2"):
             slots_mapped_in_domain.remove("dNbQ2i")
         
-        if not tracker.get_slot("dNbQ3"):
+        if tracker.get_slot("dNbQ3"):
             slots_mapped_in_domain.remove("dNbQ3i")
         
         if not tracker.get_slot("dNbQ4"):
@@ -1442,8 +1442,7 @@ class ValidateDnBForm(FormValidationAction):
             slots_mapped_in_domain.remove("dNbQ4c")
             slots_mapped_in_domain.remove("dNbQ4ci")
             slots_mapped_in_domain.remove("dNbQ4d")
-        
-        if not tracker.get_slot("dNbQ4c"):
+        elif not tracker.get_slot("dNbQ4c"):
             slots_mapped_in_domain.remove("dNbQ4ci")
 
         return slots_mapped_in_domain
