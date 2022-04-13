@@ -1163,6 +1163,224 @@ class ActionAskDnBQ2i(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
+class ActionAskDnBQ3(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ3"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Was the onset of your symptoms:",
+                " ",
+                " ",
+                "Simptomele au debutat :",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["sudden", "gradual", "overnight", "other"],
+                [" ", " "],
+                [" ", " "],
+                ["brusc", "gradual", "peste noapte", "alt mod"]
+            ],
+            ["/affirm", "/affirm", "/affirm", "/deny"]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBQ3i(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ3i"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            ["(describe)", " ", " ", "(detaliati)",],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDnBQ4(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ4"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Are your symptoms:",
+                " ",
+                " ",
+                "Simptomele sunt :",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["constant", "variable (i.e. come and go in attacks)"],
+                [" ", " "],
+                [" ", " "],
+                ["constante", "variabile (de exemplu, apar si dispar)"]
+            ],
+            ["/affirm", "/deny"]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBQ4a(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ4a"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "If variable, the spells occur every (# of hours/days/weeks/months/years)",
+                " ",
+                " ",
+                "Daca variaza, crizele apar la fiecare.... dureaza .... (ore/zile/saptamani)",
+            ],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDnBQ4b(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ4b"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "If variable, the spells last:",
+                " ",
+                " ",
+                "Daca variaza, crizele dureaza :",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["< 1 min.", "1-2 min.", "3-10 min.", "11-30 min.", "½-1 hr.", "2-6 hrs.", "7-24hrs.", "> 24 hrs."],
+                [" ", " "],
+                [" ", " "],
+                ["mai putin de 1 minut", "intre 1-2 minute", "intre 3-10 minute", "11-30 minute", "1/2 ora-1 ora", "2-6 ore", "7-24 ore", ">24 ore"]
+            ],
+            ["/inform", "/inform", "/inform", "/inform", "/inform", "/inform", "/inform", "/inform"]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBQ4c(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ4c"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "If variable, do you have any warning signs that an attack is about to happen?",
+                " ",
+                " ",
+                "Daca variaza, aveti simptome care anunta inceputul unei crize?",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["yes", "no"],
+                [" ", " "],
+                [" ", " "],
+                ["da", "nu"]
+            ],
+            ["/affirm", "/deny"]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBQ4ci(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ4ci"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "If yes, please describe:",
+                " ",
+                " ",
+                "Daca da, descrieti.",
+            ],
+        )
+        
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDnBQ4d(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ4d"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "If variable, are you completely free of symptoms between attacks?",
+                " ",
+                " ",
+                "Daca variaza, intre crize nu exista niciun fel de simptom ?",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["yes", "no"],
+                [" ", " "],
+                [" ", " "],
+                ["da", "nu"]
+            ],
+            ["/affirm", "/deny"]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
 class ActionAskDnBSymptoms(Action):
     def name(self) -> Text:
         return "action_ask_dNbSymptoms"
@@ -1214,6 +1432,19 @@ class ValidateDnBForm(FormValidationAction):
 
         if not tracker.get_slot("dNbQ2"):
             slots_mapped_in_domain.remove("dNbQ2i")
+        
+        if not tracker.get_slot("dNbQ3"):
+            slots_mapped_in_domain.remove("dNbQ3i")
+        
+        if not tracker.get_slot("dNbQ4"):
+            slots_mapped_in_domain.remove("dNbQ4a")
+            slots_mapped_in_domain.remove("dNbQ4b")
+            slots_mapped_in_domain.remove("dNbQ4c")
+            slots_mapped_in_domain.remove("dNbQ4ci")
+            slots_mapped_in_domain.remove("dNbQ4d")
+        
+        if not tracker.get_slot("dNbQ4c"):
+            slots_mapped_in_domain.remove("dNbQ4ci")
 
         return slots_mapped_in_domain
 

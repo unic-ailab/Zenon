@@ -186,6 +186,30 @@ slots:
   dNbSymptoms:
     type: any
     influence_conversation: false
+  dNbQ3:
+    type: any
+    influence_conversation: false
+  dNbQ3i:
+    type: any
+    influence_conversation: false
+  dNbQ4:
+    type: any
+    influence_conversation: false
+  dNbQ4a:
+    type: any
+    influence_conversation: false
+  dNbQ4b:
+    type: any
+    influence_conversation: false
+  dNbQ4c:
+    type: any
+    influence_conversation: false
+  dNbQ4ci:
+    type: any
+    influence_conversation: false
+  dNbQ4d:
+    type: any
+    influence_conversation: false
   requested_slot:
     type: unfeaturized
     influence_conversation: false
@@ -1231,10 +1255,18 @@ actions:
   - action_ask_psqiQ1
   - action_utter_ask_diet_start
   - action_utter_ask_muscle_start
+  - action_ask_dNbSymptoms
+  - action_ask_dNbQ1
   - action_ask_dNbQ2
   - action_ask_dNbQ2i
-  - action_ask_dNbQ1
-  - action_ask_dNbSymptoms
+  - action_ask_dNbQ3
+  - action_ask_dNbQ3i
+  - action_ask_dNbQ4
+  - action_ask_dNbQ4a
+  - action_ask_dNbQ4b
+  - action_ask_dNbQ4c
+  - action_ask_dNbQ4ci
+  - action_ask_dNbQ4d
   - action_ask_hoursPerSleepNight
   - action_ask_numberOfMinutes
   - action_ask_usualBedTime
@@ -1317,6 +1349,8 @@ forms:
         - type: from_text
   dizznbalance_form:
     required_slots:
+      dNbSymptoms:
+        - type: from_text
       dNbQ1:
         - type: from_text
       dNbQ2:
@@ -1328,7 +1362,36 @@ forms:
           value: false
       dNbQ2i:
         - type: from_text
-      dNbSymptoms:
+      dNbQ3:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dNbQ3i:
+        - type: from_text
+      dNbQ4:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dNbQ4a:
+        - type: from_text
+      dNbQ4b:
+        - type: from_text
+      dNbQ4c:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dNbQ4ci:
+        - type: from_text
+      dNbQ4d:
         - type: from_text
   psqi_form:
     required_slots:
