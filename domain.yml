@@ -313,12 +313,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Mersul pe jos mai mult de un kilometru.
@@ -342,12 +342,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Apasarea soneriei unei usi.
@@ -371,12 +371,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Transportarea unei greutati
@@ -400,12 +400,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Ridicarea unui obiect de pe podea
@@ -427,12 +427,14 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
       text: Utilizarea toaletei.
   utter_ask_outOfBed:
     - condition:
@@ -454,12 +456,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Coborarea din pat
@@ -483,12 +485,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Periajul  dintilor.
@@ -512,12 +514,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: A face duș.
@@ -541,12 +543,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Incaltarea șosetelor.
@@ -570,12 +572,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Coborarea dintr-o masina.
@@ -599,12 +601,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Întoarcerea în pat.
@@ -628,12 +630,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Legarea șireturilor.
@@ -657,12 +659,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Dezbracarea unui tricou.
@@ -686,12 +688,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Deschiderea unei uși.
@@ -715,12 +717,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Măturarea sau aspirarea prafului in casa.
@@ -744,12 +746,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Punerea felurilor de mâncare pe masa.
@@ -773,12 +775,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Ridicarea de pe un scaun.
@@ -802,12 +804,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Statul in picioare pentru o lungă perioadă de timp, fără sprijin.
@@ -831,12 +833,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Urcarea scarilor.
@@ -860,12 +862,12 @@ responses:
           name: language
           value: Romanian
       buttons:
-        - payload: /inform{{"given_answer":"imposibil"}}
-          title: Impossible
-        - payload: /inform{{"given_answer":"dificil"}}
-          title: Difficult
-        - payload: /inform{{"given_answer":"ușor"}}
-          title: Easy
+        - payload: /inform{{"given_answer":"impossible"}}
+          title: Imposibil
+        - payload: /inform{{"given_answer":"difficult"}}
+          title: Dificil
+        - payload: /inform{{"given_answer":"easy"}}
+          title: Ușor
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Introducerea unei chei in broasca.

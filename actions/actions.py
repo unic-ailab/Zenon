@@ -172,7 +172,7 @@ def get_buttons_from_lang(tracker, titles=[], payloads=[]):
     lang_index = get_lang_index(tracker)
     buttons = []
 
-    if lang_index >= len(payloads):  # No text defined for current language
+    if lang_index >= len(titles):  # No text defined for current language
         lang_index = 0
 
     for i in range(min(len(titles[lang_index]), len(payloads))):
