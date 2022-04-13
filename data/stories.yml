@@ -311,9 +311,59 @@ stories:
                   - action: action_utter_ask_diet_start
                   - intent: diet_start
 
+        - story: Eating Habits Questionnaire - unhappy path
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - action: action_utter_ask_diet_start
+                  - intent: diet_start
+                  - action: diet_form
+                  - active_loop: diet_form
+                  - slot_was_set:
+                            - requested_slot: dietQ1
+                  - slot_was_set:
+                            - dietQ1: always
+                  - slot_was_set:
+                            - requested_slot: dietQ2
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - or:
+                            - intent: affirm
+                            - intent: cancel
+                  - action: action_deactivate_loop
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: utter_process_cancelled
+
         - story: Muscle Tone happy path
           steps:
                   - intent: greet
                   - action: action_utter_greet
                   - action: action_utter_ask_muscle_start
                   - intent: muscletone_start
+
+        - story: Muscle Tone Questionnaire - unhappy path
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - action: action_utter_ask_muscle_start
+                  - intent: muscletone_start
+                  - action: muscletone_form
+                  - active_loop: muscletone_form
+                  - slot_was_set:
+                            - requested_slot: mtQ1
+                  - slot_was_set:
+                            - mtQ1: yes
+                  - slot_was_set:
+                            - requested_slot: mtQ2
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - or:
+                            - intent: affirm
+                            - intent: cancel
+                  - action: action_deactivate_loop
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: utter_process_cancelled

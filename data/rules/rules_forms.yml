@@ -108,6 +108,24 @@ rules:
       - active_loop: null
       - action: utter_confirm_questionnaire_finished
 
+  - rule: Interruption in Dizziness Questionnaire - 1
+    condition:
+      - active_loop: dizznbalance_form
+    steps:
+      - intent: bot_challenge
+      - action: utter_iamabot
+      - action: dizznbalance_form
+      - active_loop: dizznbalance_form
+
+  - rule: Interruption in Dizziness Questionnaire - 2
+    condition:
+      - active_loop: dizznbalance_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_handle_out_of_scope
+      - action: dizznbalance_form
+      - active_loop: dizznbalance_form
+
   # Eating Habits - Start
   - rule: Start Eating Habits questionnaire
     steps:
@@ -127,6 +145,24 @@ rules:
       - active_loop: null
       - action: utter_confirm_questionnaire_finished
 
+  - rule: Interruption in Diet Questionnaire - 1
+    condition:
+      - active_loop: diet_form
+    steps:
+      - intent: bot_challenge
+      - action: utter_iamabot
+      - action: diet_form
+      - active_loop: diet_form
+
+  - rule: Interruption in Diet Questionnaire - 2
+    condition:
+      - active_loop: diet_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_handle_out_of_scope
+      - action: diet_form
+      - active_loop: diet_form
+
   # Muscle Tone - Start
   - rule: Start Muscle tone questionnaire
     steps:
@@ -145,3 +181,21 @@ rules:
           - requested_slot: null
       - active_loop: null
       - action: utter_confirm_questionnaire_finished
+
+  - rule: Interruption in Muscle Tone Questionnaire - 1
+    condition:
+      - active_loop: muscletone_form
+    steps:
+      - intent: bot_challenge
+      - action: utter_iamabot
+      - action: muscletone_form
+      - active_loop: muscletone_form
+
+  - rule: Interruption in Muscle Tone Questionnaire - 2
+    condition:
+      - active_loop: muscletone_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_handle_out_of_scope
+      - action: muscletone_form
+      - active_loop: muscletone_form
