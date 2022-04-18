@@ -1421,6 +1421,564 @@ class ActionAskDnBSymptoms(Action):
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
+class ActionAskDnBQ5(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ5"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Do your symptoms occur when changing positions?",
+                " ",
+                " ",
+                "Simptomele pe care le descrieti apar cand schimbati pozitia corpului/a capului ?",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            ["/affirm", "/deny"]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBQ5i(Action):
+    def name(self) -> Text:
+        return "action_ask_dNbQ5i"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+        
+        text = get_text_from_lang(
+            tracker, [
+                "If yes, check all that apply:",
+                " ",
+                " ",
+                "Daca da, bifati ceea ce va caracterizeaza :"
+            ]
+        )
+
+        if tracker.get_slot("language") == "English":
+            data = {
+                    "choices": [
+                        "Rolling your body to the left", "Rolling your body to the right", 
+                        "Moving from a lying to a sitting position", "Looking up with your head back",
+                        "Turning head side to side while sitting/standing", "Bending over with your head down"
+                    ]
+                }
+
+        elif tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Senzatia de rotire a corpului catre stanga", "Senzatia de rotire a corpului catre dreapta", 
+                    "La trecerea din pozitia culcat in sezut", "La privirea in sus, cu capul pe spate",
+                    "La intoarcerea capului", "La privirea in jos, cu capul in fata"
+                ]
+            }
+
+        print("\nBOT:", text + "\n" + str(data))
+        dispatcher.utter_message(text=text, json_message=data)
+        return []
+
+class ActionAskDnBQ6(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ6"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Is there anything that makes your symptoms worse?",
+                " ",
+                " ",
+                "Exista lucruri care agraveaza simptomele ?",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            ["/affirm", "/deny"]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBQ6i(Action):
+    def name(self) -> Text:
+        return "action_ask_dNbQ6i"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+        
+        text = get_text_from_lang(
+            tracker, [
+                "If yes, check all that apply:",
+                " ",
+                " ",
+                "Daca da, bifati ce va caracterizeaza :"
+            ]
+        )
+
+        if tracker.get_slot("language") == "English":
+            data = {
+                    "choices": [
+                        "Moving my head", "Physical activity or exercise", "Riding or driving in the car", "Large crowds or a busy environment",
+                        "Loud sounds", "Coughing, blowing the nose, or straining", "Standing up", "Eating certain foods", 
+                        "Time of day", "Menstrual periods (if applicable)", "Other (please type your answer)"
+                    ]
+                }
+
+        elif tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Miscarea capului", "Activitatea fizica", "Condus masina", "Zone aglomerate",
+                    "Zgomote puternice", "Tusea, suflatul nasului", "Stat in picioare", "Mancatul anumitor alimente", 
+                    "Perioada din zi", "Perioada menstruala", "Altele (vă rugăm să introduceți răspunsul dvs.)"
+                ]
+            }
+
+        print("\nBOT:", text + "\n" + str(data))
+        dispatcher.utter_message(text=text, json_message=data)
+        return []
+
+class ActionAskDnBQ7(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ7"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Is there anything that makes your symptoms better?",
+                " ",
+                " ",
+                "Exista lucruri care amelioreaza simptomele ?",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            ["/affirm", "/deny"]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBQ7i(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ7i"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            ["If yes, please explain:", " ", " ", "Daca da, detaliati."],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDnBQ8(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ8"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Do you have difficulty walking in the dark or at dusk?",
+                " ",
+                " ",
+                "Aveti dificultati in a merge pe intuneric ?"
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            ["/affirm", "/deny"]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBQ9(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ9"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "When you have symptoms, do you need to support yourself to stand or walk?",
+                " ",
+                " ",
+                "Cand apar simptomele aveti nevoie de sprijin pentru a sta in picioare sau a merge ?",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            ["/affirm", "/deny"]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBQ9i(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ9i"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            ["If yes, how do you support yourself?",
+             " ", 
+             " ", 
+             "Dacă da, cum vă întrețineți?"],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDnBQ10(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ10"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Do you have difficulty walking on uneven surfaces (e.g. grass or gravel) compared with smooth surfaces (e.g. concrete)?",
+                " ",
+                " ",
+                "Aveti dificultati in a merge pe suprafete neregulate (pe iarba/pavaj) comparativ cu suprafetele netede (pe beton) ?"
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            ["/affirm", "/deny"]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBQ11(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ11"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Have you ever fallen as a result of your current problem?",
+                " ",
+                " ",
+                "Ati cazut vreodata in timpul crizelor ?"
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            ["/affirm", "/deny"]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBQ11i(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ11i"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            ["If yes, # of falls in the last 6 months...",
+             " ", 
+             " ", 
+             "Daca da, cate caderi au fost pe parcursul a 6 luni ?"],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDnBQ12(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ12"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Has there been a recent change in your vision, including contacts or glasses?",
+                " ",
+                " ",
+                "S-a schimbat ceva in ceea ce priveste calitatea vederii dumneavoastra recent, inclusiv purtat/schimbat lentile de contact sau ochelari de vedere ?"
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            ["/affirm", "/deny"]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBQ12i(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbQ12i"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            ["Explain:",
+             " ", 
+             " ", 
+             "Explicati:"],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDnBPastMedicalHistory(Action):
+    def name(self) -> Text:
+        return "action_ask_dNbPastMedicalHistory"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+        
+        text = get_text_from_lang(
+            tracker, [
+                "Past medical history - Please circle all that apply:",
+                " ",
+                " ",
+                "Antecedente personale patologice - Incercuiti ce va caracterizeaza :"
+            ]
+        )
+
+        if tracker.get_slot("language") == "English":
+            data = {
+                    "choices": [
+                        "Concussion", "Hypertension/Hypotension", "Ataxia", 
+                        "Seizures", "Diabetes/Neuropathy", "HA/Migraines", 
+                        "Motor vehicle accident", "CABG/CAD/Heart attack/CHF", "Asthma/COPD",
+                        "Stroke/TIA", "Cancer", "History of infection or blood clot",
+                        "Multiple sclerosis", "Peripheral vascular disease", "THR/TKR/Spine surgery", 
+                        "Parkinson’s disease", "Depression/Panic attacks", "Hip/knee/ankle/shoulder/back injury",
+                        "Glaucoma/macular degeneration", "Neck arthritis/surgery", "High cholesterol/triglycerides",
+                        "Fibromyalgia", "Chronic fatigue syndrome", "Auto immune disease"
+                    ]
+                }
+
+        elif tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Contuzie", "Hipertensiune/ Hipotensiune arteriala", "Ataxie", 
+                    "Crize epileptice", "Diabet zaharat/Neuropatie", "Migrena", 
+                    "Accident rutier", "Insuficienta cardiaca/Infarct", "Astm",
+                    "AVC/AIT", "Cancer", "Istoric de infectie sau tromboze", 
+                    "Scleroza multipla", "Boala vasculara periferica", "Interventie chirurgicala la nivelul coloanei vertebrale",
+                    "Boala Parkinson", "Depresie/atac de panica", "Traumatism la nivelul coapsei, genunchiului/umarului/spatelui",
+                    "Glaucom/degenerescenta maculara", "Afectare articulara la nivel cervical", "Nivel crescut colesterol",
+                    "Fibromialgie", "Sindromul oboselii cronice", "Boala autoimuna"
+                ]
+            }
+
+        print("\nBOT:", text + "\n" + str(data))
+        dispatcher.utter_message(text=text, json_message=data)
+        return []
+
+class ActionAskDnBPastMedicalHistoryOther(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbPastMedicalHistoryOther"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            ["Past medical history - Other:",
+             " ", 
+             " ", 
+             "Antecedente personale patologice - Altele (detaliati):"],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDnBMedicalTests(Action):
+    def name(self) -> Text:
+        return "action_ask_dNbMedicalTests"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+        
+        text = get_text_from_lang(
+            tracker, [
+                "Medical Tests:",
+                " ",
+                " ",
+                "Teste medicale :"
+            ]
+        )
+
+        if tracker.get_slot("language") == "English":
+            data = {
+                    "choices": [
+                        "MRI", "MRA", "CT", "X-Ray", "Blood"
+                    ]
+                }
+
+        elif tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "MRI", "MRA", "CT", "X-Ray", "Blood"    # TODO To be changed to romanian version
+                ]
+            }
+
+        print("\nBOT:", text + "\n" + str(data))
+        dispatcher.utter_message(text=text, json_message=data)
+        return []
+
+class ActionAskDnBMedicalTestsOther(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbMedicalTestsOther"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            ["Medical Tests - Other:",
+             " ", 
+             " ", 
+             "Teste medicale - Altele (detaliati):"],
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDnBOnSetType(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbOnSetType"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            ["Onset Type:",
+             " ", 
+             " ", 
+             "Tipul debutului simptomelor-alegeti dintre variantele urmatoare :"],
+        )
+
+        if tracker.get_slot("language") == "English":
+            data = {
+                    "choices": [
+                        "SURGICAL", "INJURY", "INSIDIOUS"
+                    ]
+                }
+
+        elif tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "dupa interventie chirurgicala", "dupa un traumatism", "fara sa poata fi asociate cu un anumit eveniment"
+                ]
+            }
+
+        print("\nBOT:", text + "\n" + str(data))
+        dispatcher.utter_message(text=text, json_message=data)
+        return []
+
 
 class ValidateDnBForm(FormValidationAction):
     def name(self) -> Text:
@@ -1444,6 +2002,24 @@ class ValidateDnBForm(FormValidationAction):
             slots_mapped_in_domain.remove("dNbQ4d")
         elif not tracker.get_slot("dNbQ4c"):
             slots_mapped_in_domain.remove("dNbQ4ci")
+
+        if not tracker.get_slot("dNbQ5"):
+            slots_mapped_in_domain.remove("dNbQ5i")
+
+        if not tracker.get_slot("dNbQ6"):
+            slots_mapped_in_domain.remove("dNbQ6i")
+
+        if not tracker.get_slot("dNbQ7"):
+            slots_mapped_in_domain.remove("dNbQ7i")
+
+        if not tracker.get_slot("dNbQ9"):
+            slots_mapped_in_domain.remove("dNbQ9i")
+
+        if not tracker.get_slot("dNbQ11"):
+            slots_mapped_in_domain.remove("dNbQ11i")
+
+        if not tracker.get_slot("dNbQ12"):
+            slots_mapped_in_domain.remove("dNbQ12i")
 
         return slots_mapped_in_domain
 

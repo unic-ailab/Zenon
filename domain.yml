@@ -210,6 +210,63 @@ slots:
   dNbQ4d:
     type: any
     influence_conversation: false
+  dNbQ5:
+    type: any
+    influence_conversation: false
+  dNbQ5i:
+    type: any
+    influence_conversation: false
+  dNbQ6:
+    type: any
+    influence_conversation: false
+  dNbQ6i:
+    type: any
+    influence_conversation: false
+  dNbQ7:
+    type: any
+    influence_conversation: false
+  dNbQ7i:
+    type: any
+    influence_conversation: false
+  dNbQ8:
+    type: any
+    influence_conversation: false
+  dNbQ9:
+    type: any
+    influence_conversation: false
+  dNbQ9i:
+    type: any
+    influence_conversation: false
+  dNbQ10:
+    type: any
+    influence_conversation: false
+  dNbQ11:
+    type: any
+    influence_conversation: false
+  dNbQ11i:
+    type: any
+    influence_conversation: false
+  dNbQ12:
+    type: any
+    influence_conversation: false
+  dNbQ12i:
+    type: any
+    influence_conversation: false
+  dNbPastMedicalHistory:
+    type: any
+    influence_conversation: false
+  dNbPastMedicalHistoryOther:
+    type: any
+    influence_conversation: false
+  dNbMedicalTests:
+    type: any
+    influence_conversation: false
+  dNbMedicalTestsOther:
+    type: any
+    influence_conversation: false
+  dNbOnSetType:
+    type: any
+    influence_conversation: false
   requested_slot:
     type: unfeaturized
     influence_conversation: false
@@ -1267,6 +1324,25 @@ actions:
   - action_ask_dNbQ4c
   - action_ask_dNbQ4ci
   - action_ask_dNbQ4d
+  - action_ask_dNbQ5
+  - action_ask_dNbQ5i
+  - action_ask_dNbQ6
+  - action_ask_dNbQ6i
+  - action_ask_dNbQ7
+  - action_ask_dNbQ7i
+  - action_ask_dNbQ8
+  - action_ask_dNbQ9
+  - action_ask_dNbQ9i
+  - action_ask_dNbQ10
+  - action_ask_dNbQ11
+  - action_ask_dNbQ11i
+  - action_ask_dNbQ12
+  - action_ask_dNbQ12i
+  - action_ask_dNbPastMedicalHistory
+  - action_ask_dNbPastMedicalHistoryOther
+  - action_ask_dNbMedicalTests
+  - action_ask_dNbMedicalTestsOther
+  - action_ask_dNbOnSetType
   - action_ask_hoursPerSleepNight
   - action_ask_numberOfMinutes
   - action_ask_usualBedTime
@@ -1392,6 +1468,74 @@ forms:
       dNbQ4ci:
         - type: from_text
       dNbQ4d:
+        - type: from_text
+      dNbQ5:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dNbQ5i:
+        - type: from_text
+      dNbQ6:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dNbQ6i:
+        - type: from_text
+      dNbQ7:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dNbQ7i:
+        - type: from_text
+      dNbQ8:
+        - type: from_text
+      dNbQ9:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dNbQ9i:
+        - type: from_text
+      dNbQ10:
+        - type: from_text
+      dNbQ11:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dNbQ11i:
+        - type: from_text
+      dNbQ12:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dNbQ12i:
+        - type: from_text
+      dNbPastMedicalHistory:
+        - type: from_text
+      dNbPastMedicalHistoryOther:
+        - type: from_text
+      dNbMedicalTests:
+        - type: from_text
+      dNbMedicalTestsOther:
+        - type: from_text
+      dNbOnSetType:
         - type: from_text
   psqi_form:
     required_slots:
