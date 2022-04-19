@@ -10,6 +10,7 @@ github-markdown.css
 requirements.txt
 requirements_pip.txt
 alameda-chatbot.yml
+demo.db
 
 # Folders
 __pycache__/
