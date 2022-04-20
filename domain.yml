@@ -957,6 +957,21 @@ responses:
         - type: slot
           name: language
           value: English
+      text: You can tell me how you feel today or you can share something with me. Moreover, I can help you to complete all the available questionnaires.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Poți să-mi spui cum te simți astăzi sau poți împărtăși ceva cu mine. În plus, vă pot ajuta să completați toate chestionarele disponibile.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Puoi dirmi come ti senti oggi o puoi condividere qualcosa con me. Inoltre, posso aiutarti a completare tutti i questionari disponibili.
+    - condition:
+        - type: slot
+          name: language
+          value: English
         - type: slot
           name: questionnaire
           value: ACTIVLIM
@@ -1011,17 +1026,22 @@ responses:
         - type: slot
           name: language
           value: English
-      text: I am sorry, didn't understand. Please rephrase.
+      text: I am sorry, I can't handle this request.
     - condition:
         - type: slot
           name: language
           value: Romanian
-      text: Îmi pare rău, nu am înțeles. Vă rog să reformulați.
+      text: Îmi pare rău, nu pot face față acestei cereri.
     - condition:
         - type: slot
           name: language
           value: Greek
       text: Με συγχωρείτε δεν κατάλαβα. Παρακαλώ επαναδιατυπώστε.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Mi dispiace, non posso gestire questa richiesta.
   utter_confirm_cancellation:
     - condition:
         - type: slot
@@ -1362,73 +1382,104 @@ forms:
   muscletone_form:
     required_slots:
       mtQ1:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       mtQ2:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       mtQ3:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       mtQ4:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       mtQ5:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       mtQ6:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       mtQ7:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       mtQ8:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       mtQ9:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       mtQ10:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
   diet_form:
     required_slots:
       dietQ1:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ2:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ3:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ4:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ5:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ6:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ7:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ8:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ9:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ10:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ11:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ12:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ13:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ14:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ15:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ16:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ17:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ18:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ19:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dietQ20:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
   dizznbalance_form:
     required_slots:
       dNbSymptoms:
         - type: from_text
       dNbQ1:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dNbQ2:
         - type: from_intent
           intent: affirm
@@ -1438,6 +1489,7 @@ forms:
           value: false
       dNbQ2i:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dNbQ3:
         - type: from_intent
           intent: affirm
@@ -1447,6 +1499,7 @@ forms:
           value: false
       dNbQ3i:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dNbQ4:
         - type: from_intent
           intent: affirm
@@ -1456,8 +1509,10 @@ forms:
           value: false
       dNbQ4a:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dNbQ4b:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       dNbQ4c:
         - type: from_intent
           intent: affirm
@@ -1467,8 +1522,10 @@ forms:
           value: false
       dNbQ4ci:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dNbQ4d:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dNbQ5:
         - type: from_intent
           intent: affirm
@@ -1496,8 +1553,10 @@ forms:
           value: false
       dNbQ7i:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dNbQ8:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       dNbQ9:
         - type: from_intent
           intent: affirm
@@ -1507,8 +1566,10 @@ forms:
           value: false
       dNbQ9i:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dNbQ10:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       dNbQ11:
         - type: from_intent
           intent: affirm
@@ -1518,6 +1579,7 @@ forms:
           value: false
       dNbQ11i:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dNbQ12:
         - type: from_intent
           intent: affirm
@@ -1527,6 +1589,7 @@ forms:
           value: false
       dNbQ12i:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       dNbPastMedicalHistory:
         - type: from_text
       dNbPastMedicalHistoryOther:
@@ -1541,34 +1604,60 @@ forms:
     required_slots:
       psqiQ1:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       psqiQ2:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       psqiQ3:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       psqiQ4:
         - type: from_text
+          not_intent: [cancel, out_of_scope]
       psqiQ5a:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       psqiQ5b:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       psqiQ5c:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       psqiQ5d:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       psqiQ5e:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       psqiQ5f:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       psqiQ5g:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       psqiQ5h:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       psqiQ5i:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
       psqiQ5j:
         - type: from_text
       psqiQ5k:
-        - type: from_text
+        - entity: given_answer
+          type: from_entity
+      psqiQ6:
+        - entity: given_answer
+          type: from_entity
+      psqiQ7:
+        - entity: given_answer
+          type: from_entity
+      psqiQ8:
+        - entity: given_answer
+          type: from_entity
+      psqiQ9:
+        - entity: given_answer
+          type: from_entity
   activlim_form:
     required_slots:
       doorbell:

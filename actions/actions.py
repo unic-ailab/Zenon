@@ -15,38 +15,30 @@ lang_list = ["English", "Greek", "Italian", "Romanian"]  # Same as slot values
 # PSQI Questionnaire
 psqi_start_text = ["During the past month,", " ", " ", "In ultima luna,"]
 
-# buttons_psqi = [
-#     {"title": "Not during the past month", "payload": "/inform"},
-#     {"title": "Less than once a week", "payload": "/inform"},
-#     {"title": "Once or twice a week", "payload": "/inform"},
-#     {"title": "Three or more times a week", "payload": "/inform"},
-# ]
-
 buttons_psqi = [
     ["Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week"],
-    [" ", " ", " ", ""],
-    [" ", " ", " ", ""],
+    [" ", " "],
+    [" ", " "],
     ["Nu in ultima luna", "Mai putin de o data pe saptamana", "O data sau de 2 ori pe saptamana", "De 3 sau mai multe ori pe saptamana"]
 ]
 
 psqi_q5 = [
-    "During the past month, how often have you had trouble sleeping because you ",
+    "During the past month, how often have you had trouble sleeping because you",
     " ",
     " ",
-    "In ultima luna cat de des ati avut probleme cu somnul deoarece nu "
+    "In ultima luna cat de des ati avut probleme cu somnul deoarece nu"
     ]
 
 muscletone_buttons = [
     ["Yes", "No", "Don't know/ refused"],
-    [" ", " ", ""],
-    [" ", " ", ""],
+    [" ", " "],
+    [" ", " "],
     ["Da", "Nu", "Nu stiu/ refuz sa raspund"]
 ]
 
 ####################################################################################################
 # DEBUGGING                                                                                        #
 ####################################################################################################
-
 
 def announce(action, tracker=None):
     output = ">>> Action: " + action.name()
@@ -81,11 +73,9 @@ def announce(action, tracker=None):
             print(f"\n> announce: [ERROR] {e}")
     print(output)
 
-
 ####################################################################################################
 # SLOTS                                                                                            #
 ####################################################################################################
-
 
 def reset_slots(tracker, slots, exceptions=[]):
     events = []
@@ -105,7 +95,6 @@ def reset_slots(tracker, slots, exceptions=[]):
     print("\n> reset_slots:", ", ".join(none_slots))
     return events
 
-
 def list_slots(tracker, slots, exceptions=[]):
     filled_slots = ""
 
@@ -122,11 +111,9 @@ def list_slots(tracker, slots, exceptions=[]):
     # print(filled_slots[:-1])
     return filled_slots[:-1]
 
-
 ####################################################################################################
 # LANGUAGES                                                                                        #
 ####################################################################################################
-
 
 def get_lang(tracker):
     try:
@@ -135,13 +122,10 @@ def get_lang(tracker):
     except Exception as e:
         return "English"
 
-
 def get_lang_index(tracker):
     return lang_list.index(get_lang(tracker))
 
-
 """ utter_list is a list of outputs in multiple lanaguages, each output can be a string or a list of strings """
-
 
 def get_text_from_lang(tracker, utter_list=[]):
     lang_index = get_lang_index(tracker)
@@ -163,10 +147,8 @@ def get_text_from_lang(tracker, utter_list=[]):
 
     return text
 
-
 def get_response_from_lang(tracker, response):
     return response + "_" + get_lang(tracker)
-
 
 def get_buttons_from_lang(tracker, titles=[], payloads=[]):
     lang_index = get_lang_index(tracker)
@@ -178,7 +160,6 @@ def get_buttons_from_lang(tracker, titles=[], payloads=[]):
     for i in range(min(len(titles[lang_index]), len(payloads))):
         buttons.append({"title": titles[lang_index][i], "payload": payloads[i]})
     return buttons
-
 
 class ActionUtterAskLanguage(Action):
     def name(self):
@@ -208,7 +189,6 @@ class ActionUtterAskLanguage(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-
 class ActionUtterSetLanguage(Action):
     def name(self) -> Text:
         return "action_utter_set_language"
@@ -230,11 +210,9 @@ class ActionUtterSetLanguage(Action):
         dispatcher.utter_message(text=text)
         return []
 
-
 ####################################################################################################
 # SAVE CONVERSATION HISTORY                                                                        #
 ####################################################################################################
-
 
 class ActionSaveConversation(Action):
     def name(self) -> Text:
@@ -290,11 +268,9 @@ class ActionSaveConversation(Action):
 
         return []
 
-
 ####################################################################################################
 # Chit-Chat                                                                                        #
 ####################################################################################################
-
 
 class ActionUtterGreet(Action):
     def name(self):
@@ -385,8 +361,7 @@ class ActionUtterGreet(Action):
             )
             print("\nBOT:", text)
             dispatcher.utter_message(text=text)
-            return []
-
+            return [FollowupAction("action_listen")]
 
 ####################################################################################################
 # ACTIVLIM Questionnaire                                                                           #
@@ -417,7 +392,7 @@ class ActionUtterActivlimStart(Action):
                 [" ", " "],
                 ["Porniți chestionarul ACTIVLim", "Nu"],
             ],
-            ["/activLim_start", "/deny"],
+            ['/activLim_start', '/deny']
         )
 
         print("\nBOT:", text, buttons)
@@ -453,7 +428,7 @@ class ActionUtterPSQIStart(Action):
                 [" ", " "],
                 ["Porniți chestionarul PSQI", "Nu"],
             ],
-            ["/psqi_start", "/deny"],
+            ['/psqi_start', '/deny']
         )
 
         print("\nBOT:", text, buttons)
@@ -592,7 +567,12 @@ class ActionAskPSQIQ5a(Action):  # PSQI Questionnaire
         buttons = get_buttons_from_lang(
             tracker,
             buttons_psqi,
-            ["/inform", "/inform", "/inform", "/inform"],
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
         )
 
         text = entry_text + text
@@ -624,8 +604,13 @@ class ActionAskPSQIQ5b(Action):  # PSQI Questionnaire
 
         buttons = get_buttons_from_lang(
             tracker,
-            buttons_psqi
-            ["/inform", "/inform", "/inform", "/inform"],
+            buttons_psqi,
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
         )
 
         text = entry_text + text
@@ -651,14 +636,25 @@ class ActionAskPSQIQ5c(Action):  # PSQI Questionnaire
                 " have to get up to use the bathroom?",
                 " ",
                 " ",
-                " a trebuit sa va treziti pentru a merge la baie ?",
-            ],
+                " a trebuit sa va treziti pentru a merge la baie ?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_psqi,
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
         )
 
         text = entry_text + text
 
         print("\nBOT:", text)
-        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskPSQIQ5d(Action):  # PSQI Questionnaire
@@ -678,14 +674,25 @@ class ActionAskPSQIQ5d(Action):  # PSQI Questionnaire
                 " cannot breathe comfortably?",
                 " ",
                 " ",
-                " nu ati putut respira confortabil?",
-            ],
+                " nu ati putut respira confortabil?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_psqi,
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
         )
 
         text = entry_text + text
 
         print("\nBOT:", text)
-        dispatcher.utter_message(text=text, buttons=buttons_psqi)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskPSQIQ5e(Action):  # PSQI Questionnaire
@@ -705,16 +712,21 @@ class ActionAskPSQIQ5e(Action):  # PSQI Questionnaire
                 " cough or snore loudly?",
                 " ",
                 " ",
-                " ati tusit sau sforait zgmotos?",
-            ],
+                " ati tusit sau sforait zgmotos?"
+            ]
         )
 
         text = entry_text + text
 
         buttons = get_buttons_from_lang(
             tracker,
-            buttons_psqi
-            ["/inform", "/inform", "/inform", "/inform"],
+            buttons_psqi,
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
         )
 
         print("\nBOT:", text)
@@ -738,16 +750,21 @@ class ActionAskPSQIQ5f(Action):  # PSQI Questionnaire
                 " feel too cold?",
                 " ",
                 " ",
-                " v-a fost frig?",
-            ],
+                " v-a fost frig?"
+            ]
         )
 
         text = entry_text + text
 
         buttons = get_buttons_from_lang(
             tracker,
-            buttons_psqi
-            ["/inform", "/inform", "/inform", "/inform"],
+            buttons_psqi,
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
         )
 
         print("\nBOT:", text)
@@ -771,16 +788,21 @@ class ActionAskPSQIQ5g(Action):  # PSQI Questionnaire
                 " feel too hot?",
                 " ",
                 " ",
-                " v-a fost cald?",
-            ],
+                " v-a fost cald?"
+            ]
         )
 
         text = entry_text + text
 
         buttons = get_buttons_from_lang(
             tracker,
-            buttons_psqi
-            ["/inform", "/inform", "/inform", "/inform"],
+            buttons_psqi,
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
         )
 
         print("\nBOT:", text)
@@ -804,16 +826,21 @@ class ActionAskPSQIQ5h(Action):  # PSQI Questionnaire
                 " had bad dreams?",
                 " ",
                 " ",
-                " ati avut cosmaruri?",
-            ],
+                " ati avut cosmaruri?"
+            ]
         )
 
         text = entry_text + text
 
         buttons = get_buttons_from_lang(
             tracker,
-            buttons_psqi
-            ["/inform", "/inform", "/inform", "/inform"],
+            buttons_psqi,
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
         )
 
         print("\nBOT:", text)
@@ -837,16 +864,21 @@ class ActionAskPSQIQ5i(Action):  # PSQI Questionnaire
                 " have pain?",
                 " ",
                 " ",
-                " ati avut dureri?",
-            ],
+                " ati avut dureri?"
+            ]
         )
 
         text = entry_text + text
 
         buttons = get_buttons_from_lang(
             tracker,
-            buttons_psqi
-            ["/inform", "/inform", "/inform", "/inform"],
+            buttons_psqi,
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
         )
 
         print("\nBOT:", text)
@@ -867,11 +899,11 @@ class ActionAskPSQIQ5j(Action):  # PSQI Questionnaire
         text = get_text_from_lang(
             tracker,
             [
-                " other reason? (please describe)",
+                " Other reason? (please describe)",
                 " ",
                 " ",
-                " alte motive?",
-            ],
+                " Alte motive?"
+            ]
         )
 
         text = entry_text + text
@@ -893,14 +925,19 @@ class ActionAskPSQIQ5k(Action):  # PSQI Questionnaire
                 "How often during the past month have you had trouble sleeping beacuse of this?",
                 " ",
                 " ",
-                "Cat de des in ultima luna ati avut probleme cu somnul din cauza lucrurilor mai sus mentionate?",
-            ],
+                "Cat de des in ultima luna ati avut probleme cu somnul din cauza lucrurilor mai sus mentionate?"
+            ]
         )
 
         buttons = get_buttons_from_lang(
             tracker,
-            buttons_psqi
-            ["/inform", "/inform", "/inform", "/inform"],
+            buttons_psqi,
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
         )
 
         print("\nBOT:", text)
@@ -935,7 +972,12 @@ class ActionAskPSQIQ6(Action):  # PSQI Questionnaire
                 [" ", " "],
                 ["Foarte bun", "Satisfacator", "Nesatisfacator", "Foarte rau"],
             ],
-            ["/inform", "/inform", "/inform", "/inform"],
+            [
+                '/inform{"given_answer":"Very good"}', 
+                '/inform{"given_answer":"Fairly good"}', 
+                '/inform{"given_answer":"Fairly bad"}', 
+                '/inform{"given_answer":"Very bad"}'
+            ]
         )
 
         text = entry_text + text
@@ -972,7 +1014,12 @@ class ActionAskPSQIQ7(Action):  # PSQI Questionnaire
                 [" ", " "],
                 ["Nu in ultima luna", "Mai putin de o data pe saptamana", "O data sau de 2 ori pe saptamana", "De 3 sau mai multe ori pe saptamana"],
             ],
-            ["/inform", "/inform", "/inform", "/inform"],
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
         )
 
         text = entry_text + text
@@ -1009,7 +1056,12 @@ class ActionAskPSQIQ8(Action):  # PSQI Questionnaire
                 [" ", " "],
                 ["Nu in ultima luna", "Mai putin de o data pe saptamana", "O data sau de 2 ori pe saptamana", "De 3 sau mai multe ori pe saptamana"],
             ],
-            ["/inform", "/inform", "/inform", "/inform"],
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
         )
 
         text = entry_text + text
@@ -1046,7 +1098,12 @@ class ActionAskPSQIQ9(Action):  # PSQI Questionnaire
                 [" ", " "],
                 ["Nu a fost o problema", "A fost doar putin dificil", "A fost o problema intr-o oarecare masura", "A fost foarte dificil"],
             ],
-            ["/inform", "/inform", "/inform", "/inform"],
+            [
+                '/inform{"given_answer":"No problem at all"}', 
+                '/inform{"given_answer":"Only a very slight problem"}', 
+                '/inform{"given_answer":"Somewhat of a problem"}', 
+                '/inform{"given_answer":"A very big problem"}'
+            ]
         )
 
         text = entry_text + text
@@ -1072,8 +1129,8 @@ class ActionUtterDnBStart(Action):  # DnB Questionnaire
                 "Would you like to fill it? It shouldn't take more than 7 minutes.",
                 " ",
                 " ",
-                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute.",
-            ],
+                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute."
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1084,13 +1141,12 @@ class ActionUtterDnBStart(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["Porniți chestionarul Dizzines - Balance", "Nu"],
             ],
-            ["/dizzNbalance_start", "/deny"],
+            ['/dizzNbalance_start', '/deny']
         )
 
         print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
-
 
 class ActionAskDnBQ1(Action):  # DnB Questionnaire
     def name(self) -> Text:
@@ -1105,14 +1161,13 @@ class ActionAskDnBQ1(Action):  # DnB Questionnaire
                 "When did your problem start (date)?",
                 " ",
                 " ",
-                "Cand a inceput problema dumneavoastra (data)?",
-            ],
+                "Cand a inceput problema dumneavoastra (data)?"
+            ]
         )
 
         print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
-
 
 class ActionAskDnBQ2(Action):  # DnB Questionnaire
     def name(self) -> Text:
@@ -1127,8 +1182,8 @@ class ActionAskDnBQ2(Action):  # DnB Questionnaire
                 "Was it associated with a related event (e.g. head injury) ?",
                 " ",
                 " ",
-                "A aparut in contextul unui alt eveniment (de exemplu, lovitura la cap) ?",
-            ],
+                "A aparut in contextul unui alt eveniment (de exemplu, lovitura la cap) ?"
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1139,13 +1194,12 @@ class ActionAskDnBQ2(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["Da", "Nu"]
             ],
-            ["/affirm", "/deny"]
+            ['/affirm', '/deny']
         )
 
         print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
-
 
 class ActionAskDnBQ2i(Action):  # DnB Questionnaire
     def name(self) -> Text:
@@ -1176,8 +1230,8 @@ class ActionAskDnBQ3(Action):  # DnB Questionnaire
                 "Was the onset of your symptoms:",
                 " ",
                 " ",
-                "Simptomele au debutat :",
-            ],
+                "Simptomele au debutat :"
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1188,7 +1242,7 @@ class ActionAskDnBQ3(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["brusc", "gradual", "peste noapte", "alt mod"]
             ],
-            ["/affirm", "/affirm", "/affirm", "/deny"]
+            ['/affirm', '/affirm', '/affirm', '/deny']
         )
 
         print("\nBot:", text, buttons)
@@ -1204,7 +1258,7 @@ class ActionAskDnBQ3i(Action):  # DnB Questionnaire
 
         text = get_text_from_lang(
             tracker,
-            ["describe", " ", " ", "detaliati",],
+            ["describe", " ", " ", "detaliati"]
         )
 
         print("\nBot:", text)
@@ -1224,8 +1278,8 @@ class ActionAskDnBQ4(Action):  # DnB Questionnaire
                 "Are your symptoms:",
                 " ",
                 " ",
-                "Simptomele sunt :",
-            ],
+                "Simptomele sunt :"
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1236,7 +1290,7 @@ class ActionAskDnBQ4(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["constante", "variabile de exemplu, apar si dispar"]
             ],
-            ["/deny", "/affirm"]
+            ['/deny', '/affirm']
         )
 
         print("\nBot:", text, buttons)
@@ -1256,8 +1310,8 @@ class ActionAskDnBQ4a(Action):  # DnB Questionnaire
                 "If variable, the spells occur every (# of hours/days/weeks/months/years)",
                 " ",
                 " ",
-                "Daca variaza, crizele apar la fiecare.... dureaza .... (ore/zile/saptamani)",
-            ],
+                "Daca variaza, crizele apar la fiecare.... dureaza .... (ore/zile/saptamani)"
+            ]
         )
 
         print("\nBot:", text)
@@ -1278,7 +1332,7 @@ class ActionAskDnBQ4b(Action):  # DnB Questionnaire
                 " ",
                 " ",
                 "Daca variaza, crizele dureaza :",
-            ],
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1289,7 +1343,16 @@ class ActionAskDnBQ4b(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["mai putin de 1 minut", "intre 1-2 minute", "intre 3-10 minute", "11-30 minute", "1/2 ora-1 ora", "2-6 ore", "7-24 ore", ">24 ore"]
             ],
-            ["/inform", "/inform", "/inform", "/inform", "/inform", "/inform", "/inform", "/inform"]
+            [
+                '/inform{"given_answer":"< 1 min."}', 
+                '/inform{"given_answer":"1-2 min."}', 
+                '/inform{"given_answer":"3-10 min."}', 
+                '/inform{"given_answer":"11-30 min."}', 
+                '/inform{"given_answer":"½-1 hr."}', 
+                '/inform{"given_answer":"2-6 hrs."}', 
+                '/inform{"given_answer":"7-24hrs."}', 
+                '/inform{"given_answer":"> 24 hrs."}'
+            ]
         )
 
         print("\nBot:", text, buttons)
@@ -1310,7 +1373,7 @@ class ActionAskDnBQ4c(Action):  # DnB Questionnaire
                 " ",
                 " ",
                 "Daca variaza, aveti simptome care anunta inceputul unei crize?",
-            ],
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1321,7 +1384,7 @@ class ActionAskDnBQ4c(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["da", "nu"]
             ],
-            ["/affirm", "/deny"]
+            ['/affirm', '/deny']
         )
 
         print("\nBot:", text, buttons)
@@ -1341,8 +1404,8 @@ class ActionAskDnBQ4ci(Action):  # DnB Questionnaire
                 "If yes, please describe:",
                 " ",
                 " ",
-                "Daca da, descrieti.",
-            ],
+                "Daca da, descrieti."
+            ]
         )
         
         print("\nBot:", text)
@@ -1362,8 +1425,8 @@ class ActionAskDnBQ4d(Action):  # DnB Questionnaire
                 "If variable, are you completely free of symptoms between attacks?",
                 " ",
                 " ",
-                "Daca variaza, intre crize nu exista niciun fel de simptom ?",
-            ],
+                "Daca variaza, intre crize nu exista niciun fel de simptom ?"
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1374,7 +1437,7 @@ class ActionAskDnBQ4d(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["da", "nu"]
             ],
-            ["/affirm", "/deny"]
+            ['/affirm', '/deny']
         )
 
         print("\nBot:", text, buttons)
@@ -1434,8 +1497,8 @@ class ActionAskDnBQ5(Action):  # DnB Questionnaire
                 "Do your symptoms occur when changing positions?",
                 " ",
                 " ",
-                "Simptomele pe care le descrieti apar cand schimbati pozitia corpului/a capului ?",
-            ],
+                "Simptomele pe care le descrieti apar cand schimbati pozitia corpului/a capului ?"
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1446,7 +1509,7 @@ class ActionAskDnBQ5(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["Da", "Nu"]
             ],
-            ["/affirm", "/deny"]
+            ['/affirm', '/deny']
         )
 
         print("\nBot:", text, buttons)
@@ -1504,8 +1567,8 @@ class ActionAskDnBQ6(Action):  # DnB Questionnaire
                 "Is there anything that makes your symptoms worse?",
                 " ",
                 " ",
-                "Exista lucruri care agraveaza simptomele ?",
-            ],
+                "Exista lucruri care agraveaza simptomele ?"
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1516,7 +1579,7 @@ class ActionAskDnBQ6(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["Da", "Nu"]
             ],
-            ["/affirm", "/deny"]
+            ['/affirm', '/deny']
         )
 
         print("\nBot:", text, buttons)
@@ -1574,8 +1637,8 @@ class ActionAskDnBQ7(Action):  # DnB Questionnaire
                 "Is there anything that makes your symptoms better?",
                 " ",
                 " ",
-                "Exista lucruri care amelioreaza simptomele ?",
-            ],
+                "Exista lucruri care amelioreaza simptomele ?"
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1586,7 +1649,7 @@ class ActionAskDnBQ7(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["Da", "Nu"]
             ],
-            ["/affirm", "/deny"]
+            ['/affirm', '/deny']
         )
 
         print("\nBot:", text, buttons)
@@ -1602,7 +1665,7 @@ class ActionAskDnBQ7i(Action):  # DnB Questionnaire
 
         text = get_text_from_lang(
             tracker,
-            ["If yes, please explain:", " ", " ", "Daca da, detaliati."],
+            ["If yes, please explain:", " ", " ", "Daca da, detaliati."]
         )
 
         print("\nBot:", text)
@@ -1623,7 +1686,7 @@ class ActionAskDnBQ8(Action):  # DnB Questionnaire
                 " ",
                 " ",
                 "Aveti dificultati in a merge pe intuneric ?"
-            ],
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1634,7 +1697,10 @@ class ActionAskDnBQ8(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["Da", "Nu"]
             ],
-            ["/affirm", "/deny"]
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}'
+            ]
         )
 
         print("\nBot:", text, buttons)
@@ -1654,8 +1720,8 @@ class ActionAskDnBQ9(Action):  # DnB Questionnaire
                 "When you have symptoms, do you need to support yourself to stand or walk?",
                 " ",
                 " ",
-                "Cand apar simptomele aveti nevoie de sprijin pentru a sta in picioare sau a merge ?",
-            ],
+                "Cand apar simptomele aveti nevoie de sprijin pentru a sta in picioare sau a merge ?"
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1666,7 +1732,7 @@ class ActionAskDnBQ9(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["Da", "Nu"]
             ],
-            ["/affirm", "/deny"]
+            ['/affirm', '/deny']
         )
 
         print("\nBot:", text, buttons)
@@ -1682,10 +1748,12 @@ class ActionAskDnBQ9i(Action):  # DnB Questionnaire
 
         text = get_text_from_lang(
             tracker,
-            ["If yes, how do you support yourself?",
-             " ", 
-             " ", 
-             "Dacă da, cum vă întrețineți?"],
+            [
+                "If yes, how do you support yourself?",
+                " ", 
+                " ", 
+                "Dacă da, cum vă întrețineți?"
+            ]
         )
 
         print("\nBot:", text)
@@ -1706,7 +1774,7 @@ class ActionAskDnBQ10(Action):  # DnB Questionnaire
                 " ",
                 " ",
                 "Aveti dificultati in a merge pe suprafete neregulate (pe iarba/pavaj) comparativ cu suprafetele netede (pe beton) ?"
-            ],
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1717,7 +1785,10 @@ class ActionAskDnBQ10(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["Da", "Nu"]
             ],
-            ["/affirm", "/deny"]
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}'
+            ]
         )
 
         print("\nBot:", text, buttons)
@@ -1738,7 +1809,7 @@ class ActionAskDnBQ11(Action):  # DnB Questionnaire
                 " ",
                 " ",
                 "Ati cazut vreodata in timpul crizelor ?"
-            ],
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1749,7 +1820,7 @@ class ActionAskDnBQ11(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["Da", "Nu"]
             ],
-            ["/affirm", "/deny"]
+            ['/affirm', '/deny']
         )
 
         print("\nBot:", text, buttons)
@@ -1768,7 +1839,7 @@ class ActionAskDnBQ11i(Action):  # DnB Questionnaire
             ["If yes, # of falls in the last 6 months...",
              " ", 
              " ", 
-             "Daca da, cate caderi au fost pe parcursul a 6 luni ?"],
+             "Daca da, cate caderi au fost pe parcursul a 6 luni ?"]
         )
 
         print("\nBot:", text)
@@ -1789,7 +1860,7 @@ class ActionAskDnBQ12(Action):  # DnB Questionnaire
                 " ",
                 " ",
                 "S-a schimbat ceva in ceea ce priveste calitatea vederii dumneavoastra recent, inclusiv purtat/schimbat lentile de contact sau ochelari de vedere ?"
-            ],
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -1800,7 +1871,10 @@ class ActionAskDnBQ12(Action):  # DnB Questionnaire
                 [" ", " "],
                 ["Da", "Nu"]
             ],
-            ["/affirm", "/deny"]
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}'
+            ]
         )
 
         print("\nBot:", text, buttons)
@@ -1819,7 +1893,7 @@ class ActionAskDnBQ12i(Action):  # DnB Questionnaire
             ["Explain:",
              " ", 
              " ", 
-             "Explicati:"],
+             "Explicati:"]
         )
 
         print("\nBot:", text)
@@ -1883,10 +1957,12 @@ class ActionAskDnBPastMedicalHistoryOther(Action):  # DnB Questionnaire
 
         text = get_text_from_lang(
             tracker,
-            ["Past medical history - Other:",
-             " ", 
-             " ", 
-             "Antecedente personale patologice - Altele (detaliati):"],
+            [
+                "Past medical history - Other:",
+                " ", 
+                " ", 
+                "Antecedente personale patologice - Altele (detaliati):"
+            ]
         )
 
         print("\nBot:", text)
@@ -1936,10 +2012,12 @@ class ActionAskDnBMedicalTestsOther(Action):  # DnB Questionnaire
 
         text = get_text_from_lang(
             tracker,
-            ["Medical Tests - Other:",
-             " ", 
-             " ", 
-             "Teste medicale - Altele (detaliati):"],
+            [
+                "Medical Tests - Other:",
+                " ", 
+                " ", 
+                "Teste medicale - Altele (detaliati):"
+            ]
         )
 
         print("\nBot:", text)
@@ -1955,10 +2033,12 @@ class ActionAskDnBOnSetType(Action):  # DnB Questionnaire
 
         text = get_text_from_lang(
             tracker,
-            ["Onset Type:",
-             " ", 
-             " ", 
-             "Tipul debutului simptomelor-alegeti dintre variantele urmatoare :"],
+            [
+                "Onset Type:",
+                " ", 
+                " ", 
+                "Tipul debutului simptomelor-alegeti dintre variantele urmatoare :"
+            ]
         )
 
         if tracker.get_slot("language") == "English":
@@ -1978,7 +2058,6 @@ class ActionAskDnBOnSetType(Action):  # DnB Questionnaire
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
         return []
-
 
 class ValidateDnBForm(FormValidationAction):
     def name(self) -> Text:
@@ -2040,8 +2119,8 @@ class ActionUtterDietStart(Action):
                 "Would you like to fill it? It shouldn't take more than 7 minutes.",
                 " ",
                 " ",
-                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute.",
-            ],
+                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute."
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -2050,9 +2129,9 @@ class ActionUtterDietStart(Action):
                 ["Start Eating Habits Questionnaire", "No"],
                 [" ", " "],
                 [" ", " "],
-                ["Porniți chestionarul obiceiuri alimentare", "Nu"],
+                ["Porniți chestionarul obiceiuri alimentare", "Nu"]
             ],
-            ["/diet_start", "/deny"],
+            ['/diet_start', '/deny']
         )
 
         print("\nBOT:", text, buttons)
@@ -2072,8 +2151,8 @@ class ActionAskDietQ1(Action):
                 "When you eat chicken, how often did you prepare it in the oven or boiled?",
                 " ",
                 " ",
-                "Cand mancati carne de pui, cat de des o pregatiti la cuptor sau fiarta?",
-            ],
+                "Cand mancati carne de pui, cat de des o pregatiti la cuptor sau fiarta?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2093,8 +2172,8 @@ class ActionAskDietQ2(Action):
                 "When you eat chicken, how often did you take off the skin?",
                 " ",
                 " ",
-                "Cand mancati carne de pui, cat de des renuntati la piele?",
-            ],
+                "Cand mancati carne de pui, cat de des renuntati la piele?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2114,8 +2193,8 @@ class ActionAskDietQ3(Action):
                 "When you eat red meat, how frequently did you choose to eat only small portions?",
                 " ",
                 " ",
-                "Cand mancati carne rosie, cat de frecvent alegeti sa mancati doar portii mici?",
-            ],
+                "Cand mancati carne rosie, cat de frecvent alegeti sa mancati doar portii mici?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2135,8 +2214,8 @@ class ActionAskDietQ4(Action):
                 "When you eat red meat, how frequently did you trim all visible fat?",
                 " ",
                 " ",
-                "Cand mancati carne rosie, cat de frecvent separati carnea de portiunile vizibile de grasime?",
-            ],
+                "Cand mancati carne rosie, cat de frecvent separati carnea de portiunile vizibile de grasime?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2156,8 +2235,8 @@ class ActionAskDietQ5(Action):
                 "How often did you replace red meat with chicken or fish?",
                 " ",
                 " ",
-                "Cat de des inlocuiti carnea rosie cu pui sau peste?",
-            ],
+                "Cat de des inlocuiti carnea rosie cu pui sau peste?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2177,8 +2256,8 @@ class ActionAskDietQ6(Action):
                 "How often did you choose to put butter or margarine over cooked vegetables?",
                 " ",
                 " ",
-                "Cat de des alegeti sa puneti unt sau margarina peste legumele gatite?",
-            ],
+                "Cat de des alegeti sa puneti unt sau margarina peste legumele gatite?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2198,8 +2277,8 @@ class ActionAskDietQ7(Action):
                 "How often did you eat boiled or baked potatoes without adding butter or margarine?",
                 " ",
                 " ",
-                "Cat de des mancati cartofi fierti sau copti fara a adauga unt sau margarina?",
-            ],
+                "Cat de des mancati cartofi fierti sau copti fara a adauga unt sau margarina?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2219,8 +2298,8 @@ class ActionAskDietQ8(Action):
                 "How often did you put sour cream, cheese or other sauces over cooked vegetables?",
                 " ",
                 " ",
-                "Cat de des puneti smantana, branza sau alte sosuri peste legumele gatite?",
-            ],
+                "Cat de des puneti smantana, branza sau alte sosuri peste legumele gatite?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2240,8 +2319,8 @@ class ActionAskDietQ9(Action):
                 "How often did you eat bread, muffins without associating them with butter / margarine?",
                 " ",
                 " ",
-                "Cat de des mancati paine, briose fara a le asocia cu unt/margarina?",
-            ],
+                "Cat de des mancati paine, briose fara a le asocia cu unt/margarina?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2261,8 +2340,8 @@ class ActionAskDietQ10(Action):
                 "How often did you use a tomato sauce without meat on pasta (spaghetti or noodles)?",
                 " ",
                 " ",
-                "Cat de des folositi un sos de rosii fara carne pe paste (spaghetti sau noodles)?",
-            ],
+                "Cat de des folositi un sos de rosii fara carne pe paste (spaghetti sau noodles)?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2282,8 +2361,8 @@ class ActionAskDietQ11(Action):
                 "How often did you have vegetarian meal?",
                 " ",
                 " ",
-                "Cat de des aveti mese doar pe baza de produse vegetale?",
-            ],
+                "Cat de des aveti mese doar pe baza de produse vegetale?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2303,8 +2382,8 @@ class ActionAskDietQ12(Action):
                 "How often did you use yogurt instead of sour cream?",
                 " ",
                 " ",
-                "Cat de des folositi iaurt in loc de smantana?",
-            ],
+                "Cat de des folositi iaurt in loc de smantana?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2324,8 +2403,8 @@ class ActionAskDietQ13(Action):
                 "How frequently did you use very low-fat milk or 100% skimmed milk?",
                 " ",
                 " ",
-                "Cat de frecvent folositi lapte cu continut foarte scazut de grasimi sau lapte 100% degresat?",
-            ],
+                "Cat de frecvent folositi lapte cu continut foarte scazut de grasimi sau lapte 100% degresat?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2345,8 +2424,8 @@ class ActionAskDietQ14(Action):
                 "How frequently did you consume dietary products (low-fat foods0 or dietary cheese)?",
                 " ",
                 " ",
-                "Cat de frecvent consumati produse dietetice (alimente cu continut redus de grasimi sau branza dietetica)?",
-            ],
+                "Cat de frecvent consumati produse dietetice (alimente cu continut redus de grasimi sau branza dietetica)?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2366,8 +2445,8 @@ class ActionAskDietQ15(Action):
                 "How often did you eat ice milk, frozen yogurt or sherbet, instead of ice cream?",
                 " ",
                 " ",
-                "Cat de des preferati in detrimentul inghetatei sherbet, iaurt sau lapte congelat?",
-            ],
+                "Cat de des preferati in detrimentul inghetatei sherbet, iaurt sau lapte congelat?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2387,8 +2466,8 @@ class ActionAskDietQ16(Action):
                 "How often did you use low-calorie instead of regular salad dressing?",
                 " ",
                 " ",
-                "Cat de des folositi dressing pentru salate cu continut redus de calorii in locul celui normal?",
-            ],
+                "Cat de des folositi dressing pentru salate cu continut redus de calorii in locul celui normal?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2408,8 +2487,8 @@ class ActionAskDietQ17(Action):
                 "How often did you use PAM or another non-stick spray when cooking?",
                 " ",
                 " ",
-                "Cat de des folositi produse pe baza de uleiuri/grasimi concentrate (de exemplu sub forma de spray) cand gatiti?",
-            ],
+                "Cat de des folositi produse pe baza de uleiuri/grasimi concentrate (de exemplu sub forma de spray) cand gatiti?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2429,8 +2508,8 @@ class ActionAskDietQ18(Action):
                 "How often did you have only fruit for dessert?",
                 " ",
                 " ",
-                "Cat de des optati doar pentru fructe ca desert?",
-            ],
+                "Cat de des optati doar pentru fructe ca desert?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2450,8 +2529,8 @@ class ActionAskDietQ19(Action):
                 "How often did you eat at least two vegetables (not green salad) for dinner?",
                 " ",
                 " ",
-                "Cat de des mancati cel putin doua legume (altele decat salata verde) la cina?",
-            ],
+                "Cat de des mancati cel putin doua legume (altele decat salata verde) la cina?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2471,8 +2550,8 @@ class ActionAskDietQ20(Action):
                 "How often did you prefer raw vegetables as a snack instead of potato chips or popcorn?",
                 " ",
                 " ",
-                "Cat de des preferati legume crude ca snack in locul chips urilor din cartofi sau popcorn ului?",
-            ],
+                "Cat de des preferati legume crude ca snack in locul chips urilor din cartofi sau popcorn ului?"
+            ]
         )
 
         print("\nBot:", text)
@@ -2496,8 +2575,8 @@ class ActionUtterMuscleToneStart(Action):
                 "Would you like to fill it? It shouldn't take more than 7 minutes.",
                 " ",
                 " ",
-                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute.",
-            ],
+                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute."
+            ]
         )
 
         buttons = get_buttons_from_lang(
@@ -2506,9 +2585,9 @@ class ActionUtterMuscleToneStart(Action):
                 ["Start Muscle Tone Questionnaire", "No"],
                 [" ", " "],
                 [" ", " "],
-                ["Începeți chestionarul pentru tonusul muscular", "Nu"],
+                ["Începeți chestionarul pentru tonusul muscular", "Nu"]
             ],
-            ["/muscletone_start", "/deny"],
+            ['/muscletone_start', '/deny']
         )
 
         print("\nBOT:", text, buttons)
@@ -2535,7 +2614,11 @@ class ActionAskMTQ1(Action):
         buttons = get_buttons_from_lang(
             tracker,
             muscletone_buttons,
-            ["/affirm", "/deny", "/inform"]
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}', 
+                '/inform{"given_answer":"Don\'t know/ refused"}'
+            ]
         )
 
         print("\nBOT:", text, buttons)
@@ -2562,7 +2645,11 @@ class ActionAskMTQ2(Action):
         buttons = get_buttons_from_lang(
             tracker,
             muscletone_buttons,
-            ["/affirm", "/deny", "/inform"]
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}', 
+                '/inform{"given_answer":"Don\'t know/ refused"}'
+            ]
         )
 
         print("\nBOT:", text, buttons)
@@ -2588,7 +2675,11 @@ class ActionAskMTQ3(Action):
         buttons = get_buttons_from_lang(
             tracker,
             muscletone_buttons,
-            ["/affirm", "/deny", "/inform"]
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}', 
+                '/inform{"given_answer":"Don\'t know/ refused"}'
+            ]
         )
 
         print("\nBOT:", text, buttons)
@@ -2615,7 +2706,11 @@ class ActionAskMTQ4(Action):
         buttons = get_buttons_from_lang(
             tracker,
             muscletone_buttons,
-            ["/affirm", "/deny", "/inform"]
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}', 
+                '/inform{"given_answer":"Don\'t know/ refused"}'
+            ]
         )
 
         print("\nBOT:", text, buttons)
@@ -2642,7 +2737,11 @@ class ActionAskMTQ5(Action):
         buttons = get_buttons_from_lang(
             tracker,
             muscletone_buttons,
-            ["/affirm", "/deny", "/inform"]
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}', 
+                '/inform{"given_answer":"Don\'t know/ refused"}'
+            ]
         )
 
         print("\nBOT:", text, buttons)
@@ -2674,7 +2773,15 @@ class ActionAskMTQ6(Action):
                 [" ", " ", " ", " ", " ", " ", " "],                
                 ["Nu", "Da, la nivelul piciorului stang", "Da, la nivelul piciorului drept", "Da, la nivelul ambelor picioare", "Da, dar nu stiu exact pe care parte", "Nu se aplica (ex. membru amputat)", "Nu stiu"]
             ],
-            ["/inform", "/inform", "/inform", "/inform", "/inform", "/inform", "/inform"]
+            [
+                '/inform{"given_answer":"No"}', 
+                '/inform{"given_answer":"Yes, left foot"}', 
+                '/inform{"given_answer":"Yes, right foot"}',
+                '/inform{"given_answer":"Yes, both feet"}', 
+                '/inform{"given_answer":"Yes, not sure what side"}', 
+                '/inform{"given_answer":"Not applicable (e.g. amputee)"}', 
+                '/inform{"given_answer":"Don\'t know"}'
+            ]
         )
 
         print("\nBOT:", text, buttons)
@@ -2701,7 +2808,11 @@ class ActionAskMTQ7(Action):
         buttons = get_buttons_from_lang(
             tracker,
             muscletone_buttons,
-            ["/affirm", "/deny", "/inform"]
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}', 
+                '/inform{"given_answer":"Don\'t know/ refused"}'
+            ]
         )
 
         print("\nBOT:", text, buttons)
@@ -2728,7 +2839,11 @@ class ActionAskMTQ8(Action):
         buttons = get_buttons_from_lang(
             tracker,
             muscletone_buttons,
-            ["/affirm", "/deny", "/inform"]
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}', 
+                '/inform{"given_answer":"Don\'t know/ refused"}'
+            ]
         )
 
         print("\nBOT:", text, buttons)
@@ -2755,7 +2870,11 @@ class ActionAskMTQ9(Action):
         buttons = get_buttons_from_lang(
             tracker,
             muscletone_buttons,
-            ["/affirm", "/deny", "/inform"]
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}', 
+                '/inform{"given_answer":"Don\'t know/ refused"}'
+            ]
         )
 
         print("\nBOT:", text, buttons)
@@ -2787,7 +2906,14 @@ class ActionAskMTQ10(Action):
                 [" ", " ", " ", " ", " ", " "],
                 ["Osteoartrita", "Poliartrita reumatoida", "Da, altele (specificati)", "Da, dar nu stiu exact ce tip", "Nu, nu am artrita", "Nu stiu/ refuz sa raspund"]
             ],
-            ["/inform", "/inform", "/inform", "/inform", "/inform", "/inform"]
+            [
+                '/inform{"given_answer":"Osteoarthritis"}', 
+                '/inform{"given_answer":"Rheumatoid arthritis"}', 
+                '/inform{"given_answer":"Yes, other (specify)"}', 
+                '/inform{"given_answer":"Yes, don’t know type"}', 
+                '/inform{"given_answer":"No, don’t have arthritis"}', 
+                '/inform{"given_answer":"Don\'t know / refused"}'
+            ]
         )
 
         print("\nBOT:", text, buttons)
@@ -2797,7 +2923,6 @@ class ActionAskMTQ10(Action):
 ####################################################################################################
 # Handle User's Deny                                                                               #
 ####################################################################################################
-
 
 class ActionHandleUserDenyInformDoctors(Action):
     def name(self):
@@ -2813,18 +2938,16 @@ class ActionHandleUserDenyInformDoctors(Action):
                 "Είσαι σίγουρος? Το πως αισθάνεσαι είναι σημαντικό μέρος της προόδου σου.",
                 "Esti sigur? Modul în care te simți este, de asemenea, o parte importantă a progresului tău fizic.",
                 "Sei sicuro? Anche il modo in cui ti senti è una parte importante del tuo progresso fisico.",
-            ],
+            ]
         )
 
         print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []
 
-
 ####################################################################################################
 # Set Questionnaire Slot Value                                                                     #
 ####################################################################################################
-
 
 class ActionUtterSetQuestionnaire(Action):
     def name(self) -> Text:

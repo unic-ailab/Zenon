@@ -217,6 +217,22 @@ nlu:
       - very happy
       - super happy
       - better
+      - 12
+      - 5
+      - 12 a.m
+      - 10 p.m
+      - 3 p.m
+      - 3 o'clock
+      - four o'clock
+      - five a.m
+      - twelve p.m
+      - five hours
+      - 2 hours
+      - 2.5 hours
+      - three and a half hours
+      - 90 min
+      - 2 minutes
+      - twenty seven minutes
       - τέλεια
       - μια χαρά
       - υπέροχα
@@ -389,6 +405,9 @@ nlu:
       - ?
       - is there any problem?
       - what?
+      - do you make coffe?
+      - I want ice cream
+      - cafe please.
       - τι καιρό κάνει τώρα;
       - πόσο ήρθε χθες το παιχνίδι;
       - όχι άλλο κάρβουνο
