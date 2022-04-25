@@ -7,8 +7,26 @@ rules:
       - action: domainIII_form
       - active_loop: domainIII_form
 
+  - rule: Submit Domain III relevant questions
+    condition:
+      - active_loop: domainIII_form
+    steps:
+      - action: domainIII_form
+      - slot_was_set:
+          - requested_slot: null
+      - active_loop: null
+
   - rule: Start Domain V - Quality of Life and daily living relevant questions
     steps:
       - intent: domainV_start
       - action: domainV_form
       - active_loop: domainV_form
+
+  - rule: Submit Domain V relevant questions
+    condition:
+      - action: domainV_form
+    steps:
+      - action: domainV_form
+      - slot_was_set:
+          - requested_slot: null
+      - active_loop: null
