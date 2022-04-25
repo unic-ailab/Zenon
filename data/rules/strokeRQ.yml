@@ -24,7 +24,7 @@ rules:
 
   - rule: Submit Domain V relevant questions
     condition:
-      - action: domainV_form
+      - active_loop: domainV_form
     steps:
       - action: domainV_form
       - slot_was_set:
