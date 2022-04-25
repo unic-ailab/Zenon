@@ -2059,6 +2059,666 @@ class ActionAskDnBOnSetType(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
+class ActionAskDnBEarSymptomI(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomI"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Do you have difficulty with hearing?",
+                " ",
+                " ",
+                "Aveti dificultăți cu auzul?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}'
+            ]
+        )
+
+        intro_text = get_text_from_lang(
+            tracker,
+            [
+                "Describe any ear related symptoms:",
+                " ",
+                " ",
+                "Descrieți orice simptome legate de ureche:"
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=intro_text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomIa(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomIa"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "If yes, which ear(s):",
+                " ",
+                " ",
+                "Dacă da, care ureche(e):"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["left", "right", "both"],
+                [" ", " "],
+                [" ", " "],
+                ["stânga", "dreapta", "ambele"]
+            ],
+            [
+                '/inform{"given_answer":"Left"}', 
+                '/inform{"given_answer":"Right"}',
+                '/inform{"given_answer":"Both"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomIb(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomIb"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "When did this start?",
+                " ",
+                " ",
+                "Când a început asta? Detaliati."
+            ]
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDnBEarSymptomII(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomII"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Do you wear hearing aids?",
+                " ",
+                " ",
+                "Purtați aparate auditive?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomIIa(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomIIa"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "If yes, which ear(s):",
+                " ",
+                " ",
+                "Dacă da, care ureche(e):"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["left", "right", "both"],
+                [" ", " "],
+                [" ", " "],
+                ["stânga", "dreapta", "ambele"]
+            ],
+            [
+                '/inform{"given_answer":"Left"}', 
+                '/inform{"given_answer":"Right"}',
+                '/inform{"given_answer":"Both"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomIII(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomIII"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Do you experience noise or ringing in your ears?",
+                " ",
+                " ",
+                "Simțiți zgomot sau zgomot în urechi?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomIIIa(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomIIIa"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "If yes, which ear(s):",
+                " ",
+                " ",
+                "Dacă da, care ureche(e):"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["left", "right", "both"],
+                [" ", " "],
+                [" ", " "],
+                ["stânga", "dreapta", "ambele"]
+            ],
+            [
+                '/inform{"given_answer":"Left"}', 
+                '/inform{"given_answer":"Right"}',
+                '/inform{"given_answer":"Both"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomIIIa1(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomIIIa1"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Describe the noise:",
+                " ",
+                " ",
+                "Descrieți zgomotul:"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["ringing", "buzzing", "other (please type your answer)"],
+                [" ", " "],
+                [" ", " "],
+                ["sunete", "bâzâit", "altele (vă rugăm să introduceți răspunsul dvs.)"]
+            ],
+            [
+                '/inform{"given_answer":"Ringing"}', 
+                '/inform{"given_answer":"Buzzing"}',
+                '/inform{"given_answer":"Other"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomIIIa2(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomIIIa2"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Does the noise pulsate or is it steady?",
+                " ",
+                " ",
+                "Pulsează zgomotul sau este constant?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["steady", "pulsate", "variable"],
+                [" ", " "],
+                [" ", " "],
+                ["stabil", "pulsa", "variabil"]
+            ],
+            [
+                '/inform{"given_answer":"Steady"}', 
+                '/inform{"given_answer":"Pulsate"}',
+                '/inform{"given_answer":"Variable"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomIIIa3(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomIIIa3"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Does anything stop the noise or make it better?",
+                " ",
+                " ",
+                "Opreste ceva zgomotul sau il amelioreaza?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomIIIa3i(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomIIIa3i"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "If yes, explain:",
+                " ",
+                " ",
+                "Dacă da, explicați."
+            ]
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDnBEarSymptomIV(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomIV"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Do you have pain, fullness, or pressure in your ears?",
+                " ",
+                " ",
+                "Aveți durere, plenitudine sau presiune în urechi?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomV(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomV"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Do your ear symptoms occur at the same time as your dizziness/imbalance symptoms?",
+                " ",
+                " ",
+                "Simptomele urechii apar în același timp cu simptomele de amețeală/dezechilibru?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomVI(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomVI"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Lightheadedness or a floating sensation?",
+                " ",
+                " ",
+                "Amețeli sau senzație de plutire?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}'
+            ]
+        )
+
+        intro_text = get_text_from_lang(
+            tracker,
+            [
+                "When dizzy or imbalanced, do you experience any of the following:",
+                " ",
+                " ",
+                "Când sunteți amețit sau apare tulburarea de echilibru, aveți oricare dintre următoarele:"
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=intro_text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomVII(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomVII"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Objects or your environment turning around you?",
+                " ",
+                " ",
+                "Obiectele din mediul se rotesc sau se întorc cu susul in jos în jurul tău?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}'
+            ]
+        )
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomVIII(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomVIII"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "A sensation that you are turning or spinning while the environment remains stable?",
+                " ",
+                " ",
+                "Aveti o senzație de invartire în timp ce mediul rămâne stabil?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}'
+            ]
+        )
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomIX(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomIX"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Nausea or vomiting?",
+                " ",
+                " ",
+                "Aveti greață sau vărsături?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}'
+            ]
+        )
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomX(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomX"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Tingling of hands, feet or lips?",
+                " ",
+                " ",
+                "Aveti furnicaturi la maini, picioare sau buze?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Da", "Nu"]
+            ],
+            [
+                '/affirm{"given_answer":"Yes"}', 
+                '/deny{"given_answer":"No"}'
+            ]
+        )
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBEarSymptomXI(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dNbEarSymptomXI"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "When you are walking, do you:",
+                " ",
+                " ",
+                "Când mergeti, aveti tendinta de deviere spre:"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["veer left?", "veer right?", "remain in a straight path?"],
+                [" ", " "],
+                [" ", " "],
+                ["virați la stânga?", "vireaza nu?", "rămâne pe drum drept?"]
+            ],
+            [
+                '/inform{"given_answer":"veer left"}', 
+                '/inform{"given_answer":"veer right"}',
+                '/inform{"given_answer":"remain in a straight path?"}'
+            ]
+        )
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
 class ValidateDnBForm(FormValidationAction):
     def name(self) -> Text:
         return "validate_dizznbalance_form"
@@ -2099,6 +2759,22 @@ class ValidateDnBForm(FormValidationAction):
 
         if not tracker.get_slot("dNbQ12"):
             slots_mapped_in_domain.remove("dNbQ12i")
+
+        if not tracker.get_slot("dNbEarSymptomI"):
+            slots_mapped_in_domain.remove("dNbEarSymptomIa")
+            slots_mapped_in_domain.remove("dNbEarSymptomIb")
+
+        if not tracker.get_slot("dNbEarSymptomII"):
+            slots_mapped_in_domain.remove("dNbEarSymptomIIa")
+
+        if not tracker.get_slot("dNbEarSymptomIII"):
+            slots_mapped_in_domain.remove("dNbEarSymptomIIIa")
+            slots_mapped_in_domain.remove("dNbEarSymptomIIIa1")
+            slots_mapped_in_domain.remove("dNbEarSymptomIIIa2")
+            slots_mapped_in_domain.remove("dNbEarSymptomIIIa3")
+            slots_mapped_in_domain.remove("dNbEarSymptomIIIa3i")
+        elif not tracker.get_slot("dNbEarSymptomIIIa3"):
+            slots_mapped_in_domain.remove("dNbEarSymptomIIIa3i")
 
         return slots_mapped_in_domain
 

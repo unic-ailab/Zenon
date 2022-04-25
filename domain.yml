@@ -267,6 +267,63 @@ slots:
   dNbOnSetType:
     type: any
     influence_conversation: false
+  dNbEarSymptomI:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomIa:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomIb:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomII:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomIIa:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomIII:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomIIIa:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomIIIa1:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomIIIa2:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomIIIa3:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomIIIa3i:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomIV:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomV:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomVI:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomVII:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomVIII:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomIX:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomX:
+    type: any
+    influence_conversation: false
+  dNbEarSymptomXI:
+    type: any
+    influence_conversation: false
   requested_slot:
     type: unfeaturized
     influence_conversation: false
@@ -1363,6 +1420,25 @@ actions:
   - action_ask_dNbMedicalTests
   - action_ask_dNbMedicalTestsOther
   - action_ask_dNbOnSetType
+  - action_ask_dNbEarSymptomI
+  - action_ask_dNbEarSymptomIa
+  - action_ask_dNbEarSymptomIb
+  - action_ask_dNbEarSymptomII
+  - action_ask_dNbEarSymptomIIa
+  - action_ask_dNbEarSymptomIII
+  - action_ask_dNbEarSymptomIIIa
+  - action_ask_dNbEarSymptomIIIa1
+  - action_ask_dNbEarSymptomIIIa2
+  - action_ask_dNbEarSymptomIIIa3
+  - action_ask_dNbEarSymptomIIIa3i
+  - action_ask_dNbEarSymptomIV
+  - action_ask_dNbEarSymptomV
+  - action_ask_dNbEarSymptomVI
+  - action_ask_dNbEarSymptomVII
+  - action_ask_dNbEarSymptomVIII
+  - action_ask_dNbEarSymptomIX
+  - action_ask_dNbEarSymptomX
+  - action_ask_dNbEarSymptomXI
   - action_ask_hoursPerSleepNight
   - action_ask_numberOfMinutes
   - action_ask_usualBedTime
@@ -1600,6 +1676,79 @@ forms:
         - type: from_text
       dNbOnSetType:
         - type: from_text
+      dNbEarSymptomI:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dNbEarSymptomIa:
+        - entity: given_answer
+          type: from_entity
+      dNbEarSymptomIb:
+        - type: from_text
+          not_intent: [cancel, out_of_scope]
+      dNbEarSymptomII:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dNbEarSymptomIIa:
+        - entity: given_answer
+          type: from_entity
+      dNbEarSymptomIII:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dNbEarSymptomIIIa:
+        - entity: given_answer
+          type: from_entity
+      dNbEarSymptomIIIa1:
+        - entity: given_answer
+          type: from_entity
+      dNbEarSymptomIIIa2:
+        - entity: given_answer
+          type: from_entity
+      dNbEarSymptomIIIa3:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dNbEarSymptomIIIa3i:
+        - type: from_text
+          not_intent: [cancel, out_of_scope]
+      dNbEarSymptomIV:
+        - entity: given_answer
+          type: from_entity
+      dNbEarSymptomV:
+        - entity: given_answer
+          type: from_entity
+      dNbEarSymptomVI:
+        - entity: given_answer
+          type: from_entity
+      dNbEarSymptomVII:
+        - entity: given_answer
+          type: from_entity
+      dNbEarSymptomVIII:
+        - entity: given_answer
+          type: from_entity
+      dNbEarSymptomIX:
+        - entity: given_answer
+          type: from_entity
+      dNbEarSymptomX:
+        - entity: given_answer
+          type: from_entity
+      dNbEarSymptomXI:
+        - entity: given_answer
+          type: from_entity
   psqi_form:
     required_slots:
       psqiQ1:
