@@ -1,0 +1,14 @@
+version: "2.0"
+
+rules:
+  - rule: Start Domain III – Mental and Cognitive Ability relevant questions
+    steps:
+      - intent: domainIII_start
+      - action: domainIII_form
+      - active_loop: domainIII_form
+
+  - rule: Start Domain V - Quality of Life and daily living relevant questions
+    steps:
+      - intent: domainV_start
+      - action: domainV_form
+      - active_loop: domainV_form

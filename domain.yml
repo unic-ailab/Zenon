@@ -21,6 +21,8 @@ intents:
   - muscletone_start
   - psqi_start
   - diet_start
+  - domainIII_start
+  - domainV_start
 entities:
   - given_answer
   - language
@@ -417,6 +419,18 @@ slots:
     type: any
     influence_conversation: false
   mtQ10:
+    type: any
+    influence_conversation: false
+  domainIIIRQ1:
+    type: any
+    influence_conversation: false
+  domainIIIRQ2:
+    type: any
+    influence_conversation: false
+  domainVRQ1:
+    type: any
+    influence_conversation: false
+  domainVRQ2:
     type: any
     influence_conversation: false
 responses:
@@ -1009,6 +1023,122 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Introducerea unei chei in broasca.
+  utter_ask_domainIIIRQ1:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Never
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rarely
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Sometimes
+        - payload: /inform{{"given_answer":"often"}}
+          title: Often
+      text: In the last few days, did you find it difficult to concentrate on a task?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Niciodata
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rar
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Uneori
+        - payload: /inform{{"given_answer":"often"}}
+          title: Frecvent
+      text: In ultimele cateva zile ati avut dificultati de concentrare in cursul unei activitati?
+  utter_ask_domainIIIRQ2:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Never
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rarely
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Sometimes
+        - payload: /inform{{"given_answer":"often"}}
+          title: Often
+      text: Do you find it difficult to recall activities or details from the last days?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Niciodata
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rar
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Uneori
+        - payload: /inform{{"given_answer":"often"}}
+          title: Frecvent
+      text: Aveti dificultati in a va aminti detalii sau evenimente din ultimele zile?
+  utter_ask_domainVRQ1:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Never
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rarely
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Sometimes
+        - payload: /inform{{"given_answer":"often"}}
+          title: Often
+      text: In the last month, have you had to give up social activities (eg. going out with friends, dinners with relatives, attending events, etc.) due to STROKE?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Niciodata
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rar
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Uneori
+        - payload: /inform{{"given_answer":"often"}}
+          title: Frecvent
+      text: In ultima luna ati fost nevoit/a sa renuntati la activitati sociale (ex. intalniri cy prietenii, cina in familie, mersul la diverse evenimente etc) datorita  accidentului vascular cerebral (AVC) suferit?
+  utter_ask_domainVRQ2:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Never
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rarely
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Sometimes
+        - payload: /inform{{"given_answer":"often"}}
+          title: Often
+      text: In the last month, have you had a greater need for assistance in carrying out your daily activities?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Niciodata
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rar
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Uneori
+        - payload: /inform{{"given_answer":"often"}}
+          title: Frecvent
+      text: In ultima luna, ati simtit nevoia sa fiti ajutat/a mai ult in activitatile de zi cu zi de catre alta persoana?
   utter_help:
     - condition:
         - type: slot
@@ -1455,6 +1585,22 @@ actions:
   - utter_confirm_questionnaire_finished
   - validate_dizznbalance_form
 forms:
+  domainV_form:
+    required_slots:
+      domainVRQ1:
+        - entity: given_answer
+          type: from_entity
+      domainVRQ2:
+        - entity: given_answer
+          type: from_entity
+  domainIII_form:
+    required_slots:
+      domainIIIRQ1:
+        - entity: given_answer
+          type: from_entity
+      domainIIIRQ2:
+        - entity: given_answer
+          type: from_entity
   muscletone_form:
     required_slots:
       mtQ1:

@@ -1,0 +1,14 @@
+version: "2.0"
+nlu:
+  - intent: domainIII_start # STROKE case
+    examples: |
+      - start mental and cognitive ability relevant questions
+      - start STROKE domainIII relevant questions
+      - STROKE domain III relevant questions
+      - go for mental and cognitive relevant questions
+  - intent: domainV_start # STROKE case
+    examples: |
+      - start Quality of Life and daily living relevant questions
+      - start STROKE domainV relevant questions
+      - STROKE domain V relevant questions
+      - go for quality of life and daily living questions
