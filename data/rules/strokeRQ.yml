@@ -15,6 +15,7 @@ rules:
       - slot_was_set:
           - requested_slot: null
       - active_loop: null
+      - action: utter_inform_doctor
 
   - rule: Start Domain V - Quality of Life and daily living relevant questions
     steps:
@@ -30,3 +31,4 @@ rules:
       - slot_was_set:
           - requested_slot: null
       - active_loop: null
+      - action: utter_inform_doctor
