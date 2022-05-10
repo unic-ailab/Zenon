@@ -1,0 +1,539 @@
+version: "2.0"
+slots:
+  domainIII_RQ1:
+    type: any
+    influence_conversation: false
+  domainIII_RQ2:
+    type: any
+    influence_conversation: false
+  domainV_RQ1:
+    type: any
+    influence_conversation: false
+  domainV_RQ2:
+    type: any
+    influence_conversation: false
+  domainIV_RQ1:
+    type: any
+    influence_conversation: false
+  domainIV_RQ2:
+    type: any
+    influence_conversation: false
+  domainIV_RQ3:
+    type: any
+    influence_conversation: false
+  MSdomainIII_RQ1:
+    type: any
+    influence_conversation: false
+  MSdomainIII_RQ2:
+    type: any
+    influence_conversation: false
+  MSdomainIII_RQ2a:
+    type: any
+    influence_conversation: false
+  MSdomainIII_RQ3:
+    type: any
+    influence_conversation: false
+  MSdomainIII_RQ4:
+    type: any
+    influence_conversation: false
+  MSdomainIII_RQ5:
+    type: any
+    influence_conversation: false
+  MSdomainIII_RQ5a:
+    type: any
+    influence_conversation: false
+  MSdomainIII_RQ6:
+    type: any
+    influence_conversation: false
+  MSdomainIII_RQ7:
+    type: any
+    influence_conversation: false
+  MSdomainI_RQ1:
+    type: any
+    influence_conversation: false
+  MSdomainI_RQ1a:
+    type: any
+    influence_conversation: false
+  MSdomainI_RQ1b:
+    type: any
+    influence_conversation: false
+  MSdomainI_RQ1c:
+    type: any
+    influence_conversation: false
+  MSdomainI_RQ2:
+    type: any
+    influence_conversation: false
+  MSdomainI_RQ2a:
+    type: any
+    influence_conversation: false
+  MSdomainI_RQ2b:
+    type: any
+    influence_conversation: false
+  MSdomainI_RQ2c:
+    type: any
+    influence_conversation: false
+  MSdomainI_RQ3:
+    type: any
+    influence_conversation: false
+  MSdomainI_RQ4:
+    type: any
+    influence_conversation: false
+  MSdomainI_RQ5:
+    type: any
+    influence_conversation: false
+  MSdomainI_RQ6:
+    type: any
+    influence_conversation: false
+  MSdomainII_RQ1:
+    type: any
+    influence_conversation: false
+  MSdomainII_RQ2:
+    type: any
+    influence_conversation: false
+  MSdomainII_RQ3:
+    type: any
+    influence_conversation: false
+  MSdomainV_RQ1:
+    type: any
+    influence_conversation: false
+  MSdomainV_RQ2:
+    type: any
+    influence_conversation: false
+  MSdomainIV_RQ1:
+    type: any
+    influence_conversation: false
+  MSdomainIV_RQ2:
+    type: any
+    influence_conversation: false
+  MSdomainIV_RQ2a:
+    type: any
+    influence_conversation: false
+  MSdomainIV_RQ3:
+    type: any
+    influence_conversation: false
+responses:
+  utter_ask_domainIII_RQ1:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Never
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rarely
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Sometimes
+        - payload: /inform{{"given_answer":"often"}}
+          title: Often
+      text: In the last few days, did you find it difficult to concentrate on a task?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Niciodata
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rar
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Uneori
+        - payload: /inform{{"given_answer":"often"}}
+          title: Frecvent
+      text: In ultimele cateva zile ati avut dificultati de concentrare in cursul unei activitati?
+  utter_ask_domainIII_RQ2:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Never
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rarely
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Sometimes
+        - payload: /inform{{"given_answer":"often"}}
+          title: Often
+      text: Do you find it difficult to recall activities or details from the last days?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Niciodata
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rar
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Uneori
+        - payload: /inform{{"given_answer":"often"}}
+          title: Frecvent
+      text: Aveti dificultati in a va aminti detalii sau evenimente din ultimele zile?
+  utter_ask_domainV_RQ1:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Never
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rarely
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Sometimes
+        - payload: /inform{{"given_answer":"often"}}
+          title: Often
+      text: In the last month, have you had to give up social activities (eg. going out with friends, dinners with relatives, attending events, etc.) due to STROKE?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Niciodata
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rar
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Uneori
+        - payload: /inform{{"given_answer":"often"}}
+          title: Frecvent
+      text: In ultima luna ati fost nevoit/a sa renuntati la activitati sociale (ex. intalniri cy prietenii, cina in familie, mersul la diverse evenimente etc) datorita  accidentului vascular cerebral (AVC) suferit?
+  utter_ask_domainV_RQ2:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Never
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rarely
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Sometimes
+        - payload: /inform{{"given_answer":"often"}}
+          title: Often
+      text: In the last month, have you had a greater need for assistance in carrying out your daily activities?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Niciodata
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rar
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Uneori
+        - payload: /inform{{"given_answer":"often"}}
+          title: Frecvent
+      text: In ultima luna, ati simtit nevoia sa fiti ajutat/a mai ult in activitatile de zi cu zi de catre alta persoana?
+  utter_ask_domainIV_RQ2:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Never
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rarely
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Sometimes
+        - payload: /inform{{"given_answer":"often"}}
+          title: Often
+      text: In the last 4 weeks have you felt nervous, anxious, or on edge?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Niciodata
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rar
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Uneori
+        - payload: /inform{{"given_answer":"often"}}
+          title: Frecvent
+      text: In ultimele 4 saptamani v-ati simtit nervos, nelinistit, anxios?
+  utter_ask_domainIV_RQ3:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Never
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rarely
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Sometimes
+        - payload: /inform{{"given_answer":"often"}}
+          title: Often
+      text: In the last 4 weeks have you worried too much about different things related to the stroke you suffered?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Niciodata
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rar
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Uneori
+        - payload: /inform{{"given_answer":"often"}}
+          title: Frecvent
+      text: In ultimele 4 saptamani v-ati ingrijorat maim ult decat de obicei in privinta anumitor dificultati care au leatura cu AVC suferit?
+  utter_ask_MSdomainV_RQ1:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Never
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rarely
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Sometimes
+        - payload: /inform{{"given_answer":"often"}}
+          title: Often
+      text: In the last month, have you had to give up social activities (eg. going out with friends, dinners with relatives, attending events, etc.) due to MS?
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Mai
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Raramente
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: A volte
+        - payload: /inform{{"given_answer":"often"}}
+          title: Spesso
+      text: Nell’ultimo mese hai dovuto rinunciare ad attività sociali (es. uscire con gli amici, cene con parenti, partecipare ad eventi, ecc) a causa della SM?
+  utter_ask_MSdomainV_RQ2:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Never
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rarely
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Sometimes
+        - payload: /inform{{"given_answer":"often"}}
+          title: Often
+      text: In the last month, have you had to give up social activities (eg. going out with friends, dinners with relatives, attending events, etc.) due to MS?
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Mai
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Raramente
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: A volte
+        - payload: /inform{{"given_answer":"often"}}
+          title: Spesso
+      text: Nell’ultimo mese hai avuto maggiore necessità di assistenza per svolgere le tue attività quotidiane?
+  utter_ask_MSdomainII_RQ1:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"yes"}}
+          title: Yes
+        - payload: /inform{{"given_answer":"no"}}
+          title: No
+      text: Do you usually have trouble falling asleep (more than 30 minutes)?
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      buttons:
+        - payload: /inform{{"given_answer":"yes"}}
+          title: Sì
+        - payload: /inform{{"given_answer":"no"}}
+          title: No
+      text: Fai fatica ad addormentarti (impieghi più di 30 minuti)?
+  utter_ask_MSdomainII_RQ2:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"yes"}}
+          title: Yes
+        - payload: /inform{{"given_answer":"no"}}
+          title: No
+      text: Would you define your sleep “restful”?
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      buttons:
+        - payload: /inform{{"given_answer":"yes"}}
+          title: Sì
+        - payload: /inform{{"given_answer":"no"}}
+          title: No
+      text: Definiresti il tuo sonno riposante?
+  utter_ask_MSdomainII_RQ3:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"yes"}}
+          title: Yes
+        - payload: /inform{{"given_answer":"no"}}
+          title: No
+      text: Have you ever been told, or suspected yourself, that you seem to  act out your dreams" while asleep (for example, punching, flailing your arms in the air, making running movements, etc.)?
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      buttons:
+        - payload: /inform{{"given_answer":"yes"}}
+          title: Sì
+        - payload: /inform{{"given_answer":"no"}}
+          title: No
+      text: "Ti hanno detto che ”agisci i tuoi sogni” mentre dormi o pensi di farlo (per esempio: dare dei pugni, muovere le braccia in aria, fare dei movimenti come se corressi ecc.)?"
+actions:
+  - action_ask_domainIV_RQ1
+forms:
+  MSdomainI_form:
+    required_slots:
+      MSdomainI_RQ1:
+        - entity: given_answer
+          type: from_entity
+      MSdomainI_RQ1a:
+        - type: from_text
+          not_intent: [cancel, out_of_scope]
+      MSdomainI_RQ1b:
+        - entity: given_answer
+          type: from_entity
+      MSdomainI_RQ1c:
+        - entity: given_answer
+          type: from_entity
+      MSdomainI_RQ2:
+        - entity: given_answer
+          type: from_entity
+      MSdomainI_RQ2a:
+        - type: from_text
+          not_intent: [cancel, out_of_scope]
+      MSdomainI_RQ2b:
+        - entity: given_answer
+          type: from_entity
+      MSdomainI_RQ2c:
+        - entity: given_answer
+          type: from_entity
+      MSdomainI_RQ3:
+        - entity: given_answer
+          type: from_entity
+      MSdomainI_RQ4:
+        - entity: given_answer
+          type: from_entity
+      MSdomainI_RQ5:
+        - entity: given_answer
+          type: from_entity
+      MSdomainI_RQ6:
+        - entity: given_answer
+          type: from_entity
+  MSdomainII_form:
+    required_slots:
+      MSdomainII_RQ1:
+        - entity: given_answer
+          type: from_entity
+      MSdomainII_RQ2:
+        - entity: given_answer
+          type: from_entity
+      MSdomainII_RQ3:
+        - entity: given_answer
+          type: from_entity
+  MSdomainIII_form:
+    required_slots:
+      MSdomainIII_RQ1:
+        - entity: given_answer
+          type: from_entity
+      MSdomainIII_RQ2:
+        - entity: given_answer
+          type: from_entity
+      MSdomainIII_RQ2a:
+        - entity: given_answer
+          type: from_entity
+      MSdomainIII_RQ3:
+        - entity: given_answer
+          type: from_entity
+      MSdomainIII_RQ4:
+        - entity: given_answer
+          type: from_entity
+      MSdomainIII_RQ5:
+        - entity: given_answer
+          type: from_entity
+      MSdomainIII_RQ5a:
+        - entity: given_answer
+          type: from_entity
+      MSdomainIII_RQ6:
+        - entity: given_answer
+          type: from_entity
+      MSdomainIII_RQ7:
+        - entity: given_answer
+          type: from_entity
+  MSdomainIV_form:
+    required_slots:
+      MSdomainIV_RQ1:
+        - entity: given_answer
+          type: from_entity
+      MSdomainIV_RQ2:
+        - entity: given_answer
+          type: from_entity
+      MSdomainIV_RQ2a:
+        - entity: given_answer
+          type: from_entity
+      MSdomainIV_RQ3:
+        - entity: given_answer
+          type: from_entity
+  MSdomainV_form:
+    required_slots:
+      MSdomainV_RQ1:
+        - entity: given_answer
+          type: from_entity
+      MSdomainV_RQ2:
+        - entity: given_answer
+          type: from_entity
+  domainIV_form:
+    required_slots:
+      domainV_RQ1:
+        - entity: given_answer
+          type: from_entity
+      domainV_RQ2:
+        - entity: given_answer
+          type: from_entity
+      domainV_RQ3:
+        - entity: given_answer
+          type: from_entity
+  domainV_form:
+    required_slots:
+      domainV_RQ1:
+        - entity: given_answer
+          type: from_entity
+      domainV_RQ2:
+        - entity: given_answer
+          type: from_entity
+  domainIII_form:
+    required_slots:
+      domainIII_RQ1:
+        - entity: given_answer
+          type: from_entity
+      domainIII_RQ2:
+        - entity: given_answer
+          type: from_entity

@@ -1,0 +1,175 @@
+version: "2.0"
+slots:
+  # PSQI - Related slots
+  psqi_Q1: # PSQI
+    type: any
+    influence_conversation: false
+  psqi_Q2: # PSQI
+    type: any
+    influence_conversation: false
+  psqi_Q3: # PSQI
+    type: any
+    influence_conversation: false
+  psqi_Q4: # PSQI
+    type: any
+    influence_conversation: false
+  psqi_Q5a:
+    type: any
+    influence_conversation: false
+  psqi_Q5b:
+    type: any
+    influence_conversation: false
+  psqi_Q5c:
+    type: any
+    influence_conversation: false
+  psqi_Q5d:
+    type: any
+    influence_conversation: false
+  psqi_Q5e:
+    type: any
+    influence_conversation: false
+  psqi_Q5f:
+    type: any
+    influence_conversation: false
+  psqi_Q5g:
+    type: any
+    influence_conversation: false
+  psqi_Q5h:
+    type: any
+    influence_conversation: false
+  psqi_Q5i:
+    type: any
+    influence_conversation: false
+  psqi_Q5j:
+    type: any
+    influence_conversation: false
+  psqi_Q5k:
+    type: any
+    influence_conversation: false
+  psqi_Q6:
+    type: any
+    influence_conversation: false
+  psqi_Q7:
+    type: any
+    influence_conversation: false
+  psqi_Q8:
+    type: any
+    influence_conversation: false
+  psqi_Q9:
+    type: any
+    influence_conversation: false
+  psqi_Q10:
+    type: any
+    influence_conversation: false
+  psqi_Q10a:
+    type: any
+    influence_conversation: false
+  psqi_Q10b:
+    type: any
+    influence_conversation: false
+  psqi_Q10c:
+    type: any
+    influence_conversation: false
+  psqi_Q10d:
+    type: any
+    influence_conversation: false
+actions:
+  - action_ask_psqi_Q10
+  - action_ask_psqi_Q10a
+  - action_ask_psqi_Q10b
+  - action_ask_psqi_Q10c
+  - action_ask_psqi_Q10d
+  - action_ask_psqi_Q9
+  - action_ask_psqi_Q8
+  - action_ask_psqi_Q7
+  - action_ask_psqi_Q6
+  - action_ask_psqi_Q5k
+  - action_ask_psqi_Q5j
+  - action_ask_psqi_Q5i
+  - action_ask_psqi_Q5h
+  - action_ask_psqi_Q5g
+  - action_ask_psqi_Q5f
+  - action_ask_psqi_Q5e
+  - action_ask_psqi_Q5d
+  - action_ask_psqi_Q5c
+  - action_ask_psqi_Q5b
+  - action_ask_psqi_Q5a
+  - action_ask_psqi_Q4
+  - action_ask_psqi_Q3
+  - action_ask_psqi_Q2
+  - action_ask_psqi_Q1
+  - action_utter_ask_psqi_start
+forms:
+  psqi_form:
+    required_slots:
+      psqi_Q1:
+        - type: from_text
+          not_intent: [cancel, out_of_scope]
+      psqi_Q2:
+        - type: from_text
+          not_intent: [cancel, out_of_scope]
+      psqi_Q3:
+        - type: from_text
+          not_intent: [cancel, out_of_scope]
+      psqi_Q4:
+        - type: from_text
+          not_intent: [cancel, out_of_scope]
+      psqi_Q5a:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q5b:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q5c:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q5d:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q5e:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q5f:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q5g:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q5h:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q5i:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q5j:
+        - type: from_text
+      psqi_Q5k:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q6:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q7:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q8:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q9:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q10:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q10a:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q10b:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q10c:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q10d:
+        - entity: given_answer
+          type: from_entity

@@ -18,3 +18,27 @@ nlu:
       - start STROKE domainIV relevant questions
       - STROKE domain IV relevant questions
       - go for emotional status questions
+  - intent: MSdomainI_start # MS case
+    examples: |
+      - start Mobility, general motor or physical function relevant questions
+      - start MS domainI relevant questions
+      - MS domainI relevant questions
+      - go for mobility, general motor or physical function questions
+  - intent: MSdomainII_start # MS case
+    examples: |
+      - start Sleep Disorders relevant questions
+      - start MS domainII relevant questions
+      - MS domainII relevant questions
+      - go for sleep disorders questions
+  - intent: MSdomainIII_start # MS case
+    examples: |
+      - start MS domainIII relevant questions
+      - MS domainIII relevant questions
+  - intent: MSdomainIV_start # MS case
+    examples: |
+      - start MS domainIV relevant questions
+      - MS domain IV relevant questions
+  - intent: MSdomainV_start # MS case
+    examples: |
+      - start MS domainV relevant questions
+      - MS domain V relevant questions

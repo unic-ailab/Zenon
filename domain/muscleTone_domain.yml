@@ -1,0 +1,77 @@
+version: "2.0"
+slots:
+  mtQ1:
+    type: any
+    influence_conversation: false
+  mtQ2:
+    type: any
+    influence_conversation: false
+  mtQ3:
+    type: any
+    influence_conversation: false
+  mtQ4:
+    type: any
+    influence_conversation: false
+  mtQ5:
+    type: any
+    influence_conversation: false
+  mtQ6:
+    type: any
+    influence_conversation: false
+  mtQ7:
+    type: any
+    influence_conversation: false
+  mtQ8:
+    type: any
+    influence_conversation: false
+  mtQ9:
+    type: any
+    influence_conversation: false
+  mtQ10:
+    type: any
+    influence_conversation: false
+actions:
+  - action_ask_mtQ1
+  - action_ask_mtQ2
+  - action_ask_mtQ3
+  - action_ask_mtQ4
+  - action_ask_mtQ5
+  - action_ask_mtQ6
+  - action_ask_mtQ7
+  - action_ask_mtQ8
+  - action_ask_mtQ9
+  - action_ask_mtQ10
+  - action_utter_ask_muscle_start
+forms:
+  muscletone_form:
+    required_slots:
+      mtQ1:
+        - entity: given_answer
+          type: from_entity
+      mtQ2:
+        - entity: given_answer
+          type: from_entity
+      mtQ3:
+        - entity: given_answer
+          type: from_entity
+      mtQ4:
+        - entity: given_answer
+          type: from_entity
+      mtQ5:
+        - entity: given_answer
+          type: from_entity
+      mtQ6:
+        - entity: given_answer
+          type: from_entity
+      mtQ7:
+        - entity: given_answer
+          type: from_entity
+      mtQ8:
+        - entity: given_answer
+          type: from_entity
+      mtQ9:
+        - entity: given_answer
+          type: from_entity
+      mtQ10:
+        - entity: given_answer
+          type: from_entity

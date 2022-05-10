@@ -1,0 +1,154 @@
+version: "2.0"
+slots:
+  coast_Q0:
+    type: any
+    influence_conversation: false
+  coast_Q1:
+    type: any
+    influence_conversation: false
+  coast_Q2:
+    type: any
+    influence_conversation: false
+  coast_Q3:
+    type: any
+    influence_conversation: false
+  coast_Q4:
+    type: any
+    influence_conversation: false
+  coast_Q5:
+    type: any
+    influence_conversation: false
+  coast_Q6:
+    type: any
+    influence_conversation: false
+  coast_Q7:
+    type: any
+    influence_conversation: false
+  coast_Q8:
+    type: any
+    influence_conversation: false
+  coast_Q9:
+    type: any
+    influence_conversation: false
+  coast_Q10:
+    type: any
+    influence_conversation: false
+  coast_Q11:
+    type: any
+    influence_conversation: false
+  coast_Q12:
+    type: any
+    influence_conversation: false
+  coast_Q13:
+    type: any
+    influence_conversation: false
+  coast_Q14:
+    type: any
+    influence_conversation: false
+  coast_Q15:
+    type: any
+    influence_conversation: false
+  coast_Q16:
+    type: any
+    influence_conversation: false
+  coast_Q17:
+    type: any
+    influence_conversation: false
+  coast_Q18:
+    type: any
+    influence_conversation: false
+  coast_Q19:
+    type: any
+    influence_conversation: false
+  coast_Q20:
+    type: any
+    influence_conversation: false
+actions:
+  - action_utter_ask_coast_start
+  - action_ask_coast_Q0
+  - action_ask_coast_Q1
+  - action_ask_coast_Q2
+  - action_ask_coast_Q3
+  - action_ask_coast_Q4
+  - action_ask_coast_Q5
+  - action_ask_coast_Q6
+  - action_ask_coast_Q7
+  - action_ask_coast_Q8
+  - action_ask_coast_Q9
+  - action_ask_coast_Q10
+  - action_ask_coast_Q11
+  - action_ask_coast_Q12
+  - action_ask_coast_Q13
+  - action_ask_coast_Q14
+  - action_ask_coast_Q15
+  - action_ask_coast_Q16
+  - action_ask_coast_Q17
+  - action_ask_coast_Q18
+  - action_ask_coast_Q19
+  - action_ask_coast_Q20
+forms:
+  coast_form:
+    required_slots:
+      coast_Q0:
+        - entity: given_answer
+          type: from_entity
+      coast_Q1:
+        - entity: given_answer
+          type: from_entity
+      coast_Q2:
+        - entity: given_answer
+          type: from_entity
+      coast_Q3:
+        - entity: given_answer
+          type: from_entity
+      coast_Q4:
+        - entity: given_answer
+          type: from_entity
+      coast_Q5:
+        - entity: given_answer
+          type: from_entity
+      coast_Q6:
+        - entity: given_answer
+          type: from_entity
+      coast_Q7:
+        - entity: given_answer
+          type: from_entity
+      coast_Q8:
+        - entity: given_answer
+          type: from_entity
+      coast_Q9:
+        - entity: given_answer
+          type: from_entity
+      coast_Q10:
+        - entity: given_answer
+          type: from_entity
+      coast_Q11:
+        - entity: given_answer
+          type: from_entity
+      coast_Q12:
+        - entity: given_answer
+          type: from_entity
+      coast_Q13:
+        - entity: given_answer
+          type: from_entity
+      coast_Q14:
+        - entity: given_answer
+          type: from_entity
+      coast_Q15:
+        - entity: given_answer
+          type: from_entity
+      coast_Q16:
+        - entity: given_answer
+          type: from_entity
+      coast_Q17:
+        - entity: given_answer
+          type: from_entity
+      coast_Q18:
+        - entity: given_answer
+          type: from_entity
+      coast_Q19:
+        - entity: given_answer
+          type: from_entity
+      coast_Q20:
+        - entity: given_answer
+          type: from_entity

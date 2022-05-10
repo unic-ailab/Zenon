@@ -1,0 +1,405 @@
+version: "2.0"
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
+intents:
+  - MSdomainI_start
+  - MSdomainII_start
+  - MSdomainIII_start
+  - MSdomainIV_start
+  - MSdomainV_start
+  - domainIII_start
+  - domainIV_start
+  - inform
+  - set_language
+  - greet
+  - deny
+  - questionnaire_open
+  - dizzNbalance_start
+  - affirm
+  - activLim_start
+  - goodbye
+  - bot_challenge
+  - cancel
+  - thank_you
+  - change_language
+  - out_of_scope
+  - need_help
+  - muscletone_start
+  - psqi_start
+  - diet_start
+  - domainV_start
+  - coast_start
+entities:
+  - given_answer
+  - language
+  - questionnaire
+  - sentiment
+  - time
+slots:
+  questionnaire:
+    type: categorical
+    influence_conversation: true
+    values:
+      - activlim
+      - muscletone
+      - dizzinessandbalance
+      - psqi
+      - coast
+      - eatinghabits
+      - fh-q
+  sentiment:
+    type: categorical
+    influence_conversation: true
+    values:
+      - pos
+      - neg
+      - neu
+  language:
+    type: categorical
+    influence_conversation: true
+    values:
+      - english
+      - greek
+      - italian
+      - romanian
+  requested_slot:
+    type: unfeaturized
+    influence_conversation: false
+responses:
+  utter_help:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: You can tell me how you feel today or you can share something with me. Moreover, I can help you to complete all the available questionnaires.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Poți să-mi spui cum te simți astăzi sau poți împărtăși ceva cu mine. În plus, vă pot ajuta să completați toate chestionarele disponibile.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Puoi dirmi come ti senti oggi o puoi condividere qualcosa con me. Inoltre, posso aiutarti a completare tutti i questionari disponibili.
+    - condition:
+        - type: slot
+          name: language
+          value: English
+        - type: slot
+          name: questionnaire
+          value: ACTIVLIM
+      text: Tick “?” for unfamiliar activities you cannot estimate the difficulty (because you never need to do them, not because they are impossible).
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+        - type: slot
+          name: questionnaire
+          value: ACTIVLIM
+      text: Bifați "?" pentru activități necunoscute carora nu le puteți estima dificultatea (pentru că nu trebuie să le faceți niciodată, nu pentru că sunt imposibile).
+  utter_greet:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: Hey there. How can I help you?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Hei acolo. Cu ce ​​vă pot ajuta?
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Χαίρεται. Πως μπορώ να σε βοηθήσω;
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Ehilà. Come posso aiutarla?
+  utter_confirm_questionnaire_finished:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: We are good. Thank you for your time.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Suntem buni. Multumesc pentru timpul acordat.
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Το ερωτηματολόγιο ολοκληρώθηκε. Ευχαριστώ.
+  utter_handle_out_of_scope:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: I am sorry, I can't handle this request.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Îmi pare rău, nu pot face față acestei cereri.
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Με συγχωρείτε δεν κατάλαβα. Παρακαλώ επαναδιατυπώστε.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Mi dispiace, non posso gestire questa richiesta.
+  utter_confirm_cancellation:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: Do you want to cancel the process?
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Θέλετε να διακόψω το ερωτηματολόγιο;
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Doriți să anulați procesul?
+  utter_process_cancelled:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: I stopped the process. We can finish it later.
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Έκλεισα το ερωτηματολόγιο, μπορούμε να συνεχίσουμε αργότερα.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Am oprit procesul. O putem termina mai târziu.
+  utter_goodbye:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: Bye
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Αντίο.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: La revedere.
+  utter_iamabot:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: I am Zenon your Alameda personal assistant.
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Είμαι ο Ζήνων ο προσωπικός σας βοηθός του ALAMEDA.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Sunt Zenon, asistentul tău personal Alameda.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Sono Zenon, il tuo assistente personale di Alameda.
+  utter_default:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: I still find human language challenging, can you please rephrase?
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Παρακαλώ επαναλάβετε.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Vă rog să reformulați.
+  utter_inform_doctor:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+        - type: slot
+          name: sentiment
+          value: pos
+      text: That's great! Is this something you want me to let your doctor know about? It might help with your progress.
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: Is this something you want me to let your doctor know about? It might help with your progress.
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+        - type: slot
+          name: sentiment
+          value: pos
+      text: Αυτό είναι υπέροχο! Είναι κάτι που θα ήθελες να πω στον γιατρό σου; Ίσως βοηθήσει.
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Είναι κάτι που θα ήθελες να πω στον γιατρό σου; Ίσως βοηθήσει.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+        - type: slot
+          name: sentiment
+          value: pos
+      text: Este grozav! Este ceva despre care vrei să-l anunț pe medicul tău? S-ar putea să te ajute la progresul tău.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Este ceva despre care vrei să-l anunț pe medicul tău? S-ar putea să te ajute la progresul tău.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+        - type: slot
+          name: sentiment
+          value: pos
+      text: Fantastico! È qualcosa che vuoi che informi il tuo dottore? Potrebbe aiutarti con i tuoi progressi.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: È qualcosa che vuoi che informi il tuo dottore? Potrebbe aiutarti con i tuoi progressi.
+  utter_confirm_doctor:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: Ok, I will let them know.
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Εντάξει, θα τους ενημερώσω.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Ok, le voi anunța.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Ok, gli farò sapere.
+  utter_handle_user_deny_to_inform_doctors:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: Are you sure? How you feel is also an important part of your physical progress.
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Είσαι σίγουρος? Το πως αισθάνεσαι είναι σημαντικό μέρος της προόδου σου.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Esti sigur? Modul în care te simți este, de asemenea, o parte importantă a progresului tău fizic.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Sei sicuro? Anche il modo in cui ti senti è una parte importante del tuo progresso fisico.
+  utter_no_problem:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: Alright, as you wish.
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Κανένα πρόβλημα, όπως επιθυμείς.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Bine, așa cum doriți
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Va bene, come desideri.
+  utter_you_are_welcome:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: You are welcome
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Παρακαλώ.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Cu plăcere.
+  utter_how_to_help:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: How may I help you?
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Πως μπορώ να βοηθήσω;
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Cu ce ​​vă pot ajuta?
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Come posso aiutarti?
+actions:
+  - action_save_conversation
+  - action_utter_ask_language
+  - action_utter_greet
+  - action_utter_handle_user_deny_to_inform_doctors
+  - action_utter_set_language
+  - action_utter_set_questionnaire
+  - utter_confirm_questionnaire_finished

@@ -11,8 +11,13 @@ Make sure you have installed Python 3.8 to your system.
         ```
         pip install rasa==2.8.3 rasa-sdk==2.8.1 sanic==20.12.3
         ```
+## Train a new model on server:
+1. Open a terminal and activate the conda environment then run the command `rasa train -d .\domain\
 
-2. To run Alameda chatbot on server:
-    1. Open a terminal activate the conda environment then run the command `rasa run actions`
-    2. Open a new terminal activate the conda environment and run `rasa run`
-    4. Open a new terminal and run `ngrok http 5005` then copy the "https://" url and add it to the application.
+## Run Alameda chatbot on server:
+1. Open a terminal activate the conda environment then run the command `rasa run actions`
+2. Open a new terminal activate the conda environment and run `rasa run`
+3. Open a new terminal and run `ngrok http 5005` then copy the "https://" url and add it to the application.
+
+## Repo Structure
+We have created multiple "domain", "rules" and "nlu" files to be faster and easier to make changes. In the domain folder, we've created a dedicated file for every questionnaire. In addition, we've created a dedicated file for relevant questions for all cases.
