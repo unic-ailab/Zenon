@@ -32,3 +32,19 @@ rules:
           - requested_slot: null
       - active_loop: null
       - action: utter_inform_doctor
+
+  - rule: Start Domain IV - Emotional Status relevant questions
+    steps:
+      - intent: domainIV_start
+      - action: domainIV_form
+      - active_loop: domainIV_form
+
+  - rule: Submit Domain IV relevant questions
+    condition:
+      - active_loop: domainIV_form
+    steps:
+      - action: domainIV_form
+      - slot_was_set:
+          - requested_slot: null
+      - active_loop: null
+      - action: utter_inform_doctor

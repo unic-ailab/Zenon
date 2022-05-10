@@ -4867,3 +4867,48 @@ class ActionUtterSetQuestionnaire(Action):
         open_questionnaire = tracker.slots["questionnaire"].title()
 
         return []
+
+####################################################################################################
+# STROKE Case Domain IV RQ1                                                                        #
+####################################################################################################
+
+class ActionAskStrokeDomainIVRQ1(Action):  # STROKE case Domain IV RQ1
+    def name(self) -> Text:
+        return "action_ask_domainIV_RQ1"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How are you feeling today?",
+                " ", 
+                " ", 
+                "Cum va simtiti astazi?"
+            ]
+        )
+
+        if tracker.get_slot("language") == "English":
+            data = {
+                    "choices": [
+                        "Anger", "Fear", "Sadness", "Joy", "Contempt",
+                        "Cheer", "Shame", "Anxiety", "Disappointment", "Irritation",
+                        "Serenity", "Gratitude", "Grudge", "Resignation", "Hope",
+                        "Nostalgia"
+                    ]
+                }
+
+        elif tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Furie", "Frica", "Tristete", "Bucurie",
+                    "Multumire", "Incantare", "Rusine", "Anxietate",
+                    "Dezamagire", "Iritare", "Liniste", "Gratitudine",
+                    "Nemultumire", "Resemnare", "Speranta", "Nostalgie"
+                ]
+            }
+
+        print("\nBOT:", text + "\n" + str(data))
+        dispatcher.utter_message(text=text, json_message=data)
+        return []

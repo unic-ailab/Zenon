@@ -12,3 +12,9 @@ nlu:
       - start STROKE domainV relevant questions
       - STROKE domain V relevant questions
       - go for quality of life and daily living questions
+  - intent: domainIV_start # STROKE case
+    examples: |
+      - start Emotional status relevant questions
+      - start STROKE domainIV relevant questions
+      - STROKE domain IV relevant questions
+      - go for emotional status questions

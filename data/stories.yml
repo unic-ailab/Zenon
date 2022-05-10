@@ -356,6 +356,16 @@ stories:
                   - active_loop: null
                   - action: utter_inform_doctor
 
+        - story: Domain IV relevant questions - happy path
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - intent: domainIV_start
+                  - action: domainIV_form
+                  - active_loop: domainIV_form
+                  - active_loop: null
+                  - action: utter_inform_doctor
+
         - story: Coast happy path
           steps:
                   - intent: greet

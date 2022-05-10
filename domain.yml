@@ -4,6 +4,7 @@ session_config:
   carry_over_slots_to_new_session: true
 intents:
   - domainIII_start
+  - domainIV_start
   - inform
   - set_language
   - greet
@@ -462,16 +463,25 @@ slots:
   mtQ10:
     type: any
     influence_conversation: false
-  domainIIIRQ1:
+  domainIII_RQ1:
     type: any
     influence_conversation: false
-  domainIIIRQ2:
+  domainIII_RQ2:
     type: any
     influence_conversation: false
-  domainVRQ1:
+  domainV_RQ1:
     type: any
     influence_conversation: false
-  domainVRQ2:
+  domainV_RQ2:
+    type: any
+    influence_conversation: false
+  domainIV_RQ1:
+    type: any
+    influence_conversation: false
+  domainIV_RQ2:
+    type: any
+    influence_conversation: false
+  domainIV_RQ3:
     type: any
     influence_conversation: false
   coast_Q0:
@@ -1127,7 +1137,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Introducerea unei chei in broasca.
-  utter_ask_domainIIIRQ1:
+  utter_ask_domainIII_RQ1:
     - condition:
         - type: slot
           name: language
@@ -1156,7 +1166,7 @@ responses:
         - payload: /inform{{"given_answer":"often"}}
           title: Frecvent
       text: In ultimele cateva zile ati avut dificultati de concentrare in cursul unei activitati?
-  utter_ask_domainIIIRQ2:
+  utter_ask_domainIII_RQ2:
     - condition:
         - type: slot
           name: language
@@ -1185,7 +1195,7 @@ responses:
         - payload: /inform{{"given_answer":"often"}}
           title: Frecvent
       text: Aveti dificultati in a va aminti detalii sau evenimente din ultimele zile?
-  utter_ask_domainVRQ1:
+  utter_ask_domainV_RQ1:
     - condition:
         - type: slot
           name: language
@@ -1214,7 +1224,7 @@ responses:
         - payload: /inform{{"given_answer":"often"}}
           title: Frecvent
       text: In ultima luna ati fost nevoit/a sa renuntati la activitati sociale (ex. intalniri cy prietenii, cina in familie, mersul la diverse evenimente etc) datorita  accidentului vascular cerebral (AVC) suferit?
-  utter_ask_domainVRQ2:
+  utter_ask_domainV_RQ2:
     - condition:
         - type: slot
           name: language
@@ -1243,6 +1253,64 @@ responses:
         - payload: /inform{{"given_answer":"often"}}
           title: Frecvent
       text: In ultima luna, ati simtit nevoia sa fiti ajutat/a mai ult in activitatile de zi cu zi de catre alta persoana?
+  utter_ask_domainIV_RQ2:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Never
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rarely
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Sometimes
+        - payload: /inform{{"given_answer":"often"}}
+          title: Often
+      text: In the last 4 weeks have you felt nervous, anxious, or on edge?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Niciodata
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rar
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Uneori
+        - payload: /inform{{"given_answer":"often"}}
+          title: Frecvent
+      text: In ultimele 4 saptamani v-ati simtit nervos, nelinistit, anxios?
+  utter_ask_domainIV_RQ3:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Never
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rarely
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Sometimes
+        - payload: /inform{{"given_answer":"often"}}
+          title: Often
+      text: In the last 4 weeks have you worried too much about different things related to the stroke you suffered?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      buttons:
+        - payload: /inform{{"given_answer":"never"}}
+          title: Niciodata
+        - payload: /inform{{"given_answer":"rarely"}}
+          title: Rar
+        - payload: /inform{{"given_answer":"sometimes"}}
+          title: Uneori
+        - payload: /inform{{"given_answer":"often"}}
+          title: Frecvent
+      text: In ultimele 4 saptamani v-ati ingrijorat maim ult decat de obicei in privinta anumitor dificultati care au leatura cu AVC suferit?
   utter_help:
     - condition:
         - type: slot
@@ -1713,6 +1781,7 @@ actions:
   - action_ask_coast_Q18
   - action_ask_coast_Q19
   - action_ask_coast_Q20
+  - action_ask_domainIV_RQ1
   - action_save_conversation
   - action_utter_ask_activlim_start
   - action_utter_ask_dizzNbalance_start
@@ -1725,20 +1794,31 @@ actions:
   - utter_confirm_questionnaire_finished
   - validate_dizzNbalance_form
 forms:
-  domainV_form:
+  domainIV_form:
     required_slots:
-      domainVRQ1:
+      domainV_RQ1:
         - entity: given_answer
           type: from_entity
-      domainVRQ2:
+      domainV_RQ2:
+        - entity: given_answer
+          type: from_entity
+      domainV_RQ3:
+        - entity: given_answer
+          type: from_entity
+  domainV_form:
+    required_slots:
+      domainV_RQ1:
+        - entity: given_answer
+          type: from_entity
+      domainV_RQ2:
         - entity: given_answer
           type: from_entity
   domainIII_form:
     required_slots:
-      domainIIIRQ1:
+      domainIII_RQ1:
         - entity: given_answer
           type: from_entity
-      domainIIIRQ2:
+      domainIII_RQ2:
         - entity: given_answer
           type: from_entity
   coast_form:
