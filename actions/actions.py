@@ -36,6 +36,56 @@ muscletone_buttons = [
     ["Da", "Nu", "Nu stiu/ refuz sa raspund"]
 ]
 
+
+coast_buttons_1 = [
+    ["😒 Couldn't do it at all", "With a lot of difficulty", "With some difficulty", "Quite well", "🙂 Very well"],
+    [" ", " ", " ", " ", " "],
+    [" ", " ", " ", " ", " "],
+    ["😒 Nu reusesc deloc", "Foarte dificil", "Destul de dificil", "Destul de usor", "🙂 Foarte usor"]
+]
+
+coast_buttons_2 = [
+    ["😒 Can't do it at all", "With a lot of difficulty", "With some difficulty", "Quite well", "🙂 Very well"],
+    [" ", " ", " ", " ", " "],
+    [" ", " ", " ", " ", " "],
+    ["😒 Nu reusesc deloc", "Foarte dificil", "Destul de dificil", "Destul de usor", "🙂 Foarte usor"]
+]
+
+coast_buttons_3 = [
+    ["😒 Couldn't do it at all", "With a lot of difficulty", "With some difficulty", "Quite well", "🙂 As well as before my stroke"],
+    [" ", " ", " ", " ", " "],
+    [" ", " ", " ", " ", " "],
+    ["😒 Nu reusesc deloc", "Foarte dificil", "Destul de dificil", "Destul de usor", "🙂 Foarte usor"]
+]
+
+coast_buttons_4 = [
+    ["😒 Not changed at all", "A little bit beter", "Quite a bit better", "A lot better", "🙂 Completely better"],
+    [" ", " ", " ", " ", " "],
+    [" ", " ", " ", " ", " "],
+    ["😒 Nu s-a schimbat deloc", "Putin mai bine", "Mai bine", "Mult mai bine", "🙂 Complet recuperat"]
+]
+
+coast_buttons_5 = [
+    ["😒 The worst possible", "Quite poor", "Fair", "Quite good", "🙂 As good as before my stroke"],
+    [" ", " ", " ", " ", " "],
+    [" ", " ", " ", " ", " "],
+    ["😒 Este foarte rau", "Destul de rau", "Acceptabil", "Destul de bine", "🙂 La fel de bine ca inainte de accidentul vascular cerebral"]
+]
+
+coast_buttons_6 = [
+    ["😒 All the time", "Very often", "Sometimes", "Hardly ever", "🙂 Never"],
+    [" ", " ", " ", " ", " "],
+    [" ", " ", " ", " ", " "],
+    ["😒 Tot timpul", "Destul de des", "Uneori", "Rareori", "🙂 Niciodata"]
+]
+
+coast_buttons_7 = [
+    ["😒 The worst possible", "Quite poor", "Fair", "Quite good", "🙂 It's at least as good as before my stroke"],
+    [" ", " ", " ", " ", " "],
+    [" ", " ", " ", " ", " "],
+    ["😒 Afecteaza foarte mult", "Destul de mult", "Moderat", "Destul de putin", "🙂 Nu afecteaza deloc"]
+]
+
 ####################################################################################################
 # DEBUGGING                                                                                        #
 ####################################################################################################
@@ -437,7 +487,7 @@ class ActionUtterPSQIStart(Action):
 
 class ActionAskPSQIQ1(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ1"
+        return "action_ask_psqi_Q1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -464,7 +514,7 @@ class ActionAskPSQIQ1(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ2(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ2"
+        return "action_ask_psqi_Q2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -491,7 +541,7 @@ class ActionAskPSQIQ2(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ3(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ3"
+        return "action_ask_psqi_Q3"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -518,7 +568,7 @@ class ActionAskPSQIQ3(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ4(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ4"
+        return "action_ask_psqi_Q4"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -545,7 +595,7 @@ class ActionAskPSQIQ4(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ5a(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ5a"
+        return "action_ask_psqi_Q5a"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -583,7 +633,7 @@ class ActionAskPSQIQ5a(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ5b(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ5b"
+        return "action_ask_psqi_Q5b"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -621,7 +671,7 @@ class ActionAskPSQIQ5b(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ5c(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ5c"
+        return "action_ask_psqi_Q5c"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -659,7 +709,7 @@ class ActionAskPSQIQ5c(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ5d(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ5d"
+        return "action_ask_psqi_Q5d"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -697,7 +747,7 @@ class ActionAskPSQIQ5d(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ5e(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ5e"
+        return "action_ask_psqi_Q5e"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -735,7 +785,7 @@ class ActionAskPSQIQ5e(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ5f(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ5f"
+        return "action_ask_psqi_Q5f"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -773,7 +823,7 @@ class ActionAskPSQIQ5f(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ5g(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ5g"
+        return "action_ask_psqi_Q5g"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -811,7 +861,7 @@ class ActionAskPSQIQ5g(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ5h(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ5h"
+        return "action_ask_psqi_Q5h"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -849,7 +899,7 @@ class ActionAskPSQIQ5h(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ5i(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ5i"
+        return "action_ask_psqi_Q5i"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -887,7 +937,7 @@ class ActionAskPSQIQ5i(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ5j(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ5j"
+        return "action_ask_psqi_Q5j"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -914,7 +964,7 @@ class ActionAskPSQIQ5j(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ5k(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ5k"
+        return "action_ask_psqi_Q5k"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -946,7 +996,7 @@ class ActionAskPSQIQ5k(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ6(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ6"
+        return "action_ask_psqi_Q6"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -988,7 +1038,7 @@ class ActionAskPSQIQ6(Action):  # PSQI Questionnaire
         
 class ActionAskPSQIQ7(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ7"
+        return "action_ask_psqi_Q7"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1030,7 +1080,7 @@ class ActionAskPSQIQ7(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ8(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ8"
+        return "action_ask_psqi_Q8"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1072,7 +1122,7 @@ class ActionAskPSQIQ8(Action):  # PSQI Questionnaire
 
 class ActionAskPSQIQ9(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqiQ9"
+        return "action_ask_psqi_Q9"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1112,13 +1162,193 @@ class ActionAskPSQIQ9(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
+class ActionAskPSQIQ10(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqi_Q10"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker, [
+                "If you have a roommate or bed partner, ask him/her how often in the past month you have had...",
+                " ",
+                " ",
+                "Daca aveti un coleg de camera/partener intrebati-l cat de des in ultima luna"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["No bed partner or roommate", "Partner/roommate in other room", "Partner in same room, but not same bed", "Partner in same bed"],
+                [" ", " "],
+                [" ", " "],
+                ["Nu am partener sau coleg de camera", "Partenerul sau colegul doarme intr-o alta camera", "Partenerul doarme in aceeasi camera, dar nu in acelasi pat", "Partenerul doarme in acelasi pat"],
+            ],
+            [
+                '/inform{"given_answer":"No bed partner or roommate"}', 
+                '/inform{"given_answer":"Partner/roommate in other room"}', 
+                '/inform{"given_answer":"Partner in same room, but not same bed"}', 
+                '/inform{"given_answer":"Partner in same bed"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskPSQIQ10a(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqi_Q10a"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker, [
+                "loud snoring",
+                " ",
+                " ",
+                "Ati sforait foarte zgmotos ?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week"],
+                [" ", " "],
+                [" ", " "],
+                ["Nu in ultima luna", "Mai putin de o data pe saptamana", "O data sau de 2 ori pe saptamana", "De 3 sau mai multe ori pe saptamana"],
+            ],
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskPSQIQ10b(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqi_Q10b"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker, [
+                "long pauses between breath while asleep",
+                " ",
+                " ",
+                "ati facut pauze lungi intre respiratii in timp ce dormeati ?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week"],
+                [" ", " "],
+                [" ", " "],
+                ["Nu in ultima luna", "Mai putin de o data pe saptamana", "O data sau de 2 ori pe saptamana", "De 3 sau mai multe ori pe saptamana"],
+            ],
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskPSQIQ10c(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqi_Q10c"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker, [
+                "legs twitching or jerking while you sleep",
+                " ",
+                " ",
+                "ati avut tresariri ale picioarelor in timpul somnului?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week"],
+                [" ", " "],
+                [" ", " "],
+                ["Nu in ultima luna", "Mai putin de o data pe saptamana", "O data sau de 2 ori pe saptamana", "De 3 sau mai multe ori pe saptamana"],
+            ],
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []  
+
+class ActionAskPSQIQ10d(Action):  # PSQI Questionnaire
+    def name(self) -> Text:
+        return "action_ask_psqi_Q10d"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker, [
+                "episodes of disorientation or confusion during sleep",
+                " ",
+                " ",
+                "ati avut alte miscari agitate in timpul somnului (va rugam descrieti)"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week"],
+                [" ", " "],
+                [" ", " "],
+                ["Nu in ultima luna", "Mai putin de o data pe saptamana", "O data sau de 2 ori pe saptamana", "De 3 sau mai multe ori pe saptamana"],
+            ],
+            [
+                '/inform{"given_answer":"Not during the past month"}', 
+                '/inform{"given_answer":"Less than once a week"}', 
+                '/inform{"given_answer":"Once or twice a week"}', 
+                '/inform{"given_answer":"Three or more times a week"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
 ####################################################################################################
 # Dizziness and Balance Questionnaire                                                              #
 ####################################################################################################
 
 class ActionUtterDnBStart(Action):  # DnB Questionnaire
     def name(self):
-        return "action_utter_ask_dNb_start"
+        return "action_utter_ask_dizzNbalance_start"
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
@@ -1150,7 +1380,7 @@ class ActionUtterDnBStart(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ1(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ1"
+        return "action_ask_dizzNbalance_Q1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1171,7 +1401,7 @@ class ActionAskDnBQ1(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ2(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ2"
+        return "action_ask_dizzNbalance_Q2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1203,7 +1433,7 @@ class ActionAskDnBQ2(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ2i(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ2i"
+        return "action_ask_dizzNbalance_Q2i"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1219,7 +1449,7 @@ class ActionAskDnBQ2i(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ3(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ3"
+        return "action_ask_dizzNbalance_Q3"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1251,7 +1481,7 @@ class ActionAskDnBQ3(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ3i(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ3i"
+        return "action_ask_dizzNbalance_Q3i"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1267,7 +1497,7 @@ class ActionAskDnBQ3i(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ4(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ4"
+        return "action_ask_dizzNbalance_Q4"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1299,7 +1529,7 @@ class ActionAskDnBQ4(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ4a(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ4a"
+        return "action_ask_dizzNbalance_Q4a"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1320,7 +1550,7 @@ class ActionAskDnBQ4a(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ4b(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ4b"
+        return "action_ask_dizzNbalance_Q4b"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1361,7 +1591,7 @@ class ActionAskDnBQ4b(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ4c(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ4c"
+        return "action_ask_dizzNbalance_Q4c"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1393,7 +1623,7 @@ class ActionAskDnBQ4c(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ4ci(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ4ci"
+        return "action_ask_dizzNbalance_Q4ci"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1414,7 +1644,7 @@ class ActionAskDnBQ4ci(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ4d(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ4d"
+        return "action_ask_dizzNbalance_Q4d"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1446,7 +1676,7 @@ class ActionAskDnBQ4d(Action):  # DnB Questionnaire
 
 class ActionAskDnBSymptoms(Action):
     def name(self) -> Text:
-        return "action_ask_dNbSymptoms"
+        return "action_ask_dizzNbalance_Symptoms"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1486,7 +1716,7 @@ class ActionAskDnBSymptoms(Action):
 
 class ActionAskDnBQ5(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ5"
+        return "action_ask_dizzNbalance_Q5"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1518,7 +1748,7 @@ class ActionAskDnBQ5(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ5i(Action):
     def name(self) -> Text:
-        return "action_ask_dNbQ5i"
+        return "action_ask_dizzNbalance_Q5i"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1556,7 +1786,7 @@ class ActionAskDnBQ5i(Action):
 
 class ActionAskDnBQ6(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ6"
+        return "action_ask_dizzNbalance_Q6"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1588,7 +1818,7 @@ class ActionAskDnBQ6(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ6i(Action):
     def name(self) -> Text:
-        return "action_ask_dNbQ6i"
+        return "action_ask_dizzNbalance_Q6i"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1626,7 +1856,7 @@ class ActionAskDnBQ6i(Action):
 
 class ActionAskDnBQ7(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ7"
+        return "action_ask_dizzNbalance_Q7"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1658,7 +1888,7 @@ class ActionAskDnBQ7(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ7i(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ7i"
+        return "action_ask_dizzNbalance_Q7i"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1674,7 +1904,7 @@ class ActionAskDnBQ7i(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ8(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ8"
+        return "action_ask_dizzNbalance_Q8"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1709,7 +1939,7 @@ class ActionAskDnBQ8(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ9(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ9"
+        return "action_ask_dizzNbalance_Q9"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1741,7 +1971,7 @@ class ActionAskDnBQ9(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ9i(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ9i"
+        return "action_ask_dizzNbalance_Q9i"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1762,7 +1992,7 @@ class ActionAskDnBQ9i(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ10(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ10"
+        return "action_ask_dizzNbalance_Q10"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1797,7 +2027,7 @@ class ActionAskDnBQ10(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ11(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ11"
+        return "action_ask_dizzNbalance_Q11"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1829,7 +2059,7 @@ class ActionAskDnBQ11(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ11i(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ11i"
+        return "action_ask_dizzNbalance_Q11i"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1848,7 +2078,7 @@ class ActionAskDnBQ11i(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ12(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ12"
+        return "action_ask_dizzNbalance_Q12"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1883,7 +2113,7 @@ class ActionAskDnBQ12(Action):  # DnB Questionnaire
 
 class ActionAskDnBQ12i(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbQ12i"
+        return "action_ask_dizzNbalance_Q12i"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1902,7 +2132,7 @@ class ActionAskDnBQ12i(Action):  # DnB Questionnaire
 
 class ActionAskDnBPastMedicalHistory(Action):
     def name(self) -> Text:
-        return "action_ask_dNbPastMedicalHistory"
+        return "action_ask_dizzNbalance_PastMedicalHistory"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1950,7 +2180,7 @@ class ActionAskDnBPastMedicalHistory(Action):
 
 class ActionAskDnBPastMedicalHistoryOther(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbPastMedicalHistoryOther"
+        return "action_ask_dizzNbalance_PastMedicalHistoryOther"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1971,7 +2201,7 @@ class ActionAskDnBPastMedicalHistoryOther(Action):  # DnB Questionnaire
 
 class ActionAskDnBMedicalTests(Action):
     def name(self) -> Text:
-        return "action_ask_dNbMedicalTests"
+        return "action_ask_dizzNbalance_MedicalTests"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2005,7 +2235,7 @@ class ActionAskDnBMedicalTests(Action):
 
 class ActionAskDnBMedicalTestsOther(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbMedicalTestsOther"
+        return "action_ask_dizzNbalance_MedicalTestsOther"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2026,7 +2256,7 @@ class ActionAskDnBMedicalTestsOther(Action):  # DnB Questionnaire
 
 class ActionAskDnBOnSetType(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbOnSetType"
+        return "action_ask_dizzNbalance_OnSetType"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2061,7 +2291,7 @@ class ActionAskDnBOnSetType(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomI(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomI"
+        return "action_ask_dizzNbalance_EarSymptomI"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2107,7 +2337,7 @@ class ActionAskDnBEarSymptomI(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomIa(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomIa"
+        return "action_ask_dizzNbalance_EarSymptomIa"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2143,7 +2373,7 @@ class ActionAskDnBEarSymptomIa(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomIb(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomIb"
+        return "action_ask_dizzNbalance_EarSymptomIb"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2164,7 +2394,7 @@ class ActionAskDnBEarSymptomIb(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomII(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomII"
+        return "action_ask_dizzNbalance_EarSymptomII"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2199,7 +2429,7 @@ class ActionAskDnBEarSymptomII(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomIIa(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomIIa"
+        return "action_ask_dizzNbalance_EarSymptomIIa"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2235,7 +2465,7 @@ class ActionAskDnBEarSymptomIIa(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomIII(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomIII"
+        return "action_ask_dizzNbalance_EarSymptomIII"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2270,7 +2500,7 @@ class ActionAskDnBEarSymptomIII(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomIIIa(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomIIIa"
+        return "action_ask_dizzNbalance_EarSymptomIIIa"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2306,7 +2536,7 @@ class ActionAskDnBEarSymptomIIIa(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomIIIa1(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomIIIa1"
+        return "action_ask_dizzNbalance_EarSymptomIIIa1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2342,7 +2572,7 @@ class ActionAskDnBEarSymptomIIIa1(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomIIIa2(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomIIIa2"
+        return "action_ask_dizzNbalance_EarSymptomIIIa2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2378,7 +2608,7 @@ class ActionAskDnBEarSymptomIIIa2(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomIIIa3(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomIIIa3"
+        return "action_ask_dizzNbalance_EarSymptomIIIa3"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2413,7 +2643,7 @@ class ActionAskDnBEarSymptomIIIa3(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomIIIa3i(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomIIIa3i"
+        return "action_ask_dizzNbalance_EarSymptomIIIa3i"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2434,7 +2664,7 @@ class ActionAskDnBEarSymptomIIIa3i(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomIV(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomIV"
+        return "action_ask_dizzNbalance_EarSymptomIV"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2469,7 +2699,7 @@ class ActionAskDnBEarSymptomIV(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomV(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomV"
+        return "action_ask_dizzNbalance_EarSymptomV"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2504,7 +2734,7 @@ class ActionAskDnBEarSymptomV(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomVI(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomVI"
+        return "action_ask_dizzNbalance_EarSymptomVI"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2550,7 +2780,7 @@ class ActionAskDnBEarSymptomVI(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomVII(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomVII"
+        return "action_ask_dizzNbalance_EarSymptomVII"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2584,7 +2814,7 @@ class ActionAskDnBEarSymptomVII(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomVIII(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomVIII"
+        return "action_ask_dizzNbalance_EarSymptomVIII"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2618,7 +2848,7 @@ class ActionAskDnBEarSymptomVIII(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomIX(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomIX"
+        return "action_ask_dizzNbalance_EarSymptomIX"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2652,7 +2882,7 @@ class ActionAskDnBEarSymptomIX(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomX(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomX"
+        return "action_ask_dizzNbalance_EarSymptomX"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2686,7 +2916,7 @@ class ActionAskDnBEarSymptomX(Action):  # DnB Questionnaire
 
 class ActionAskDnBEarSymptomXI(Action):  # DnB Questionnaire
     def name(self) -> Text:
-        return "action_ask_dNbEarSymptomXI"
+        return "action_ask_dizzNbalance_EarSymptomXI"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2719,62 +2949,335 @@ class ActionAskDnBEarSymptomXI(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
+class ActionAskDnBSocial_a(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Social_a"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Please indicate your level of activity currently and prior to developing symptoms:\nCurrent activity level:",
+                " ",
+                " ",
+                "Vă rugăm să indicați nivelul dvs. de activitate în prezent și înainte de apariția simptomelor:\nNivel de activitate curent:"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["inactive", "light", "moderate", "vigorous with/without walker/cane"],
+                [" ", " "],
+                [" ", " "],
+                ["inactiv", "activitate usoara", "moderat", "intensa, cu/fara cadru/baston"]
+            ],
+            [
+                '/inform{"given_answer":"inactive"}', 
+                '/inform{"given_answer":"light"}',
+                '/inform{"given_answer":"moderate"}',
+                '/inform{"given_answer":"vigorous with/without walker/cane"}'
+            ]
+        )
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBSocial_ai(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Social_ai"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "List activities/hobbies:",
+                " ",
+                " ",
+                "Lista activități/hobby-uri:"
+            ]
+        )
+
+        
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDnBSocial_b(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Social_b"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Prior activity level:",
+                " ",
+                " ",
+                "Nivel de activitate anterioară:"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["inactive", "light", "moderate", "vigorous with/without walker/cane"],
+                [" ", " "],
+                [" ", " "],
+                ["inactiv", "activitate usoara", "moderat", "intensa, cu/fara cadru/baston"]
+            ],
+            [
+                '/inform{"given_answer":"inactive"}', 
+                '/inform{"given_answer":"light"}',
+                '/inform{"given_answer":"moderate"}',
+                '/inform{"given_answer":"vigorous with/without walker/cane"}'
+            ]
+        )
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBSocial_bi(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Social_bi"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "List activities/hobbies:",
+                " ",
+                " ",
+                "Lista activități/hobby-uri:"
+            ]
+        )
+
+        
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionAskDnBSocial_c(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Social_c"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+        
+        text = get_text_from_lang(
+            tracker, [
+                "If your activity is light or inactive, what are the major barriers? (check all that apply):",
+                " ",
+                " ",
+                "Dacă activitatea dumneavoastră este ușoară sau inactivă, care sunt barierele majore? (bifați tot ce se aplică):"
+            ]
+        )
+
+        if tracker.get_slot("language") == "English":
+            data = {
+                    "choices": [
+                        "Dizziness", "Imbalance", "Fear of falling", "Lack of energy"
+                    ]
+                }
+
+        elif tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Amețeala", "Dezechilibru", "Teamă de cădere", "Lipsă de energie"
+                ]
+            }
+
+        print("\nBOT:", text + "\n" + str(data))
+        dispatcher.utter_message(text=text, json_message=data)
+        return []
+
+class ActionAskDnBHabitsCaffeine(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Habits_caffeine"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Please describe your habits in regards to the following substances:\nCaffeine",
+                " ",
+                " ",
+                "Vă rugăm să descrieți obiceiurile dvs. în ceea ce privește următoarele substanțe:\nCofeina"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["I do not consume caffeine", "I consume caffeine"],
+                [" ", " "],
+                [" ", " "],
+                ["nu consum cafeina", "consum cafeina"]
+            ],
+            [
+                '/inform{"given_answer":"don\'t consume caffeine"}', 
+                '/inform{"given_answer":"consume caffeine"}'
+            ]
+        )
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskDnBHabitsAlcohol(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Habits_alcohol"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Alcohol",
+                " ",
+                " ",
+                "Alcool"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["I do not consume alcohol", "I consume alcohol"],
+                [" ", " "],
+                [" ", " "],
+                ["nu consum alcool", "consum alcool"]
+            ],
+            [
+                '/inform{"given_answer":"don\'t consume alcohol"}', 
+                '/inform{"given_answer":"consume alcohol"}'
+            ]
+        )
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []      
+
+class ActionAskDnBHabitsTobacco(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Habits_tobacco"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Tobacco:",
+                " ",
+                " ",
+                "Tutun:"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["I do not consume tobacco", "I consume tobacco"],
+                [" ", " "],
+                [" ", " "],
+                ["nu consum tutun", "consum tutun"]
+            ],
+            [
+                '/inform{"given_answer":"don\'t consume tobacco"}', 
+                '/inform{"given_answer":"consume tobacco"}'
+            ]
+        )
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return [] 
+
+class ActionAskDnBMedications(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Medications"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Please provide us with a list of current medications if not submitted before.\nIs there anything else you would like to tell us?",
+                " ",
+                " ",
+                "Vă rugăm să ne furnizați o listă cu medicamentele curente, dacă nu ați trimis-o înainte.\nAți dori să ne spuneți altceva?"
+            ]
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []                          
+
 class ValidateDnBForm(FormValidationAction):
     def name(self) -> Text:
-        return "validate_dizznbalance_form"
+        return "validate_dizzNbalance_form"
 
     async def required_slots(
         self, slots_mapped_in_domain, dispatcher, tracker, domain,
     ) -> List[Text]:
 
-        if not tracker.get_slot("dNbQ2"):
-            slots_mapped_in_domain.remove("dNbQ2i")
+        if not tracker.get_slot("dizzNbalance_Q2"):
+            slots_mapped_in_domain.remove("dizzNbalance_Q2i")
         
-        if tracker.get_slot("dNbQ3"):
-            slots_mapped_in_domain.remove("dNbQ3i")
+        if tracker.get_slot("dizzNbalance_Q3"):
+            slots_mapped_in_domain.remove("dizzNbalance_Q3i")
         
-        if not tracker.get_slot("dNbQ4"):
-            slots_mapped_in_domain.remove("dNbQ4a")
-            slots_mapped_in_domain.remove("dNbQ4b")
-            slots_mapped_in_domain.remove("dNbQ4c")
-            slots_mapped_in_domain.remove("dNbQ4ci")
-            slots_mapped_in_domain.remove("dNbQ4d")
-        elif not tracker.get_slot("dNbQ4c"):
-            slots_mapped_in_domain.remove("dNbQ4ci")
+        if not tracker.get_slot("dizzNbalance_Q4"):
+            slots_mapped_in_domain.remove("dizzNbalance_Q4a")
+            slots_mapped_in_domain.remove("dizzNbalance_Q4b")
+            slots_mapped_in_domain.remove("dizzNbalance_Q4c")
+            slots_mapped_in_domain.remove("dizzNbalance_Q4ci")
+            slots_mapped_in_domain.remove("dizzNbalance_Q4d")
+        elif not tracker.get_slot("dizzNbalance_Q4c"):
+            slots_mapped_in_domain.remove("dizzNbalance_Q4ci")
 
-        if not tracker.get_slot("dNbQ5"):
-            slots_mapped_in_domain.remove("dNbQ5i")
+        if not tracker.get_slot("dizzNbalance_Q5"):
+            slots_mapped_in_domain.remove("dizzNbalance_Q5i")
 
-        if not tracker.get_slot("dNbQ6"):
-            slots_mapped_in_domain.remove("dNbQ6i")
+        if not tracker.get_slot("dizzNbalance_Q6"):
+            slots_mapped_in_domain.remove("dizzNbalance_Q6i")
 
-        if not tracker.get_slot("dNbQ7"):
-            slots_mapped_in_domain.remove("dNbQ7i")
+        if not tracker.get_slot("dizzNbalance_Q7"):
+            slots_mapped_in_domain.remove("dizzNbalance_Q7i")
 
-        if not tracker.get_slot("dNbQ9"):
-            slots_mapped_in_domain.remove("dNbQ9i")
+        if not tracker.get_slot("dizzNbalance_Q9"):
+            slots_mapped_in_domain.remove("dizzNbalance_Q9i")
 
-        if not tracker.get_slot("dNbQ11"):
-            slots_mapped_in_domain.remove("dNbQ11i")
+        if not tracker.get_slot("dizzNbalance_Q11"):
+            slots_mapped_in_domain.remove("dizzNbalance_Q11i")
 
-        if not tracker.get_slot("dNbQ12"):
-            slots_mapped_in_domain.remove("dNbQ12i")
+        if not tracker.get_slot("dizzNbalance_Q12"):
+            slots_mapped_in_domain.remove("dizzNbalance_Q12i")
 
-        if not tracker.get_slot("dNbEarSymptomI"):
-            slots_mapped_in_domain.remove("dNbEarSymptomIa")
-            slots_mapped_in_domain.remove("dNbEarSymptomIb")
+        if not tracker.get_slot("dizzNbalance_EarSymptomI"):
+            slots_mapped_in_domain.remove("dizzNbalance_EarSymptomIa")
+            slots_mapped_in_domain.remove("dizzNbalance_EarSymptomIb")
 
-        if not tracker.get_slot("dNbEarSymptomII"):
-            slots_mapped_in_domain.remove("dNbEarSymptomIIa")
+        if not tracker.get_slot("dizzNbalance_EarSymptomII"):
+            slots_mapped_in_domain.remove("dizzNbalance_EarSymptomIIa")
 
-        if not tracker.get_slot("dNbEarSymptomIII"):
-            slots_mapped_in_domain.remove("dNbEarSymptomIIIa")
-            slots_mapped_in_domain.remove("dNbEarSymptomIIIa1")
-            slots_mapped_in_domain.remove("dNbEarSymptomIIIa2")
-            slots_mapped_in_domain.remove("dNbEarSymptomIIIa3")
-            slots_mapped_in_domain.remove("dNbEarSymptomIIIa3i")
-        elif not tracker.get_slot("dNbEarSymptomIIIa3"):
-            slots_mapped_in_domain.remove("dNbEarSymptomIIIa3i")
+        if not tracker.get_slot("dizzNbalance_EarSymptomIII"):
+            slots_mapped_in_domain.remove("dizzNbalance_EarSymptomIIIa")
+            slots_mapped_in_domain.remove("dizzNbalance_EarSymptomIIIa1")
+            slots_mapped_in_domain.remove("dizzNbalance_EarSymptomIIIa2")
+            slots_mapped_in_domain.remove("dizzNbalance_EarSymptomIIIa3")
+            slots_mapped_in_domain.remove("dizzNbalance_EarSymptomIIIa3i")
+        elif not tracker.get_slot("dizzNbalance_EarSymptomIIIa3"):
+            slots_mapped_in_domain.remove("dizzNbalance_EarSymptomIIIa3i")
 
         return slots_mapped_in_domain
 
@@ -3589,6 +4092,735 @@ class ActionAskMTQ10(Action):
                 '/inform{"given_answer":"Yes, don’t know type"}', 
                 '/inform{"given_answer":"No, don’t have arthritis"}', 
                 '/inform{"given_answer":"Don\'t know / refused"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+####################################################################################################
+# Coast Questionnaire                                                                              #
+####################################################################################################
+
+class ActionUtterCoastStart(Action):
+    def name(self):
+        return "action_utter_ask_coast_start"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Would you like to fill it? It shouldn't take more than 7 minutes.",
+                " ",
+                " ",
+                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute."
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Start Coast Questionnaire", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Scala COAST", "Nu"]
+            ],
+            ['/coast_start', '/deny']
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ0(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q0"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the past week or so how well could you use the phone?",
+                " ",
+                " ",
+                "În ultima săptămână sau cam asa ceva, cât de bine ai putut folosi telefonul?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_1,
+            [
+                '/inform{"given_answer":"Couldn\'t do it at all"}',
+                '/inform{"given_answer":"With a lot of difficulty"}',
+                '/inform{"given_answer":"With some difficulty"}',
+                '/inform{"given_answer":"Quite well"}',
+                '/inform{"given_answer":"Very well"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ1(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q1"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the past week or so how well could you show that you mean YES or NO?",
+                " ",
+                " ",
+                "In ultima saptamana, cat de usor v-a fost sa oferiti raspunsuri precum DA sau NU?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_1,
+            [
+                '/inform{"given_answer":"Couldn\'t do it at all"}',
+                '/inform{"given_answer":"With a lot of difficulty"}',
+                '/inform{"given_answer":"With some difficulty"}',
+                '/inform{"given_answer":"Quite well"}',
+                '/inform{"given_answer":"Very well"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ2(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q2"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Nowadays, how well can you use other ways to help you communicate? (eg pointing, writing etc)",
+                " ",
+                " ",
+                "Cat de usor va este sa folositi alte mijloace care sa va ajute sa comunicati (ex. a scrie sau a indica folosind degetul)?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_2,
+            [
+                '/inform{"given_answer":"Can\'t do it at all"}',
+                '/inform{"given_answer":"With a lot of difficulty"}',
+                '/inform{"given_answer":"With some difficulty"}',
+                '/inform{"given_answer":"Quite well"}',
+                '/inform{"given_answer":"Very well"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ3(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q3"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the past week or so how well could you have a chat with someone you know well ?",
+                " ",
+                " ",
+                "In ultima saptamana, cat de usor v-a fost sa purtati o discutie cu o persoana cunoscuta?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_1,
+            [
+                '/inform{"given_answer":"Couldn\'t do it at all"}',
+                '/inform{"given_answer":"With a lot of difficulty"}',
+                '/inform{"given_answer":"With some difficulty"}',
+                '/inform{"given_answer":"Quite well"}',
+                '/inform{"given_answer":"Very well"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ4(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q4"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the past week or so how well could you have a short conversation with an unfamiliar person?",
+                " ",
+                " ",
+                "In ultima saptamana, cat de usor v-a fost sa purtati o scurta discutie cu o persoana necunoscuta?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_1,
+            [
+                '/inform{"given_answer":"Couldn\'t do it at all"}',
+                '/inform{"given_answer":"With a lot of difficulty"}',
+                '/inform{"given_answer":"With some difficulty"}',
+                '/inform{"given_answer":"Quite well"}',
+                '/inform{"given_answer":"Very well"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ5(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q5"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the past week or so how well could you join in a conversation with a group of people?",
+                " ",
+                " ",
+                "In ultima saptamana, cat de usor v-a fost sa va alaturati unei discutii cu un grup de persoane?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_1,
+            [
+                '/inform{"given_answer":"Couldn\'t do it at all"}',
+                '/inform{"given_answer":"With a lot of difficulty"}',
+                '/inform{"given_answer":"With some difficulty"}',
+                '/inform{"given_answer":"Quite well"}',
+                '/inform{"given_answer":"Very well"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ6(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q6"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Nowadays, how well can you make yourself understood in longer sentences?",
+                " ",
+                " ",
+                "Cat de usor va este sa va faceti inteles folosind propozitii mai complexe ?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_2,
+            [
+                '/inform{"given_answer":"Can\'t do it at all"}',
+                '/inform{"given_answer":"With a lot of difficulty"}',
+                '/inform{"given_answer":"With some difficulty"}',
+                '/inform{"given_answer":"Quite well"}',
+                '/inform{"given_answer":"Very well"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ7(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q7"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the past week or so how well could you understand simple spoken information ?",
+                " ",
+                " ",
+                "In ultima saptamana cat de usor v-a fost sa intelegeti propozitii simple transmise verbal?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_1,
+            [
+                '/inform{"given_answer":"Couldn\'t do it at all"}',
+                '/inform{"given_answer":"With a lot of difficulty"}',
+                '/inform{"given_answer":"With some difficulty"}',
+                '/inform{"given_answer":"Quite well"}',
+                '/inform{"given_answer":"Very well"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ8(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q8"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Nowadays, how well can you show that you don’t understand ?",
+                " ",
+                " ",
+                "Cat de usor va este sa aratati ca nu intelegeti ce vi se comunica?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_2,
+            [
+                '/inform{"given_answer":"Can\'t do it at all"}',
+                '/inform{"given_answer":"With a lot of difficulty"}',
+                '/inform{"given_answer":"With some difficulty"}',
+                '/inform{"given_answer":"Quite well"}',
+                '/inform{"given_answer":"Very well"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ9(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q9"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the past week or so how well could you follow a change of subject in conversation?",
+                " ",
+                " ",
+                "In ultima saptamana, cat de usor v-a fost sa urmariti o conversatie daca subiectul acesteia s-a schimbat? "
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_1,
+            [
+                '/inform{"given_answer":"Couldn\'t do it at all"}',
+                '/inform{"given_answer":"With a lot of difficulty"}',
+                '/inform{"given_answer":"With some difficulty"}',
+                '/inform{"given_answer":"Quite well"}',
+                '/inform{"given_answer":"Very well"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ10(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q10"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the past week or so how well could you read?",
+                " ",
+                " ",
+                "In ultima saptamana cat de usor v-a fost sa cititi?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_3,
+            [
+                '/inform{"given_answer":"Couldn\'t do it at all"}',
+                '/inform{"given_answer":"With a lot of difficulty"}',
+                '/inform{"given_answer":"With some difficulty"}',
+                '/inform{"given_answer":"Quite well"}',
+                '/inform{"given_answer":"As well as before my stroke"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ11(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q11"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the past week or so how well could you write?",
+                " ",
+                " ",
+                "In ultima saptamana cat de usor v-a fost sa scrieti?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_3,
+            [
+                '/inform{"given_answer":"Couldn\'t do it at all"}',
+                '/inform{"given_answer":"With a lot of difficulty"}',
+                '/inform{"given_answer":"With some difficulty"}',
+                '/inform{"given_answer":"Quite well"}',
+                '/inform{"given_answer":"As well as before my stroke"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ12(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q12"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Nowadays, how well can you deal with money?",
+                " ",
+                " ",
+                "In prezent cat de usor va este sa va gestionati banii?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_1,
+            [
+                '/inform{"given_answer":"Can\'t do it at all"}',
+                '/inform{"given_answer":"With a lot of difficulty"}',
+                '/inform{"given_answer":"With some difficulty"}',
+                '/inform{"given_answer":"Quite well"}',
+                '/inform{"given_answer":"Very well"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ13(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q13"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How much has your communication changed since just after your stroke ?",
+                " ",
+                " ",
+                "Cum s-a modificat modul in care comunicati fata de momentul de dupa ce ati avut accidentul vascular cerebral?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_4,
+            [
+                '/inform{"given_answer":"Not changed at all"}',
+                '/inform{"given_answer":"A little bit better"}',
+                '/inform{"given_answer":"Quite a bit better"}',
+                '/inform{"given_answer":"A lot better"}',
+                '/inform{"given_answer":"Completely better"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ14(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q14"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "What do you think about your communication now?",
+                " ",
+                " ",
+                "Ce parere aveti despre capacitatea dumneavoastra de a comunica in prezent?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_5,
+            [
+                '/inform{"given_answer":"The worst possible"}',
+                '/inform{"given_answer":"Quite poor"}',
+                '/inform{"given_answer":"Fair"}',
+                '/inform{"given_answer":"Quite good"}',
+                '/inform{"given_answer":"As good as before my stroke"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ15(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q15"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often does confidence about communicating affect what you do?",
+                " ",
+                " ",
+                "Cat de des este afectata activitatea zilnică  in functie de capacitatea de comunicare?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_6,
+            [
+                '/inform{"given_answer":"All the time"}',
+                '/inform{"given_answer":"Very often"}',
+                '/inform{"given_answer":"Sometimes"}',
+                '/inform{"given_answer":"Hardly ever"}',
+                '/inform{"given_answer":"Never"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ16(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q16"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Nowadays, what effect do your speech or language problems have on your family life?",
+                " ",
+                " ",
+                "In prezent, cat de mult va afecteaza viata de familie tulburarea de limbaj/vorbire?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_7,
+            [
+                '/inform{"given_answer":"The worst possible"}',
+                '/inform{"given_answer":"Quite poor"}',
+                '/inform{"given_answer":"Fair"}',
+                '/inform{"given_answer":"Quite good"}',
+                '/inform{"given_answer":"It\'s at least as good as before my stroke"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ17(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q17"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Nowadays, what effect do your speech or language problems have on your social life?",
+                " ",
+                " ",
+                "In prezent, cat de mult va afecteaza viata de sociala tulburarea de limbaj/vorbire?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_7,
+            [
+                '/inform{"given_answer":"The worst possible"}',
+                '/inform{"given_answer":"Quite poor"}',
+                '/inform{"given_answer":"Fair"}',
+                '/inform{"given_answer":"Quite good"}',
+                '/inform{"given_answer":"It\'s at least as good as before my stroke"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ18(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q18"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Nowadays, what effect do your speech and language problems have on your interests or hobbies?",
+                " ",
+                " ",
+                "In prezent, cat de mult va sunt afectate interesele si pasiunile de catre tulburarea de limbaj/vorbire?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_7,
+            [
+                '/inform{"given_answer":"The worst possible"}',
+                '/inform{"given_answer":"Quite poor"}',
+                '/inform{"given_answer":"Fair"}',
+                '/inform{"given_answer":"Quite good"}',
+                '/inform{"given_answer":"It\'s at least as good as before my stroke"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ19(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q19"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How often do difficulties communicating make you worried or unhappy?",
+                " ",
+                " ",
+                "Cat de des dificultatea de a comunica va ingrijoreaza sau va intristeaza?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_6,
+            [
+                '/inform{"given_answer":"All the time"}',
+                '/inform{"given_answer":"Very often"}',
+                '/inform{"given_answer":"Sometimes"}',
+                '/inform{"given_answer":"Hardly ever"}',
+                '/inform{"given_answer":"Never"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskCoastQ20(Action):
+    def name(self) -> Text:
+        return "action_ask_coast_Q20"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How do you rate your overall quality of life?",
+                " ",
+                " ",
+                "Cum apreciati calitatea vietii dumneavoastra in general?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            coast_buttons_7,
+            [
+                '/inform{"given_answer":"The worst possible"}',
+                '/inform{"given_answer":"Quite poor"}',
+                '/inform{"given_answer":"Fair"}',
+                '/inform{"given_answer":"Quite good"}',
+                '/inform{"given_answer":"It\'s at least as good as before my stroke"}'
             ]
         )
 

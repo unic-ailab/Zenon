@@ -21,6 +21,7 @@ intents:
   - muscletone_start
   - psqi_start
   - diet_start
+  - coast_start
 entities:
   - given_answer
   - language
@@ -54,6 +55,9 @@ slots:
       - greek
       - italian
       - romanian
+  requested_slot:
+    type: unfeaturized
+    influence_conversation: false
   # ACTIVLim - Related slots
   walking:
     type: any
@@ -116,216 +120,255 @@ slots:
     type: any
     influence_conversation: false
   # PSQI - Related slots
-  psqiQ1: # PSQI
+  psqi_Q1: # PSQI
     type: any
     influence_conversation: false
-  psqiQ2: # PSQI
+  psqi_Q2: # PSQI
     type: any
     influence_conversation: false
-  psqiQ3: # PSQI
+  psqi_Q3: # PSQI
     type: any
     influence_conversation: false
-  psqiQ4: # PSQI
+  psqi_Q4: # PSQI
     type: any
     influence_conversation: false
-  psqiQ5a:
+  psqi_Q5a:
     type: any
     influence_conversation: false
-  psqiQ5b:
+  psqi_Q5b:
     type: any
     influence_conversation: false
-  psqiQ5c:
+  psqi_Q5c:
     type: any
     influence_conversation: false
-  psqiQ5d:
+  psqi_Q5d:
     type: any
     influence_conversation: false
-  psqiQ5e:
+  psqi_Q5e:
     type: any
     influence_conversation: false
-  psqiQ5f:
+  psqi_Q5f:
     type: any
     influence_conversation: false
-  psqiQ5g:
+  psqi_Q5g:
     type: any
     influence_conversation: false
-  psqiQ5h:
+  psqi_Q5h:
     type: any
     influence_conversation: false
-  psqiQ5i:
+  psqi_Q5i:
     type: any
     influence_conversation: false
-  psqiQ5j:
+  psqi_Q5j:
     type: any
     influence_conversation: false
-  psqiQ5k:
+  psqi_Q5k:
     type: any
     influence_conversation: false
-  psqiQ6:
+  psqi_Q6:
     type: any
     influence_conversation: false
-  psqiQ7:
+  psqi_Q7:
     type: any
     influence_conversation: false
-  psqiQ8:
+  psqi_Q8:
     type: any
     influence_conversation: false
-  psqiQ9:
+  psqi_Q9:
+    type: any
+    influence_conversation: false
+  psqi_Q10:
+    type: any
+    influence_conversation: false
+  psqi_Q10a:
+    type: any
+    influence_conversation: false
+  psqi_Q10b:
+    type: any
+    influence_conversation: false
+  psqi_Q10c:
+    type: any
+    influence_conversation: false
+  psqi_Q10d:
     type: any
     influence_conversation: false
   # Dizziness and Balance - Related slots
-  dNbQ1:
+  dizzNbalance_Q1:
     type: any
     influence_conversation: false
-  dNbQ2:
+  dizzNbalance_Q2:
     type: any
     influence_conversation: false
-  dNbQ2i:
+  dizzNbalance_Q2i:
     type: any
     influence_conversation: false
-  dNbSymptoms:
+  dizzNbalance_Symptoms:
     type: any
     influence_conversation: false
-  dNbQ3:
+  dizzNbalance_Q3:
     type: any
     influence_conversation: false
-  dNbQ3i:
+  dizzNbalance_Q3i:
     type: any
     influence_conversation: false
-  dNbQ4:
+  dizzNbalance_Q4:
     type: any
     influence_conversation: false
-  dNbQ4a:
+  dizzNbalance_Q4a:
     type: any
     influence_conversation: false
-  dNbQ4b:
+  dizzNbalance_Q4b:
     type: any
     influence_conversation: false
-  dNbQ4c:
+  dizzNbalance_Q4c:
     type: any
     influence_conversation: false
-  dNbQ4ci:
+  dizzNbalance_Q4ci:
     type: any
     influence_conversation: false
-  dNbQ4d:
+  dizzNbalance_Q4d:
     type: any
     influence_conversation: false
-  dNbQ5:
+  dizzNbalance_Q5:
     type: any
     influence_conversation: false
-  dNbQ5i:
+  dizzNbalance_Q5i:
     type: any
     influence_conversation: false
-  dNbQ6:
+  dizzNbalance_Q6:
     type: any
     influence_conversation: false
-  dNbQ6i:
+  dizzNbalance_Q6i:
     type: any
     influence_conversation: false
-  dNbQ7:
+  dizzNbalance_Q7:
     type: any
     influence_conversation: false
-  dNbQ7i:
+  dizzNbalance_Q7i:
     type: any
     influence_conversation: false
-  dNbQ8:
+  dizzNbalance_Q8:
     type: any
     influence_conversation: false
-  dNbQ9:
+  dizzNbalance_Q9:
     type: any
     influence_conversation: false
-  dNbQ9i:
+  dizzNbalance_Q9i:
     type: any
     influence_conversation: false
-  dNbQ10:
+  dizzNbalance_Q10:
     type: any
     influence_conversation: false
-  dNbQ11:
+  dizzNbalance_Q11:
     type: any
     influence_conversation: false
-  dNbQ11i:
+  dizzNbalance_Q11i:
     type: any
     influence_conversation: false
-  dNbQ12:
+  dizzNbalance_Q12:
     type: any
     influence_conversation: false
-  dNbQ12i:
+  dizzNbalance_Q12i:
     type: any
     influence_conversation: false
-  dNbPastMedicalHistory:
+  dizzNbalance_PastMedicalHistory:
     type: any
     influence_conversation: false
-  dNbPastMedicalHistoryOther:
+  dizzNbalance_PastMedicalHistoryOther:
     type: any
     influence_conversation: false
-  dNbMedicalTests:
+  dizzNbalance_MedicalTests:
     type: any
     influence_conversation: false
-  dNbMedicalTestsOther:
+  dizzNbalance_MedicalTestsOther:
     type: any
     influence_conversation: false
-  dNbOnSetType:
+  dizzNbalance_OnSetType:
     type: any
     influence_conversation: false
-  dNbEarSymptomI:
+  dizzNbalance_EarSymptomI:
     type: any
     influence_conversation: false
-  dNbEarSymptomIa:
+  dizzNbalance_EarSymptomIa:
     type: any
     influence_conversation: false
-  dNbEarSymptomIb:
+  dizzNbalance_EarSymptomIb:
     type: any
     influence_conversation: false
-  dNbEarSymptomII:
+  dizzNbalance_EarSymptomII:
     type: any
     influence_conversation: false
-  dNbEarSymptomIIa:
+  dizzNbalance_EarSymptomIIa:
     type: any
     influence_conversation: false
-  dNbEarSymptomIII:
+  dizzNbalance_EarSymptomIII:
     type: any
     influence_conversation: false
-  dNbEarSymptomIIIa:
+  dizzNbalance_EarSymptomIIIa:
     type: any
     influence_conversation: false
-  dNbEarSymptomIIIa1:
+  dizzNbalance_EarSymptomIIIa1:
     type: any
     influence_conversation: false
-  dNbEarSymptomIIIa2:
+  dizzNbalance_EarSymptomIIIa2:
     type: any
     influence_conversation: false
-  dNbEarSymptomIIIa3:
+  dizzNbalance_EarSymptomIIIa3:
     type: any
     influence_conversation: false
-  dNbEarSymptomIIIa3i:
+  dizzNbalance_EarSymptomIIIa3i:
     type: any
     influence_conversation: false
-  dNbEarSymptomIV:
+  dizzNbalance_EarSymptomIV:
     type: any
     influence_conversation: false
-  dNbEarSymptomV:
+  dizzNbalance_EarSymptomV:
     type: any
     influence_conversation: false
-  dNbEarSymptomVI:
+  dizzNbalance_EarSymptomVI:
     type: any
     influence_conversation: false
-  dNbEarSymptomVII:
+  dizzNbalance_EarSymptomVII:
     type: any
     influence_conversation: false
-  dNbEarSymptomVIII:
+  dizzNbalance_EarSymptomVIII:
     type: any
     influence_conversation: false
-  dNbEarSymptomIX:
+  dizzNbalance_EarSymptomIX:
     type: any
     influence_conversation: false
-  dNbEarSymptomX:
+  dizzNbalance_EarSymptomX:
     type: any
     influence_conversation: false
-  dNbEarSymptomXI:
+  dizzNbalance_EarSymptomXI:
     type: any
     influence_conversation: false
-  requested_slot:
-    type: unfeaturized
+  dizzNbalance_Social_a:
+    type: any
+    influence_conversation: false
+  dizzNbalance_Social_ai:
+    type: any
+    influence_conversation: false
+  dizzNbalance_Social_b:
+    type: any
+    influence_conversation: false
+  dizzNbalance_Social_bi:
+    type: any
+    influence_conversation: false
+  dizzNbalance_Social_c:
+    type: any
+    influence_conversation: false
+  dizzNbalance_Habits_caffeine:
+    type: any
+    influence_conversation: false
+  dizzNbalance_Habits_tobacco:
+    type: any
+    influence_conversation: false
+  dizzNbalance_Habits_alcohol:
+    type: any
+    influence_conversation: false
+  dizzNbalance_Medications:
+    type: any
     influence_conversation: false
   # Eating Habits - Related Slots
   dietQ1:
@@ -417,6 +460,69 @@ slots:
     type: any
     influence_conversation: false
   mtQ10:
+    type: any
+    influence_conversation: false
+  coast_Q0:
+    type: any
+    influence_conversation: false
+  coast_Q1:
+    type: any
+    influence_conversation: false
+  coast_Q2:
+    type: any
+    influence_conversation: false
+  coast_Q3:
+    type: any
+    influence_conversation: false
+  coast_Q4:
+    type: any
+    influence_conversation: false
+  coast_Q5:
+    type: any
+    influence_conversation: false
+  coast_Q6:
+    type: any
+    influence_conversation: false
+  coast_Q7:
+    type: any
+    influence_conversation: false
+  coast_Q8:
+    type: any
+    influence_conversation: false
+  coast_Q9:
+    type: any
+    influence_conversation: false
+  coast_Q10:
+    type: any
+    influence_conversation: false
+  coast_Q11:
+    type: any
+    influence_conversation: false
+  coast_Q12:
+    type: any
+    influence_conversation: false
+  coast_Q13:
+    type: any
+    influence_conversation: false
+  coast_Q14:
+    type: any
+    influence_conversation: false
+  coast_Q15:
+    type: any
+    influence_conversation: false
+  coast_Q16:
+    type: any
+    influence_conversation: false
+  coast_Q17:
+    type: any
+    influence_conversation: false
+  coast_Q18:
+    type: any
+    influence_conversation: false
+  coast_Q19:
+    type: any
+    influence_conversation: false
+  coast_Q20:
     type: any
     influence_conversation: false
 responses:
@@ -1368,84 +1474,120 @@ actions:
   - action_ask_dietQ18
   - action_ask_dietQ19
   - action_ask_dietQ20
-  - action_ask_psqiQ9
-  - action_ask_psqiQ8
-  - action_ask_psqiQ7
-  - action_ask_psqiQ6
-  - action_ask_psqiQ5k
-  - action_ask_psqiQ5j
-  - action_ask_psqiQ5i
-  - action_ask_psqiQ5h
-  - action_ask_psqiQ5g
-  - action_ask_psqiQ5f
-  - action_ask_psqiQ5e
-  - action_ask_psqiQ5d
-  - action_ask_psqiQ5c
-  - action_ask_psqiQ5b
-  - action_ask_psqiQ5a
-  - action_ask_psqiQ4
-  - action_ask_psqiQ3
-  - action_ask_psqiQ2
-  - action_ask_psqiQ1
+  - action_ask_psqi_Q10
+  - action_ask_psqi_Q10a
+  - action_ask_psqi_Q10b
+  - action_ask_psqi_Q10c
+  - action_ask_psqi_Q10d
+  - action_ask_psqi_Q9
+  - action_ask_psqi_Q8
+  - action_ask_psqi_Q7
+  - action_ask_psqi_Q6
+  - action_ask_psqi_Q5k
+  - action_ask_psqi_Q5j
+  - action_ask_psqi_Q5i
+  - action_ask_psqi_Q5h
+  - action_ask_psqi_Q5g
+  - action_ask_psqi_Q5f
+  - action_ask_psqi_Q5e
+  - action_ask_psqi_Q5d
+  - action_ask_psqi_Q5c
+  - action_ask_psqi_Q5b
+  - action_ask_psqi_Q5a
+  - action_ask_psqi_Q4
+  - action_ask_psqi_Q3
+  - action_ask_psqi_Q2
+  - action_ask_psqi_Q1
   - action_utter_ask_diet_start
   - action_utter_ask_muscle_start
-  - action_ask_dNbSymptoms
-  - action_ask_dNbQ1
-  - action_ask_dNbQ2
-  - action_ask_dNbQ2i
-  - action_ask_dNbQ3
-  - action_ask_dNbQ3i
-  - action_ask_dNbQ4
-  - action_ask_dNbQ4a
-  - action_ask_dNbQ4b
-  - action_ask_dNbQ4c
-  - action_ask_dNbQ4ci
-  - action_ask_dNbQ4d
-  - action_ask_dNbQ5
-  - action_ask_dNbQ5i
-  - action_ask_dNbQ6
-  - action_ask_dNbQ6i
-  - action_ask_dNbQ7
-  - action_ask_dNbQ7i
-  - action_ask_dNbQ8
-  - action_ask_dNbQ9
-  - action_ask_dNbQ9i
-  - action_ask_dNbQ10
-  - action_ask_dNbQ11
-  - action_ask_dNbQ11i
-  - action_ask_dNbQ12
-  - action_ask_dNbQ12i
-  - action_ask_dNbPastMedicalHistory
-  - action_ask_dNbPastMedicalHistoryOther
-  - action_ask_dNbMedicalTests
-  - action_ask_dNbMedicalTestsOther
-  - action_ask_dNbOnSetType
-  - action_ask_dNbEarSymptomI
-  - action_ask_dNbEarSymptomIa
-  - action_ask_dNbEarSymptomIb
-  - action_ask_dNbEarSymptomII
-  - action_ask_dNbEarSymptomIIa
-  - action_ask_dNbEarSymptomIII
-  - action_ask_dNbEarSymptomIIIa
-  - action_ask_dNbEarSymptomIIIa1
-  - action_ask_dNbEarSymptomIIIa2
-  - action_ask_dNbEarSymptomIIIa3
-  - action_ask_dNbEarSymptomIIIa3i
-  - action_ask_dNbEarSymptomIV
-  - action_ask_dNbEarSymptomV
-  - action_ask_dNbEarSymptomVI
-  - action_ask_dNbEarSymptomVII
-  - action_ask_dNbEarSymptomVIII
-  - action_ask_dNbEarSymptomIX
-  - action_ask_dNbEarSymptomX
-  - action_ask_dNbEarSymptomXI
+  - action_ask_dizzNbalance_Symptoms
+  - action_ask_dizzNbalance_Q1
+  - action_ask_dizzNbalance_Q2
+  - action_ask_dizzNbalance_Q2i
+  - action_ask_dizzNbalance_Q3
+  - action_ask_dizzNbalance_Q3i
+  - action_ask_dizzNbalance_Q4
+  - action_ask_dizzNbalance_Q4a
+  - action_ask_dizzNbalance_Q4b
+  - action_ask_dizzNbalance_Q4c
+  - action_ask_dizzNbalance_Q4ci
+  - action_ask_dizzNbalance_Q4d
+  - action_ask_dizzNbalance_Q5
+  - action_ask_dizzNbalance_Q5i
+  - action_ask_dizzNbalance_Q6
+  - action_ask_dizzNbalance_Q6i
+  - action_ask_dizzNbalance_Q7
+  - action_ask_dizzNbalance_Q7i
+  - action_ask_dizzNbalance_Q8
+  - action_ask_dizzNbalance_Q9
+  - action_ask_dizzNbalance_Q9i
+  - action_ask_dizzNbalance_Q10
+  - action_ask_dizzNbalance_Q11
+  - action_ask_dizzNbalance_Q11i
+  - action_ask_dizzNbalance_Q12
+  - action_ask_dizzNbalance_Q12i
+  - action_ask_dizzNbalance_PastMedicalHistory
+  - action_ask_dizzNbalance_PastMedicalHistoryOther
+  - action_ask_dizzNbalance_MedicalTests
+  - action_ask_dizzNbalance_MedicalTestsOther
+  - action_ask_dizzNbalance_OnSetType
+  - action_ask_dizzNbalance_EarSymptomI
+  - action_ask_dizzNbalance_EarSymptomIa
+  - action_ask_dizzNbalance_EarSymptomIb
+  - action_ask_dizzNbalance_EarSymptomII
+  - action_ask_dizzNbalance_EarSymptomIIa
+  - action_ask_dizzNbalance_EarSymptomIII
+  - action_ask_dizzNbalance_EarSymptomIIIa
+  - action_ask_dizzNbalance_EarSymptomIIIa1
+  - action_ask_dizzNbalance_EarSymptomIIIa2
+  - action_ask_dizzNbalance_EarSymptomIIIa3
+  - action_ask_dizzNbalance_EarSymptomIIIa3i
+  - action_ask_dizzNbalance_EarSymptomIV
+  - action_ask_dizzNbalance_EarSymptomV
+  - action_ask_dizzNbalance_EarSymptomVI
+  - action_ask_dizzNbalance_EarSymptomVII
+  - action_ask_dizzNbalance_EarSymptomVIII
+  - action_ask_dizzNbalance_EarSymptomIX
+  - action_ask_dizzNbalance_EarSymptomX
+  - action_ask_dizzNbalance_EarSymptomXI
+  - action_ask_dizzNbalance_Medications
+  - action_ask_dizzNbalance_Habits_tobacco
+  - action_ask_dizzNbalance_Habits_alcohol
+  - action_ask_dizzNbalance_Habits_caffeine
+  - action_ask_dizzNbalance_Social_c
+  - action_ask_dizzNbalance_Social_bi
+  - action_ask_dizzNbalance_Social_b
+  - action_ask_dizzNbalance_Social_ai
+  - action_ask_dizzNbalance_Social_a
   - action_ask_hoursPerSleepNight
   - action_ask_numberOfMinutes
   - action_ask_usualBedTime
   - action_ask_usualGettingUpTime
+  - action_utter_ask_coast_start
+  - action_ask_coast_Q0
+  - action_ask_coast_Q1
+  - action_ask_coast_Q2
+  - action_ask_coast_Q3
+  - action_ask_coast_Q4
+  - action_ask_coast_Q5
+  - action_ask_coast_Q6
+  - action_ask_coast_Q7
+  - action_ask_coast_Q8
+  - action_ask_coast_Q9
+  - action_ask_coast_Q10
+  - action_ask_coast_Q11
+  - action_ask_coast_Q12
+  - action_ask_coast_Q13
+  - action_ask_coast_Q14
+  - action_ask_coast_Q15
+  - action_ask_coast_Q16
+  - action_ask_coast_Q17
+  - action_ask_coast_Q18
+  - action_ask_coast_Q19
+  - action_ask_coast_Q20
   - action_save_conversation
   - action_utter_ask_activlim_start
-  - action_utter_ask_dNb_start
+  - action_utter_ask_dizzNbalance_start
   - action_utter_ask_language
   - action_utter_ask_psqi_start
   - action_utter_greet
@@ -1453,8 +1595,73 @@ actions:
   - action_utter_set_language
   - action_utter_set_questionnaire
   - utter_confirm_questionnaire_finished
-  - validate_dizznbalance_form
+  - validate_dizzNbalance_form
 forms:
+  coast_form:
+    required_slots:
+      coast_Q0:
+        - entity: given_answer
+          type: from_entity
+      coast_Q1:
+        - entity: given_answer
+          type: from_entity
+      coast_Q2:
+        - entity: given_answer
+          type: from_entity
+      coast_Q3:
+        - entity: given_answer
+          type: from_entity
+      coast_Q4:
+        - entity: given_answer
+          type: from_entity
+      coast_Q5:
+        - entity: given_answer
+          type: from_entity
+      coast_Q6:
+        - entity: given_answer
+          type: from_entity
+      coast_Q7:
+        - entity: given_answer
+          type: from_entity
+      coast_Q8:
+        - entity: given_answer
+          type: from_entity
+      coast_Q9:
+        - entity: given_answer
+          type: from_entity
+      coast_Q10:
+        - entity: given_answer
+          type: from_entity
+      coast_Q11:
+        - entity: given_answer
+          type: from_entity
+      coast_Q12:
+        - entity: given_answer
+          type: from_entity
+      coast_Q13:
+        - entity: given_answer
+          type: from_entity
+      coast_Q14:
+        - entity: given_answer
+          type: from_entity
+      coast_Q15:
+        - entity: given_answer
+          type: from_entity
+      coast_Q16:
+        - entity: given_answer
+          type: from_entity
+      coast_Q17:
+        - entity: given_answer
+          type: from_entity
+      coast_Q18:
+        - entity: given_answer
+          type: from_entity
+      coast_Q19:
+        - entity: given_answer
+          type: from_entity
+      coast_Q20:
+        - entity: given_answer
+          type: from_entity
   muscletone_form:
     required_slots:
       mtQ1:
@@ -1549,262 +1756,303 @@ forms:
       dietQ20:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-  dizznbalance_form:
+  dizzNbalance_form:
     required_slots:
-      dNbSymptoms:
+      dizzNbalance_Symptoms:
         - type: from_text
-      dNbQ1:
-        - type: from_text
-          not_intent: [cancel, out_of_scope]
-      dNbQ2:
-        - type: from_intent
-          intent: affirm
-          value: true
-        - type: from_intent
-          intent: deny
-          value: false
-      dNbQ2i:
+      dizzNbalance_Q1:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      dNbQ3:
+      dizzNbalance_Q2:
         - type: from_intent
           intent: affirm
           value: true
         - type: from_intent
           intent: deny
           value: false
-      dNbQ3i:
+      dizzNbalance_Q2i:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      dNbQ4:
+      dizzNbalance_Q3:
         - type: from_intent
           intent: affirm
           value: true
         - type: from_intent
           intent: deny
           value: false
-      dNbQ4a:
+      dizzNbalance_Q3i:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      dNbQ4b:
-        - entity: given_answer
-          type: from_entity
-      dNbQ4c:
+      dizzNbalance_Q4:
         - type: from_intent
           intent: affirm
           value: true
         - type: from_intent
           intent: deny
           value: false
-      dNbQ4ci:
+      dizzNbalance_Q4a:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      dNbQ4d:
+      dizzNbalance_Q4b:
+        - entity: given_answer
+          type: from_entity
+      dizzNbalance_Q4c:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dizzNbalance_Q4ci:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      dNbQ5:
-        - type: from_intent
-          intent: affirm
-          value: true
-        - type: from_intent
-          intent: deny
-          value: false
-      dNbQ5i:
-        - type: from_text
-      dNbQ6:
-        - type: from_intent
-          intent: affirm
-          value: true
-        - type: from_intent
-          intent: deny
-          value: false
-      dNbQ6i:
-        - type: from_text
-      dNbQ7:
-        - type: from_intent
-          intent: affirm
-          value: true
-        - type: from_intent
-          intent: deny
-          value: false
-      dNbQ7i:
+      dizzNbalance_Q4d:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      dNbQ8:
-        - entity: given_answer
-          type: from_entity
-      dNbQ9:
+      dizzNbalance_Q5:
         - type: from_intent
           intent: affirm
           value: true
         - type: from_intent
           intent: deny
           value: false
-      dNbQ9i:
+      dizzNbalance_Q5i:
+        - type: from_text
+      dizzNbalance_Q6:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dizzNbalance_Q6i:
+        - type: from_text
+      dizzNbalance_Q7:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dizzNbalance_Q7i:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      dNbQ10:
+      dizzNbalance_Q8:
         - entity: given_answer
           type: from_entity
-      dNbQ11:
+      dizzNbalance_Q9:
         - type: from_intent
           intent: affirm
           value: true
         - type: from_intent
           intent: deny
           value: false
-      dNbQ11i:
+      dizzNbalance_Q9i:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      dNbQ12:
+      dizzNbalance_Q10:
+        - entity: given_answer
+          type: from_entity
+      dizzNbalance_Q11:
         - type: from_intent
           intent: affirm
           value: true
         - type: from_intent
           intent: deny
           value: false
-      dNbQ12i:
+      dizzNbalance_Q11i:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      dNbPastMedicalHistory:
-        - type: from_text
-      dNbPastMedicalHistoryOther:
-        - type: from_text
-      dNbMedicalTests:
-        - type: from_text
-      dNbMedicalTestsOther:
-        - type: from_text
-      dNbOnSetType:
-        - type: from_text
-      dNbEarSymptomI:
+      dizzNbalance_Q12:
         - type: from_intent
           intent: affirm
           value: true
         - type: from_intent
           intent: deny
           value: false
-      dNbEarSymptomIa:
-        - entity: given_answer
-          type: from_entity
-      dNbEarSymptomIb:
+      dizzNbalance_Q12i:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      dNbEarSymptomII:
+      dizzNbalance_PastMedicalHistory:
+        - type: from_text
+      dizzNbalance_PastMedicalHistoryOther:
+        - type: from_text
+      dizzNbalance_MedicalTests:
+        - type: from_text
+      dizzNbalance_MedicalTestsOther:
+        - type: from_text
+      dizzNbalance_OnSetType:
+        - type: from_text
+      dizzNbalance_EarSymptomI:
         - type: from_intent
           intent: affirm
           value: true
         - type: from_intent
           intent: deny
           value: false
-      dNbEarSymptomIIa:
+      dizzNbalance_EarSymptomIa:
         - entity: given_answer
           type: from_entity
-      dNbEarSymptomIII:
-        - type: from_intent
-          intent: affirm
-          value: true
-        - type: from_intent
-          intent: deny
-          value: false
-      dNbEarSymptomIIIa:
-        - entity: given_answer
-          type: from_entity
-      dNbEarSymptomIIIa1:
-        - entity: given_answer
-          type: from_entity
-      dNbEarSymptomIIIa2:
-        - entity: given_answer
-          type: from_entity
-      dNbEarSymptomIIIa3:
-        - type: from_intent
-          intent: affirm
-          value: true
-        - type: from_intent
-          intent: deny
-          value: false
-      dNbEarSymptomIIIa3i:
+      dizzNbalance_EarSymptomIb:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      dNbEarSymptomIV:
+      dizzNbalance_EarSymptomII:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dizzNbalance_EarSymptomIIa:
         - entity: given_answer
           type: from_entity
-      dNbEarSymptomV:
+      dizzNbalance_EarSymptomIII:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dizzNbalance_EarSymptomIIIa:
         - entity: given_answer
           type: from_entity
-      dNbEarSymptomVI:
+      dizzNbalance_EarSymptomIIIa1:
         - entity: given_answer
           type: from_entity
-      dNbEarSymptomVII:
+      dizzNbalance_EarSymptomIIIa2:
         - entity: given_answer
           type: from_entity
-      dNbEarSymptomVIII:
+      dizzNbalance_EarSymptomIIIa3:
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dizzNbalance_EarSymptomIIIa3i:
+        - type: from_text
+          not_intent: [cancel, out_of_scope]
+      dizzNbalance_EarSymptomIV:
         - entity: given_answer
           type: from_entity
-      dNbEarSymptomIX:
+      dizzNbalance_EarSymptomV:
         - entity: given_answer
           type: from_entity
-      dNbEarSymptomX:
+      dizzNbalance_EarSymptomVI:
         - entity: given_answer
           type: from_entity
-      dNbEarSymptomXI:
+      dizzNbalance_EarSymptomVII:
         - entity: given_answer
           type: from_entity
+      dizzNbalance_EarSymptomVIII:
+        - entity: given_answer
+          type: from_entity
+      dizzNbalance_EarSymptomIX:
+        - entity: given_answer
+          type: from_entity
+      dizzNbalance_EarSymptomX:
+        - entity: given_answer
+          type: from_entity
+      dizzNbalance_EarSymptomXI:
+        - entity: given_answer
+          type: from_entity
+      dizzNbalance_Social_a:
+        - entity: given_answer
+          type: from_entity
+      dizzNbalance_Social_ai:
+        - type: from_text
+          not_intent: [cancel, out_of_scope]
+      dizzNbalance_Social_b:
+        - entity: given_answer
+          type: from_entity
+      dizzNbalance_Social_bi:
+        - type: from_text
+          not_intent: [cancel, out_of_scope]
+      dizzNbalance_Social_c:
+        - entity: given_answer
+          type: from_entity
+      dizzNbalance_Habits_caffeine:
+        - entity: given_answer
+          type: from_entity
+      dizzNbalance_Habits_tobacco:
+        - entity: given_answer
+          type: from_entity
+      dizzNbalance_Habits_alcohol:
+        - entity: given_answer
+          type: from_entity
+      dizzNbalance_Medications:
+        - type: from_text
   psqi_form:
     required_slots:
-      psqiQ1:
+      psqi_Q1:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      psqiQ2:
+      psqi_Q2:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      psqiQ3:
+      psqi_Q3:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      psqiQ4:
+      psqi_Q4:
         - type: from_text
           not_intent: [cancel, out_of_scope]
-      psqiQ5a:
+      psqi_Q5a:
         - entity: given_answer
           type: from_entity
-      psqiQ5b:
+      psqi_Q5b:
         - entity: given_answer
           type: from_entity
-      psqiQ5c:
+      psqi_Q5c:
         - entity: given_answer
           type: from_entity
-      psqiQ5d:
+      psqi_Q5d:
         - entity: given_answer
           type: from_entity
-      psqiQ5e:
+      psqi_Q5e:
         - entity: given_answer
           type: from_entity
-      psqiQ5f:
+      psqi_Q5f:
         - entity: given_answer
           type: from_entity
-      psqiQ5g:
+      psqi_Q5g:
         - entity: given_answer
           type: from_entity
-      psqiQ5h:
+      psqi_Q5h:
         - entity: given_answer
           type: from_entity
-      psqiQ5i:
+      psqi_Q5i:
         - entity: given_answer
           type: from_entity
-      psqiQ5j:
+      psqi_Q5j:
         - type: from_text
-      psqiQ5k:
+      psqi_Q5k:
         - entity: given_answer
           type: from_entity
-      psqiQ6:
+      psqi_Q6:
         - entity: given_answer
           type: from_entity
-      psqiQ7:
+      psqi_Q7:
         - entity: given_answer
           type: from_entity
-      psqiQ8:
+      psqi_Q8:
         - entity: given_answer
           type: from_entity
-      psqiQ9:
+      psqi_Q9:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q10:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q10a:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q10b:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q10c:
+        - entity: given_answer
+          type: from_entity
+      psqi_Q10d:
         - entity: given_answer
           type: from_entity
   activlim_form:
