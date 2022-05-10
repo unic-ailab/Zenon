@@ -1,10 +1,10 @@
 from __future__ import annotations
-from asyncio.windows_events import NULL
 import contextlib
 from http.client import ImproperConnectionState
 import itertools
 import json
 import logging
+from sqlite3 import Timestamp
 
 from time import sleep
 from typing import (
@@ -82,9 +82,11 @@ class CustomSQLTrackerStore(TrackerStore):
         id = sa.Column(sa.Integer, _create_sequence(__tablename__), primary_key=True)
         sender_id = sa.Column(sa.String(255), nullable=False, index=True)
         questionnaire_name = sa.Column(sa.String(255), nullable=False)
+        available_at = sa.Column(sa.Float)
         state = sa.Column(sa.String(255), nullable=False)
         timestamp_start = sa.Column(sa.Float)
         timestamp_end = sa.Column(sa.Float)
+        answers = sa.Column(sa.Text)
 
 
     def __init__(
@@ -356,7 +358,7 @@ class CustomSQLTrackerStore(TrackerStore):
         return event_query.order_by(self.SQLEvent.timestamp)
 
     def _questionnaire_query(
-        self, session: "Session", sender_id: Text, questionnaire_name: Text, fetch_questionnaires_from_all_sessions: bool
+        self, session: "Session", sender_id: Text, questionnaire_name: Text
     ) -> "Query":
         """Provide the query to retrieve the conversation events for a specific sender.
 
@@ -379,14 +381,83 @@ class CustomSQLTrackerStore(TrackerStore):
         #     .subquery()
         # )
 
-        #take into account null values
-        #new table with availabilities, check everytime users ask for questionnaire and then change time according to plan
-        # table use case, qname , timestamp thta is available, duration until next timestamp, 
-        # different time per pilot cuz of countries
-        #stroke every friday
+        # different time per pilot or save in specific timezone
 
-        questionnaire_query=session.query(self.SQLQuestState)
-        return questionnaire_query.first()
+        latest_questionnaire_sub_sub_query = (
+            session.query(sa.func.max(self.SQLEvent.timestamp).label("questionnaire_start"))
+            .filter(
+                self.SQLEvent.sender_id == sender_id,
+                self.SQLEvent.intent_name == questionnaire_name+"_start",
+            )
+            .subquery()
+        )
+
+        event_sub_query = (
+            session.query(self.SQLEvent)
+            .filter(
+                # Find events after the latest `questionnaire_started` event
+                    self.SQLEvent.sender_id == sender_id,
+                    self.SQLEvent.timestamp > latest_questionnaire_sub_sub_query.c.questionnaire_start,
+                )
+            )
+            
+                
+
+        question_events = event_sub_query.filter(
+            self.SQLEvent.type_name == "bot"
+        )
+
+        # this needs a lot of testing, it might not work for all cases
+        slot_events_1 = event_sub_query.filter(
+            sa.and_(
+                    self.SQLEvent.type_name == "slot",
+                    self.SQLEvent.action_name != "sentiment",
+                )
+        )
+
+        slot_events_2 = event_sub_query.filter(
+            sa.and_(
+                    self.SQLEvent.type_name == "user",
+                    self.SQLEvent.intent_name == "out_of_scope",
+                )
+        )
+
+        return question_events, slot_events_1.union(slot_events_2).all()
+
+    def _questionnaire_state_query(
+        self, session: "Session", sender_id: Text, questionnaire_name: Text, timestamp: float):
+        """Provide the query to retrieve the conversation events for a specific sender.
+
+        Args:
+            session: Current database session.
+            sender_id: Sender id whose conversation events should be retrieved.
+            fetch_events_from_all_sessions: Whether to fetch events from all
+                conversation sessions. If `False`, only fetch events from the
+                latest conversation session.
+
+        Returns:
+            One database row entry.
+        """
+
+        available_questionnaire_sub_query = session.query(self.SQLQuestState.state).filter(
+            sa.or_(
+                self.SQLQuestState.state == "available",
+                self.SQLQuestState.state == "pending",
+            )).subquery()
+
+        database_entry = (
+            session.query(self.SQLQuestState)
+            .filter(
+                self.SQLQuestState.sender_id == sender_id,
+                self.SQLQuestState.questionnaire_name == questionnaire_name,
+                self.SQLQuestState.state.in_(available_questionnaire_sub_query),
+                self.SQLQuestState.available_at >= timestamp,
+            )
+        ).first()
+        
+
+        return database_entry
+
 
     def save(self, tracker: DialogueStateTracker) -> None:
         """Update database with events from the current conversation."""
@@ -430,31 +501,7 @@ class CustomSQLTrackerStore(TrackerStore):
                         action_name=action,
                         data=json.dumps(data),
                     )
-                )
-
-                # try: 
-                #     intent_q = intent.split("_")
-                #     if intent_q[1] == "start":
-                #         questionnaire_name=intent_q[0]
-                #         last_entry=self._questionnaire_query(session, sender_id, questionnaire_name,True)
-                #         print(last_entry)
-                #         if last_entry.state=="available":
-                #             last_entry.state="started"
-                #             last_entry.timestamp_start=timestamp
-                # except:
-                #      pass
-            
-                        
-                        # session.add(
-                        #     self.SQLQuestState(
-                        #         sender_id=sender_id,
-                        #         questionnaire_name=questionnaire_name,
-                        #         state="started",
-                        #         timestamp_start=timestamp,
-                        #         timestamp_end=NULL,                          
-                        #     )
-                        #)
-                    
+                )                 
 
             session.commit()
 
@@ -475,3 +522,89 @@ class CustomSQLTrackerStore(TrackerStore):
         return itertools.islice(
             tracker.events, number_of_events_since_last_session, len(tracker.events)
         )
+
+    def saveRelevantQuestionsAnswers(self, sender_id, domain_name, tracker: DialogueStateTracker) -> None:
+        """Update database with answers from the relevant questions."""
+
+        if self.event_broker:
+            self.stream_events(tracker)
+
+        with self.session_scope() as session:
+            question_events, slot_events  = self._questionnaire_query(session, sender_id, domain_name)
+            answers_data = {}
+
+            for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
+                if i==0:
+                    init_timestamp = slot_data.get("timestamp")
+                timestamp = slot_data.get("timestamp")
+
+                # example: {q1: {"question": "How difficult is it..?", "answer": "very", "timestamp": }}
+                answers_data[slot_data.get("name")] = {"question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": timestamp}
+
+            
+            session.add(
+                self.SQLQuestState(
+                    sender_id=sender_id,
+                    questionnaire_name=domain_name,
+                    available_at=init_timestamp,
+                    state="finished",
+                    timestamp_start=init_timestamp,
+                    timestamp_end=timestamp,
+                    answers=json.dumps(answers_data),                          
+                    )
+                )
+
+            session.commit()
+
+        logger.debug(f"Relevant questions answers with sender_id '{tracker.sender_id}' stored to database")
+
+
+    def saveQuestionnaireAnswers(self, sender_id, questionnaire_name, isFinished: bool, tracker: DialogueStateTracker) -> None:
+        """Update database with events from the current conversation."""
+
+        class UniqueDict(dict):
+            def __setitem__(self, key, value):
+                if key not in self:
+                    dict.__setitem__(self, key, value)
+                else:
+                    raise print("Key already exists")
+
+        if self.event_broker:
+            self.stream_events(tracker)
+
+        with self.session_scope() as session:
+            question_events, slot_events  = self._questionnaire_query(session, sender_id, questionnaire_name)
+            question_events = [json.loads(event.data) for event in question_events]
+            slot_events = [json.loads(event.data) for event in slot_events]
+
+            answers_data = UniqueDict()
+
+            for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
+                if i==0:
+                    init_timestamp = slot_data.get("timestamp")
+                timestamp = slot_data.get("timestamp")
+
+                # example: {q1: {"question": "How difficult is it..?", "answer": "very", "timestamp": }}
+                answers_data[slot_data.get("name")] = {"question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": timestamp}
+
+
+            database_entry = self._questionnaire_state_query(session, sender_id, questionnaire_name, init_timestamp)
+            try:
+                if database_entry.state=="available":
+                    database_entry.timestamp_start=init_timestamp
+                    database_entry.answers = json.dumps(answers_data)
+                else:
+                    previous_answers = json.loads(database_entry.answers)
+                    database_entry.answers = json.dumps({key: value for (key, value) in (previous_answers.items() + answers_data.items())})
+
+                if isFinished:
+                    database_entry.timestamp_end=timestamp
+                    database_entry.state="finished"
+                else:
+                    database_entry.state="pending"
+            except:
+                print("Error: no such entry in database table 'questionnaires_state'.")
+
+            session.commit()
+
+        logger.debug(f"Questionnaire answers with sender_id '{tracker.sender_id}' stored to database")

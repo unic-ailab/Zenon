@@ -95,14 +95,14 @@ rules:
       - intent: dizzNbalance_start
       - slot_was_set:
           - questionnaire: DizzinessAndBalance
-      - action: dizznbalance_form
-      - active_loop: dizznbalance_form
+      - action: dizzNbalance_form
+      - active_loop: dizzNbalance_form
 
-  - rule: Submit - dizznbalance_form
+  - rule: Submit - dizzNbalance_form
     condition:
-      - active_loop: dizznbalance_form
+      - active_loop: dizzNbalance_form
     steps:
-      - action: dizznbalance_form
+      - action: dizzNbalance_form
       - slot_was_set:
           - requested_slot: null
       - active_loop: null
@@ -110,21 +110,21 @@ rules:
 
   - rule: Interruption in Dizziness Questionnaire - 1
     condition:
-      - active_loop: dizznbalance_form
+      - active_loop: dizzNbalance_form
     steps:
       - intent: bot_challenge
       - action: utter_iamabot
-      - action: dizznbalance_form
-      - active_loop: dizznbalance_form
+      - action: dizzNbalance_form
+      - active_loop: dizzNbalance_form
 
   - rule: Interruption in Dizziness Questionnaire - 2
     condition:
-      - active_loop: dizznbalance_form
+      - active_loop: dizzNbalance_form
     steps:
       - intent: out_of_scope
       - action: utter_handle_out_of_scope
-      - action: dizznbalance_form
-      - active_loop: dizznbalance_form
+      - action: dizzNbalance_form
+      - active_loop: dizzNbalance_form
 
   # Eating Habits - Start
   - rule: Start Eating Habits questionnaire
@@ -199,3 +199,40 @@ rules:
       - action: utter_handle_out_of_scope
       - action: muscletone_form
       - active_loop: muscletone_form
+
+  # Coast - Start
+  - rule: Start Coast questionnaire
+    steps:
+      - intent: coast_start
+      - slot_was_set:
+          - questionnaire: coast
+      - action: coast_form
+      - active_loop: coast_form
+
+  - rule: Submit - coast_form
+    condition:
+      - active_loop: coast_form
+    steps:
+      - action: coast_form
+      - slot_was_set:
+          - requested_slot: null
+      - active_loop: null
+      - action: utter_confirm_questionnaire_finished
+
+  - rule: Interruption in Coast Questionnaire - 1
+    condition:
+      - active_loop: coast_form
+    steps:
+      - intent: bot_challenge
+      - action: utter_iamabot
+      - action: coast_form
+      - active_loop: coast_form
+
+  - rule: Interruption in Coast Questionnaire - 2
+    condition:
+      - active_loop: coast_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_handle_out_of_scope
+      - action: coast_form
+      - active_loop: coast_form

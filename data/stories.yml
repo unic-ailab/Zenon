@@ -69,7 +69,7 @@ stories:
           steps:
                   - intent: greet
                   - action: action_utter_greet
-                  - action: action_utter_ask_dNb_start
+                  - action: action_utter_ask_dizzNbalance_start
                   - intent: deny
                   - action: utter_how_to_help
 
@@ -186,21 +186,21 @@ stories:
                   - action: psqi_form
                   - active_loop: psqi_form
                   - slot_was_set:
-                            - requested_slot: psqiQ1
+                            - requested_slot: psqi_Q1
                   - slot_was_set:
-                            - psqiQ1: 10 p.m
+                            - psqi_Q1: 10 p.m
                   - slot_was_set:
-                            - requested_slot: psqiQ2
+                            - requested_slot: psqi_Q2
                   - slot_was_set:
-                            - psqiQ2: 35
+                            - psqi_Q2: 35
                   - slot_was_set:
-                            - requested_slot: psqiQ3
+                            - requested_slot: psqi_Q3
                   - slot_was_set:
-                            - psqiQ3: 6 a.m
+                            - psqi_Q3: 6 a.m
                   - slot_was_set:
-                            - requested_slot: psqiQ4
+                            - requested_slot: psqi_Q4
                   - slot_was_set:
-                            - psqiQ4: 4
+                            - psqi_Q4: 4
                   - slot_was_set:
                             - requested_slot: null
                   - active_loop: null
@@ -227,24 +227,24 @@ stories:
           steps:
                   - intent: greet
                   - action: action_utter_greet
-                  - action: action_utter_ask_dNb_start
+                  - action: action_utter_ask_dizzNbalance_start
                   - intent: dizzNbalance_start
-                  - action: dizznbalance_form
-                  - active_loop: dizznbalance_form
+                  - action: dizzNbalance_form
+                  - active_loop: dizzNbalance_form
                   - slot_was_set:
-                            - requested_slot: dNbQ1
+                            - requested_slot: dizzNbalance_Q1
                   - slot_was_set:
-                            - dNbQ1: a month ago
+                            - dizzNbalance_Q1: a month ago
                   - slot_was_set:
-                            - requested_slot: dNbQ2
+                            - requested_slot: dizzNbalance_Q2
                   - slot_was_set:
-                            - dNbQ2: true
+                            - dizzNbalance_Q2: true
                   - slot_was_set:
-                            - requested_slot: dNbQ2i
+                            - requested_slot: dizzNbalance_Q2i
                   - slot_was_set:
                             - sentiment: neg
                   - slot_was_set:
-                            - dNbQ2i: I fell down the stairs and hit my head
+                            - dizzNbalance_Q2i: I fell down the stairs and hit my head
                   - slot_was_set:
                             - requested_slot: null
                   - active_loop: null
@@ -254,18 +254,18 @@ stories:
           steps:
                   - intent: greet
                   - action: action_utter_greet
-                  - action: action_utter_ask_dNb_start
+                  - action: action_utter_ask_dizzNbalance_start
                   - intent: dizzNbalance_start
-                  - action: dizznbalance_form
-                  - active_loop: dizznbalance_form
+                  - action: dizzNbalance_form
+                  - active_loop: dizzNbalance_form
                   - slot_was_set:
-                            - requested_slot: dNbQ1
+                            - requested_slot: dizzNbalance_Q1
                   - slot_was_set:
-                            - dNbQ1: a month ago
+                            - dizzNbalance_Q1: a month ago
                   - slot_was_set:
-                            - requested_slot: dNbQ2
+                            - requested_slot: dizzNbalance_Q2
                   - slot_was_set:
-                            - dNbQ2: false
+                            - dizzNbalance_Q2: false
                   - slot_was_set:
                             - requested_slot: null
                   - active_loop: null
@@ -275,10 +275,10 @@ stories:
           steps:
                   - intent: greet
                   - action: action_utter_greet
-                  - action: action_utter_ask_dNb_start
+                  - action: action_utter_ask_dizzNbalance_start
                   - intent: dizzNbalance_start
-                  - action: dizznbalance_form
-                  - active_loop: dizznbalance_form
+                  - action: dizzNbalance_form
+                  - active_loop: dizzNbalance_form
                   - intent: cancel
                   - action: utter_confirm_cancellation
                   - or:
@@ -355,3 +355,27 @@ stories:
                   - active_loop: domainV_form
                   - active_loop: null
                   - action: utter_inform_doctor
+
+        - story: Coast happy path
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - action: action_utter_ask_coast_start
+                  - intent: coast_start
+
+        - story: Coast unhappy path
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - action: action_utter_ask_coast_start
+                  - intent: coast_start
+                  - action: coast_form
+                  - active_loop: coast_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - or:
+                            - intent: affirm
+                            - intent: cancel
+                  - action: action_deactivate_loop
+                  - active_loop: null
+                  - action: utter_process_cancelled
