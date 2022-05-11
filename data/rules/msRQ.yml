@@ -1,0 +1,82 @@
+version: "2.0"
+
+rules:
+  - rule: Start MS Domain I – Mobility, general motor or physical function relevant questions
+    steps:
+      - intent: MSdomainI_start
+      - action: MSdomainI_form
+      - active_loop: MSdomainI_form
+
+  - rule: Submit MS Domain I relevant questions
+    condition:
+      - active_loop: MSdomainI_form
+    steps:
+      - action: MSdomainI_form
+      - slot_was_set:
+          - requested_slot: null
+      - active_loop: null
+      - action: utter_inform_doctor
+
+  - rule: Start MS Domain II – Sleep Disorders relevant questions
+    steps:
+      - intent: MSdomainII_start
+      - action: MSdomainII_form
+      - active_loop: MSdomainII_form
+
+  - rule: Submit MS Domain II relevant questions
+    condition:
+      - active_loop: MSdomainII_form
+    steps:
+      - action: MSdomainII_form
+      - slot_was_set:
+          - requested_slot: null
+      - active_loop: null
+      - action: utter_inform_doctor
+
+  - rule: Start MS Domain III – Mental and Cognitive Ability relevant questions
+    steps:
+      - intent: MSdomainIII_start
+      - action: MSdomainIII_form
+      - active_loop: MSdomainIII_form
+
+  - rule: Submit MS Domain III relevant questions
+    condition:
+      - active_loop: MSdomainIII_form
+    steps:
+      - action: MSdomainIII_form
+      - slot_was_set:
+          - requested_slot: null
+      - active_loop: null
+      - action: utter_inform_doctor
+
+  - rule: Start MS Domain V - Quality of Life and daily living relevant questions
+    steps:
+      - intent: MSdomainV_start
+      - action: MSdomainV_form
+      - active_loop: MSdomainV_form
+
+  - rule: Submit MS Domain V relevant questions
+    condition:
+      - active_loop: MSdomainV_form
+    steps:
+      - action: MSdomainV_form
+      - slot_was_set:
+          - requested_slot: null
+      - active_loop: null
+      - action: utter_inform_doctor
+
+  - rule: Start MS Domain IV - Emotional Status relevant questions
+    steps:
+      - intent: MSdomainIV_start
+      - action: MSdomainIV_form
+      - active_loop: MSdomainIV_form
+
+  - rule: Submit Domain IV relevant questions
+    condition:
+      - active_loop: MSdomainIV_form
+    steps:
+      - action: MSdomainIV_form
+      - slot_was_set:
+          - requested_slot: null
+      - active_loop: null
+      - action: utter_inform_doctor

@@ -1,7 +1,7 @@
 version: "2.0"
 
 rules:
-  - rule: Start Domain III – Mental and Cognitive Ability relevant questions
+  - rule: Start Domain III – Mental and Cognitive Ability relevant questions # Works Fine - It should be called like "start STROKE domainIII relevant questions"
     steps:
       - intent: domainIII_start
       - action: domainIII_form
@@ -17,7 +17,7 @@ rules:
       - active_loop: null
       - action: utter_inform_doctor
 
-  - rule: Start Domain V - Quality of Life and daily living relevant questions
+  - rule: Start Domain V - Quality of Life and daily living relevant questions # Works Fine - It should be called like "start STROKE domainV relevant questions"
     steps:
       - intent: domainV_start
       - action: domainV_form

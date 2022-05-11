@@ -4912,3 +4912,728 @@ class ActionAskStrokeDomainIVRQ1(Action):  # STROKE case Domain IV RQ1
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
         return []
+
+####################################################################################################
+# MS Case Domain I                                                                                 #
+####################################################################################################
+
+class ActionAskMSDomainIRQ1(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainI_RQ1"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the last few days, have you noticed a sudden lack of strength in one or more limbs?",
+                " ", 
+                " ", 
+                "Negli ultimi giorni hai notato un’improvvisa mancanza di forza a uno o più arti?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Sì", "No"] 
+            ],
+            [
+                '/affirm',
+                '/deny'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []     
+
+class ActionAskMSDomainIRQ1a(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainI_RQ1a"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In which situation (e.g. carrying shopping, bags, or folders, picking up children or walking)?",
+                " ", 
+                " ", 
+                "In che situazione (ad es. portando spesa, borse, faldoni, prendendo in braccio bambini o camminando)?"
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text)
+        return []   
+
+class ActionAskMSDomainIRQ1b(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainI_RQ1b"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Did these disorders occur in limbs that did not previously have deficits?",
+                " ", 
+                " ", 
+                "Questi disturbi si sono verificati in arti che prima non presentavano deficit?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Sì", "No"] 
+            ],
+            [
+                '/affirm{"given_answer":"yes"}',
+                '/deny{"given_answer":"no"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []          
+
+class ActionAskMSDomainIRQ1c(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainI_RQ1c"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the last few days, have you noticed a sudden lack of strength in one or more limbs?",
+                " ", 
+                " ", 
+                "Per quanto tempo sono durati?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["A few hours or less", "About a day", "Two to four days", "Most of the week"],
+                [" ", " "],
+                [" ", " "],
+                ["Qualche ora o meno", "Circa un giorno", "Da due a quattro giorni", "Quasi tutti la settimana"] 
+            ],
+            [
+                '/inform{"given_answer":"A few hours or less"}',
+                '/inform{"given_answer":"About a day"}',
+                '/inform{"given_answer":"Two to four days"}',
+                '/inform{"given_answer":"Most of the week"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskMSDomainIRQ2(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainI_RQ2"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Have you felt more rigid or less fluid in your movements in the last few days?",
+                " ", 
+                " ", 
+                "Negli ultimi giorni hai avvertito più rigidità (o meno fluidità) nei movimenti?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Sì", "No"] 
+            ],
+            [
+                '/affirm',
+                '/deny'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []   
+
+class ActionAskMSDomainIRQ2a(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainI_RQ2a"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In which situation (e.g. carrying shopping, bags, or folders, picking up children or walking)?",
+                " ", 
+                " ", 
+                "In che situazione (ad es. portando spesa, borse, faldoni, prendendo in braccio bambini o camminando)?"
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text)
+        return []   
+
+class ActionAskMSDomainIRQ2b(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainI_RQ2b"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Did these disorders occur in limbs that did not previously have deficits?",
+                " ", 
+                " ", 
+                "Questi disturbi si sono verificati in arti che prima non presentavano deficit?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Sì", "No"] 
+            ],
+            [
+                '/affirm{"given_answer":"yes"}',
+                '/deny{"given_answer":"no"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []          
+
+class ActionAskMSDomainIRQ2c(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainI_RQ2c"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the last few days, have you noticed a sudden lack of strength in one or more limbs?",
+                " ", 
+                " ", 
+                "Per quanto tempo sono durati?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["A few hours or less", "About a day", "Two to four days", "Most of the week"],
+                [" ", " "],
+                [" ", " "],
+                ["Qualche ora o meno", "Circa un giorno", "Da due a quattro giorni", "Quasi tutti la settimana"] 
+            ],
+            [
+                '/inform{"given_answer":"A few hours or less"}',
+                '/inform{"given_answer":"About a day"}',
+                '/inform{"given_answer":"Two to four days"}',
+                '/inform{"given_answer":"Most of the week"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []    
+
+class ActionAskMSDomainIRQ3(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainI_RQ3"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the last few days, how have you felt when you move?",
+                " ", 
+                " ", 
+                "Negli ultimi giorni come ti sei sentito/a quando ti muovi?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Sure step", "I have to pay more attention or stop to do other things", "Unstable", "Real risk of falling"],
+                [" ", " "],
+                [" ", " "],
+                ["Passo sicuro", "Devo prestare più - attenzione o fermarmi per fare altre cose", "Instabile", "Rischio concreto di cadere"] 
+            ],
+            [
+                '/inform{"given_answer":"Sure step"}',
+                '/inform{"given_answer":"I have to pay more attention or stop to do other things"}',
+                '/inform{"given_answer":"Unstable"}',
+                '/inform{"given_answer":"Real risk of falling"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []    
+
+class ActionAskMSDomainIRQ4(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainI_RQ4"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How many times have you stumbled over the last few days?",
+                " ", 
+                " ", 
+                "Quante volte ti è capitato di inciampare negli ultimi giorni?"
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text)
+        return []  
+
+class ActionAskMSDomainIRQ5(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainI_RQ5"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How many times have you fallen in the last few days?",
+                " ", 
+                " ", 
+                "Quante volte sei caduto/a negli ultimi giorni?"
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text)
+        return []  
+
+class ActionAskMSDomainIRQ6(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainI_RQ6"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the last few days, have you noticed an alteration in sensitivity (for example, arms or legs asleep, tingling, burning, unusual sensation to the touch, loss of sensitivity)?",
+                " ", 
+                " ", 
+                "Negli ultimi giorni hai notato un’alterazione della sensibilità (ad esempio braccia o gambe addormentate, formicolio, bruciore, sensazione insolita al tatto, perdita di sensibilità)?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Sì", "No"] 
+            ],
+            [
+                '/affirm{"given_answer":"yes"}',
+                '/deny{"given_answer":"no"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []                                                             
+
+class ValidateMSDomainIForm(FormValidationAction):
+    def name(self) -> Text:
+        return "validate_MSdomainI_form"
+
+    async def required_slots(
+        self, slots_mapped_in_domain, dispatcher, tracker, domain,
+    ) -> List[Text]:
+
+        if not tracker.get_slot("MSdomainI_RQ1"):
+            slots_mapped_in_domain.remove("MSdomainI_RQ1a")
+            slots_mapped_in_domain.remove("MSdomainI_RQ1b")
+            slots_mapped_in_domain.remove("MSdomainI_RQ1c")
+
+        if not tracker.get_slot("MSdomainI_RQ2"):
+            slots_mapped_in_domain.remove("MSdomainI_RQ2a")
+            slots_mapped_in_domain.remove("MSdomainI_RQ2b")
+            slots_mapped_in_domain.remove("MSdomainI_RQ2c")            
+
+        return slots_mapped_in_domain
+
+####################################################################################################
+# MS Case Domain III                                                                               #
+####################################################################################################        
+
+class ActionAskMSDomainIIIRQ2(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainIII_RQ2"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "From 1 to 10 how hard are you struggling to stay focused on what you are doing (e.g. losing your train of thought, listening to what others are saying, reading a book or watching a movie)?\nPlease type an integer...",
+                " ", 
+                " ", 
+                "Da 1 a 10 quanto fai fatica a mantenere la concentrazione su quello che stai facendo (ad es. perdere il filo del discorso, ascoltare quello che dicono gli altri, leggendo un libro o guardando un film)?\nPer favore digita un numero intero..."
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text)
+        return [] 
+
+class ActionAskMSDomainIIIRQ2a(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainIII_RQ2a"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In which situation does it happen most frequently?",
+                " ", 
+                " ", 
+                "In quale situazione succede più frequentemente?"
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text)
+        return []    
+
+class ActionAskMSDomainIIIRQ5(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainIII_RQ5"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "From 1 to 10 how difficult is to find the word in your head? How often do you get the terms wrong?\nPlease type an integer...",
+                " ", 
+                " ", 
+                "Da 1 a 10 quanto hai difficoltà a trovare la parola che hai in testa? Quanto ti capita di sbagliare i termini?\nPer favore digita un numero intero..."
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text)
+        return [] 
+
+class ActionAskMSDomainIIIRQ5a(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainIII_RQ5a"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In which situation does it happen most frequently?",
+                " ", 
+                " ", 
+                "In quale situazione succede più frequentemente?"
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text)
+        return []   
+
+class ActionAskMSDomainIIIRQ6(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainIII_RQ6"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How many appointments or commitments have you forgotten in the last two weeks?",
+                " ", 
+                " ", 
+                "Quanti appuntamenti o impegni hai dimenticato nelle ultime due settimane?"
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text)
+        return []  
+
+class ActionAskMSDomainIIIRQ7(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainIII_RQ7"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the last two weeks, did you need to write down commitments more than usual to remember them (for example via extra notes or alarms in addition to the usual agenda)?",
+                " ", 
+                " ", 
+                "Nelle ultime due settimane, hai avuto particolarmente bisogno di annotare più del solito gli impegni per ricordarli (ad esempio tramite note, allarmi o sveglie in aggiunta alle abituale agenda)?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Sì", "No"] 
+            ],
+            [
+                '/affirm{"given_answer":"yes"}',
+                '/deny{"given_answer":"no"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []                     
+
+class ValidateMSDomainIIIForm(FormValidationAction):
+    def name(self) -> Text:
+        return "validate_MSdomainIII_form"
+
+    async def required_slots(
+        self, slots_mapped_in_domain, dispatcher, tracker, domain,
+    ) -> List[Text]:
+
+        if tracker.get_slot("MSdomainIII_RQ2") < 6:
+            slots_mapped_in_domain.remove("MSdomainIII_RQ2a")
+
+        if tracker.get_slot("MSdomainIII_RQ5") < 6:
+            slots_mapped_in_domain.remove("MSdomainIII_RQ5a")            
+
+        return slots_mapped_in_domain  
+
+####################################################################################################
+# MS Case Domain IV                                                                                #
+####################################################################################################   
+
+class ActionAskMSDomainIVRQ1(Action):  # STROKE case Domain IV RQ1
+    def name(self) -> Text:
+        return "action_ask_MSdomainIV_RQ1"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How are you feeling today?",
+                " ", 
+                " ", 
+                "Cum va simtiti astazi?"
+            ]
+        )
+
+        if tracker.get_slot("language") == "English":
+            data = {
+                    "choices": [
+                        "Anger", "Fear", "Sadness", "Joy", "Contempt",
+                        "Cheer", "Shame", "Anxiety", "Disappointment", "Irritation",
+                        "Serenity", "Gratitude", "Grudge", "Resignation", "Hope",
+                        "Nostalgia"
+                    ]
+                }
+
+        elif tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Rabbia", "Paura", "Tristezza", "Gioia",
+                    "Disprezzo", "Allegria", "Vergogna", "Ansia",
+                    "Delusione", "Irritazione", "Serenità", "Gratitudine",
+                    "Rancore", "Rassegnazione", "Speranza", "Nostalgia"
+                ]
+            }
+
+        print("\nBOT:", text + "\n" + str(data))
+        dispatcher.utter_message(text=text, json_message=data)
+        return []   
+
+class ActionAskMSDomainIVRQ2(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainIV_RQ2"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Are you feeling stressed this week?",
+                " ", 
+                " ", 
+                "In questa settimana, ti senti stressato/a?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Sì", "No"] 
+            ],
+            [
+                '/affirm',
+                '/deny'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []   
+
+class ActionAskMSDomainIVRQ2a(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainIV_RQ2a"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In which statement do you recognize yourself most?",
+                " ", 
+                " ", 
+                "In quale affermazione ti riconosci maggiormente?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Level 1: \"daily life\" stress (work, home, family management)", 
+                 "Level 2: stress from overlapping commitments and difficulties in managing things to do with respect to my mental energies",
+                 "Level 3: stress from the onset of worries or aggravation of existing ones (e.g. economic difficulties, conflicts at work or in the family, etc ...)",
+                 "Level 4: stress from strong destabilizing events (e.g. a radical change of life, bereavement, etc ...)"],
+                [" ", " "],
+                [" ", " "],
+                ["Livello 1: stress da «vita quotidiana» (gestione lavoro, casa, famiglia)",
+                 "Livello 2: stress da sovrapposizione di impegni e difficoltà di gestione delle cose da fare rispetto alle mie energie mentali",
+                 "Livello 3: stress da insorgenza di preoccupazioni o aggravamento di quelle esistenti (es difficoltà economiche, conflitti sul lavoro o in famiglia, ecc…)",
+                 "Livello 4: stress da forti eventi destabilizzanti (es. un cambiamento radicale di vita, un lutto, ecc …)"] 
+            ],
+            [
+                '/inform{"given_answer":"Level 1: \"daily life\" stress (work, home, family management)"}',
+                '/inform{"given_answer":"Level 2: stress from overlapping commitments and difficulties in managing things to do with respect to my mental energies"}',
+                '/inform{"given_answer":"Level 3: stress from the onset of worries or aggravation of existing ones (e.g. economic difficulties, conflicts at work or in the family, etc ...)"}',
+                '/inform{"given_answer":"Level 4: stress from strong destabilizing events (e.g. a radical change of life, bereavement, etc ...)"}',
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []   
+
+class ActionAskMSDomainIVRQ3(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainIV_RQ3"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "In the last week, have you experienced symptoms of previous relapses again?",
+                " ", 
+                " ", 
+                "Nell’ultima settimana ti è capitato di avvertire nuovamente sintomi di precedenti ricadute?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                [" ", " "],
+                ["Sì", "No"] 
+            ],
+            [
+                '/affirm{"given_answer":"yes"}',
+                '/deny{"given_answer":"no"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []               
+
+class ValidateMSDomainIVForm(FormValidationAction):
+    def name(self) -> Text:
+        return "validate_MSdomainIV_form"
+
+    async def required_slots(
+        self, slots_mapped_in_domain, dispatcher, tracker, domain,
+    ) -> List[Text]:
+
+        if not tracker.get_slot("MSdomainIII_RQ2"):
+            slots_mapped_in_domain.remove("MSdomainIII_RQ2a")           
+
+        return slots_mapped_in_domain                           
