@@ -12,6 +12,7 @@ requirements_pip.txt
 alameda-chatbot.yml
 demo.db
 test_stories.yml
+sentiment_old.py
 
 # Folders
 __pycache__/
