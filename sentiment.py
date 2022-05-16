@@ -38,18 +38,30 @@ class SentimentAnalyzer(Component):
         """Retrieve the text message, pass it to the classifier
             and append the prediction results to the message class."""
 
-        str = message.data["text"]
-        data = {"text": str}
-        response = requests.post(
-            "http://91.184.203.22:5050/sentiment", json=data
-        )   
-        resp = response.json()  # This returns {"class":"positive","score":75.0}
+        try:
+            str = message.data['text']
 
-        sentiment = resp.get("class")
-        score = resp.get("score")
+            data = {"text": str}
+            response = requests.post(
+                "http://91.184.203.22:5050/sentiment", json=data
+            )   
+            resp = response.json()  # This returns {"class":"positive","score":75.0}
 
-        entity = self.convert_to_rasa(sentiment, score)
-        message.set("entities", [entity], add_to_output=True)
+            sentiment = resp.get("class")
+
+            if sentiment == "positive":
+                sentiment = "pos"
+            elif sentiment == "negative":
+                sentiment = "neg"
+            else:
+                sentiment = "neu"
+            score = resp.get("score")
+
+            entity = self.convert_to_rasa(sentiment, score)
+            message.set("entities", [entity], add_to_output=True)            
+        except KeyError:
+            pass
+
 
     def persist(self, file_name, dir_name):
         """Pass because a pre-trained model is already persisted"""
