@@ -4,15 +4,7 @@ from rasa.nlu.model import Metadata
 
 import requests
 
-# import nltk
-# from nltk.sentiment.vader import SentimentIntensityAnalyzer
-# nltk.download("vader_lexicon")
-
-import spacy
-from spacytextblob.spacytextblob import SpacyTextBlob
-
 import os
-
 
 class SentimentAnalyzer(Component):
     """A pre-trained sentiment component"""
@@ -25,8 +17,6 @@ class SentimentAnalyzer(Component):
 
     def __init__(self, component_config=None):
         super(SentimentAnalyzer, self).__init__(component_config)
-        self.nlp = spacy.load("en_core_web_sm")
-        self.nlp.add_pipe("spacytextblob")
 
     def train(self, training_data, cfg, **kwargs):
         """Not needed, because the the model is pretrained"""
@@ -48,19 +38,30 @@ class SentimentAnalyzer(Component):
         """Retrieve the text message, pass it to the classifier
             and append the prediction results to the message class."""
 
-        nlp = self.nlp
-        doc = nlp(str(message.get("text")))
+        try:
+            str = message.data['text']
 
-        if doc._.polarity < 0:
-            sentiment = "neg"
-        elif doc._.polarity > 0:
-            sentiment = "pos"
-        else:
-            sentiment = "neu"
+            data = {"text": str}
+            response = requests.post(
+                "http://91.184.203.22:5050/sentiment", json=data
+            )   
+            resp = response.json()  # This returns {"class":"positive","score":75.0}
 
-        entity = self.convert_to_rasa(sentiment, doc._.polarity)
+            sentiment = resp.get("class")
 
-        message.set("entities", [entity], add_to_output=True)
+            if sentiment == "positive":
+                sentiment = "pos"
+            elif sentiment == "negative":
+                sentiment = "neg"
+            else:
+                sentiment = "neu"
+            score = resp.get("score")
+
+            entity = self.convert_to_rasa(sentiment, score)
+            message.set("entities", [entity], add_to_output=True)            
+        except KeyError:
+            pass
+
 
     def persist(self, file_name, dir_name):
         """Pass because a pre-trained model is already persisted"""
