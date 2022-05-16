@@ -4844,8 +4844,8 @@ class ActionHandleUserDenyInformDoctors(Action):
             [
                 "Are you sure? How you feel is also an important part of your physical progress.",
                 "Είσαι σίγουρος? Το πως αισθάνεσαι είναι σημαντικό μέρος της προόδου σου.",
-                "Esti sigur? Modul în care te simți este, de asemenea, o parte importantă a progresului tău fizic.",
                 "Sei sicuro? Anche il modo in cui ti senti è una parte importante del tuo progresso fisico.",
+                "Esti sigur? Modul în care te simți este, de asemenea, o parte importantă a progresului tău fizic."
             ]
         )
 
@@ -4929,8 +4929,8 @@ class ActionAskMSDomainIRQ1(Action):
             [
                 "In the last few days, have you noticed a sudden lack of strength in one or more limbs?",
                 " ", 
-                " ", 
-                "Negli ultimi giorni hai notato un’improvvisa mancanza di forza a uno o più arti?"
+                "Negli ultimi giorni hai notato un’improvvisa mancanza di forza a uno o più arti?",                
+                " "
             ]
         )
 
@@ -4939,8 +4939,8 @@ class ActionAskMSDomainIRQ1(Action):
             [
                 ["Yes", "No"],
                 [" ", " "],
-                [" ", " "],
-                ["Sì", "No"] 
+                ["Sì", "No"],                 
+                [" ", " "]
             ],
             [
                 '/affirm',
@@ -4963,9 +4963,9 @@ class ActionAskMSDomainIRQ1a(Action):
             tracker,
             [
                 "In which situation (e.g. carrying shopping, bags, or folders, picking up children or walking)?",
-                " ", 
-                " ", 
-                "In che situazione (ad es. portando spesa, borse, faldoni, prendendo in braccio bambini o camminando)?"
+                " ",
+                "In che situazione (ad es. portando spesa, borse, faldoni, prendendo in braccio bambini o camminando)?",                 
+                " "
             ]
         )
 
@@ -4985,8 +4985,8 @@ class ActionAskMSDomainIRQ1b(Action):
             [
                 "Did these disorders occur in limbs that did not previously have deficits?",
                 " ", 
+                "Questi disturbi si sono verificati in arti che prima non presentavano deficit?",                
                 " ", 
-                "Questi disturbi si sono verificati in arti che prima non presentavano deficit?"
             ]
         )
 
@@ -4995,8 +4995,8 @@ class ActionAskMSDomainIRQ1b(Action):
             [
                 ["Yes", "No"],
                 [" ", " "],
-                [" ", " "],
-                ["Sì", "No"] 
+                ["Sì", "No"],                 
+                [" ", " "]
             ],
             [
                 '/affirm{"given_answer":"yes"}',
@@ -5019,9 +5019,9 @@ class ActionAskMSDomainIRQ1c(Action):
             tracker,
             [
                 "In the last few days, have you noticed a sudden lack of strength in one or more limbs?",
-                " ", 
-                " ", 
-                "Per quanto tempo sono durati?"
+                " ",
+                "Per quanto tempo sono durati?",                 
+                " "
             ]
         )
 
@@ -5030,8 +5030,8 @@ class ActionAskMSDomainIRQ1c(Action):
             [
                 ["A few hours or less", "About a day", "Two to four days", "Most of the week"],
                 [" ", " "],
-                [" ", " "],
-                ["Qualche ora o meno", "Circa un giorno", "Da due a quattro giorni", "Quasi tutti la settimana"] 
+                ["Qualche ora o meno", "Circa un giorno", "Da due a quattro giorni", "Quasi tutti la settimana"],                
+                [" ", " "] 
             ],
             [
                 '/inform{"given_answer":"A few hours or less"}',
@@ -5057,8 +5057,8 @@ class ActionAskMSDomainIRQ2(Action):
             [
                 "Have you felt more rigid or less fluid in your movements in the last few days?",
                 " ", 
-                " ", 
-                "Negli ultimi giorni hai avvertito più rigidità (o meno fluidità) nei movimenti?"
+                "Negli ultimi giorni hai avvertito più rigidità (o meno fluidità) nei movimenti?",
+                " "                
             ]
         )
 
@@ -5067,8 +5067,8 @@ class ActionAskMSDomainIRQ2(Action):
             [
                 ["Yes", "No"],
                 [" ", " "],
-                [" ", " "],
-                ["Sì", "No"] 
+                ["Sì", "No"]                
+                [" ", " "] 
             ],
             [
                 '/affirm',
@@ -5091,9 +5091,9 @@ class ActionAskMSDomainIRQ2a(Action):
             tracker,
             [
                 "In which situation (e.g. carrying shopping, bags, or folders, picking up children or walking)?",
-                " ", 
-                " ", 
-                "In che situazione (ad es. portando spesa, borse, faldoni, prendendo in braccio bambini o camminando)?"
+                " ",
+                "In che situazione (ad es. portando spesa, borse, faldoni, prendendo in braccio bambini o camminando)?",                 
+                " "
             ]
         )
 
@@ -5112,9 +5112,9 @@ class ActionAskMSDomainIRQ2b(Action):
             tracker,
             [
                 "Did these disorders occur in limbs that did not previously have deficits?",
-                " ", 
-                " ", 
-                "Questi disturbi si sono verificati in arti che prima non presentavano deficit?"
+                " ",
+                "Questi disturbi si sono verificati in arti che prima non presentavano deficit?",                 
+                " "
             ]
         )
 
@@ -5123,8 +5123,8 @@ class ActionAskMSDomainIRQ2b(Action):
             [
                 ["Yes", "No"],
                 [" ", " "],
-                [" ", " "],
-                ["Sì", "No"] 
+                ["Sì", "No"],                
+                [" ", " "] 
             ],
             [
                 '/affirm{"given_answer":"yes"}',
@@ -5147,9 +5147,9 @@ class ActionAskMSDomainIRQ2c(Action):
             tracker,
             [
                 "In the last few days, have you noticed a sudden lack of strength in one or more limbs?",
-                " ", 
-                " ", 
-                "Per quanto tempo sono durati?"
+                " ",
+                "Per quanto tempo sono durati?",                 
+                " "
             ]
         )
 
@@ -5158,8 +5158,8 @@ class ActionAskMSDomainIRQ2c(Action):
             [
                 ["A few hours or less", "About a day", "Two to four days", "Most of the week"],
                 [" ", " "],
-                [" ", " "],
-                ["Qualche ora o meno", "Circa un giorno", "Da due a quattro giorni", "Quasi tutti la settimana"] 
+                ["Qualche ora o meno", "Circa un giorno", "Da due a quattro giorni", "Quasi tutti la settimana"],                
+                [" ", " "] 
             ],
             [
                 '/inform{"given_answer":"A few hours or less"}',
@@ -5184,9 +5184,9 @@ class ActionAskMSDomainIRQ3(Action):
             tracker,
             [
                 "In the last few days, how have you felt when you move?",
-                " ", 
-                " ", 
-                "Negli ultimi giorni come ti sei sentito/a quando ti muovi?"
+                " ",
+                "Negli ultimi giorni come ti sei sentito/a quando ti muovi?",                 
+                " "
             ]
         )
 
@@ -5195,8 +5195,8 @@ class ActionAskMSDomainIRQ3(Action):
             [
                 ["Sure step", "I have to pay more attention or stop to do other things", "Unstable", "Real risk of falling"],
                 [" ", " "],
-                [" ", " "],
-                ["Passo sicuro", "Devo prestare più - attenzione o fermarmi per fare altre cose", "Instabile", "Rischio concreto di cadere"] 
+                ["Passo sicuro", "Devo prestare più - attenzione o fermarmi per fare altre cose", "Instabile", "Rischio concreto di cadere"],                
+                [" ", " "] 
             ],
             [
                 '/inform{"given_answer":"Sure step"}',
@@ -5221,9 +5221,9 @@ class ActionAskMSDomainIRQ4(Action):
             tracker,
             [
                 "How many times have you stumbled over the last few days?",
-                " ", 
-                " ", 
-                "Quante volte ti è capitato di inciampare negli ultimi giorni?"
+                " ",
+                "Quante volte ti è capitato di inciampare negli ultimi giorni?",                 
+                " "
             ]
         )
 
@@ -5242,9 +5242,9 @@ class ActionAskMSDomainIRQ5(Action):
             tracker,
             [
                 "How many times have you fallen in the last few days?",
-                " ", 
-                " ", 
-                "Quante volte sei caduto/a negli ultimi giorni?"
+                " ",
+                "Quante volte sei caduto/a negli ultimi giorni?",                 
+                " "
             ]
         )
 
@@ -5263,9 +5263,9 @@ class ActionAskMSDomainIRQ6(Action):
             tracker,
             [
                 "In the last few days, have you noticed an alteration in sensitivity (for example, arms or legs asleep, tingling, burning, unusual sensation to the touch, loss of sensitivity)?",
-                " ", 
-                " ", 
-                "Negli ultimi giorni hai notato un’alterazione della sensibilità (ad esempio braccia o gambe addormentate, formicolio, bruciore, sensazione insolita al tatto, perdita di sensibilità)?"
+                " ",
+                "Negli ultimi giorni hai notato un’alterazione della sensibilità (ad esempio braccia o gambe addormentate, formicolio, bruciore, sensazione insolita al tatto, perdita di sensibilità)?",                 
+                " "
             ]
         )
 
@@ -5274,8 +5274,8 @@ class ActionAskMSDomainIRQ6(Action):
             [
                 ["Yes", "No"],
                 [" ", " "],
-                [" ", " "],
-                ["Sì", "No"] 
+                ["Sì", "No"]                
+                [" ", " "] 
             ],
             [
                 '/affirm{"given_answer":"yes"}',
@@ -5322,9 +5322,9 @@ class ActionAskMSDomainIIIRQ2(Action):
             tracker,
             [
                 "From 1 to 10 how hard are you struggling to stay focused on what you are doing (e.g. losing your train of thought, listening to what others are saying, reading a book or watching a movie)?\nPlease type an integer...",
-                " ", 
-                " ", 
-                "Da 1 a 10 quanto fai fatica a mantenere la concentrazione su quello che stai facendo (ad es. perdere il filo del discorso, ascoltare quello che dicono gli altri, leggendo un libro o guardando un film)?\nPer favore digita un numero intero..."
+                " ",
+                "Da 1 a 10 quanto fai fatica a mantenere la concentrazione su quello che stai facendo (ad es. perdere il filo del discorso, ascoltare quello che dicono gli altri, leggendo un libro o guardando un film)?\nPer favore digita un numero intero...",                 
+                " "
             ]
         )
 
@@ -5343,9 +5343,9 @@ class ActionAskMSDomainIIIRQ2a(Action):
             tracker,
             [
                 "In which situation does it happen most frequently?",
-                " ", 
-                " ", 
-                "In quale situazione succede più frequentemente?"
+                " ",
+                "In quale situazione succede più frequentemente?",                 
+                " "
             ]
         )
 
@@ -5364,9 +5364,9 @@ class ActionAskMSDomainIIIRQ5(Action):
             tracker,
             [
                 "From 1 to 10 how difficult is to find the word in your head? How often do you get the terms wrong?\nPlease type an integer...",
-                " ", 
-                " ", 
-                "Da 1 a 10 quanto hai difficoltà a trovare la parola che hai in testa? Quanto ti capita di sbagliare i termini?\nPer favore digita un numero intero..."
+                " ",
+                "Da 1 a 10 quanto hai difficoltà a trovare la parola che hai in testa? Quanto ti capita di sbagliare i termini?\nPer favore digita un numero intero...",                 
+                " "
             ]
         )
 
@@ -5385,9 +5385,9 @@ class ActionAskMSDomainIIIRQ5a(Action):
             tracker,
             [
                 "In which situation does it happen most frequently?",
-                " ", 
-                " ", 
-                "In quale situazione succede più frequentemente?"
+                " ",
+                "In quale situazione succede più frequentemente?",                 
+                " "
             ]
         )
 
@@ -5406,9 +5406,9 @@ class ActionAskMSDomainIIIRQ6(Action):
             tracker,
             [
                 "How many appointments or commitments have you forgotten in the last two weeks?",
-                " ", 
-                " ", 
-                "Quanti appuntamenti o impegni hai dimenticato nelle ultime due settimane?"
+                " ",
+                "Quanti appuntamenti o impegni hai dimenticato nelle ultime due settimane?",                 
+                " "
             ]
         )
 
@@ -5427,9 +5427,9 @@ class ActionAskMSDomainIIIRQ7(Action):
             tracker,
             [
                 "In the last two weeks, did you need to write down commitments more than usual to remember them (for example via extra notes or alarms in addition to the usual agenda)?",
-                " ", 
-                " ", 
-                "Nelle ultime due settimane, hai avuto particolarmente bisogno di annotare più del solito gli impegni per ricordarli (ad esempio tramite note, allarmi o sveglie in aggiunta alle abituale agenda)?"
+                " ",
+                "Nelle ultime due settimane, hai avuto particolarmente bisogno di annotare più del solito gli impegni per ricordarli (ad esempio tramite note, allarmi o sveglie in aggiunta alle abituale agenda)?",                 
+                " "
             ]
         )
 
@@ -5438,8 +5438,8 @@ class ActionAskMSDomainIIIRQ7(Action):
             [
                 ["Yes", "No"],
                 [" ", " "],
-                [" ", " "],
-                ["Sì", "No"] 
+                ["Sì", "No"],                
+                [" ", " "] 
             ],
             [
                 '/affirm{"given_answer":"yes"}',
@@ -5482,9 +5482,9 @@ class ActionAskMSDomainIVRQ1(Action):  # STROKE case Domain IV RQ1
             tracker,
             [
                 "How are you feeling today?",
-                " ", 
-                " ", 
-                "Cum va simtiti astazi?"
+                " ",
+                "Cum va simtiti astazi?",                 
+                " "
             ]
         )
 
@@ -5498,7 +5498,7 @@ class ActionAskMSDomainIVRQ1(Action):  # STROKE case Domain IV RQ1
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
+        elif tracker.get_slot("language") == "Italian":
             data = {
                 "choices": [
                     "Rabbia", "Paura", "Tristezza", "Gioia",
@@ -5523,9 +5523,9 @@ class ActionAskMSDomainIVRQ2(Action):
             tracker,
             [
                 "Are you feeling stressed this week?",
-                " ", 
-                " ", 
-                "In questa settimana, ti senti stressato/a?"
+                " ",
+                "In questa settimana, ti senti stressato/a?",                 
+                " "
             ]
         )
 
@@ -5534,8 +5534,8 @@ class ActionAskMSDomainIVRQ2(Action):
             [
                 ["Yes", "No"],
                 [" ", " "],
-                [" ", " "],
-                ["Sì", "No"] 
+                ["Sì", "No"]                
+                [" ", " "] 
             ],
             [
                 '/affirm',
@@ -5558,9 +5558,9 @@ class ActionAskMSDomainIVRQ2a(Action):
             tracker,
             [
                 "In which statement do you recognize yourself most?",
-                " ", 
-                " ", 
-                "In quale affermazione ti riconosci maggiormente?"
+                " ",
+                "In quale affermazione ti riconosci maggiormente?",                 
+                " "
             ]
         )
 
@@ -5572,11 +5572,11 @@ class ActionAskMSDomainIVRQ2a(Action):
                  "Level 3: stress from the onset of worries or aggravation of existing ones (e.g. economic difficulties, conflicts at work or in the family, etc ...)",
                  "Level 4: stress from strong destabilizing events (e.g. a radical change of life, bereavement, etc ...)"],
                 [" ", " "],
-                [" ", " "],
                 ["Livello 1: stress da «vita quotidiana» (gestione lavoro, casa, famiglia)",
                  "Livello 2: stress da sovrapposizione di impegni e difficoltà di gestione delle cose da fare rispetto alle mie energie mentali",
                  "Livello 3: stress da insorgenza di preoccupazioni o aggravamento di quelle esistenti (es difficoltà economiche, conflitti sul lavoro o in famiglia, ecc…)",
-                 "Livello 4: stress da forti eventi destabilizzanti (es. un cambiamento radicale di vita, un lutto, ecc …)"] 
+                 "Livello 4: stress da forti eventi destabilizzanti (es. un cambiamento radicale di vita, un lutto, ecc …)"],                
+                [" ", " "] 
             ],
             [
                 '/inform{"given_answer":"Level 1: \"daily life\" stress (work, home, family management)"}',
@@ -5601,9 +5601,9 @@ class ActionAskMSDomainIVRQ3(Action):
             tracker,
             [
                 "In the last week, have you experienced symptoms of previous relapses again?",
-                " ", 
-                " ", 
-                "Nell’ultima settimana ti è capitato di avvertire nuovamente sintomi di precedenti ricadute?"
+                " ",
+                "Nell’ultima settimana ti è capitato di avvertire nuovamente sintomi di precedenti ricadute?",                 
+                " "
             ]
         )
 
@@ -5612,8 +5612,8 @@ class ActionAskMSDomainIVRQ3(Action):
             [
                 ["Yes", "No"],
                 [" ", " "],
-                [" ", " "],
-                ["Sì", "No"] 
+                ["Sì", "No"],                
+                [" ", " "] 
             ],
             [
                 '/affirm{"given_answer":"yes"}',
