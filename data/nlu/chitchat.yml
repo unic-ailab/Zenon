@@ -38,7 +38,6 @@ nlu:
       - hai să mergem
       - ce faci?
       - bună
-      - o zi bună
       - howdy
       - hey
   - intent: goodbye
