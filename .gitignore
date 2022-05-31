@@ -13,12 +13,14 @@ alameda-chatbot.yml
 demo.db
 test_stories.yml
 sentiment_old.py
+sentimentClasses.py
 
 # Folders
 __pycache__/
 .idea/
 ZenonEnv/
-train_test_split
+train_test_split/
+results/
 
 # Files in folders
 actions/__pycache__

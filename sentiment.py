@@ -34,6 +34,17 @@ class SentimentAnalyzer(Component):
 
         return entity
 
+    def convert_to_rasa_classes(self, value):
+        """Convert model output into the Rasa NLU compatible output format."""
+
+        entity = {
+            "value": value,
+            "entity": "sentiment_classes",
+            "extractor": "sentiment_extractor",
+        }
+
+        return entity        
+
     def process(self, message, **kwargs):
         """Retrieve the text message, pass it to the classifier
             and append the prediction results to the message class."""
@@ -43,22 +54,29 @@ class SentimentAnalyzer(Component):
 
             data = {"text": str}
             response = requests.post(
-                "http://91.184.203.22:5050/sentiment", json=data
+                "http://91.184.203.22:5050/classes", json=data
             )   
-            resp = response.json()  # This returns {"class":"positive","score":75.0}
+            resp = response.json()  # This returns {"sentiment_classes":[{"sentiment_class":"positive","sentiment_score":<score>}, {"sentiment_class":"neutral","sentiment_score":<score>}, {"sentiment_class":"negative","sentiment_score":<score>}]}
 
-            sentiment = resp.get("class")
+            sentiment_classes = resp.get("sentiment_classes")
+            
+            max_score = sentiment_classes[0].get("sentiment_score")
+            max_sentiment = sentiment_classes[0].get("sentiment_class")
+            for sentiment in sentiment_classes:
+                if sentiment.get("sentiment_score") > max_score:
+                    max_score = sentiment.get("sentiment_score")
+                    max_sentiment = sentiment.get("sentiment_class")
 
-            if sentiment == "positive":
-                sentiment = "pos"
-            elif sentiment == "negative":
-                sentiment = "neg"
+            if max_sentiment == "positive":
+                max_sentiment = "pos"
+            elif max_sentiment == "negative":
+                max_sentiment = "neg"
             else:
-                sentiment = "neu"
-            score = resp.get("score")
+                max_sentiment = "neu"
 
-            entity = self.convert_to_rasa(sentiment, score)
-            message.set("entities", [entity], add_to_output=True)            
+            sentiment_entity = self.convert_to_rasa(max_sentiment, max_score)
+            sentiment_classes_entity = self.convert_to_rasa_classes(sentiment_classes)
+            message.set("entities", [sentiment_entity, sentiment_classes_entity], add_to_output=True)  
         except KeyError:
             pass
 

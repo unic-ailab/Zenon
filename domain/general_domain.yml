@@ -36,6 +36,7 @@ entities:
   - questionnaire
   - sentiment
   - time
+  - sentiment_classes
 slots:
   questionnaire:
     type: categorical
@@ -63,6 +64,9 @@ slots:
       - greek
       - italian
       - romanian
+  sentiment_classes:
+    type: any
+    influence_conversation: false
   requested_slot:
     type: unfeaturized
     influence_conversation: false
