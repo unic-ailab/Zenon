@@ -18,6 +18,7 @@ sentiment_old.py
 __pycache__/
 .idea/
 ZenonEnv/
+train_test_split
 
 # Files in folders
 actions/__pycache__
