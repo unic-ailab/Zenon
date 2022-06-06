@@ -41,7 +41,7 @@ nlu:
       - go on for dizziness and balance
       - initialize Dizziness questionnaire
       - initialize Balance questionnaire
-  - intent: diet_start
+  - intent: eatinghabits_start
     examples: |
       - start eating habits questionnaire
       - go on for diet questionnaire

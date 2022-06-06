@@ -129,17 +129,17 @@ rules:
   # Eating Habits - Start
   - rule: Start Eating Habits questionnaire
     steps:
-      - intent: diet_start
+      - intent: eatinghabits_start
       - slot_was_set:
           - questionnaire: EatingHabits
-      - action: diet_form
-      - active_loop: diet_form
+      - action: eatinghabits_form
+      - active_loop: eatinghabits_form
 
-  - rule: Submit - diet_form
+  - rule: Submit - eatinghabits_form
     condition:
-      - active_loop: diet_form
+      - active_loop: eatinghabits_form
     steps:
-      - action: diet_form
+      - action: eatinghabits_form
       - slot_was_set:
           - requested_slot: null
       - active_loop: null
@@ -147,21 +147,21 @@ rules:
 
   - rule: Interruption in Diet Questionnaire - 1
     condition:
-      - active_loop: diet_form
+      - active_loop: eatinghabits_form
     steps:
       - intent: bot_challenge
       - action: utter_iamabot
-      - action: diet_form
-      - active_loop: diet_form
+      - action: eatinghabits_form
+      - active_loop: eatinghabits_form
 
   - rule: Interruption in Diet Questionnaire - 2
     condition:
-      - active_loop: diet_form
+      - active_loop: eatinghabits_form
     steps:
       - intent: out_of_scope
       - action: utter_handle_out_of_scope
-      - action: diet_form
-      - active_loop: diet_form
+      - action: eatinghabits_form
+      - active_loop: eatinghabits_form
 
   # Muscle Tone - Start
   - rule: Start Muscle tone questionnaire

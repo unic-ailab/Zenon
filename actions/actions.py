@@ -383,7 +383,7 @@ class ActionUtterGreet(Action):
             )
             print("\nBOT:", text)
             dispatcher.utter_message(text=text)
-            return [FollowupAction("action_utter_ask_diet_start")]
+            return [FollowupAction("action_utter_ask_eatinghabits_start")]
 
         elif tracker.get_slot("questionnaire") == "MuscleTone":
             text = get_text_from_lang(
@@ -397,7 +397,7 @@ class ActionUtterGreet(Action):
             )
             print("\nBOT:", text)
             dispatcher.utter_message(text=text)
-            return [FollowupAction("action_utter_ask_muscle_start")]
+            return [FollowupAction("action_utter_ask_muscletone_start")]
 
         else:
             text = get_text_from_lang(
@@ -3285,9 +3285,9 @@ class ValidateDnBForm(FormValidationAction):
 # Eating Habits Questionnaire                                                                      #
 ####################################################################################################
 
-class ActionUtterDietStart(Action):
+class ActionUttereatinghabitsStart(Action):
     def name(self):
-        return "action_utter_ask_diet_start"
+        return "action_utter_ask_eatinghabits_start"
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
@@ -3310,16 +3310,16 @@ class ActionUtterDietStart(Action):
                 [" ", " "],
                 ["Porniți chestionarul obiceiuri alimentare", "Nu"]
             ],
-            ['/diet_start', '/deny']
+            ['/eatinghabits_start', '/deny']
         )
 
         print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDietQ1(Action):
+class ActionAskeatinghabitsQ1(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ1"
+        return "action_ask_eatinghabits_Q1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3338,9 +3338,9 @@ class ActionAskDietQ1(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ2(Action):
+class ActionAskeatinghabitsQ2(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ2"
+        return "action_ask_eatinghabits_Q2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3359,9 +3359,9 @@ class ActionAskDietQ2(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ3(Action):
+class ActionAskeatinghabitsQ3(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ3"
+        return "action_ask_eatinghabits_Q3"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3380,9 +3380,9 @@ class ActionAskDietQ3(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ4(Action):
+class ActionAskeatinghabitsQ4(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ4"
+        return "action_ask_eatinghabits_Q4"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3401,9 +3401,9 @@ class ActionAskDietQ4(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ5(Action):
+class ActionAskeatinghabitsQ5(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ5"
+        return "action_ask_eatinghabits_Q5"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3422,9 +3422,9 @@ class ActionAskDietQ5(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ6(Action):
+class ActionAskeatinghabitsQ6(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ6"
+        return "action_ask_eatinghabits_Q6"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3443,9 +3443,9 @@ class ActionAskDietQ6(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ7(Action):
+class ActionAskeatinghabitsQ7(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ7"
+        return "action_ask_eatinghabits_Q7"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3464,9 +3464,9 @@ class ActionAskDietQ7(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ8(Action):
+class ActionAskeatinghabitsQ8(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ8"
+        return "action_ask_eatinghabits_Q8"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3485,9 +3485,9 @@ class ActionAskDietQ8(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ9(Action):
+class ActionAskeatinghabitsQ9(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ9"
+        return "action_ask_eatinghabits_Q9"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3506,9 +3506,9 @@ class ActionAskDietQ9(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ10(Action):
+class ActionAskeatinghabitsQ10(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ10"
+        return "action_ask_eatinghabits_Q10"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3527,9 +3527,9 @@ class ActionAskDietQ10(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ11(Action):
+class ActionAskeatinghabitsQ11(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ11"
+        return "action_ask_eatinghabits_Q11"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3548,9 +3548,9 @@ class ActionAskDietQ11(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ12(Action):
+class ActionAskeatinghabitsQ12(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ12"
+        return "action_ask_eatinghabits_Q12"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3569,9 +3569,9 @@ class ActionAskDietQ12(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ13(Action):
+class ActionAskeatinghabitsQ13(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ13"
+        return "action_ask_eatinghabits_Q13"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3590,9 +3590,9 @@ class ActionAskDietQ13(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ14(Action):
+class ActionAskeatinghabitsQ14(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ14"
+        return "action_ask_eatinghabits_Q14"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3600,10 +3600,10 @@ class ActionAskDietQ14(Action):
         text = get_text_from_lang(
             tracker,
             [
-                "How frequently did you consume dietary products (low-fat foods0 or dietary cheese)?",
+                "How frequently did you consume eatinghabitsary products (low-fat foods0 or eatinghabitsary cheese)?",
                 " ",
                 " ",
-                "Cat de frecvent consumati produse dietetice (alimente cu continut redus de grasimi sau branza dietetica)?"
+                "Cat de frecvent consumati produse eatinghabitsetice (alimente cu continut redus de grasimi sau branza eatinghabitsetica)?"
             ]
         )
 
@@ -3611,9 +3611,9 @@ class ActionAskDietQ14(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ15(Action):
+class ActionAskeatinghabitsQ15(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ15"
+        return "action_ask_eatinghabits_Q15"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3632,9 +3632,9 @@ class ActionAskDietQ15(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ16(Action):
+class ActionAskeatinghabitsQ16(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ16"
+        return "action_ask_eatinghabits_Q16"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3653,9 +3653,9 @@ class ActionAskDietQ16(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ17(Action):
+class ActionAskeatinghabitsQ17(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ17"
+        return "action_ask_eatinghabits_Q17"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3674,9 +3674,9 @@ class ActionAskDietQ17(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ18(Action):
+class ActionAskeatinghabitsQ18(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ18"
+        return "action_ask_eatinghabits_Q18"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3695,9 +3695,9 @@ class ActionAskDietQ18(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ19(Action):
+class ActionAskeatinghabitsQ19(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ19"
+        return "action_ask_eatinghabits_Q19"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3716,9 +3716,9 @@ class ActionAskDietQ19(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDietQ20(Action):
+class ActionAskeatinghabitsQ20(Action):
     def name(self) -> Text:
-        return "action_ask_dietQ20"
+        return "action_ask_eatinghabits_Q20"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3743,7 +3743,7 @@ class ActionAskDietQ20(Action):
 
 class ActionUtterMuscleToneStart(Action):
     def name(self):
-        return "action_utter_ask_muscle_start"
+        return "action_utter_ask_muscletone_start"
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
@@ -3773,9 +3773,9 @@ class ActionUtterMuscleToneStart(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskMTQ1(Action):
+class ActionAskMuscleToneQ1(Action):
     def name(self) -> Text:
-        return "action_ask_mtQ1"
+        return "action_ask_muscletoneQ1"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3804,9 +3804,9 @@ class ActionAskMTQ1(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskMTQ2(Action):
+class ActionAskMuscleToneQ2(Action):
     def name(self) -> Text:
-        return "action_ask_mtQ2"
+        return "action_ask_muscletoneQ2"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3834,9 +3834,9 @@ class ActionAskMTQ2(Action):
         print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
-class ActionAskMTQ3(Action):
+class ActionAskMuscleToneQ3(Action):
     def name(self) -> Text:
-        return "action_ask_mtQ3"
+        return "action_ask_muscletone_Q3"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3865,9 +3865,9 @@ class ActionAskMTQ3(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskMTQ4(Action):
+class ActionAskMuscleToneQ4(Action):
     def name(self) -> Text:
-        return "action_ask_mtQ4"
+        return "action_ask_muscletoneQ4"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3896,9 +3896,9 @@ class ActionAskMTQ4(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskMTQ5(Action):
+class ActionAskMuscleToneQ5(Action):
     def name(self) -> Text:
-        return "action_ask_mtQ5"
+        return "action_ask_muscletoneQ5"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3927,9 +3927,9 @@ class ActionAskMTQ5(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskMTQ6(Action):
+class ActionAskMuscleToneQ6(Action):
     def name(self) -> Text:
-        return "action_ask_mtQ6"
+        return "action_ask_muscletoneQ6"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3967,9 +3967,9 @@ class ActionAskMTQ6(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskMTQ7(Action):
+class ActionAskMuscleToneQ7(Action):
     def name(self) -> Text:
-        return "action_ask_mtQ7"
+        return "action_ask_muscletoneQ7"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3998,9 +3998,9 @@ class ActionAskMTQ7(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskMTQ8(Action):
+class ActionAskMuscleToneQ8(Action):
     def name(self) -> Text:
-        return "action_ask_mtQ8"
+        return "action_ask_muscletoneQ8"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -4029,9 +4029,9 @@ class ActionAskMTQ8(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskMTQ9(Action):
+class ActionAskMuscleToneQ9(Action):
     def name(self) -> Text:
-        return "action_ask_mtQ9"
+        return "action_ask_muscletoneQ9"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -4060,9 +4060,9 @@ class ActionAskMTQ9(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskMTQ10(Action):
+class ActionAskMuscleToneQ10(Action):
     def name(self) -> Text:
-        return "action_ask_mtQ10"
+        return "action_ask_muscletoneQ10"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)

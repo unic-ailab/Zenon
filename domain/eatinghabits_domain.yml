@@ -1,185 +1,185 @@
 version: "2.0"
 slots:
-  dietQ1:
+  eatinghabits_Q1:
     type: any
     influence_conversation: false
-  dietQ2:
+  eatinghabits_Q2:
     type: any
     influence_conversation: false
-  dietQ3:
+  eatinghabits_Q3:
     type: any
     influence_conversation: false
-  dietQ4:
+  eatinghabits_Q4:
     type: any
     influence_conversation: false
-  dietQ5:
+  eatinghabits_Q5:
     type: any
     influence_conversation: false
-  dietQ6:
+  eatinghabits_Q6:
     type: any
     influence_conversation: false
-  dietQ7:
+  eatinghabits_Q7:
     type: any
     influence_conversation: false
-  dietQ8:
+  eatinghabits_Q8:
     type: any
     influence_conversation: false
-  dietQ9:
+  eatinghabits_Q9:
     type: any
     influence_conversation: false
-  dietQ10:
+  eatinghabits_Q10:
     type: any
     influence_conversation: false
-  dietQ11:
+  eatinghabits_Q11:
     type: any
     influence_conversation: false
-  dietQ12:
+  eatinghabits_Q12:
     type: any
     influence_conversation: false
-  dietQ13:
+  eatinghabits_Q13:
     type: any
     influence_conversation: false
-  dietQ14:
+  eatinghabits_Q14:
     type: any
     influence_conversation: false
-  dietQ15:
+  eatinghabits_Q15:
     type: any
     influence_conversation: false
-  dietQ16:
+  eatinghabits_Q16:
     type: any
     influence_conversation: false
-  dietQ17:
+  eatinghabits_Q17:
     type: any
     influence_conversation: false
-  dietQ18:
+  eatinghabits_Q18:
     type: any
     influence_conversation: false
-  dietQ19:
+  eatinghabits_Q19:
     type: any
     influence_conversation: false
-  dietQ20:
+  eatinghabits_Q20:
     type: any
     influence_conversation: false
 actions:
-  - action_ask_dietQ1
-  - action_ask_dietQ2
-  - action_ask_dietQ3
-  - action_ask_dietQ4
-  - action_ask_dietQ5
-  - action_ask_dietQ6
-  - action_ask_dietQ7
-  - action_ask_dietQ8
-  - action_ask_dietQ9
-  - action_ask_dietQ10
-  - action_ask_dietQ11
-  - action_ask_dietQ12
-  - action_ask_dietQ13
-  - action_ask_dietQ14
-  - action_ask_dietQ15
-  - action_ask_dietQ16
-  - action_ask_dietQ17
-  - action_ask_dietQ18
-  - action_ask_dietQ19
-  - action_ask_dietQ20
-  - action_utter_ask_diet_start
+  - action_ask_eatinghabits_Q1
+  - action_ask_eatinghabits_Q2
+  - action_ask_eatinghabits_Q3
+  - action_ask_eatinghabits_Q4
+  - action_ask_eatinghabits_Q5
+  - action_ask_eatinghabits_Q6
+  - action_ask_eatinghabits_Q7
+  - action_ask_eatinghabits_Q8
+  - action_ask_eatinghabits_Q9
+  - action_ask_eatinghabits_Q10
+  - action_ask_eatinghabits_Q11
+  - action_ask_eatinghabits_Q12
+  - action_ask_eatinghabits_Q13
+  - action_ask_eatinghabits_Q14
+  - action_ask_eatinghabits_Q15
+  - action_ask_eatinghabits_Q16
+  - action_ask_eatinghabits_Q17
+  - action_ask_eatinghabits_Q18
+  - action_ask_eatinghabits_Q19
+  - action_ask_eatinghabits_Q20
+  - action_utter_ask_eatinghabits_start
 forms:
-  diet_form:
+  eatinghabits_form:
     required_slots:
-      dietQ1:
+      eatinghabits_Q1:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ2:
+      eatinghabits_Q2:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ3:
+      eatinghabits_Q3:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ4:
+      eatinghabits_Q4:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ5:
+      eatinghabits_Q5:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ6:
+      eatinghabits_Q6:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ7:
+      eatinghabits_Q7:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ8:
+      eatinghabits_Q8:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ9:
+      eatinghabits_Q9:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ10:
+      eatinghabits_Q10:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ11:
+      eatinghabits_Q11:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ12:
+      eatinghabits_Q12:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ13:
+      eatinghabits_Q13:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ14:
+      eatinghabits_Q14:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ15:
+      eatinghabits_Q15:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ16:
+      eatinghabits_Q16:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ17:
+      eatinghabits_Q17:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ18:
+      eatinghabits_Q18:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ19:
+      eatinghabits_Q19:
         - type: from_text
           not_intent:
             - cancel
             - out_of_scope
-      dietQ20:
+      eatinghabits_Q20:
         - type: from_text
           not_intent: [cancel, out_of_scope]

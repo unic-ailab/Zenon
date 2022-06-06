@@ -1,77 +1,77 @@
 version: "2.0"
 slots:
-  mtQ1:
+  muscletone_Q1:
     type: any
     influence_conversation: false
-  mtQ2:
+  muscletone_Q2:
     type: any
     influence_conversation: false
-  mtQ3:
+  muscletone_Q3:
     type: any
     influence_conversation: false
-  mtQ4:
+  muscletone_Q4:
     type: any
     influence_conversation: false
-  mtQ5:
+  muscletone_Q5:
     type: any
     influence_conversation: false
-  mtQ6:
+  muscletone_Q6:
     type: any
     influence_conversation: false
-  mtQ7:
+  muscletone_Q7:
     type: any
     influence_conversation: false
-  mtQ8:
+  muscletone_Q8:
     type: any
     influence_conversation: false
-  mtQ9:
+  muscletone_Q9:
     type: any
     influence_conversation: false
-  mtQ10:
+  muscletone_Q10:
     type: any
     influence_conversation: false
 actions:
-  - action_ask_mtQ1
-  - action_ask_mtQ2
-  - action_ask_mtQ3
-  - action_ask_mtQ4
-  - action_ask_mtQ5
-  - action_ask_mtQ6
-  - action_ask_mtQ7
-  - action_ask_mtQ8
-  - action_ask_mtQ9
-  - action_ask_mtQ10
-  - action_utter_ask_muscle_start
+  - action_ask_muscletone_Q1
+  - action_ask_muscletone_Q2
+  - action_ask_muscletone_Q3
+  - action_ask_muscletone_Q4
+  - action_ask_muscletone_Q5
+  - action_ask_muscletone_Q6
+  - action_ask_muscletone_Q7
+  - action_ask_muscletone_Q8
+  - action_ask_muscletone_Q9
+  - action_ask_muscletone_Q10
+  - action_utter_ask_muscletone_start
 forms:
   muscletone_form:
     required_slots:
-      mtQ1:
+      muscletone_Q1:
         - entity: given_answer
           type: from_entity
-      mtQ2:
+      muscletone_Q2:
         - entity: given_answer
           type: from_entity
-      mtQ3:
+      muscletone_Q3:
         - entity: given_answer
           type: from_entity
-      mtQ4:
+      muscletone_Q4:
         - entity: given_answer
           type: from_entity
-      mtQ5:
+      muscletone_Q5:
         - entity: given_answer
           type: from_entity
-      mtQ6:
+      muscletone_Q6:
         - entity: given_answer
           type: from_entity
-      mtQ7:
+      muscletone_Q7:
         - entity: given_answer
           type: from_entity
-      mtQ8:
+      muscletone_Q8:
         - entity: given_answer
           type: from_entity
-      mtQ9:
+      muscletone_Q9:
         - entity: given_answer
           type: from_entity
-      mtQ10:
+      muscletone_Q10:
         - entity: given_answer
           type: from_entity

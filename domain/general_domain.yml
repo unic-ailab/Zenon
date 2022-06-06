@@ -27,7 +27,7 @@ intents:
   - need_help
   - muscletone_start
   - psqi_start
-  - diet_start
+  - eatinghabits_start
   - domainV_start
   - coast_start
 entities:
