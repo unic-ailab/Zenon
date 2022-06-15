@@ -1,0 +1,107 @@
+version: "2.0"
+#will we allow domain questions to be stopped?
+rules:
+  - rule: Start MS Domain I – Mobility, general motor or physical function relevant questions
+    steps:
+      - intent: MSdomainI_start
+      - action: action_set_questionnaire_slot
+      - slot_was_set:
+          - questionnaire: MSdomainI
+      - action: action_utter_starting_questionnaire
+      - action: MSdomainI_form
+      - active_loop: MSdomainI_form
+
+  - rule: Submit MS Domain I relevant questions
+    condition:
+      - active_loop: MSdomainI_form
+    steps:
+      - action: MSdomainI_form
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null     
+      - action: action_questionnaire_completed
+      - action: action_get_available_questionnaires
+
+  - rule: Start MS Domain II – Sleep Disorders relevant questions
+    steps:
+      - intent: MSdomainII_start
+      - action: action_set_questionnaire_slot
+      - slot_was_set:
+          - questionnaire: MSdomainII
+      - action: action_utter_starting_questionnaire
+      - action: MSdomainII_form
+      - active_loop: MSdomainII_form
+
+  - rule: Submit MS Domain II relevant questions
+    condition:
+      - active_loop: MSdomainII_form
+    steps:
+      - action: MSdomainII_form
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null     
+      - action: action_questionnaire_completed
+      - action: action_get_available_questionnaires
+
+  - rule: Start MS Domain III – Mental and Cognitive Ability relevant questions
+    steps:
+      - intent: MSdomainIII_start
+      - action: action_set_questionnaire_slot
+      - slot_was_set:
+          - questionnaire: MSdomainIII
+      - action: action_utter_starting_questionnaire
+      - action: MSdomainIII_form
+      - active_loop: MSdomainIII_form
+
+  - rule: Submit MS Domain III relevant questions
+    condition:
+      - active_loop: MSdomainIII_form
+    steps:
+      - action: MSdomainIII_form
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null     
+      - action: action_questionnaire_completed
+      - action: action_get_available_questionnaires
+
+  - rule: Start MS Domain V - Quality of Life and daily living relevant questions
+    steps:
+      - intent: MSdomainV_start
+      - action: action_set_questionnaire_slot
+      - slot_was_set:
+          - questionnaire: MSdomainV
+      - action: action_utter_starting_questionnaire
+      - action: MSdomainV_form
+      - active_loop: MSdomainV_form
+
+  - rule: Submit MS Domain V relevant questions
+    condition:
+      - active_loop: MSdomainV_form
+    steps:
+      - action: MSdomainV_form
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null     
+      - action: action_questionnaire_completed
+      - action: action_get_available_questionnaires
+
+  - rule: Start MS Domain IV - Emotional Status relevant questions
+    steps:
+      - intent: MSdomainIV_start
+      - action: action_set_questionnaire_slot
+      - slot_was_set:
+          - questionnaire: MSdomainIV
+      - action: action_utter_starting_questionnaire
+      - action: MSdomainIV_form
+      - active_loop: MSdomainIV_form
+
+  - rule: Submit Domain IV relevant questions
+    condition:
+      - active_loop: MSdomainIV_form
+    steps:
+      - action: MSdomainIV_form
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null     
+      - action: action_questionnaire_completed
+      - action: action_get_available_questionnaires

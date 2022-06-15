@@ -1,0 +1,92 @@
+version: "2.0"
+
+rules:
+  - rule: Start Domain III – Mental and Cognitive Ability relevant questions # Works Fine - It should be called like "start STROKE domainIII relevant questions"
+    steps:
+      - intent: STROKEdomainIII_start
+      - action: action_set_questionnaire_slot
+      - slot_was_set:
+          - questionnaire: STROKEdomainIII
+      - action: action_utter_starting_questionnaire
+      - action: STROKEdomainIII_form
+      - active_loop: STROKEdomainIII_form
+
+  - rule: Interruption Domain III relevant questions
+    condition:
+      - active_loop: STROKEdomainIII_form
+    steps:
+      - intent: cancel
+      - action: utter_process_not_cancellable
+      - action: STROKEdomainIII_form
+      - active_loop: STROKEdomainIII_form
+
+  - rule: Submit Domain III relevant questions
+    condition:
+      - active_loop: STROKEdomainIII_form
+    steps:
+      - action: STROKEdomainIII_form
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null     
+      - action: action_questionnaire_completed
+      - action: action_get_available_questionnaires
+
+  - rule: Start Domain V - Quality of Life and daily living relevant questions # Works Fine - It should be called like "start STROKE domainV relevant questions"
+    steps:
+      - intent: STROKEdomainV_start
+      - action: action_set_questionnaire_slot
+      - slot_was_set:
+          - questionnaire: STROKEdomainV
+      - action: action_utter_starting_questionnaire
+      - action: STROKEdomainV_form
+      - active_loop: STROKEdomainV_form
+
+  - rule: Interruption Domain V relevant questions
+    condition:
+      - active_loop: STROKEdomainV_form
+    steps:
+      - intent: cancel
+      - action: utter_process_not_cancellable
+      - action: STROKEdomainV_form
+      - active_loop: STROKEdomainV_form
+
+  - rule: Submit Domain V relevant questions
+    condition:
+      - active_loop: STROKEdomainV_form
+    steps:
+      - action: STROKEdomainV_form
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null     
+      - action: action_questionnaire_completed
+      - action: action_get_available_questionnaires
+
+  - rule: Start Domain IV - Emotional Status relevant questions
+    steps:
+      - intent: STROKEdomainIV_start
+      - action: action_set_questionnaire_slot
+      - slot_was_set:
+          - questionnaire: STROKEdomainIV
+      - action: action_utter_starting_questionnaire
+      - action: STROKEdomainIV_form
+      - active_loop: STROKEdomainIV_form
+
+  - rule: Interruption Domain IV relevant questions
+    condition:
+      - active_loop: STROKEdomainIV_form
+    steps:
+      - intent: cancel
+      - action: utter_process_not_cancellable
+      - action: STROKEdomainIV_form
+      - active_loop: STROKEdomainIV_form
+
+  - rule: Submit Domain IV relevant questions
+    condition:
+      - active_loop: STROKEdomainIV_form
+    steps:
+      - action: STROKEdomainIV_form
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null     
+      - action: action_questionnaire_completed
+      - action: action_get_available_questionnaires
