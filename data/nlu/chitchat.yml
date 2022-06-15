@@ -17,13 +17,13 @@ nlu:
   - intent: notification_greet ##needs to be redefined
     examples: |
       - weird
-  - intent: how_are_you
-  - intent: ok
-    examples: |
-      - Ok
-      - Alright
-      - Alright, then
-  - intent: glag_to_hear
+  # - intent: how_are_you
+  # - intent: ok
+  #   examples: |
+  #     - Ok
+  #     - Alright
+  #     - Alright, then
+  # - intent: glag_to_hear
   - intent: available_questionnaires
     examples: |
       - available questionnaires

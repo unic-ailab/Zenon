@@ -14,7 +14,7 @@ from rasa_sdk.forms import FormValidationAction
 
 import sys        
 #sys.path.append("/home/unic/Zenon/")   
-sys.path.append('C:/Users/chloe/Desktop/UNIC-AI Lab/ALAMEDA/Zenon_original/Zenon')   
+sys.path.append('C:\Users\vagge\Documents\Data Science - AI - Deep Learning\Projects\Zenon')   
 from custom_tracker_store import CustomSQLTrackerStore
 
 customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="demo.db")
@@ -324,7 +324,7 @@ class ActionUtterSetLanguage(Action):
 # SAVE CONVERSATION HISTORY                                                                        #
 ####################################################################################################
 
-class ActionSaveConversation(Action):
+class ActionSaveConversation(Action):   #TODO To be deleted
     def name(self) -> Text:
         return "action_save_conversation"
 
@@ -5017,7 +5017,7 @@ class ActionUtterSetQuestionnaire(Action):
 
 class ActionAskStrokeDomainIVRQ1(Action):  # STROKE case Domain IV RQ1
     def name(self) -> Text:
-        return "action_ask_domainIV_RQ1"
+        return "action_ask_STROKEdomainIV_RQ1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)

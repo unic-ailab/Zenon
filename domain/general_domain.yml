@@ -3,10 +3,11 @@ session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
 intents:
+  - available_questionnaires
   - notification_greet
-  - how_are_you
-  - ok
-  - glag_to_hear
+  # - how_are_you
+  # - ok
+  # - glag_to_hear
   - available_questionaires
   - health_update
   - tutorials
@@ -258,6 +259,11 @@ responses:
           name: language
           value: Romanian
       text: Vă rog să reformulați.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Trovo ancora difficile il linguaggio umano, puoi per favore riformularlo?
   utter_inform_doctor:
     - condition:
         - type: slot
