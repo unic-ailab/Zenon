@@ -581,11 +581,17 @@ forms:
         - entity: given_answer
           type: from_entity
       MSdomainI_RQ4:
-        - entity: given_answer
-          type: from_entity
+        # - entity: given_answer
+        #   type: from_entity
+        - type: from_text
+          not_intent: 
+            - cancel
+            - out_of_scope
       MSdomainI_RQ5:
-        - entity: given_answer
-          type: from_entity
+        - type: from_text
+          not_intent: 
+            - cancel
+            - out_of_scope
       MSdomainI_RQ6:
         - entity: given_answer
           type: from_entity

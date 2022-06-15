@@ -311,6 +311,39 @@ responses:
           name: language
           value: Italian
       text: È qualcosa che vuoi che informi il tuo dottore? Potrebbe aiutarti con i tuoi progressi.
+  utter_inform_doctor_extra:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      #text: Are you sure there isn't something else you would like to report? Perhaps regarding an event in your daily life that might relate to your progress?
+      text: Is there something else you would like to report? Perhaps regarding an event in your daily life that might relate to your progress?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Mai există ceva pe care ați dori să raportați? Poate cu privire la un eveniment din viața ta de zi cu zi care ar putea avea legătură cu progresul tău?
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: C'è qualcos'altro che vorresti segnalare? Forse per quanto riguarda un evento della tua vita quotidiana che potrebbe riguardare i tuoi progressi?
+  utter_inform_doctor_go_on:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: What would you like me to pass on?
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Este ceva despre care vrei să-l anunț pe medicul tău? S-ar putea să te ajute la progresul tău.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Ce ai vrea să transmit mai departe?
   utter_confirm_doctor:
     - condition:
         - type: slot

@@ -535,6 +535,7 @@ class ActionUtterGreet(Action):
         dispatcher.utter_message(text=text)
         #check if it is the first time of the day
         isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
+        print(isFirstTime)
         return [SlotSet("is_first_time", isFirstTime)]
 
 class ActionUtterHowAreYou(Action):
@@ -5366,7 +5367,7 @@ class ActionAskMSDomainIRQ4(Action):
                 "How many times have you stumbled over the last few days?",
                 " ",
                 "Quante volte ti è capitato di inciampare negli ultimi giorni?",                 
-                " "
+                " ",
             ]
         )
 
@@ -5602,10 +5603,10 @@ class ValidateMSDomainIIIForm(FormValidationAction):
         self, slots_mapped_in_domain, dispatcher, tracker, domain,
     ) -> List[Text]:
 
-        if tracker.get_slot("MSdomainIII_RQ2") < 6:
+        if tracker.get_slot("MSdomainIII_RQ2") is not None and tracker.get_slot("MSdomainIII_RQ2") < 6:
             slots_mapped_in_domain.remove("MSdomainIII_RQ2a")
 
-        if tracker.get_slot("MSdomainIII_RQ5") < 6:
+        if tracker.get_slot("MSdomainIII_RQ5") is not None and tracker.get_slot("MSdomainIII_RQ5") < 6:
             slots_mapped_in_domain.remove("MSdomainIII_RQ5a")            
 
         return slots_mapped_in_domain  
@@ -5776,8 +5777,8 @@ class ValidateMSDomainIVForm(FormValidationAction):
         self, slots_mapped_in_domain, dispatcher, tracker, domain,
     ) -> List[Text]:
 
-        if not tracker.get_slot("MSdomainIII_RQ2"):
-            slots_mapped_in_domain.remove("MSdomainIII_RQ2a")           
+        if not tracker.get_slot("MSdomainIV_RQ2"):
+            slots_mapped_in_domain.remove("MSdomainIV_RQ2a")           
 
         return slots_mapped_in_domain                           
 
