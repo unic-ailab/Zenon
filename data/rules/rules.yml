@@ -6,6 +6,23 @@ rules:
       - intent: questionnaire_open
       - action: action_utter_set_questionnaire
 
+  - rule: Get available questionnaires
+    steps:
+      - intent: available_questionaires
+      - action: action_get_available_questionnaires
+
+  - rule: Get tutorials
+    steps:
+      - intent: tutorials
+      - action: utter_tutorial_link
+      - action: action_options_menu_extra
+
+  - rule: Get health status update
+    steps:
+      - intent: health_update
+      - action: utter_not_available
+      - action: action_options_menu_extra
+
   - rule: Ask the user to rephrase in case of low NLU confidence
     steps:
       - intent: nlu_fallback

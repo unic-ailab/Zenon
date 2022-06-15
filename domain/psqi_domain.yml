@@ -98,7 +98,6 @@ actions:
   - action_ask_psqi_Q3
   - action_ask_psqi_Q2
   - action_ask_psqi_Q1
-  - action_utter_ask_psqi_start
 forms:
   psqi_form:
     required_slots:

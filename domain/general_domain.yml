@@ -3,13 +3,23 @@ session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
 intents:
+  - notification_greet
+  - how_are_you
+  - ok
+  - glag_to_hear
+  - available_questionaires
+  - health_update
+  - tutorials
+  - continue
+  - options_menu
   - MSdomainI_start
   - MSdomainII_start
   - MSdomainIII_start
   - MSdomainIV_start
   - MSdomainV_start
-  - domainIII_start
-  - domainIV_start
+  - STROKEdomainIII_start
+  - STROKEdomainIV_start
+  - STROKEdomainV_start
   - inform
   - set_language
   - greet
@@ -28,7 +38,6 @@ intents:
   - muscletone_start
   - psqi_start
   - eatinghabits_start
-  - domainV_start
   - coast_start
 entities:
   - given_answer
@@ -37,18 +46,37 @@ entities:
   - sentiment
   - time
   - sentiment_classes
+  - is_first_time
 slots:
   questionnaire:
     type: categorical
     influence_conversation: true
     values:
-      - activlim
+      - activLim
       - muscletone
-      - dizzinessandbalance
+      - dizzinessNbalance
       - psqi
       - coast
       - eatinghabits
-      - fh-q
+      - STROKEdomainIII
+      - STROKEdomainIV
+      - STROKEdomainV
+      - MSdomainI
+      - MSdomainII
+      - MSdomainIII
+      # - MSdomainII_1M
+      # - MSdomainII_3M
+      # - MSdomainIII_1W
+      # - MSdomainIII_2W
+      - MSdomainIV
+      - MSdomainV
+      #- fh-q
+  is_first_time:
+    type: bool
+    influence_conversation: true
+  is_completed:
+    type: bool
+    influence_conversation: true
   sentiment:
     type: categorical
     influence_conversation: true
@@ -124,22 +152,6 @@ responses:
           name: language
           value: Italian
       text: Ehilà. Come posso aiutarla?
-  utter_confirm_questionnaire_finished:
-    - condition:
-        - type: slot
-          name: language
-          value: English
-      text: We are good. Thank you for your time.
-    - condition:
-        - type: slot
-          name: language
-          value: Romanian
-      text: Suntem buni. Multumesc pentru timpul acordat.
-    - condition:
-        - type: slot
-          name: language
-          value: Greek
-      text: Το ερωτηματολόγιο ολοκληρώθηκε. Ευχαριστώ.
   utter_handle_out_of_scope:
     - condition:
         - type: slot
@@ -259,7 +271,7 @@ responses:
         - type: slot
           name: language
           value: English
-      text: Is this something you want me to let your doctor know about? It might help with your progress.
+      text: Is this something you would like me to report to your doctor? It might help with your progress.
     - condition:
         - type: slot
           name: language
@@ -304,7 +316,7 @@ responses:
         - type: slot
           name: language
           value: English
-      text: Ok, I will let them know.
+      text: Ok, I will include it in your report.
     - condition:
         - type: slot
           name: language
@@ -314,12 +326,12 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Ok, le voi anunța.
+      text: Ok, O voi include în raportul dumneavoastră.
     - condition:
         - type: slot
           name: language
           value: Italian
-      text: Ok, gli farò sapere.
+      text: Ok, Lo includerò nella tua relazione.
   utter_handle_user_deny_to_inform_doctors:
     - condition:
         - type: slot
@@ -399,11 +411,84 @@ responses:
           name: language
           value: Italian
       text: Come posso aiutarti?
+  utter_glad_to_hear:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: I am glad to hear that!
+      # text: That's good.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Mă bucur să aud că!
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Χαίρομαι που το ακούω!
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Sono felice di sapere che!
+  utter_tutorial_link:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: If you are having trouble with the devices of ALAMEDA you can check out this tutorial page /n/n <link>
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Dacă aveți probleme cu dispozitivele ALAMEDA, puteți consulta această pagină de tutorial /n/n <link>
+    - condition:
+        - type: slot
+          name: language
+          value: Greek
+      text: Εάν αντιμετωπίζετε προβλήματα με τις συσκευές της ALAMEDA, μπορείτε να επισκεφθείτε αυτήν τη σελίδα εκμάθησης /n/n <link>
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Se hai problemi con i dispositivi di ALAMEDA puoi dare un'occhiata a questa pagina del tutorial /n/n <link>
+  utter_process_not_cancellable:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: Unfortunately, I can not stop this questionnaire before completion. It is very short and they are only a few questions left.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Sfortunatamente, non posso interrompere questo questionario prima del completamento. È molto breve e sono rimaste solo poche domande.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Din păcate, nu pot opri acest chestionar înainte de completare. Este foarte scurt și au mai rămas doar câteva întrebări.
+  utter_not_available:
+    - text: Sorry, this functionality is not available at the moment.
 actions:
-  - action_save_conversation
-  - action_utter_ask_language
   - action_utter_greet
+  - action_utter_how_are_you
+  - action_options_menu
+  - action_options_menu_extra
+  - action_get_available_questionnaires
+  - action_utter_continue_latest_questionnaire
+  - action_utter_starting_questionnaire
+  - action_set_questionnaire_slot
+  - action_ontology_store_sentiment
+  - action_store_questionnaire
+  - action_save_conversation
+  - action_questionnaire_cancelled
+  - action_questionnaire_completed
+  - action_utter_ask_questionnaire_start
+  - action_utter_ask_language
+  - action_utter_notification_greet
   - action_utter_handle_user_deny_to_inform_doctors
   - action_utter_set_language
   - action_utter_set_questionnaire
-  - utter_confirm_questionnaire_finished

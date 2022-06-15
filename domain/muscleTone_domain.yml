@@ -41,7 +41,6 @@ actions:
   - action_ask_muscletone_Q8
   - action_ask_muscletone_Q9
   - action_ask_muscletone_Q10
-  - action_utter_ask_muscletone_start
 forms:
   muscletone_form:
     required_slots:

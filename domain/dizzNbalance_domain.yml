@@ -180,7 +180,6 @@ slots:
     influence_conversation: false
 actions:
   - validate_dizzNbalance_form
-  - action_utter_ask_dizzNbalance_start
   - action_ask_dizzNbalance_Symptoms
   - action_ask_dizzNbalance_Q1
   - action_ask_dizzNbalance_Q2

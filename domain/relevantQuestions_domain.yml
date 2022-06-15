@@ -1,24 +1,24 @@
 version: "2.0"
 slots:
-  domainIII_RQ1:
+  STROKEdomainIII_RQ1:
     type: any
     influence_conversation: false
-  domainIII_RQ2:
+  STROKEdomainIII_RQ2:
     type: any
     influence_conversation: false
-  domainV_RQ1:
+  STROKEdomainV_RQ1:
     type: any
     influence_conversation: false
-  domainV_RQ2:
+  STROKEdomainV_RQ2:
     type: any
     influence_conversation: false
-  domainIV_RQ1:
+  STROKEdomainIV_RQ1:
     type: any
     influence_conversation: false
-  domainIV_RQ2:
+  STROKEdomainIV_RQ2:
     type: any
     influence_conversation: false
-  domainIV_RQ3:
+  STROKEdomainIV_RQ3:
     type: any
     influence_conversation: false
   MSdomainIII_RQ1:
@@ -112,7 +112,7 @@ slots:
     type: any
     influence_conversation: false
 responses:
-  utter_ask_domainIII_RQ1:
+  utter_ask_STROKEdomainIII_RQ1:
     - condition:
         - type: slot
           name: language
@@ -141,7 +141,7 @@ responses:
         - payload: /inform{{"given_answer":"often"}}
           title: Frecvent
       text: In ultimele cateva zile ati avut dificultati de concentrare in cursul unei activitati?
-  utter_ask_domainIII_RQ2:
+  utter_ask_STROKEdomainIII_RQ2:
     - condition:
         - type: slot
           name: language
@@ -170,7 +170,7 @@ responses:
         - payload: /inform{{"given_answer":"often"}}
           title: Frecvent
       text: Aveti dificultati in a va aminti detalii sau evenimente din ultimele zile?
-  utter_ask_domainV_RQ1:
+  utter_ask_STROKEdomainV_RQ1:
     - condition:
         - type: slot
           name: language
@@ -199,7 +199,7 @@ responses:
         - payload: /inform{{"given_answer":"often"}}
           title: Frecvent
       text: In ultima luna ati fost nevoit/a sa renuntati la activitati sociale (ex. intalniri cy prietenii, cina in familie, mersul la diverse evenimente etc) datorita  accidentului vascular cerebral (AVC) suferit?
-  utter_ask_domainV_RQ2:
+  utter_ask_STROKEdomainV_RQ2:
     - condition:
         - type: slot
           name: language
@@ -228,7 +228,7 @@ responses:
         - payload: /inform{{"given_answer":"often"}}
           title: Frecvent
       text: In ultima luna, ati simtit nevoia sa fiti ajutat/a mai ult in activitatile de zi cu zi de catre alta persoana?
-  utter_ask_domainIV_RQ2:
+  utter_ask_STROKEdomainIV_RQ2:
     - condition:
         - type: slot
           name: language
@@ -257,7 +257,7 @@ responses:
         - payload: /inform{{"given_answer":"often"}}
           title: Frecvent
       text: In ultimele 4 saptamani v-ati simtit nervos, nelinistit, anxios?
-  utter_ask_domainIV_RQ3:
+  utter_ask_STROKEdomainIV_RQ3:
     - condition:
         - type: slot
           name: language
@@ -516,7 +516,7 @@ responses:
           title: No
       text: Nelle ultime due settimane, hai avuto particolarmente bisogno di annotare più del solito gli impegni per ricordarli (ad esempio tramite note, allarmi o sveglie in aggiunta alle abituale agenda)?
 actions:
-  - action_ask_domainIV_RQ1 # STROKE
+  - action_ask_STROKEdomainIV_RQ1 # STROKE
   - action_ask_MSdomainI_RQ1
   - action_ask_MSdomainI_RQ1a
   - action_ask_MSdomainI_RQ1b
@@ -654,29 +654,29 @@ forms:
       MSdomainV_RQ2:
         - entity: given_answer
           type: from_entity
-  domainIV_form:
+  STROKEdomainIV_form:
     required_slots:
-      domainIV_RQ1:
+      STROKEdomainIV_RQ1:
         - type: from_text
-      domainIV_RQ2:
+      STROKEdomainIV_RQ2:
         - entity: given_answer
           type: from_entity
-      domainIV_RQ3:
+      STROKEdomainIV_RQ3:
         - entity: given_answer
           type: from_entity
-  domainV_form:
+  STROKEdomainV_form:
     required_slots:
-      domainV_RQ1:
+      STROKEdomainV_RQ1:
         - entity: given_answer
           type: from_entity
-      domainV_RQ2:
+      STROKEdomainV_RQ2:
         - entity: given_answer
           type: from_entity
-  domainIII_form:
+  STROKEdomainIII_form:
     required_slots:
-      domainIII_RQ1:
+      STROKEdomainIII_RQ1:
         - entity: given_answer
           type: from_entity
-      domainIII_RQ2:
+      STROKEdomainIII_RQ2:
         - entity: given_answer
           type: from_entity

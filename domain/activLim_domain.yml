@@ -1,64 +1,64 @@
 version: "2.0"
 slots:
   # ACTIVLim - Related slots
-  walking:
+  activLim_doorbell:
     type: any
     influence_conversation: false
-  doorbell:
+  activLim_heavyLoad:
     type: any
     influence_conversation: false
-  heavyLoad:
+  activLim_pickFromFloor:
     type: any
     influence_conversation: false
-  pickFromFloor:
+  activLim_walking:
     type: any
     influence_conversation: false
-  usingToilet:
+  activLim_usingToilet:
     type: any
     influence_conversation: false
-  outOfBed:
+  activLim_outOfBed:
     type: any
     influence_conversation: false
-  brushTeeth:
+  activLim_brushTeeth:
     type: any
     influence_conversation: false
-  takingShower:
+  activLim_takingShower:
     type: any
     influence_conversation: false
-  puttinSocks:
+  activLim_puttinSocks:
     type: any
     influence_conversation: false
-  outOfCar:
+  activLim_outOfCar:
     type: any
     influence_conversation: false
-  turnInBed:
+  activLim_turnInBed:
     type: any
     influence_conversation: false
-  tyingLaces:
+  activLim_tyingLaces:
     type: any
     influence_conversation: false
-  takeOffTshirt:
+  activLim_takeOffTshirt:
     type: any
     influence_conversation: false
-  openDoor:
+  activLim_openDoor:
     type: any
     influence_conversation: false
-  sweepVaccum:
+  activLim_sweepVaccum:
     type: any
     influence_conversation: false
-  dishesInCupboard:
+  activLim_dishesInCupboard:
     type: any
     influence_conversation: false
-  getUpFromChair:
+  activLim_getUpFromChair:
     type: any
     influence_conversation: false
-  standingNoSupport:
+  activLim_standingNoSupport:
     type: any
     influence_conversation: false
-  walkingUpstairs:
+  activLim_walkingUpstairs:
     type: any
     influence_conversation: false
-  putKey:
+  activLim_putKey:
     type: any
     influence_conversation: false
 responses:
@@ -73,7 +73,7 @@ responses:
           name: language
           value: Romanian
       text: Ați putea, vă rog, să indicați cât de dificil percepeți fiecare dintre următoarele activități?
-  utter_ask_walking:
+  utter_ask_activLim_walking:
     - condition:
         - type: slot
           name: language
@@ -102,7 +102,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Mersul pe jos mai mult de un kilometru.
-  utter_ask_doorbell:
+  utter_ask_activLim_doorbell:
     - condition:
         - type: slot
           name: language
@@ -131,7 +131,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Apasarea soneriei unei usi.
-  utter_ask_heavyLoad:
+  utter_ask_activLim_heavyLoad:
     - condition:
         - type: slot
           name: language
@@ -160,7 +160,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Transportarea unei greutati
-  utter_ask_pickFromFloor:
+  utter_ask_activLim_pickFromFloor:
     - condition:
         - type: slot
           name: language
@@ -189,7 +189,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Ridicarea unui obiect de pe podea
-  utter_ask_usingToilet:
+  utter_ask_activLim_usingToilet:
     - condition:
         - type: slot
           name: language
@@ -216,7 +216,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Utilizarea toaletei.
-  utter_ask_outOfBed:
+  utter_ask_activLim_outOfBed:
     - condition:
         - type: slot
           name: language
@@ -245,7 +245,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Coborarea din pat
-  utter_ask_brushTeeth:
+  utter_ask_activLim_brushTeeth:
     - condition:
         - type: slot
           name: language
@@ -274,7 +274,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Periajul  dintilor.
-  utter_ask_takingShower:
+  utter_ask_activLim_takingShower:
     - condition:
         - type: slot
           name: language
@@ -303,7 +303,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: A face duș.
-  utter_ask_puttinSocks:
+  utter_ask_activLim_puttinSocks:
     - condition:
         - type: slot
           name: language
@@ -332,7 +332,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Incaltarea șosetelor.
-  utter_ask_outOfCar:
+  utter_ask_activLim_outOfCar:
     - condition:
         - type: slot
           name: language
@@ -361,7 +361,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Coborarea dintr-o masina.
-  utter_ask_turnInBed:
+  utter_ask_activLim_turnInBed:
     - condition:
         - type: slot
           name: language
@@ -390,7 +390,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Întoarcerea în pat.
-  utter_ask_tyingLaces:
+  utter_ask_activLim_tyingLaces:
     - condition:
         - type: slot
           name: language
@@ -419,7 +419,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Legarea șireturilor.
-  utter_ask_takeOffTshirt:
+  utter_ask_activLim_takeOffTshirt:
     - condition:
         - type: slot
           name: language
@@ -448,7 +448,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Dezbracarea unui tricou.
-  utter_ask_openDoor:
+  utter_ask_activLim_openDoor:
     - condition:
         - type: slot
           name: language
@@ -477,7 +477,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Deschiderea unei uși.
-  utter_ask_sweepVaccum:
+  utter_ask_activLim_sweepVaccum:
     - condition:
         - type: slot
           name: language
@@ -506,7 +506,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Măturarea sau aspirarea prafului in casa.
-  utter_ask_dishesInCupboard:
+  utter_ask_activLim_dishesInCupboard:
     - condition:
         - type: slot
           name: language
@@ -535,7 +535,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Punerea felurilor de mâncare pe masa.
-  utter_ask_getUpFromChair:
+  utter_ask_activLim_getUpFromChair:
     - condition:
         - type: slot
           name: language
@@ -564,7 +564,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Ridicarea de pe un scaun.
-  utter_ask_standingNoSupport:
+  utter_ask_activLim_standingNoSupport:
     - condition:
         - type: slot
           name: language
@@ -593,7 +593,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Statul in picioare pentru o lungă perioadă de timp, fără sprijin.
-  utter_ask_walkingUpstairs:
+  utter_ask_activLim_walkingUpstairs:
     - condition:
         - type: slot
           name: language
@@ -622,7 +622,7 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Urcarea scarilor.
-  utter_ask_putKey:
+  utter_ask_activLim_putKey:
     - condition:
         - type: slot
           name: language
@@ -651,68 +651,66 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Introducerea unei chei in broasca.
-actions:
-  - action_utter_ask_activlim_start
 forms:
-  activlim_form:
+  activLim_form:
     required_slots:
-      doorbell:
+      activLim_doorbell:
         - entity: given_answer
           type: from_entity
-      heavyLoad:
+      activLim_heavyLoad:
         - entity: given_answer
           type: from_entity
-      pickFromFloor:
+      activLim_pickFromFloor:
         - entity: given_answer
           type: from_entity
-      walking:
+      activLim_walking:
         - entity: given_answer
           type: from_entity
-      usingToilet:
+      activLim_usingToilet:
         - entity: given_answer
           type: from_entity
-      outOfBed:
+      activLim_outOfBed:
         - entity: given_answer
           type: from_entity
-      brushTeeth:
+      activLim_brushTeeth:
         - entity: given_answer
           type: from_entity
-      takingShower:
+      activLim_takingShower:
         - entity: given_answer
           type: from_entity
-      puttinSocks:
+      activLim_puttinSocks:
         - entity: given_answer
           type: from_entity
-      outOfCar:
+      activLim_outOfCar:
         - entity: given_answer
           type: from_entity
-      turnInBed:
+      activLim_turnInBed:
         - entity: given_answer
           type: from_entity
-      tyingLaces:
+      activLim_tyingLaces:
         - entity: given_answer
           type: from_entity
-      takeOffTshirt:
+      activLim_takeOffTshirt:
         - entity: given_answer
           type: from_entity
-      openDoor:
+      activLim_openDoor:
         - entity: given_answer
           type: from_entity
-      sweepVaccum:
+      activLim_sweepVaccum:
         - entity: given_answer
           type: from_entity
-      dishesInCupboard:
+      activLim_dishesInCupboard:
         - entity: given_answer
           type: from_entity
-      getUpFromChair:
+      activLim_getUpFromChair:
         - entity: given_answer
           type: from_entity
-      standingNoSupport:
+      activLim_standingNoSupport:
         - entity: given_answer
           type: from_entity
-      walkingUpstairs:
+      activLim_walkingUpstairs:
         - entity: given_answer
           type: from_entity
-      putKey:
+      activLim_putKey:
         - entity: given_answer
           type: from_entity

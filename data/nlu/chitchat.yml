@@ -1,5 +1,100 @@
 version: "2.0"
 nlu:
+  - intent: health_update
+    examples: |
+      - How am i doing?
+      - how am i progressing
+      - how is my health
+      - health update
+      - Come lo sto facendo?
+      - come sto procedendo
+      - come va la mia salute
+      - aggiornamento sanitario
+      - Ce mai fac?
+      - Cum progresez
+      - Cum este sănătatea mea
+      - actualizare de sănătate
+  - intent: notification_greet ##needs to be redefined
+    examples: |
+      - weird
+  - intent: how_are_you
+  - intent: ok
+    examples: |
+      - Ok
+      - Alright
+      - Alright, then
+  - intent: glag_to_hear
+  - intent: available_questionnaires
+    examples: |
+      - available questionnaires
+      - answer questionnaire
+      - go to questionnaires
+      - I want to see the questionnaires
+      - other questionnaires
+      - questionari disponibili
+      - rispondere al questionario
+      - vai ai questionari
+      - Voglio vedere i questionari
+      - altri questionari
+      - chestionare disponibile
+      - raspunde la chestionar
+      - mergi la chestionare
+      - Vreau să văd chestionarele
+      - alte chestionare
+  - intent: options_menu
+    examples: |
+      - options menu
+      - menu
+      - go to main menu
+      - I want to see the other options
+      - take me to the main menu
+      - start menu
+      - start options
+      - other options
+      - menu delle opzioni
+      - menù
+      - vai al menu principale
+      - Voglio vedere le altre opzioni
+      - portami al menu principale
+      - menu iniziale
+      - Opzioni di avvio
+      - altre opzioni
+      - meniul de opțiuni
+      - meniul
+      - accesați meniul principal
+      - Vreau să văd celelalte opțiuni
+      - duce-mă la meniul principal
+      - meniul de pornire
+      - opțiuni de pornire
+      - alte optiuni
+  - intent: tutorials
+    examples: |
+      - I want to see the tutorials
+      - can you show me the tutorial page
+      - tutorials
+      - Voglio vedere i tutorial
+      - puoi mostrarmi la pagina del tutorial
+      - tutorial
+      - Vreau să văd tutorialele
+      - îmi puteți arăta pagina de tutorial
+      - tutoriale
+  - intent: continue
+    examples: |
+      - I want to resume the questionnaire
+      - resume questionnaire
+      - continue the questionnaire
+      - can i continue the questionnaire
+      - i want to continue the questionnaire
+      - Voglio riprendere il questionario
+      - riprendere il questionario
+      - continuare il questionario
+      - posso continuare il questionario?
+      - Voglio continuare il questionario
+      - Vreau să reiau chestionarul
+      - chestionar pentru CV
+      - continua chestionarul
+      - Pot continua chestionarul
+      - vreau să continui chestionarul
   - intent: greet
     examples: |
       - hey

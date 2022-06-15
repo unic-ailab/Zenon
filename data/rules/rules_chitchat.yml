@@ -20,3 +20,13 @@ rules:
     steps:
       - intent: need_help
       - action: utter_help
+
+  - rule: Return options menu
+    steps:
+      - intent: options_menu
+      - action: action_options_menu
+
+  - rule: User wants to continue the latest available questionnaire # in theory this shouldn't happen
+    steps:
+      - intent: continue
+      - action: action_utter_continue_latest_questionnaire

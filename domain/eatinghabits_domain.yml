@@ -81,7 +81,6 @@ actions:
   - action_ask_eatinghabits_Q18
   - action_ask_eatinghabits_Q19
   - action_ask_eatinghabits_Q20
-  - action_utter_ask_eatinghabits_start
 forms:
   eatinghabits_form:
     required_slots:

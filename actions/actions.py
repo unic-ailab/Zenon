@@ -1,16 +1,60 @@
 import random
+import datetime
+import time
 
 from typing import Any, Dict, List, Text
 from urllib import response
 from matplotlib.pyplot import text
+from numpy import true_divide
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.events import SlotSet, FollowupAction
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormValidationAction
 
+import sys        
+#sys.path.append("/home/unic/Zenon/")   
+sys.path.append('C:/Users/chloe/Desktop/UNIC-AI Lab/ALAMEDA/Zenon_original/Zenon')   
+from custom_tracker_store import CustomSQLTrackerStore
+
+customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="demo.db")
+
 # Define this list as the values for the `language` slot. Arguments of the `get_..._lang` functions should respect this order.
 lang_list = ["English", "Greek", "Italian", "Romanian"]  # Same as slot values
+
+# Questionnaire names in different languages with their abbreviation
+questionnaire_abbreviations = {"activLim": ["ACTIVLIM", "", "", "ACTIVLIM"], 
+                                "psqi": ["PSQI", "", "", "PSQI"],
+                                "eatinghabits": ["Eating Habits", "", "", "Obiceiuri alimentare"], 
+                                "dizzNbalance": ["Dizziness and Balance", "", "", "Amețeli și echilibrului"], 
+                                "muscletone": ["Muscle Tone", "", "", "Tonusului muscular"], 
+                                "coast": ["COAST", "", "", "COAST"],
+                                "STROKEdomainIII": ["Mental and Cognitive Ability", "", "", "Tulburari cognitive"],
+                                "STROKEdomainIV": ["Emotional Status", "", "", "Statusul emotional"],
+                                "STROKEdomainV": ["Quality of Life and daily living", "", "", "Calitatea vietii"],
+                                "MSdomainI": ["Mobility and physical function", "", "Mobilità, funzioni motorie e fisiche", ""],
+                                "MSdomainII": ["Sleep Disorders", "", "Sonno", ""],
+                                "MSdomainIII": ["Mental and Cognitive Ability", "", "Abilità mentali e cognitive", ""],
+                                "MSdomainIV": ["Emotional Status", "", "Stato emotivo", ""],
+                                "MSdomainV": ["Quality of Life", "", "Qualità di vita", ""],}
+
+# cancel button
+cancel_button = [
+    "Cancel",
+    " ",
+    "Annulla",
+    "Anulare",
+]
+
+
+# The main options the agent offers
+options_menu_buttons = [
+    ["Complete Questionnaires", "Health Status update", "Tutorials"],
+    ["", "", ""],
+    ["Questionari completi", "Aggiornamento dello stato di salute", "Tutorials"],
+    ["Completează chestionare", "Actualizare stare de sănătate", "Tutoriales"]
+]
+
 
 # PSQI Questionnaire
 psqi_start_text = ["During the past month,", " ", " ", "In ultima luna,"]
@@ -144,6 +188,22 @@ def reset_slots(tracker, slots, exceptions=[]):
 
     print("\n> reset_slots:", ", ".join(none_slots))
     return events
+
+def reset_form_slots(tracker, domain, list_questionnaire_abbreviation):
+    #async def required_slots(self, domain_slots, dispatcher, tracker, domain):
+    required = []
+
+    # it shouldnt reach this state
+    if list_questionnaire_abbreviation is None:
+        list_questionnaire_abbreviation = ["activLim"]
+
+    for slot_name in domain['slots'].keys():
+        if slot_name.split("_")[0] in list_questionnaire_abbreviation:
+            if tracker.get_slot(slot_name) is not None:
+                print(slot_name)
+                required.append(SlotSet(slot_name, None))
+           
+    return required
 
 def list_slots(tracker, slots, exceptions=[]):
     filled_slots = ""
@@ -319,8 +379,142 @@ class ActionSaveConversation(Action):
         return []
 
 ####################################################################################################
-# Chit-Chat                                                                                        #
+# General                                                                                          #
 ####################################################################################################
+class ActionGetAvailableQuestions(Action):
+    def name(self) -> Text:
+        return "action_get_available_questionnaires"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+        now = datetime.datetime.now()
+        customTrackerInstance.checkUserID(tracker.current_state()['sender_id'])
+        available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
+        print(available_questionnaires)   
+        if len(available_questionnaires) == 0:
+            text = get_text_from_lang(
+                tracker, 
+                [
+                    "Currently there are no available questionnaires. Would you like to be redirected to the main menu?",
+                    "",
+                    "Al momento non ci sono questionari disponibili. Vuoi essere reindirizzato al menu principale?",
+                    "Momentan nu sunt disponibile chestionare. Doriți să fiți redirecționat către meniul principal?"
+                    ]
+            )
+            # shows first question or asks if there is anything else you would like help with
+            dispatcher.utter_message(text=text)
+            return []
+        else :
+            # if len(available_questionnaires)>3:
+            #     intro_text = ""
+            # else:
+            #     intro_text = ""
+
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "You have the following questionnaire(s) available:",
+                    " ",
+                    "Hai a disposizione il seguente questionario(i):",
+                    "Aveți la dispoziție următoarul(ele) chestionare:",
+                ]
+            )
+            buttons = []
+            for questionnaire in available_questionnaires:
+                button_title = get_text_from_lang(tracker, questionnaire_abbreviations[questionnaire])
+                buttons.append({"title": button_title, "payload": "/"+questionnaire+"_start"})
+             
+            #add button for cancel that takes the user back to the general questions
+            buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
+            dispatcher.utter_message(text=text, buttons=buttons)
+
+            # return doesnt need [] because reset_form_slots returns a list
+            return reset_form_slots(tracker, domain, reset_questionnaires)
+
+class ActionContinueLatestQuestionnaire(Action):
+    def name(self) -> Text:
+        return "action_utter_continue_latest_questionnaire"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+        questionnaire = tracker.get_slot("questionnaire")
+        q_name = get_text_from_lang(tracker, questionnaire_abbreviations[questionnaire])
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Do you want to continue the {} questionnaire?".format(q_name),
+                " ",
+                "Vuoi continuare il questionario {}?".format(q_name),
+                "Doriți să continuați chestionarul {}?".format(q_name),
+            ]
+        )
+        buttons = []
+        start_button_title = get_text_from_lang(
+            tracker,
+            [
+                "Continue",
+                " ", 
+                "Continua",
+                "Continua",
+            ]
+        )
+        buttons.append({"title": start_button_title, "payload": "/"+questionnaire+"_start"})
+        #add button for cancel that takes the user back to the general questions
+        buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionOptionsMenu(Action):
+    def name(self) -> Text:
+        return "action_options_menu"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+        
+        #smthg missing here
+        text = get_text_from_lang(
+            tracker, 
+            [
+                "What can I do for you today?",
+                "",
+                "Cosa posso fare per te oggi?",
+                "Ce pot face pentru tine azi?"]
+            )
+        buttons = get_buttons_from_lang(
+            tracker,
+            options_menu_buttons,
+            ["/available_questionaires", "/health_update", "/tutorials"]
+        )
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+# used when user ends up in the options menu more than once after greeting
+class ActionOptionsMenuExtra(Action):
+    def name(self) -> Text:
+        return "action_options_menu_extra"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+        
+        time.sleep(5) # 5 second delay before the next action
+        #smthg missing here but i dont remember
+        text = get_text_from_lang(
+            tracker, 
+            [
+                "Is there anything else that I can help you with?",
+                " ",
+                "C'è qualcos'altro con cui posso aiutarti?",
+                "Mai este ceva cu care te pot ajuta?",
+            ]
+            )
+        buttons = get_buttons_from_lang(
+            tracker,
+            options_menu_buttons,
+            ["/available_questionaires", "/health_update", "/tutorials"]
+        )
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
 
 class ActionUtterGreet(Action):
     def name(self):
@@ -329,161 +523,238 @@ class ActionUtterGreet(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
-        if tracker.get_slot("questionnaire") == "ACTIVLIM":  # ACTIVLIM is only for Romanian use-case
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Hey there! I am Zenon, your ALAMEDA personal assistant bot.",
+                "Χαίρεται!",
+                "Ehilà! Sono Zenon, il tuo assistente personale ALAMEDA bot.",
+                "Hei acolo! Sunt Zenon, robotul tău asistent personal ALAMEDA.",
+            ],
+        )
+        dispatcher.utter_message(text=text)
+        #check if it is the first time of the day
+        isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
+        return [SlotSet("is_first_time", isFirstTime)]
+
+class ActionUtterHowAreYou(Action):
+    def name(self):
+        return "action_utter_how_are_you"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                random.choice(["How are you?", "How are you feeling today?", "How are you today?", "How is it going?", "How is your day going?"]),
+                " ",
+                random.choice(["Come stai?", "Come ti senti oggi?", "Come stai oggi?", "Come va?", "Come va la tua giornata?"]),
+                random.choice(["Cum mai faci?", "Cum te simți azi?", "Ce mai faci azi?", "Cum merge?", "Cum îți merge ziua?"]),
+            ],
+        )
+        dispatcher.utter_message(text=text)
+        return []
+
+class ActionUtterNotificationGreet(Action):
+    def name(self):
+        return "action_utter_notification_greet"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        q_abbreviation = tracker.get_slot("questionnaire")
+        if q_abbreviation==None:
+            q_abbreviation = "psqi"
+        q_name = get_text_from_lang(
+            tracker,
+            questionnaire_abbreviations[q_abbreviation],
+        )
+
+        # check if questionnaire is still pending
+        isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(), q_abbreviation)
+        if isAvailable:
             text = get_text_from_lang(
                 tracker,
                 [
-                    "Hey there. Just to note that the ACTIVLim questionnaire is available to answer it.",
+                    "Hey there. Just to note that the '{}' questionnaire is available.".format(q_name),
                     " ",
-                    " ",
-                    "Hei acolo. Doar să rețineți că chestionarul ACTIVLim este disponibil pentru a-i răspunde.",
+                    "Ehilà. Solo per notare che il questionario '{}' è disponibile per rispondere.".format(q_name),
+                    "Hei acolo. Doar să rețineți că chestionarul '{}' este disponibil pentru a răspunde.".format(q_name),
                 ],
             )
             print("\nBOT:", text)
             dispatcher.utter_message(text=text)
-            return [FollowupAction("action_utter_ask_activlim_start")]
-
-        elif tracker.get_slot("questionnaire") == "PSQI":
-            text = get_text_from_lang(
-                tracker,
-                [
-                    "Hey, just to note that the PSQI questionnaire is available to answer it.",
-                    " ",
-                    " ",
-                    "Hei, doar să rețineți că chestionarul PSQI este disponibil pentru a-i răspunde.",
-                ],
-            )
-            print("\nBOT:", text)
-            dispatcher.utter_message(text=text)
-            return [FollowupAction("action_utter_ask_psqi_start")]
-
-        elif tracker.get_slot("questionnaire") == "DizzinessAndBalance":
-            text = get_text_from_lang(
-                tracker,
-                [
-                    "Hey, just to note that the Dizziness - Balance questionnaire is available to answer it.",
-                    " ",
-                    " ",
-                    "Hei, doar să rețineți că chestionarul al evaluarii ametelii si echilibrului este disponibil pentru a-i răspunde.",
-                ],
-            )
-            print("\nBOT:", text)
-            dispatcher.utter_message(text=text)
-            return [FollowupAction("action_utter_ask_dNb_start")]
-
-        elif tracker.get_slot("questionnaire") == "EatingHabits":
-            text = get_text_from_lang(
-                tracker,
-                [
-                    "Hey, just to note that the Eating Habits questionnaire is available to answer it.",
-                    " ",
-                    " ",
-                    "Hei, doar să rețineți că chestionarul obiceiuri alimentare este disponibil pentru a-i răspunde.",
-                ],
-            )
-            print("\nBOT:", text)
-            dispatcher.utter_message(text=text)
-            return [FollowupAction("action_utter_ask_eatinghabits_start")]
-
-        elif tracker.get_slot("questionnaire") == "MuscleTone":
-            text = get_text_from_lang(
-                tracker,
-                [
-                    "Hey, just to note that the Muscle Tone questionnaire is available to answer it.",
-                    " ",
-                    " ",
-                    "Hei, doar să rețineți că chestionarul pentru tonusul muscular este disponibil pentru a răspunde.",
-                ],
-            )
-            print("\nBOT:", text)
-            dispatcher.utter_message(text=text)
-            return [FollowupAction("action_utter_ask_muscletone_start")]
-
+            return []
         else:
             text = get_text_from_lang(
                 tracker,
                 [
-                    "Hey there. How can I help you?",
-                    "Χαίρεται. Πως μπορώ να σε βοηθήσω;",
-                    "Ehilà. Come posso aiutarla?",
-                    "Hei acolo. Cu ce ​​vă pot ajuta?",
+                    "Hey there!",
+                    "Χαίρεται!",
+                    "Ehilà!",
+                    "Hei acolo!",
                 ],
             )
-            print("\nBOT:", text)
             dispatcher.utter_message(text=text)
-            return [FollowupAction("action_listen")]
+            return []
+
+class ActionOntologyStoreSentiment(Action):
+    def name(self):
+        return "action_ontology_store_sentiment"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+        return []
+
+class ActionQuestionnaireCompleted(Action):
+    def name(self):
+        return "action_questionnaire_completed"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "We are good. Thank you for your time.",
+                "Το ερωτηματολόγιο ολοκληρώθηκε. Ευχαριστώ.",
+                "Siamo buoni. Grazie per il tuo tempo.",
+                "Suntem buni. Multumesc pentru timpul acordat.",
+            ],
+        )
+        dispatcher.utter_message(text=text)
+        storeQuestionnaireData(True, tracker)
+        return []
+
+# class ActionStoreQuestionnaire(Action):
+#     def name(self):
+#         return "action_store_questionnaire"
+
+#     def run(self, dispatcher, tracker, domain):
+#         announce(self, tracker)
+
+#         #tracker.get_slot("is_finished")
+#         #print(domain["slots"])
+#         storeQuestionnaireData(True, tracker)
+#         return[]
+
+class ActionQuestionnaireCancelled(Action):
+    def name(self):
+        return "action_questionnaire_cancelled"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "I stopped the process. We can finish it later.",
+                "Σταμάτησα το ερωτηματολόγιο, μπορούμε να συνεχίσουμε αργότερα.",
+                "Ho interrotto il processo. Possiamo finirlo più tardi.",
+                "Am oprit procesul. O putem termina mai târziu.",
+            ],
+        )
+        dispatcher.utter_message(text=text)
+        storeQuestionnaireData(False, tracker)
+        return[]
+
+# this action might need to change in order to not set the questionnaire slot in here 
+class ActionUtterStartingQuestionnaire(Action):
+    def name(self):
+        return "action_utter_starting_questionnaire"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+        
+        q_abbreviation = tracker.latest_message["intent"].get("name").split('_')[0]
+        #print(tracker.latest_message["intent"])
+        #q_abbreviation = tracker.get_slot("questionnaire")
+        if q_abbreviation==None:
+            q_abbreviation = "psqi"
+        q_name = get_text_from_lang(
+            tracker,
+            questionnaire_abbreviations[q_abbreviation],
+        )
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Starting '{}' questionnaire...".format(q_name),
+                " ",
+                "Di partenza '{}' questionario...".format(q_name),
+                "Pornire '{}' chestionar...".format(q_name),
+            ],
+        )
+        dispatcher.utter_message(text=text)
+        #return [SlotSet("questionnaire", q_abbreviation)]
+        return [FollowupAction("{}_form".format(q_abbreviation))]
+
+class ActionSetQuestionnaireSlot(Action):
+    def name(self):
+        return "action_set_questionnaire_slot"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+        
+        q_abbreviation = tracker.latest_message["intent"].get("name").split('_')[0]
+        return [SlotSet("questionnaire", q_abbreviation)]
+
+
+class ActionUtterStartQuestionnaire(Action):
+    def name(self):
+        return "action_utter_ask_questionnaire_start"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        q_abbreviation = tracker.get_slot("questionnaire")
+        if q_abbreviation==None:
+            q_abbreviation = "psqi"
+        q_name = get_text_from_lang(
+            tracker,
+            questionnaire_abbreviations[q_abbreviation],
+        )
+
+        if q_abbreviation[:2] == "MS":
+            minutes = 5
+        elif q_abbreviation[:6] == "STROKE":
+            minutes = 3
+        else:
+            minutes = 7
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Would you like to fill it? It shouldn't take more than {} minutes.".format(minutes),
+                " ",
+                "Ti piacerebbe riempirlo? Non dovrebbero volerci più di {} minuti.".format(minutes),
+                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de {} minute.".format(minutes),
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Start {} Questionnaire".format(q_name), "No"],
+                [" ", " "],
+                ["Inizio {} Questionario".format(q_name), "No"],
+                ["Porniți chestionarul {}".format(q_name), "Nu"],
+            ],
+            ['/{}_start'.format(q_abbreviation), '/deny']
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
 
 ####################################################################################################
 # ACTIVLIM Questionnaire                                                                           #
 ####################################################################################################
 
-class ActionUtterActivlimStart(Action):
-    def name(self):
-        return "action_utter_ask_activlim_start"
-
-    def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
-
-        text = get_text_from_lang(
-            tracker,
-            [
-                "Would you like to fill it? It shouldn't take more than 7 minutes.",
-                " ",
-                " ",
-                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute.",
-            ],
-        )
-
-        buttons = get_buttons_from_lang(
-            tracker,
-            [
-                ["Start ACTIVLim Questionnaire", "No"],
-                [" ", " "],
-                [" ", " "],
-                ["Porniți chestionarul ACTIVLim", "Nu"],
-            ],
-            ['/activLim_start', '/deny']
-        )
-
-        print("\nBOT:", text, buttons)
-        dispatcher.utter_message(text=text, buttons=buttons)
-        return []
 
 ####################################################################################################
 # PSQI Questionnaire                                                                               #
 ####################################################################################################
-
-class ActionUtterPSQIStart(Action):
-    def name(self):
-        return "action_utter_ask_psqi_start"
-
-    def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
-
-        text = get_text_from_lang(
-            tracker,
-            [
-                "Would you like to fill it? It shouldn't take more than 7 minutes.",
-                " ",
-                " ",
-                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute.",
-            ],
-        )
-
-        buttons = get_buttons_from_lang(
-            tracker,
-            [
-                ["Start PSQI Questionnaire", "No"],
-                [" ", " "],
-                [" ", " "],
-                ["Porniți chestionarul PSQI", "Nu"],
-            ],
-            ['/psqi_start', '/deny']
-        )
-
-        print("\nBOT:", text, buttons)
-        dispatcher.utter_message(text=text, buttons=buttons)
-        return []
 
 class ActionAskPSQIQ1(Action):  # PSQI Questionnaire
     def name(self) -> Text:
@@ -1345,38 +1616,6 @@ class ActionAskPSQIQ10d(Action):  # PSQI Questionnaire
 ####################################################################################################
 # Dizziness and Balance Questionnaire                                                              #
 ####################################################################################################
-
-class ActionUtterDnBStart(Action):  # DnB Questionnaire
-    def name(self):
-        return "action_utter_ask_dizzNbalance_start"
-
-    def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
-
-        text = get_text_from_lang(
-            tracker,
-            [
-                "Would you like to fill it? It shouldn't take more than 7 minutes.",
-                " ",
-                " ",
-                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute."
-            ]
-        )
-
-        buttons = get_buttons_from_lang(
-            tracker,
-            [
-                ["Start Dizzines - Balance Questionnaire", "No"],
-                [" ", " "],
-                [" ", " "],
-                ["Porniți chestionarul Dizzines - Balance", "Nu"],
-            ],
-            ['/dizzNbalance_start', '/deny']
-        )
-
-        print("\nBOT:", text, buttons)
-        dispatcher.utter_message(text=text, buttons=buttons)
-        return []
 
 class ActionAskDnBQ1(Action):  # DnB Questionnaire
     def name(self) -> Text:
@@ -3285,38 +3524,6 @@ class ValidateDnBForm(FormValidationAction):
 # Eating Habits Questionnaire                                                                      #
 ####################################################################################################
 
-class ActionUttereatinghabitsStart(Action):
-    def name(self):
-        return "action_utter_ask_eatinghabits_start"
-
-    def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
-
-        text = get_text_from_lang(
-            tracker,
-            [
-                "Would you like to fill it? It shouldn't take more than 7 minutes.",
-                " ",
-                " ",
-                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute."
-            ]
-        )
-
-        buttons = get_buttons_from_lang(
-            tracker,
-            [
-                ["Start Eating Habits Questionnaire", "No"],
-                [" ", " "],
-                [" ", " "],
-                ["Porniți chestionarul obiceiuri alimentare", "Nu"]
-            ],
-            ['/eatinghabits_start', '/deny']
-        )
-
-        print("\nBOT:", text, buttons)
-        dispatcher.utter_message(text=text, buttons=buttons)
-        return []
-
 class ActionAskeatinghabitsQ1(Action):
     def name(self) -> Text:
         return "action_ask_eatinghabits_Q1"
@@ -3741,41 +3948,9 @@ class ActionAskeatinghabitsQ20(Action):
 # Muscle Tone Questionnaire                                                                        #
 ####################################################################################################
 
-class ActionUtterMuscleToneStart(Action):
-    def name(self):
-        return "action_utter_ask_muscletone_start"
-
-    def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
-
-        text = get_text_from_lang(
-            tracker,
-            [
-                "Would you like to fill it? It shouldn't take more than 7 minutes.",
-                " ",
-                " ",
-                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute."
-            ]
-        )
-
-        buttons = get_buttons_from_lang(
-            tracker,
-            [
-                ["Start Muscle Tone Questionnaire", "No"],
-                [" ", " "],
-                [" ", " "],
-                ["Începeți chestionarul pentru tonusul muscular", "Nu"]
-            ],
-            ['/muscletone_start', '/deny']
-        )
-
-        print("\nBOT:", text, buttons)
-        dispatcher.utter_message(text=text, buttons=buttons)
-        return []
-
 class ActionAskMuscleToneQ1(Action):
     def name(self) -> Text:
-        return "action_ask_muscletoneQ1"
+        return "action_ask_muscletone_Q1"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3806,7 +3981,7 @@ class ActionAskMuscleToneQ1(Action):
 
 class ActionAskMuscleToneQ2(Action):
     def name(self) -> Text:
-        return "action_ask_muscletoneQ2"
+        return "action_ask_muscletone_Q2"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3867,7 +4042,7 @@ class ActionAskMuscleToneQ3(Action):
 
 class ActionAskMuscleToneQ4(Action):
     def name(self) -> Text:
-        return "action_ask_muscletoneQ4"
+        return "action_ask_muscletone_Q4"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3898,7 +4073,7 @@ class ActionAskMuscleToneQ4(Action):
 
 class ActionAskMuscleToneQ5(Action):
     def name(self) -> Text:
-        return "action_ask_muscletoneQ5"
+        return "action_ask_muscletone_Q5"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3929,7 +4104,7 @@ class ActionAskMuscleToneQ5(Action):
 
 class ActionAskMuscleToneQ6(Action):
     def name(self) -> Text:
-        return "action_ask_muscletoneQ6"
+        return "action_ask_muscletone_Q6"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -3969,7 +4144,7 @@ class ActionAskMuscleToneQ6(Action):
 
 class ActionAskMuscleToneQ7(Action):
     def name(self) -> Text:
-        return "action_ask_muscletoneQ7"
+        return "action_ask_muscletone_Q7"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -4000,7 +4175,7 @@ class ActionAskMuscleToneQ7(Action):
 
 class ActionAskMuscleToneQ8(Action):
     def name(self) -> Text:
-        return "action_ask_muscletoneQ8"
+        return "action_ask_muscletone_Q8"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -4031,7 +4206,7 @@ class ActionAskMuscleToneQ8(Action):
 
 class ActionAskMuscleToneQ9(Action):
     def name(self) -> Text:
-        return "action_ask_muscletoneQ9"
+        return "action_ask_muscletone_Q9"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -4062,7 +4237,7 @@ class ActionAskMuscleToneQ9(Action):
 
 class ActionAskMuscleToneQ10(Action):
     def name(self) -> Text:
-        return "action_ask_muscletoneQ10"
+        return "action_ask_muscletone_Q10"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -4102,38 +4277,6 @@ class ActionAskMuscleToneQ10(Action):
 ####################################################################################################
 # Coast Questionnaire                                                                              #
 ####################################################################################################
-
-class ActionUtterCoastStart(Action):
-    def name(self):
-        return "action_utter_ask_coast_start"
-
-    def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
-
-        text = get_text_from_lang(
-            tracker,
-            [
-                "Would you like to fill it? It shouldn't take more than 7 minutes.",
-                " ",
-                " ",
-                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de 7 minute."
-            ]
-        )
-
-        buttons = get_buttons_from_lang(
-            tracker,
-            [
-                ["Start Coast Questionnaire", "No"],
-                [" ", " "],
-                [" ", " "],
-                ["Scala COAST", "Nu"]
-            ],
-            ['/coast_start', '/deny']
-        )
-
-        print("\nBOT:", text, buttons)
-        dispatcher.utter_message(text=text, buttons=buttons)
-        return []
 
 class ActionAskCoastQ0(Action):
     def name(self) -> Text:
@@ -4940,7 +5083,7 @@ class ActionAskMSDomainIRQ1(Action):
                 ["Yes", "No"],
                 [" ", " "],
                 ["Sì", "No"],                 
-                [" ", " "]
+                [" ", " "],
             ],
             [
                 '/affirm',
@@ -4996,7 +5139,7 @@ class ActionAskMSDomainIRQ1b(Action):
                 ["Yes", "No"],
                 [" ", " "],
                 ["Sì", "No"],                 
-                [" ", " "]
+                [" ", " "],
             ],
             [
                 '/affirm{"given_answer":"yes"}',
@@ -5067,8 +5210,8 @@ class ActionAskMSDomainIRQ2(Action):
             [
                 ["Yes", "No"],
                 [" ", " "],
-                ["Sì", "No"]                
-                [" ", " "] 
+                ["Sì", "No"],                
+                [" ", " "], 
             ],
             [
                 '/affirm',
@@ -5124,7 +5267,7 @@ class ActionAskMSDomainIRQ2b(Action):
                 ["Yes", "No"],
                 [" ", " "],
                 ["Sì", "No"],                
-                [" ", " "] 
+                [" ", " "], 
             ],
             [
                 '/affirm{"given_answer":"yes"}',
@@ -5274,8 +5417,8 @@ class ActionAskMSDomainIRQ6(Action):
             [
                 ["Yes", "No"],
                 [" ", " "],
-                ["Sì", "No"]                
-                [" ", " "] 
+                ["Sì", "No"],                
+                [" ", " "], 
             ],
             [
                 '/affirm{"given_answer":"yes"}',
@@ -5439,7 +5582,7 @@ class ActionAskMSDomainIIIRQ7(Action):
                 ["Yes", "No"],
                 [" ", " "],
                 ["Sì", "No"],                
-                [" ", " "] 
+                [" ", " "], 
             ],
             [
                 '/affirm{"given_answer":"yes"}',
@@ -5534,8 +5677,8 @@ class ActionAskMSDomainIVRQ2(Action):
             [
                 ["Yes", "No"],
                 [" ", " "],
-                ["Sì", "No"]                
-                [" ", " "] 
+                ["Sì", "No"],                
+                [" ", " "], 
             ],
             [
                 '/affirm',
@@ -5613,7 +5756,7 @@ class ActionAskMSDomainIVRQ3(Action):
                 ["Yes", "No"],
                 [" ", " "],
                 ["Sì", "No"],                
-                [" ", " "] 
+                [" ", " "], 
             ],
             [
                 '/affirm{"given_answer":"yes"}',
@@ -5637,3 +5780,15 @@ class ValidateMSDomainIVForm(FormValidationAction):
             slots_mapped_in_domain.remove("MSdomainIII_RQ2a")           
 
         return slots_mapped_in_domain                           
+
+
+
+####################################################################################################
+# Other methods                                                                                    #
+#################################################################################################### 
+# method to store questionnaires
+def storeQuestionnaireData(isFinished, tracker):
+    customTrackerInstance.saveQuestionnaireAnswers(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), isFinished, tracker)
+
+def storeRelevantQuestionsData(tracker):
+    customTrackerInstance.saveRelevantQuestionsAnswers(tracker.current_state()['sender_id'], tracker.slots["questionnaire"].title(), tracker)

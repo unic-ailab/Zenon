@@ -64,7 +64,6 @@ slots:
     type: any
     influence_conversation: false
 actions:
-  - action_utter_ask_coast_start
   - action_ask_coast_Q0
   - action_ask_coast_Q1
   - action_ask_coast_Q2
