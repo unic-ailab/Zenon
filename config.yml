@@ -18,7 +18,7 @@ pipeline:
     max_ngram: 4
   - name: "DucklingEntityExtractor"
     url: "http://localhost:8000"
-    dimensions: ["time"]
+    dimensions: ["time", "number"]
   - name: DIETClassifier
     epochs: 100
     constrain_similarities: true

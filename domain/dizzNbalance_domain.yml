@@ -245,8 +245,8 @@ forms:
       dizzNbalance_Symptoms:
         - type: from_text
       dizzNbalance_Q1:
-        - type: from_text
-          not_intent: [cancel, out_of_scope]
+        - type: from_entity
+          entity: time
       dizzNbalance_Q2:
         - type: from_intent
           intent: affirm

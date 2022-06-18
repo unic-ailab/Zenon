@@ -14,7 +14,7 @@ from rasa_sdk.forms import FormValidationAction
 
 import sys        
 #sys.path.append("/home/unic/Zenon/")   
-sys.path.append('C:\Users\vagge\Documents\Data Science - AI - Deep Learning\Projects\Zenon')   
+sys.path.append('C:\\Users\\vagge\\Documents\\Data Science - AI - Deep Learning\\Projects\\Zenon')   
 from custom_tracker_store import CustomSQLTrackerStore
 
 customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="demo.db")
@@ -3519,6 +3519,31 @@ class ValidateDnBForm(FormValidationAction):
             slots_mapped_in_domain.remove("dizzNbalance_EarSymptomIIIa3i")
 
         return slots_mapped_in_domain
+
+    def validate_dizzNbalance_Q1(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+    ) -> Dict[Text, Any]:
+        """Validate question 'When did your problem start (date)?' """
+
+        today = datetime.date.today()
+
+        if isinstance(slot_value, datetime.date):   # validation succeeded, answer has correct type
+            if today <= slot_value:
+                # validation succeeded, provided answer is correct
+                return {"dizzNbalance_Q1": slot_value}
+            else:
+                # validation failed, user provides a date after today.
+                # user will be asked again
+                dispatcher.utter_message(text="You can't provide a date after today.")
+                return {"dizzNbalance_Q1": None}
+        else:
+            # validation failed, set this slot to None so that the
+            # user will be asked for the slot again
+            dispatcher.utter_message(text="Please provide a valid date.")
+            return {"dizzNbalance_Q1": None}        
 
 ####################################################################################################
 # Eating Habits Questionnaire                                                                      #
