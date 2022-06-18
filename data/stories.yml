@@ -71,7 +71,32 @@ stories:
                   - or:
                             - intent: deny
                             - intent: cancel
+                  - action: utter_inform_doctor_extra
+                  - or:
+                            - intent: deny
+                            - intent: cancel
                   - action: utter_no_problem
+                  - action: action_options_menu
+
+        - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report but want to report smothing extra.
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - slot_was_set:
+                            - is_first_time: true
+                  - action: action_utter_how_are_you
+                  - intent: inform
+                  - slot_was_set:
+                            - sentiment: neg
+                  - action: utter_inform_doctor
+                  - or:
+                            - intent: deny
+                            - intent: cancel
+                  - action: utter_inform_doctor_extra
+                  - intent: affirm
+                  - action: utter_inform_doctor_go_on
+                  - intent: inform
+                  - action: utter_confirm_doctor
                   - action: action_options_menu
 
         - story: Greeting, not first time of the day using the agent - agent doesn't ask again for how the user is feeling

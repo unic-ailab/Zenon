@@ -580,13 +580,13 @@ class CustomSQLTrackerStore(TrackerStore):
         Returns:
             Boolean, True=first time, False=not first time
         """
-        today = datetime(datetime.today().year, datetime.today().month, datetime.today().day).timestamp()
-        return session.query(self.SQLEvent).filter(
+        today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+        return session.query(sa.func.min(self.SQLEvent.timestamp)).filter(
             self.SQLEvent.sender_id == sender_id,
             self.SQLEvent.type_name == "action",
             self.SQLEvent.action_name == "action_utter_how_are_you",
             self.SQLEvent.timestamp >= today,
-        ) is None
+        ).first()[0] is None
 
 
     def save(self, tracker: DialogueStateTracker) -> None:
@@ -741,7 +741,10 @@ class CustomSQLTrackerStore(TrackerStore):
                     #save to ontology
                     #saveQuestToOntology(database_entry)
                     #reset row
-                    database_entry.available_at= (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=4)).timestamp()
+                    print(database_entry.available_at)
+                    new_day = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=4)).timestamp()
+                    print(new_day)
+                    database_entry.available_at= new_day
                     database_entry.state="available"
                     database_entry.timestamp_start=None
                     database_entry.timestamp_end=None # this seems to not be used
@@ -758,7 +761,7 @@ class CustomSQLTrackerStore(TrackerStore):
     def getSpecificQuestionnaireAvailability(self, sender_id, current_datetime, questionnaire_name) -> bool:
         current_timestamp = current_datetime.timestamp()
         with self.session_scope() as session:
-            isAvailable = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first() is None
+            isAvailable = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first()[0] is None
         return isAvailable
 
     def isFirstTimeToday(self, sender_id) -> bool:
@@ -781,7 +784,8 @@ class CustomSQLTrackerStore(TrackerStore):
                     # save to ontology
                     #saveQuestToOntology(entry)
                     # reset
-                    entry.available_at= (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=4)).timestamp()
+                    new_day = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=4)).timestamp()
+                    entry.available_at= new_day
                     entry.state="available"
                     entry.timestamp_start=None
                     entry.timestamp_end=None
@@ -869,15 +873,16 @@ if __name__ == "__main__":
     #print(ts.getAvailableQuestionnaires("stroke00",datetime.datetime.now()))
     #print(ts.saveQuestionnaireAnswers("stroke03", "activLim", False))
     now = datetime.datetime.now().timestamp()
-    print(1654808400<now)
+    #print(1654808400<now)
     with ts.session_scope() as session:
         #question_events = ts._questionnaire_state_query(session, "stroke05", now, "activLim")
         #print(question_events.first().state)
         #q = [json.loads(event.data) for event in question_events]
         #print(q)
-        question_events, slot = ts._questionnaire_query(session, "stroke19", "STROKEdomainIII")
-        print([json.loads(event.data) for event in question_events])
-        print([json.loads(event.data) for event in slot])
+        # question_events, slot = ts._questionnaire_query(session, "stroke19", "STROKEdomainIII")
+        # print([json.loads(event.data) for event in question_events])
+        # print([json.loads(event.data) for event in slot])
+        print(ts._first_time_of_day_query(session, "stroke23"))
 
 
 
