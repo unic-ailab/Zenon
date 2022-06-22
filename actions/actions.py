@@ -1,3 +1,4 @@
+from ast import Try
 from dataclasses import dataclass
 import random
 import datetime
@@ -1616,6 +1617,93 @@ class ActionAskPSQIQ10d(Action):  # PSQI Questionnaire
         print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
+
+class ValidatePSQIForm(FormValidationAction):
+    def name(self) -> Text:
+        return "validate_psqi_form"
+
+    def validate_psqi_Q1(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 'when have you usually go to bed at night?' """
+
+        try:
+            slot_value = tracker.get_slot("time")
+            slot_value = datetime.datetime.fromisoformat(slot_value)
+            slot_value = slot_value.strftime("%Y-%m-%d %H:%M:%S")
+            slot_value = datetime.datetime.strptime(slot_value, "%Y-%m-%d %H:%M:%S")
+            slot_value = slot_value.time()
+
+            return {"psqi_Q1": slot_value}
+
+        except:
+            dispatcher.utter_message(text="Please give a valid answer")
+            return {"psqi_Q1": None}
+
+    def validate_psqi_Q2(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """
+        Validation for the question 
+        'how many hours of actual sleep did you get at night? 
+        (This may be different than the number of hours you spend in bed.)' 
+        """
+
+        try:
+            slot_value = tracker.get_slot("number")
+            return {"psqi_Q2": slot_value}
+
+        except:
+            dispatcher.utter_message(text="Please give a valid answer")
+            return {"psqi_Q2": None}      
+
+    def validate_psqi_Q3(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 'when have you usually gotten up in the morning?' """
+
+        try:
+            slot_value = tracker.get_slot("time")
+            slot_value = datetime.datetime.fromisoformat(slot_value)
+            slot_value = slot_value.strftime("%Y-%m-%d %H:%M:%S")
+            slot_value = datetime.datetime.strptime(slot_value, "%Y-%m-%d %H:%M:%S")
+            slot_value = slot_value.time()
+
+            return {"psqi_Q3": slot_value}
+
+        except:
+            dispatcher.utter_message(text="Please give a valid answer")
+            return {"psqi_Q3": None}     
+
+    def validate_psqi_Q4(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 'how long (in minutes) has it usually take you to fall asleep each night?' """
+
+        try:
+            slot_value = tracker.get_slot("number")
+            return {"psqi_Q4": slot_value}
+
+        except:
+            dispatcher.utter_message(text="Please give a valid answer")
+            return {"psqi_Q4": None}                      
+
 
 ####################################################################################################
 # Dizziness and Balance Questionnaire                                                              #
@@ -3536,6 +3624,7 @@ class ValidateDnBForm(FormValidationAction):
         today = datetime.datetime.today()
         date_format = "%Y-%m-%d"    # This is the correct date format for Duckling to extract correct the date.
         user_date = tracker.latest_message['text']
+        slot_value = tracker.get_slot("time")
 
         if any(map(str.isdigit, user_date)) and (re.search("/", user_date) or (re.search("\.", user_date)) or (re.search("-", user_date))):
             try:
@@ -3616,6 +3705,18 @@ class ValidateDnBForm(FormValidationAction):
 
             dispatcher.utter_message(text="Please provide an answer in the form of '# hours/days/weeks/months'\ne.g. 3 days or 1 month")
             return {"dizzNbalance_Q4a": None}
+
+    def validate_dizzNbalance_Q11i(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:  
+        """Validates the answer for question 'If yes, # of falls in the last 6 months...'"""
+        
+        slot_value = tracker.get_slot("number")
+        return {"dizzNbalance_Q11i": slot_value}
 
 ####################################################################################################
 # Eating Habits Questionnaire                                                                      #

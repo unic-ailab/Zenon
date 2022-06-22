@@ -48,6 +48,7 @@ entities:
   - time
   - sentiment_classes
   - is_first_time
+  - number
 slots:
   questionnaire:
     type: categorical
