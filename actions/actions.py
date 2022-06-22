@@ -1,11 +1,14 @@
+from dataclasses import dataclass
 import random
 import datetime
 import time
+import re
 
 from typing import Any, Dict, List, Text
 from urllib import response
 from matplotlib.pyplot import text
 from numpy import true_divide
+from pytz import timezone
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.events import SlotSet, FollowupAction
@@ -3526,25 +3529,93 @@ class ValidateDnBForm(FormValidationAction):
         slot_value: Any,
         dispatcher: CollectingDispatcher,
         tracker: Tracker,
+        domain
     ) -> Dict[Text, Any]:
         """Validate question 'When did your problem start (date)?' """
 
-        today = datetime.date.today()
+        today = datetime.datetime.today()
+        date_format = "%Y-%m-%d"    # This is the correct date format for Duckling to extract correct the date.
+        user_date = tracker.latest_message['text']
 
-        if isinstance(slot_value, datetime.date):   # validation succeeded, answer has correct type
-            if today <= slot_value:
-                # validation succeeded, provided answer is correct
-                return {"dizzNbalance_Q1": slot_value}
-            else:
-                # validation failed, user provides a date after today.
-                # user will be asked again
-                dispatcher.utter_message(text="You can't provide a date after today.")
+        if any(map(str.isdigit, user_date)) and (re.search("/", user_date) or (re.search("\.", user_date)) or (re.search("-", user_date))):
+            try:
+                datetime.datetime.strptime(user_date, date_format)
+            except ValueError or TypeError:
+                text = get_text_from_lang(
+                    tracker,
+                    [
+                        "Please provide a valid date in the format YYYY-MM-DD.",
+                        " ",
+                        " ",
+                        "Vă rugăm să furnizați o dată validă în formatul AAAA-LL-ZZ."
+                    ]
+                )
+
+                dispatcher.utter_message(text=text)
                 return {"dizzNbalance_Q1": None}
-        else:
-            # validation failed, set this slot to None so that the
-            # user will be asked for the slot again
-            dispatcher.utter_message(text="Please provide a valid date.")
-            return {"dizzNbalance_Q1": None}        
+        else:  
+            user_input = datetime.datetime.fromisoformat(slot_value)
+            user_input = user_input.strftime("%Y-%m-%d %H:%M:%S")
+            user_input = datetime.datetime.strptime(user_input, "%Y-%m-%d %H:%M:%S")
+
+            if isinstance(user_input, datetime.datetime):   # validation succeeded, answer has correct type
+                if user_input <= today:
+                    # validation succeeded, provided answer is correct
+                    return {"dizzNbalance_Q1": slot_value}
+                else:
+                    # validation failed, user provides a date after today.
+                    # user will be asked again
+                    text = get_text_from_lang(
+                    tracker,
+                    [
+                        "You can't provide a date after today.",
+                        " ",
+                        " ",
+                        "Nu puteți furniza o dată după astăzi."
+                    ]
+                )
+
+
+                    dispatcher.utter_message(text=text)
+                    return {"dizzNbalance_Q1": None}
+            else:
+                # validation failed, set this slot to None so that the
+                # user will be asked for the slot again
+                text = get_text_from_lang(
+                    tracker,
+                    [
+                        "Please provide a valid date in the format YYYY-MM-DD.",
+                        " ",
+                        " ",
+                        "Vă rugăm să furnizați o dată validă în formatul AAAA-LL-ZZ."
+                    ]
+                )
+
+                dispatcher.utter_message(text=text)
+                return {"dizzNbalance_Q1": None}
+
+    def validate_dizzNbalance_Q4a(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validates the answer of question 'If variable, the spells occur every (# of hours/days/weeks/months/years)' """
+
+        if len(slot_value) < 2:
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "Please provide an answer in the form of '# hours/days/weeks/months'\ne.g. 3 days or 1 month",
+                    " ",
+                    " ",
+                    "Vă rugăm să furnizați un răspuns sub forma „# ore/zile/săptămâni/luni”\ne.g. 3 zile sau 1 luna"
+                ]
+            )
+
+            dispatcher.utter_message(text="Please provide an answer in the form of '# hours/days/weeks/months'\ne.g. 3 days or 1 month")
+            return {"dizzNbalance_Q4a": None}
 
 ####################################################################################################
 # Eating Habits Questionnaire                                                                      #

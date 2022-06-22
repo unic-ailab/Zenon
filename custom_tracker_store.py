@@ -721,7 +721,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 try:
                     question_number = slot_data.get("name").split("Q")[1]
                 except:
-                    question_number = slot_data.get("name").split("activLim_")[1]
+                    question_number = slot_data.get("name").split(questionnaire_name + "_")[1]
                 
                 # example: {q1: {"question": "How difficult is it..?", "answer": "very", "timestamp": }}
                 answers_data[question_number] = {"question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")}
