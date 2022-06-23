@@ -74,6 +74,7 @@ slots:
     type: any
     influence_conversation: false
 actions:
+  - validate_psqi_form
   - action_ask_psqi_Q10
   - action_ask_psqi_Q10a
   - action_ask_psqi_Q10b
@@ -102,17 +103,25 @@ forms:
   psqi_form:
     required_slots:
       psqi_Q1:
-        - type: from_text
-          not_intent: [cancel, out_of_scope]
+        # - type: from_text
+        #   not_intent: [cancel, out_of_scope]
+        - entity: time
+          type: from_entity
       psqi_Q2:
-        - type: from_text
-          not_intent: [cancel, out_of_scope]
+        # - type: from_text
+        #   not_intent: [cancel, out_of_scope]
+        - entity: number
+          type: from_entity
       psqi_Q3:
-        - type: from_text
-          not_intent: [cancel, out_of_scope]
+        # - type: from_text
+        #   not_intent: [cancel, out_of_scope]
+        - entity: time
+          type: from_entity
       psqi_Q4:
-        - type: from_text
-          not_intent: [cancel, out_of_scope]
+        # - type: from_text
+        #   not_intent: [cancel, out_of_scope]
+        - entity: number
+          type: from_entity
       psqi_Q5a:
         - entity: given_answer
           type: from_entity

@@ -345,8 +345,10 @@ forms:
           intent: deny
           value: false
       dizzNbalance_Q11i:
-        - type: from_text
-          not_intent: [cancel, out_of_scope]
+        # - type: from_text
+        #   not_intent: [cancel, out_of_scope]
+        - type: from_entity
+          entity: number
       dizzNbalance_Q12:
         - type: from_intent
           intent: affirm

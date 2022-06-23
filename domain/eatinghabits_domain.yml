@@ -85,100 +85,62 @@ forms:
   eatinghabits_form:
     required_slots:
       eatinghabits_Q1:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q2:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q3:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q4:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q5:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q6:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q7:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q8:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q9:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q10:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q11:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q12:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q13:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q14:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q15:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q16:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q17:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q18:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q19:
-        - type: from_text
-          not_intent:
-            - cancel
-            - out_of_scope
+        - type: from_entity
+          entity: given_answer
       eatinghabits_Q20:
-        - type: from_text
-          not_intent: [cancel, out_of_scope]
+        - type: from_entity
+          entity: given_answer

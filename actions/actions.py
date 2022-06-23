@@ -134,6 +134,12 @@ coast_buttons_7 = [
     ["😒 Afecteaza foarte mult", "Destul de mult", "Moderat", "Destul de putin", "🙂 Nu afecteaza deloc"]
 ]
 
+eatingHabits_buttons = [
+    ["Never", "Rarely", "Sometimes", "Often", "Very often", "Always"],
+    [" ", " ", " ", " ", " ", " "],
+    ["Niciodată", "Rareori", "Uneori", "Adesea", "Foarte des", "Întotdeauna"]
+]
+
 ####################################################################################################
 # DEBUGGING                                                                                        #
 ####################################################################################################
@@ -1632,11 +1638,11 @@ class ValidatePSQIForm(FormValidationAction):
         """Validation for the question 'when have you usually go to bed at night?' """
 
         try:
-            slot_value = tracker.get_slot("time")
             slot_value = datetime.datetime.fromisoformat(slot_value)
             slot_value = slot_value.strftime("%Y-%m-%d %H:%M:%S")
             slot_value = datetime.datetime.strptime(slot_value, "%Y-%m-%d %H:%M:%S")
-            slot_value = slot_value.time()
+            slot_value = slot_value.time()  
+            slot_value = slot_value.strftime("%H:%M:%S")                                  
 
             return {"psqi_Q1": slot_value}
 
@@ -1655,10 +1661,10 @@ class ValidatePSQIForm(FormValidationAction):
         Validation for the question 
         'how many hours of actual sleep did you get at night? 
         (This may be different than the number of hours you spend in bed.)' 
-        """
+        """ 
 
         try:
-            slot_value = tracker.get_slot("number")
+            slot_value = next(tracker.get_latest_entity_values("number"), None)
             return {"psqi_Q2": slot_value}
 
         except:
@@ -1675,13 +1681,16 @@ class ValidatePSQIForm(FormValidationAction):
         """Validation for the question 'when have you usually gotten up in the morning?' """
 
         try:
-            slot_value = tracker.get_slot("time")
             slot_value = datetime.datetime.fromisoformat(slot_value)
             slot_value = slot_value.strftime("%Y-%m-%d %H:%M:%S")
             slot_value = datetime.datetime.strptime(slot_value, "%Y-%m-%d %H:%M:%S")
             slot_value = slot_value.time()
-
-            return {"psqi_Q3": slot_value}
+            if slot_value < datetime.datetime.strptime("12:00:00", "%H:%M:%S").time():
+                slot_value = slot_value.strftime("%H:%M:%S")      
+                return {"psqi_Q3": slot_value}
+            else:
+                dispatcher.utter_message(text="Please give a valid answer")
+                return {"psqi_Q3": None}   
 
         except:
             dispatcher.utter_message(text="Please give a valid answer")
@@ -1697,7 +1706,7 @@ class ValidatePSQIForm(FormValidationAction):
         """Validation for the question 'how long (in minutes) has it usually take you to fall asleep each night?' """
 
         try:
-            slot_value = tracker.get_slot("number")
+            slot_value = next(tracker.get_latest_entity_values("number"), None)
             return {"psqi_Q4": slot_value}
 
         except:
@@ -3624,7 +3633,7 @@ class ValidateDnBForm(FormValidationAction):
         today = datetime.datetime.today()
         date_format = "%Y-%m-%d"    # This is the correct date format for Duckling to extract correct the date.
         user_date = tracker.latest_message['text']
-        slot_value = tracker.get_slot("time")
+        slot_value = next(tracker.get_latest_entity_values("time"), None)
 
         if any(map(str.isdigit, user_date)) and (re.search("/", user_date) or (re.search("\.", user_date)) or (re.search("-", user_date))):
             try:
@@ -3715,7 +3724,7 @@ class ValidateDnBForm(FormValidationAction):
     ) -> Dict[Text, Any]:  
         """Validates the answer for question 'If yes, # of falls in the last 6 months...'"""
         
-        slot_value = tracker.get_slot("number")
+        slot_value = next(tracker.get_latest_entity_values("number"), None)
         return {"dizzNbalance_Q11i": slot_value}
 
 ####################################################################################################
@@ -3739,8 +3748,20 @@ class ActionAskeatinghabitsQ1(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ2(Action):
@@ -3760,8 +3781,20 @@ class ActionAskeatinghabitsQ2(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ3(Action):
@@ -3781,8 +3814,20 @@ class ActionAskeatinghabitsQ3(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ4(Action):
@@ -3802,8 +3847,20 @@ class ActionAskeatinghabitsQ4(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ5(Action):
@@ -3823,8 +3880,20 @@ class ActionAskeatinghabitsQ5(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ6(Action):
@@ -3844,8 +3913,20 @@ class ActionAskeatinghabitsQ6(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ7(Action):
@@ -3865,8 +3946,20 @@ class ActionAskeatinghabitsQ7(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ8(Action):
@@ -3886,8 +3979,20 @@ class ActionAskeatinghabitsQ8(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ9(Action):
@@ -3907,8 +4012,20 @@ class ActionAskeatinghabitsQ9(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ10(Action):
@@ -3928,8 +4045,20 @@ class ActionAskeatinghabitsQ10(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ11(Action):
@@ -3949,8 +4078,20 @@ class ActionAskeatinghabitsQ11(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ12(Action):
@@ -3970,8 +4111,20 @@ class ActionAskeatinghabitsQ12(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ13(Action):
@@ -3991,8 +4144,20 @@ class ActionAskeatinghabitsQ13(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ14(Action):
@@ -4012,8 +4177,20 @@ class ActionAskeatinghabitsQ14(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ15(Action):
@@ -4033,8 +4210,20 @@ class ActionAskeatinghabitsQ15(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ16(Action):
@@ -4054,8 +4243,20 @@ class ActionAskeatinghabitsQ16(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ17(Action):
@@ -4075,8 +4276,20 @@ class ActionAskeatinghabitsQ17(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ18(Action):
@@ -4096,8 +4309,20 @@ class ActionAskeatinghabitsQ18(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ19(Action):
@@ -4117,8 +4342,20 @@ class ActionAskeatinghabitsQ19(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 class ActionAskeatinghabitsQ20(Action):
@@ -4138,8 +4375,20 @@ class ActionAskeatinghabitsQ20(Action):
             ]
         )
 
-        print("\nBot:", text)
-        dispatcher.utter_message(text=text)
+        buttons = get_buttons_from_lang(
+            tracker, eatingHabits_buttons,
+            [
+                '/inform{"given_answer":"never"}', 
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often"}',
+                '/inform{"given_answer":"very often"}',
+                '/inform{"given_answer":"always"}'
+            ]
+        )
+
+        print("\nBot:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
 ####################################################################################################
