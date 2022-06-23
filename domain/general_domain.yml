@@ -75,6 +75,7 @@ slots:
       #- fh-q
   is_first_time:
     type: bool
+    initial_value: True
     influence_conversation: true
   is_completed:
     type: bool

@@ -742,7 +742,7 @@ class CustomSQLTrackerStore(TrackerStore):
                     #saveQuestToOntology(database_entry)
                     #reset row
                     print(database_entry.available_at)
-                    new_day = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=4)).timestamp()
+                    new_day = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
                     print(new_day)
                     database_entry.available_at= new_day
                     database_entry.state="available"
@@ -778,13 +778,14 @@ class CustomSQLTrackerStore(TrackerStore):
             for entry in database_entries:
                 # this step might need to happen somewhere else, myb automatically
                 # checks whether 2 days has passed after the questionnaire was first available
-                time_limit = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=2)).timestamp()
+                time_limit = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=1)).timestamp()
                 if time_limit < current_datetime.timestamp():
                     entry.state = "incomplete"
                     # save to ontology
                     #saveQuestToOntology(entry)
                     # reset
-                    new_day = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=4)).timestamp()
+                    new_day = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=3)).timestamp()
+                    print("new day", new_day)
                     entry.available_at= new_day
                     entry.state="available"
                     entry.timestamp_start=None
