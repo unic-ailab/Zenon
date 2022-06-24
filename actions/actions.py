@@ -489,7 +489,7 @@ class ActionOptionsMenu(Action):
         buttons = get_buttons_from_lang(
             tracker,
             options_menu_buttons,
-            ["/available_questionaires", "/health_update", "/tutorials"]
+            ["/available_questionnaires", "/health_update", "/tutorials"]
         )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
@@ -516,7 +516,7 @@ class ActionOptionsMenuExtra(Action):
         buttons = get_buttons_from_lang(
             tracker,
             options_menu_buttons,
-            ["/available_questionaires", "/health_update", "/tutorials"]
+            ["/available_questionnaires", "/health_update", "/tutorials"]
         )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
@@ -668,7 +668,6 @@ class ActionQuestionnaireCancelled(Action):
         storeQuestionnaireData(False, tracker)
         return[]
 
-# this action might need to change in order to not set the questionnaire slot in here 
 class ActionUtterStartingQuestionnaire(Action):
     def name(self):
         return "action_utter_starting_questionnaire"
@@ -679,25 +678,36 @@ class ActionUtterStartingQuestionnaire(Action):
         q_abbreviation = tracker.latest_message["intent"].get("name").split('_')[0]
         #print(tracker.latest_message["intent"])
         #q_abbreviation = tracker.get_slot("questionnaire")
-        if q_abbreviation==None:
-            q_abbreviation = "psqi"
-        q_name = get_text_from_lang(
-            tracker,
-            questionnaire_abbreviations[q_abbreviation],
-        )
-
-        text = get_text_from_lang(
-            tracker,
-            [
-                "Starting '{}' questionnaire...".format(q_name),
-                " ",
-                "Di partenza '{}' questionario...".format(q_name),
-                "Pornire '{}' chestionar...".format(q_name),
-            ],
-        )
-        dispatcher.utter_message(text=text)
-        #return [SlotSet("questionnaire", q_abbreviation)]
-        return [FollowupAction("{}_form".format(q_abbreviation))]
+        if (q_abbreviation !=None and q_abbreviation in questionnaire_abbreviations.keys()):
+            q_name = get_text_from_lang(
+                tracker,
+                questionnaire_abbreviations[q_abbreviation],
+            )
+            print("rr", q_abbreviation)
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "Starting '{}' questionnaire...".format(q_name),
+                    " ",
+                    "Di partenza '{}' questionario...".format(q_name),
+                    "Pornire '{}' chestionar...".format(q_name),
+                ],
+            )
+            dispatcher.utter_message(text=text)
+            #return [SlotSet("questionnaire", q_abbreviation)]
+            return [FollowupAction("{}_form".format(q_abbreviation))]
+        else:
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "Something is wrong and I am not sure how to deal with it. Can you please type 'main menu' to return the conversation to a level I am more familiar with?",
+                    " ",
+                    "Qualcosa non va e non so come affrontarlo. Puoi digitare 'menu principale' per riportare la conversazione a un livello che mi è più familiare?",
+                    "Ceva nu este în regulă și nu sunt sigur cum să fac față. Poți, te rog, să tastați 'meniu principal' pentru a readuce conversația la un nivel cu care sunt mai familiarizat?",
+                ],
+            )
+            dispatcher.utter_message(text=text)
+            return [SlotSet("questionnaire", None)]
 
 class ActionSetQuestionnaireSlot(Action):
     def name(self):
@@ -707,7 +717,10 @@ class ActionSetQuestionnaireSlot(Action):
         announce(self, tracker)
         
         q_abbreviation = tracker.latest_message["intent"].get("name").split('_')[0]
-        return [SlotSet("questionnaire", q_abbreviation)]
+        if q_abbreviation in questionnaire_abbreviations.keys():
+            return [SlotSet("questionnaire", q_abbreviation)]
+        else:
+            return [SlotSet("questionnaire", None)]
 
 
 class ActionUtterStartQuestionnaire(Action):

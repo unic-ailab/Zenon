@@ -109,7 +109,7 @@ stories:
 
     - story: NO available questionnaires, user doesnt want to go back to main menu
       steps:
-          - intent: available_questionaires
+          - intent: available_questionnaires
           - action: action_get_available_questionnaires
           - or:
                 - intent: deny
@@ -117,7 +117,7 @@ stories:
 
     - story: NO available questionnaires, user wants to go back to main menu
       steps:
-          - intent: available_questionaires
+          - intent: available_questionnaires
           - action: action_get_available_questionnaires
           - intent: affirm
           - action: action_options_menu_extra

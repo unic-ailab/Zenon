@@ -554,7 +554,10 @@ forms:
           value: false
       MSdomainI_RQ1a:
         - type: from_text
-          not_intent: [cancel, out_of_scope]
+          not_intent: 
+            - cancel
+            - out_of_scope
+            - options_menu
       MSdomainI_RQ1b:
         - entity: given_answer
           type: from_entity
@@ -570,7 +573,10 @@ forms:
           value: false
       MSdomainI_RQ2a:
         - type: from_text
-          not_intent: [cancel, out_of_scope]
+          not_intent: 
+            - cancel
+            - out_of_scope
+            - options_menu
       MSdomainI_RQ2b:
         - entity: given_answer
           type: from_entity
@@ -617,8 +623,11 @@ forms:
         - entity: number
           type: from_entity
       MSdomainIII_RQ2a:
-        - entity: given_answer
-          type: from_entity
+        - type: from_text
+          not_intent: 
+            - cancel
+            - out_of_scope
+            - options_menu
       MSdomainIII_RQ3:
         - entity: given_answer
           type: from_entity
@@ -629,8 +638,11 @@ forms:
         - entity: number
           type: from_entity
       MSdomainIII_RQ5a:
-        - entity: given_answer
-          type: from_entity
+        - type: from_text
+          not_intent: 
+            - cancel
+            - out_of_scope
+            - options_menu
       MSdomainIII_RQ6:
         - entity: number
           type: from_entity
