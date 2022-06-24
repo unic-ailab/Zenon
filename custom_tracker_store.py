@@ -1,5 +1,4 @@
 from __future__ import annotations
-from asyncio.windows_events import NULL
 import contextlib
 from http.client import ImproperConnectionState
 import itertools
@@ -544,20 +543,32 @@ class CustomSQLTrackerStore(TrackerStore):
             Query to get the user message events
         """
         # Subquery to find the timestamp of the latest `SessionStarted` event
-        session_start_sub_query = (
-            session.query(sa.func.max(self.SQLEvent.timestamp).label("session_start"))
-            .filter(
+        # session_start_sub_query = (
+        #     session.query(sa.func.max(self.SQLEvent.timestamp).label("session_start"))
+        #     .filter(
+        #         self.SQLEvent.sender_id == sender_id,
+        #         self.SQLEvent.type_name == SessionStarted.type_name,
+        #     )
+        #     .subquery()
+        # )
+
+        session_start_timestamp = session.query(sa.func.max(self.SQLEvent.timestamp)).filter(
                 self.SQLEvent.sender_id == sender_id,
                 self.SQLEvent.type_name == SessionStarted.type_name,
-            )
-            .subquery()
-        )
+            ).first()
+
+        session_stop_timestamp = session.query(sa.func.min(self.SQLEvent.timestamp)).filter(
+                self.SQLEvent.sender_id == sender_id,
+                self.SQLEvent.action_name == "action_options_menu",
+                self.SQLEvent.type_name == "action",
+                self.SQLEvent.timestamp >= session_start_timestamp,
+            ).first()        
 
         sentiment_entries = session.query(self.SQLEvent).filter(
             self.SQLEvent.sender_id == sender_id,
             self.SQLEvent.type_name == "slot",
-            self.SQLEvent.action_name == "sentiment",
-            self.SQLEvent.timestamp >= session_start_sub_query.c.session_start,
+            self.SQLEvent.action_name == "sentiment_classes",
+            self.SQLEvent.timestamp.between(session_start_timestamp, session_stop_timestamp),
         ).order_by(self.SQLEvent.timestamp)
 
         sentiment_timestamps = [entry.timestamp for entry in sentiment_entries]
@@ -653,6 +664,7 @@ class CustomSQLTrackerStore(TrackerStore):
             tracker.events, number_of_events_since_last_session, len(tracker.events)
         )
 
+    # Not used
     def saveRelevantQuestionsAnswers(self, sender_id, domain_name, tracker: DialogueStateTracker) -> None:
         """Update database with answers from a specific domain of relevant questions."""
 
@@ -738,19 +750,31 @@ class CustomSQLTrackerStore(TrackerStore):
                 if isFinished:
                     database_entry.timestamp_end=timestamp
                     database_entry.state="finished"
-                    #save to ontology
-                    #saveQuestToOntology(database_entry)
-                    #reset row
-                    print(database_entry.available_at)
-                    new_day = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
-                    print(new_day)
-                    database_entry.available_at= new_day
-                    database_entry.state="available"
-                    database_entry.timestamp_start=None
-                    database_entry.timestamp_end=None # this seems to not be used
-                    database_entry.answers = None
+                    # create new row
+                    new_timestamp = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
+                    
+                    session.add(
+                        self.SQLQuestState(
+                        sender_id=sender_id,
+                        questionnaire_name=questionnaire_name,
+                        available_at=new_timestamp,
+                        state="available",
+                        timestamp_start=None,
+                        timestamp_end=None,
+                        answers=None,                          
+                        )
+                    )
+
+                    # previous version where we keep the same database entry and change the available_at timestamp
+                    # new_day = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
+                    # database_entry.available_at= new_day
+                    # database_entry.state="available"
+                    # database_entry.timestamp_start=None
+                    # database_entry.timestamp_end=None # this seems to not be used
+                    # database_entry.answers = None
                 else:
                     database_entry.state="pending"
+                    database_entry.timestamp_end=timestamp
             except:
                 print("Error: no such entry in database table 'questionnaires_state'.")
 
@@ -781,16 +805,30 @@ class CustomSQLTrackerStore(TrackerStore):
                 time_limit = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=1)).timestamp()
                 if time_limit < current_datetime.timestamp():
                     entry.state = "incomplete"
-                    # save to ontology
-                    #saveQuestToOntology(entry)
-                    # reset
-                    new_day = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=3)).timestamp()
-                    print("new day", new_day)
-                    entry.available_at= new_day
-                    entry.state="available"
-                    entry.timestamp_start=None
-                    entry.timestamp_end=None
-                    entry.answers = None
+
+                    # create new database entry
+                    new_timestamp = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=3)).timestamp()
+                    
+                    session.add(
+                        self.SQLQuestState(
+                        sender_id=sender_id,
+                        questionnaire_name=entry.questionnaire_name,
+                        available_at=new_timestamp,
+                        state="available",
+                        timestamp_start=None,
+                        timestamp_end=None,
+                        answers=None,                          
+                        )
+                    )
+
+                    # previous version where we keep the same database entry and change the available_at timestamp
+                    # new_day = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=3)).timestamp()
+                    # entry.available_at= new_day
+                    # entry.state="available"
+                    # entry.timestamp_start=None
+                    # entry.timestamp_end=None
+                    # entry.answers = None
+
                     # questionnaires that are passed the time limit need to be reset
                     reset_questionnaires.append(entry.questionnaire_name)
                 else:
@@ -801,13 +839,6 @@ class CustomSQLTrackerStore(TrackerStore):
             session.commit()
         return available_questionnaires, reset_questionnaires 
 
-    def saveQuestToOntology(self, database_entry):
-        pass
-
-
-    def reset(self, database_entry):
-        pass
-
 
     def saveToOntology(self,sender_id):
         ontology_data = {"user_id": sender_id, "source": "Conversational Agent", "observations" : []}
@@ -816,13 +847,21 @@ class CustomSQLTrackerStore(TrackerStore):
             for message in message_entries:
                 message_data = json.loads(message.data)
                 print(datetime.datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%dT%H:%M:%SZ"))
-                sentiment = json.loads(message_data.get("parse_data", {}).get("entities", {}).get("value"))
-                data = {"sentiment_scores": [sentiment[0]],
+                sentiment = message_data.get("parse_data", {}).get("entities", {})[1].get("value") # returns a list of dicts
+                #sentiment = json.loads(message_data.get("parse_data", {}).get("entities", {})[1].get("value")[0])
+
+                # this might be removed in the future
+                temp_sentiment = json.dumps(sentiment)
+                temp_sentiment = temp_sentiment.replace("positive", "Positive")
+                temp_sentiment = temp_sentiment.replace("negative", "Negative")
+                temp_sentiment = temp_sentiment.replace("neutral", "Neutral")
+
+                data = {"sentiment_scores": json.loads(temp_sentiment),
                     "timestamp": datetime.datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%dT%H:%M:%SZ"),
                     "explanation": message.message}
-                print(data)
                 ontology_data["observations"].append(data)
-
+            
+            print(ontology_data)
         #TODO:send to ontology
 
     def checkUserID(self, sender_id):

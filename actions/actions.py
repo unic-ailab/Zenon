@@ -17,8 +17,7 @@ from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormValidationAction
 
 import sys        
-#sys.path.append("/home/unic/Zenon/")   
-sys.path.append('C:\\Users\\vagge\\Documents\\Data Science - AI - Deep Learning\\Projects\\Zenon')   
+sys.path.append("/home/unic/Zenon/")   
 from custom_tracker_store import CustomSQLTrackerStore
 
 customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="demo.db")
@@ -53,10 +52,10 @@ cancel_button = [
 
 # The main options the agent offers
 options_menu_buttons = [
-    ["Complete Questionnaires", "Health Status update", "Tutorials"],
+    ["Questionnaires", "Health Status update", "Tutorials"],
     ["", "", ""],
-    ["Questionari completi", "Aggiornamento dello stato di salute", "Tutorials"],
-    ["Completează chestionare", "Actualizare stare de sănătate", "Tutoriales"]
+    ["Questionari", "Aggiornamento dello stato di salute", "Tutorials"],
+    ["Chestionare", "Actualizare stare de sănătate", "Tutoriales"]
 ]
 
 
@@ -203,15 +202,12 @@ def reset_form_slots(tracker, domain, list_questionnaire_abbreviation):
     #async def required_slots(self, domain_slots, dispatcher, tracker, domain):
     required = []
 
-    # it shouldnt reach this state
-    if list_questionnaire_abbreviation is None:
-        list_questionnaire_abbreviation = ["activLim"]
-
-    for slot_name in domain['slots'].keys():
-        if slot_name.split("_")[0] in list_questionnaire_abbreviation:
-            if tracker.get_slot(slot_name) is not None:
-                print(slot_name)
-                required.append(SlotSet(slot_name, None))
+    if list_questionnaire_abbreviation is not None:
+        for slot_name in domain['slots'].keys():
+            if slot_name.split("_")[0] in list_questionnaire_abbreviation:
+                if tracker.get_slot(slot_name) is not None:
+                    print(slot_name)
+                    required.append(SlotSet(slot_name, None))
            
     return required
 
@@ -482,7 +478,6 @@ class ActionOptionsMenu(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
         
-        #smthg missing here
         text = get_text_from_lang(
             tracker, 
             [
@@ -610,13 +605,6 @@ class ActionUtterNotificationGreet(Action):
             dispatcher.utter_message(text=text)
             return []
 
-class ActionOntologyStoreSentiment(Action):
-    def name(self):
-        return "action_ontology_store_sentiment"
-
-    def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
-        return []
 
 class ActionQuestionnaireCompleted(Action):
     def name(self):
@@ -649,6 +637,16 @@ class ActionQuestionnaireCompleted(Action):
 #         #print(domain["slots"])
 #         storeQuestionnaireData(True, tracker)
 #         return[]
+
+class ActionOntologyStoreSentiment(Action):
+    def name(self):
+        return "action_ontology_store_sentiment"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+        if tracker.get_slot("is_first_time"):
+            customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
+        return []
 
 class ActionQuestionnaireCancelled(Action):
     def name(self):
