@@ -5,7 +5,7 @@ session_config:
 intents:
   - available_questionnaires
   - notification_greet
-  # - how_are_you
+  - app_closed
   # - ok
   # - glag_to_hear
   - available_questionaires
@@ -47,7 +47,6 @@ entities:
   - sentiment
   - time
   - sentiment_classes
-  - is_first_time
   - number
 slots:
   questionnaire:
@@ -87,6 +86,12 @@ slots:
       - pos
       - neg
       - neu
+  meaa_mood:
+    type: categorical
+    influence_conversation: true
+    values:
+      - non_neg
+      - neg
   language:
     type: categorical
     influence_conversation: true

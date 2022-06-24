@@ -33,3 +33,11 @@ rules:
       - intent: out_of_scope
       - action: utter_handle_out_of_scope
       - action: utter_help
+
+  - rule: Close questionnaire when app is closed unexpectedly
+    steps:
+      - intent: app_closed
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null  
+      - action: action_questionnaire_cancelled

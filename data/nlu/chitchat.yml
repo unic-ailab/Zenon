@@ -24,6 +24,7 @@ nlu:
   #     - Alright
   #     - Alright, then
   # - intent: glag_to_hear
+  - intent: app_closed
   - intent: available_questionnaires
     examples: |
       - available questionnaires
@@ -48,6 +49,7 @@ nlu:
       - go to main menu
       - I want to see the other options
       - take me to the main menu
+      - main menu
       - start menu
       - start options
       - other options
@@ -57,10 +59,12 @@ nlu:
       - Voglio vedere le altre opzioni
       - portami al menu principale
       - menu iniziale
+      - menu principale
       - Opzioni di avvio
       - altre opzioni
       - meniul de opțiuni
       - meniul
+      - meniu principal
       - accesați meniul principal
       - Vreau să văd celelalte opțiuni
       - duce-mă la meniul principal
