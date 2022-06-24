@@ -5897,6 +5897,54 @@ class ValidateMSDomainIForm(FormValidationAction):
 
         return slots_mapped_in_domain
 
+    def validate_MSdomainI_RQ4(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+
+        slot_value = next(tracker.get_latest_entity_values("number"), None)
+        
+        if slot_value is not None:
+            return {"MSdomainI_RQ4": slot_value}
+        else:
+            text = get_text_from_lang(
+                tracker,
+                ["Please give a valid answer",
+                " ",
+                "Si prega di dare una risposta valida",
+                " "]
+            )
+
+            dispatcher.utter_message(text=text)
+            return {"MSdomainI_RQ4": None}
+
+    def validate_MSdomainI_RQ5(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+
+        slot_value = next(tracker.get_latest_entity_values("number"), None)
+        
+        if slot_value is not None:
+            return {"MSdomainI_RQ5": slot_value}
+        else:
+            text = get_text_from_lang(
+                tracker,
+                ["Please give a valid answer",
+                " ",
+                "Si prega di dare una risposta valida",
+                " "]
+            )
+
+            dispatcher.utter_message(text=text)
+            return {"MSdomainI_RQ5": None}            
+
 ####################################################################################################
 # MS Case Domain III                                                                               #
 ####################################################################################################        
@@ -6055,7 +6103,101 @@ class ValidateMSDomainIIIForm(FormValidationAction):
         if tracker.get_slot("MSdomainIII_RQ5") is not None and tracker.get_slot("MSdomainIII_RQ5") < 6:
             slots_mapped_in_domain.remove("MSdomainIII_RQ5a")            
 
-        return slots_mapped_in_domain  
+        return slots_mapped_in_domain 
+
+    def validate_MSdomainIII_RQ2(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+
+        slot_value = next(tracker.get_latest_entity_values("number"), None)
+        
+        if (slot_value is not None) and (slot_value in list(range(1, 11))):
+            return {"MSdomainIII_RQ2": slot_value}
+        elif (slot_value is not None) and (slot_value not in list(range(1, 11))):
+            text = get_text_from_lang(
+                tracker,
+                ["Your answer must be between 1 and 10.",
+                " ",
+                "La tua risposta deve essere compresa tra 1 e 10.",
+                " "]
+            )
+
+            dispatcher.utter_message(text=text)
+            return {"MSdomainIII_RQ2": None}  
+        else:
+            text = get_text_from_lang(
+                tracker,
+                ["Please give a valid answer",
+                " ",
+                "Si prega di dare una risposta valida",
+                " "]
+            )
+
+            dispatcher.utter_message(text=text)
+            return {"MSdomainIII_RQ2": None}     
+
+    def validate_MSdomainIII_RQ5(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+
+        slot_value = next(tracker.get_latest_entity_values("number"), None)
+        
+        if (slot_value is not None) and (slot_value in list(range(1, 11))):
+            return {"MSdomainIII_RQ5": slot_value}
+        elif (slot_value is not None) and (slot_value not in list(range(1, 11))):
+            text = get_text_from_lang(
+                tracker,
+                ["Your answer must be between 1 and 10.",
+                " ",
+                "La tua risposta deve essere compresa tra 1 e 10.",
+                " "]
+            )
+
+            dispatcher.utter_message(text=text)
+            return {"MSdomainIII_RQ5": None}  
+        else:
+            text = get_text_from_lang(
+                tracker,
+                ["Please give a valid answer",
+                " ",
+                "Si prega di dare una risposta valida",
+                " "]
+            )
+
+            dispatcher.utter_message(text=text)
+            return {"MSdomainIII_RQ5": None}   
+
+    def validate_MSdomainIII_RQ6(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+
+        slot_value = next(tracker.get_latest_entity_values("number"), None)
+        
+        if slot_value is not None:
+            return {"MSdomainIII_RQ6": slot_value}
+        else:
+            text = get_text_from_lang(
+                tracker,
+                ["Please give a valid answer",
+                " ",
+                "Si prega di dare una risposta valida",
+                " "]
+            )
+
+            dispatcher.utter_message(text=text)
+            return {"MSdomainIII_RQ6": None}                               
 
 ####################################################################################################
 # MS Case Domain IV                                                                                #
