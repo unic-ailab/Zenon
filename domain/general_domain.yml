@@ -5,6 +5,7 @@ session_config:
 intents:
   - available_questionnaires
   - notification_greet
+  - app_closed
   # - ok
   # - glag_to_hear
   - available_questionaires
