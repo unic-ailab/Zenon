@@ -627,6 +627,7 @@ class ActionQuestionnaireCompleted(Action):
         )
         dispatcher.utter_message(text=text)
         storeQuestionnaireData(True, tracker)
+        customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "COMPLETED")
         return []
 
 # class ActionStoreQuestionnaire(Action):
@@ -669,6 +670,7 @@ class ActionQuestionnaireCancelled(Action):
         )
         dispatcher.utter_message(text=text)
         storeQuestionnaireData(False, tracker)
+        customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "IN_PROGRESS")
         return[]
 
 class ActionUtterStartingQuestionnaire(Action):

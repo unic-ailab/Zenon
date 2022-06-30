@@ -453,10 +453,10 @@ class CustomSQLTrackerStore(TrackerStore):
                 self.SQLEvent.intent_name == "cancel",
                 self.SQLEvent.type_name == "user",
                 self.SQLEvent.timestamp >= latest_start_time,
-            ).first()
+            ).first()[0]
         print(cancel_request_timestamp)
-        if cancel_request_timestamp[0] is not None:
-            latest_end_time = cancel_request_timestamp[0]
+        if cancel_request_timestamp is not None:
+            latest_end_time = cancel_request_timestamp
         else:
             latest_end_time = session.query(sa.func.max(self.SQLEvent.timestamp)).filter(
                 self.SQLEvent.sender_id == sender_id,
@@ -528,6 +528,49 @@ class CustomSQLTrackerStore(TrackerStore):
             ).order_by(self.SQLQuestState.available_at)
         
         return database_entries
+
+    def _questionnaire_answers_query(
+        self, session: "Session", sender_id: Text, questionnaire_name: Text, previous: int=0):
+        """Provide the query to retrieve the questionnaire state events for a specific sender.
+
+        Args:
+            session: Current database session.
+            sender_id: Sender id whose conversation events should be retrieved.
+            questionnaire_name: The name of the questionnaire whose questions and responses should be retrieved.
+
+
+        Returns:
+            One database row entry.
+        """
+        latest_questionnaire_sub_query = session.query(sa.func.max(self.SQLQuestState.timestamp_end).label("latest_timestamp")).filter(
+            sa.or_(
+                self.SQLQuestState.sender_id == sender_id,
+                self.SQLQuestState.questionnaire_name == questionnaire_name,
+                self.SQLQuestState.state.in_(["finished", "pending"]),
+            )).subquery()
+
+        answers_entry = (
+                session.query(self.SQLQuestState.answers)
+                .filter(
+                    self.SQLQuestState.sender_id == sender_id,
+                    self.SQLQuestState.questionnaire_name == questionnaire_name,
+                    self.SQLQuestState.state.in_(["finished", "pending"]),
+                    self.SQLQuestState.timestamp_end >= latest_questionnaire_sub_query.c.latest_timestamp,
+                )
+            ).first()
+        if previous > 0:
+            previous_answers_entries = (
+                session.query(self.SQLQuestState.answers)
+                .filter(
+                    self.SQLQuestState.sender_id == sender_id,
+                    self.SQLQuestState.questionnaire_name == questionnaire_name,
+                    self.SQLQuestState.state.in_(["finished", "pending", "incomplete"]),
+                )
+            ).order_by(self.SQLQuestState.timestamp_end.desc()).limit(previous)
+        #tell them you send all answers not only the new
+            return answers_entry, reversed(previous_answers_entries)
+        else:
+            return answers_entry
 
 
     def _sentiment_query(
@@ -665,42 +708,42 @@ class CustomSQLTrackerStore(TrackerStore):
         )
 
     # Not used
-    def saveRelevantQuestionsAnswers(self, sender_id, domain_name, tracker: DialogueStateTracker) -> None:
-        """Update database with answers from a specific domain of relevant questions."""
+    # def saveRelevantQuestionsAnswers(self, sender_id, domain_name, tracker: DialogueStateTracker) -> None:
+    #     """Update database with answers from a specific domain of relevant questions."""
 
-        if self.event_broker:
-            self.stream_events(tracker)
+    #     if self.event_broker:
+    #         self.stream_events(tracker)
 
-        with self.session_scope() as session:
-            q_events, s_events  = self._questionnaire_query(session, sender_id, domain_name)
-            question_events = [json.loads(event.data) for event in q_events]
-            slot_events = [json.loads(event.data) for event in s_events]
-            answers_data = {}
+    #     with self.session_scope() as session:
+    #         q_events, s_events  = self._questionnaire_query(session, sender_id, domain_name)
+    #         question_events = [json.loads(event.data) for event in q_events]
+    #         slot_events = [json.loads(event.data) for event in s_events]
+    #         answers_data = {}
 
-            for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
-                if i==0:
-                    init_timestamp = slot_data.get("timestamp")
-                timestamp = slot_data.get("timestamp")
+    #         for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
+    #             if i==0:
+    #                 init_timestamp = slot_data.get("timestamp")
+    #             timestamp = slot_data.get("timestamp")
 
-                # example: {q1: {"question": "How difficult is it..?", "answer": "very", "timestamp": }}
-                answers_data[slot_data.get("name")] = {"question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": timestamp}
+    #             # example: {q1: {"question": "How difficult is it..?", "answer": "very", "timestamp": }}
+    #             answers_data[slot_data.get("name")] = {"question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": timestamp}
 
             
-            session.add(
-                self.SQLQuestState(
-                    sender_id=sender_id,
-                    questionnaire_name=domain_name,
-                    available_at=init_timestamp,
-                    state="finished",
-                    timestamp_start=init_timestamp,
-                    timestamp_end=timestamp,
-                    answers=json.dumps(answers_data),                          
-                    )
-                )
+    #         session.add(
+    #             self.SQLQuestState(
+    #                 sender_id=sender_id,
+    #                 questionnaire_name=domain_name,
+    #                 available_at=init_timestamp,
+    #                 state="finished",
+    #                 timestamp_start=init_timestamp,
+    #                 timestamp_end=timestamp,
+    #                 answers=json.dumps(answers_data),                          
+    #                 )
+    #             )
 
-            session.commit()
+    #         session.commit()
 
-        logger.debug(f"Relevant questions answers with sender_id '{tracker.sender_id}' stored to database")
+    #     logger.debug(f"Relevant questions answers with sender_id '{tracker.sender_id}' stored to database")
 
 
     def saveQuestionnaireAnswers(self, sender_id, questionnaire_name, isFinished: bool, tracker: DialogueStateTracker) -> None:
@@ -722,7 +765,9 @@ class CustomSQLTrackerStore(TrackerStore):
             slot_events = [json.loads(event.data) for event in s_events]
             print(slot_events)
             print(s_events)
-            answers_data = UniqueDict()
+            print(len(s_events))
+            #answers_data = UniqueDict()
+            answers_data = []
 
             for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
                 print(question_data, slot_data)
@@ -735,9 +780,10 @@ class CustomSQLTrackerStore(TrackerStore):
                 except:
                     question_number = slot_data.get("name").split(questionnaire_name + "_")[1]
                 
-                # example: {q1: {"question": "How difficult is it..?", "answer": "very", "timestamp": }}
-                answers_data[question_number] = {"question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")}
+                # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
+                answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
 
+            #print(answers_data)
             try:
                 database_entry = self._questionnaire_state_query(session, sender_id, init_timestamp, questionnaire_name).first()
                 if database_entry.state=="available":
@@ -745,8 +791,8 @@ class CustomSQLTrackerStore(TrackerStore):
                     database_entry.answers = json.dumps(answers_data)
                 elif database_entry.state=="pending":
                     previous_answers = json.loads(database_entry.answers)
-                    answers_data.update(previous_answers)
-                    database_entry.answers = json.dumps({key: value for (key, value) in answers_data.items()})
+                    answers_data.extend(previous_answers)
+                    database_entry.answers = json.dumps(answers_data)#json.dumps({key: value for (key, value) in answers_data.items()})
                 if isFinished:
                     database_entry.timestamp_end=timestamp
                     database_entry.state="finished"
@@ -863,6 +909,7 @@ class CustomSQLTrackerStore(TrackerStore):
             
             print(ontology_data)
         #TODO:send to ontology
+        # response = requests.post("ontology_link", json=ontology_data)
 
     def checkUserID(self, sender_id):
         """ Checks if the specific user id is in the database. If not it adds it"""
@@ -901,8 +948,61 @@ class CustomSQLTrackerStore(TrackerStore):
                 )
 
             session.commit()
-   
 
+    def sendQuestionnareStatus(self, sender_id, questionnare_abvr, status):
+        """ Sends the status of the questionnaire to WCS
+
+        Object should be of the format:
+        {
+            "patient_uuid": "uuid",
+            "abbreviation": "String",
+            "status": "enum",
+            "submission_date": "yyyy-MM-dd",
+            "questionnaire_answers": [{
+                    "number": "String",
+                    "question": "String",
+                    "answer": "String"
+            }]
+        }
+
+        Available Status: COMPLETED, IN_PROGRESS, CANCELED
+        """
+
+        submission_date = datetime.date.today()
+        questionnaire_data = {"patient_uuid": sender_id, 
+                        "abbreviation": questionnare_abvr, 
+                        "status": status, 
+                        "submission_date" : submission_date.strftime("%Y-%m-%d")}
+    
+        if questionnare_abvr in ["MSdomainIV_Daily", "STROKEdomainIV"]:            
+            with self.session_scope() as session:
+                answers_events  = self._questionnaire_answers_query(session, sender_id, questionnare_abvr)
+                answers = json.loads(answers_events.answers)
+                session.commit()    
+            questionnaire_data["questionnaire_answers"] = answers
+
+        #TODO:send to wcs
+        # response = requests.post("wcs_link", json=questionnaire_data)
+        # 
+
+    def getDizzinessNbalanceSymptoms(self, sender_id):
+        
+        with self.session_scope() as session:
+            answers_events, previous_answers_events  = self._questionnaire_answers_query(session, sender_id, "dizzNbalance", 1)
+            answers = json.loads(answers_events.answers)
+            previous_answers = json.loads(previous_answers_events.answers)
+            symptoms= [answer for answer in answers if answer["number"] == "Symptoms"]
+            previous_symptoms= [answer for answer in previous_answers if answer["number"] == "Symptoms"]
+
+            previous_symptoms = set(previous_symptoms)
+            new_symptoms = [x for x in symptoms if x not in previous_symptoms]
+            session.commit()
+
+        if new_symptoms:
+            print(new_symptoms)
+            #TODO:send to wcs
+            # response = requests.post("wcs_link", json=questionnaire_data)
+            #      
 
 # get the name of the active form 
 #active_loop = tracker.active_loop.get(‘name’)
@@ -923,6 +1023,10 @@ if __name__ == "__main__":
         # print([json.loads(event.data) for event in question_events])
         # print([json.loads(event.data) for event in slot])
         print(ts._first_time_of_day_query(session, "stroke23"))
+
+        answers, previous_answers = ts._questionnaire_state_query(session, "stroke04", now, "activLim")
+        print(previous_answers)
+
 
 
 
