@@ -313,7 +313,6 @@ class ActionUtterSetLanguage(Action):
         announce(self, tracker)
 
         current_language = tracker.slots["language"].title()
-        text = "I only understand English, Greek, Italian and Romanian. The language is now English."
 
         if current_language == "English":
             text = "The language is now English."
@@ -321,10 +320,14 @@ class ActionUtterSetLanguage(Action):
             text = "Η γλώσσα έχει τεθεί στα Ελληνικά"
         elif current_language == "Romanian":
             text = "Limba este acum Română."
+        elif current_language == "Italian":
+            text = "La lingua ora è l'italiano"
+        else:
+            text = "I only understand English, Greek, Italian and Romanian. The language is now English."
 
         print("\nBOT:", text)
         dispatcher.utter_message(text=text)
-        return []
+        return [SlotSet("language", current_language)]
 
 ####################################################################################################
 # SAVE CONVERSATION HISTORY                                                                        #

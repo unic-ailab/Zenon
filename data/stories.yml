@@ -134,6 +134,11 @@ stories:
           - action: utter_not_available
           - action: action_options_menu_extra
 
+    - story: set language
+      steps:
+          - intent: set_language
+          - action: action_utter_set_language
+
     # - story: User wants to continue the latest available questionnaire # this shouldn't in theory happen
     #   steps:
     #           - intent: continue
