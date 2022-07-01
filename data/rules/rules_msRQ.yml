@@ -43,6 +43,15 @@ rules:
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
 
+  - rule: Interruption MS Domain II relevant questions
+    condition:
+      - active_loop: MSdomainII_form
+    steps:
+      - intent: cancel
+      - action: utter_process_not_cancellable
+      - action: MSdomainII_form
+      - active_loop: MSdomainII_form
+
   - rule: Start MS Domain III – Mental and Cognitive Ability relevant questions
     steps:
       - intent: MSdomainIII_start
@@ -63,6 +72,15 @@ rules:
           - requested_slot: null     
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
+
+  - rule: Interruption MS Domain III relevant questions
+    condition:
+      - active_loop: MSdomainIII_form
+    steps:
+      - intent: cancel
+      - action: utter_process_not_cancellable
+      - action: MSdomainIII_form
+      - active_loop: MSdomainIII_form
 
   - rule: Start MS Domain V - Quality of Life and daily living relevant questions
     steps:
@@ -85,6 +103,15 @@ rules:
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
 
+  - rule: Interruption MS Domain V relevant questions
+    condition:
+      - active_loop: MSdomainV_form
+    steps:
+      - intent: cancel
+      - action: utter_process_not_cancellable
+      - action: MSdomainV_form
+      - active_loop: MSdomainV_form
+
   - rule: Start MS Domain IV - Emotional Status relevant questions
     steps:
       - intent: MSdomainIV_start
@@ -105,3 +132,12 @@ rules:
           - requested_slot: null     
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
+
+  - rule: Interruption MS Domain IV relevant questions
+    condition:
+      - active_loop: MSdomainIV_form
+    steps:
+      - intent: cancel
+      - action: utter_process_not_cancellable
+      - action: MSdomainIV_form
+      - active_loop: MSdomainIV_form

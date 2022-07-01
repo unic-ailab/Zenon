@@ -6,6 +6,7 @@ import json
 import logging
 import datetime
 import requests
+import pandas as pd
 from sqlite3 import Timestamp
 
 from time import sleep
@@ -58,7 +59,8 @@ questionnaire_per_usecase = {
 }
 
 #"ms_orig": ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdomainIII_1W", "MSdomainIII_2W", "MSdomainIV", "MSdomainV"],
-                        
+
+#schedule_df = pd.read_csv ("pilot_schedule.csv")                       
 
 class CustomSQLTrackerStore(TrackerStore):
     """Store which can save and retrieve trackers from an SQL database. Based on rasa's original SQLTrackerStore"""
@@ -761,68 +763,71 @@ class CustomSQLTrackerStore(TrackerStore):
 
         with self.session_scope() as session:
             q_events, s_events  = self._questionnaire_query(session, sender_id, questionnaire_name)
-            question_events = [json.loads(event.data) for event in q_events]
-            slot_events = [json.loads(event.data) for event in s_events]
-            print(slot_events)
-            print(s_events)
-            print(len(s_events))
-            #answers_data = UniqueDict()
-            answers_data = []
+            if q_events:
+                question_events = [json.loads(event.data) for event in q_events]
+                slot_events = [json.loads(event.data) for event in s_events]
+                print(slot_events)
+                print(s_events)
+                print(len(s_events))
+                #answers_data = UniqueDict()
+                answers_data = []
 
-            for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
-                print(question_data, slot_data)
-                if i==0:
-                    init_timestamp = slot_data.get("timestamp")
-                timestamp = slot_data.get("timestamp")
+                for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
+                    print(question_data, slot_data)
+                    if i==0:
+                        init_timestamp = slot_data.get("timestamp")
+                    timestamp = slot_data.get("timestamp")
 
-                try:
-                    question_number = slot_data.get("name").split("Q")[1]
-                except:
-                    question_number = slot_data.get("name").split(questionnaire_name + "_")[1]
+                    try:
+                        question_number = slot_data.get("name").split("Q")[1]
+                    except:
+                        question_number = slot_data.get("name").split(questionnaire_name + "_")[1]
                 
-                # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
-                answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
+                    # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
+                    answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
 
-            #print(answers_data)
-            try:
-                database_entry = self._questionnaire_state_query(session, sender_id, init_timestamp, questionnaire_name).first()
-                if database_entry.state=="available":
-                    database_entry.timestamp_start=init_timestamp
-                    database_entry.answers = json.dumps(answers_data)
-                elif database_entry.state=="pending":
-                    previous_answers = json.loads(database_entry.answers)
-                    answers_data.extend(previous_answers)
-                    database_entry.answers = json.dumps(answers_data)#json.dumps({key: value for (key, value) in answers_data.items()})
-                if isFinished:
-                    database_entry.timestamp_end=timestamp
-                    database_entry.state="finished"
-                    # create new row
-                    new_timestamp = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
+                #print(answers_data)
+                try:
+                    database_entry = self._questionnaire_state_query(session, sender_id, init_timestamp, questionnaire_name).first()
+                    if database_entry.state=="available":
+                        database_entry.timestamp_start=init_timestamp
+                        database_entry.answers = json.dumps(answers_data)
+                    elif database_entry.state=="pending":
+                        previous_answers = json.loads(database_entry.answers)
+                        answers_data.extend(previous_answers)
+                        database_entry.answers = json.dumps(answers_data)#json.dumps({key: value for (key, value) in answers_data.items()})
+                    if isFinished:
+                        database_entry.timestamp_end=timestamp
+                        database_entry.state="finished"
+                        # create new row
+                        #df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == questionnaire_name]
+                        
+                        new_timestamp = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
                     
-                    session.add(
-                        self.SQLQuestState(
-                        sender_id=sender_id,
-                        questionnaire_name=questionnaire_name,
-                        available_at=new_timestamp,
-                        state="available",
-                        timestamp_start=None,
-                        timestamp_end=None,
-                        answers=None,                          
+                        session.add(
+                            self.SQLQuestState(
+                            sender_id=sender_id,
+                            questionnaire_name=questionnaire_name,
+                            available_at=new_timestamp,
+                            state="available",
+                            timestamp_start=None,
+                            timestamp_end=None,
+                            answers=None,                          
+                            )
                         )
-                    )
 
-                    # previous version where we keep the same database entry and change the available_at timestamp
-                    # new_day = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
-                    # database_entry.available_at= new_day
-                    # database_entry.state="available"
-                    # database_entry.timestamp_start=None
-                    # database_entry.timestamp_end=None # this seems to not be used
-                    # database_entry.answers = None
-                else:
-                    database_entry.state="pending"
-                    database_entry.timestamp_end=timestamp
-            except:
-                print("Error: no such entry in database table 'questionnaires_state'.")
+                        # previous version where we keep the same database entry and change the available_at timestamp
+                        # new_day = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
+                        # database_entry.available_at= new_day
+                        # database_entry.state="available"
+                        # database_entry.timestamp_start=None
+                        # database_entry.timestamp_end=None # this seems to not be used
+                        # database_entry.answers = None
+                    else:
+                        database_entry.state="pending"
+                        database_entry.timestamp_end=timestamp
+                except:
+                    print("Error: no such entry in database table 'questionnaires_state'.")
 
             session.commit()
 
@@ -847,12 +852,14 @@ class CustomSQLTrackerStore(TrackerStore):
             database_entries = self._questionnaire_state_query(session, sender_id, current_timestamp).all()
             for entry in database_entries:
                 # this step might need to happen somewhere else, myb automatically
-                # checks whether 2 days has passed after the questionnaire was first available
+                # checks whether 1 or 2 days has passed after the questionnaire was first available
+                #df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == entry.questionnaire_name]
                 time_limit = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=1)).timestamp()
                 if time_limit < current_datetime.timestamp():
                     entry.state = "incomplete"
 
                     # create new database entry
+
                     new_timestamp = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=3)).timestamp()
                     
                     session.add(
@@ -886,7 +893,7 @@ class CustomSQLTrackerStore(TrackerStore):
         return available_questionnaires, reset_questionnaires 
 
 
-    def saveToOntology(self,sender_id):
+    def saveToOntology(self, sender_id):
         ontology_data = {"user_id": sender_id, "source": "Conversational Agent", "observations" : []}
         with self.session_scope() as session:
             message_entries = self._sentiment_query(session, sender_id)
@@ -969,7 +976,7 @@ class CustomSQLTrackerStore(TrackerStore):
         """
 
         submission_date = datetime.date.today()
-        questionnaire_data = {"patient_uuid": sender_id, 
+        questionnaire_data = {"patient_uuid": "d0023400-6cf1-44af-8356-5ec4ab63cad3", 
                         "abbreviation": questionnare_abvr, 
                         "status": status, 
                         "submission_date" : submission_date.strftime("%Y-%m-%d")}
@@ -978,12 +985,15 @@ class CustomSQLTrackerStore(TrackerStore):
             with self.session_scope() as session:
                 answers_events  = self._questionnaire_answers_query(session, sender_id, questionnare_abvr)
                 answers = json.loads(answers_events.answers)
+                # remove the timestamp of each message
+                res_answers = [{key : val for key, val in d.items() if key != "timestamp"} for d in answers]
                 session.commit()    
-            questionnaire_data["questionnaire_answers"] = answers
+            questionnaire_data["questionnaire_answers"] = res_answers
 
         #TODO:send to wcs
-        # response = requests.post("wcs_link", json=questionnaire_data)
-        # 
+        print(questionnaire_data)
+        response = requests.post("wcs_link", json=questionnaire_data)
+        print(response)
 
     def getDizzinessNbalanceSymptoms(self, sender_id):
         
@@ -1006,6 +1016,16 @@ class CustomSQLTrackerStore(TrackerStore):
 
 # get the name of the active form 
 #active_loop = tracker.active_loop.get(‘name’)
+
+def timestampSchedule(schedule_df, questionnaire_name, init_timestamp):
+    df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == questionnaire_name]                    
+    df_row["dayOfWeek"]
+    df_row["weekOfMonth"]
+    df_row["frequencyInMonths"]
+
+    new_timestamp = (datetime.datetime.fromtimestamp(init_timestamp)+datetime.timedelta(days=3)).timestamp()
+    return new_timestamp
+                    
 
 if __name__ == "__main__":
     ts = CustomSQLTrackerStore(db="demo.db")
