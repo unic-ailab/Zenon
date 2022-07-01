@@ -323,7 +323,7 @@ responses:
         - type: slot
           name: language
           value: Italian
-      text: È qualcosa che vuoi che informi il tuo dottore? Potrebbe aiutarti con i tuoi progressi.
+      text: C’è qualcosa di cui vuoi informare il tuo dottore? Potrebbe aiutarti con i tuoi progressi.
   utter_inform_doctor_extra:
     - condition:
         - type: slot
@@ -478,7 +478,7 @@ responses:
         - type: slot
           name: language
           value: Italian
-      text: Sono felice di sapere che!
+      text: Sono felice di sentirlo!
   utter_tutorial_link:
     - condition:
         - type: slot

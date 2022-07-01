@@ -536,7 +536,7 @@ class ActionUtterGreet(Action):
             [
                 "Hey there! I am Zenon, your ALAMEDA personal assistant bot.",
                 "Χαίρεται!",
-                "Ehilà! Sono Zenon, il tuo assistente personale ALAMEDA bot.",
+                "Ciao! Sono Zenon, il tuo assistente personale ALAMEDA.",
                 "Hei acolo! Sunt Zenon, robotul tău asistent personal ALAMEDA.",
             ],
         )
@@ -621,13 +621,15 @@ class ActionQuestionnaireCompleted(Action):
             [
                 "We are good. Thank you for your time.",
                 "Το ερωτηματολόγιο ολοκληρώθηκε. Ευχαριστώ.",
-                "Siamo buoni. Grazie per il tuo tempo.",
+                "A posto! Grazie per il tuo tempo.",
                 "Suntem buni. Multumesc pentru timpul acordat.",
             ],
         )
         dispatcher.utter_message(text=text)
+        #TODO: issue here, the query doesnt find the latest message
+        # issue with size of answers cell
         storeQuestionnaireData(True, tracker)
-        customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "COMPLETED")
+        #customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "COMPLETED")
         return []
 
 # class ActionStoreQuestionnaire(Action):
@@ -670,7 +672,7 @@ class ActionQuestionnaireCancelled(Action):
         )
         dispatcher.utter_message(text=text)
         storeQuestionnaireData(False, tracker)
-        customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "IN_PROGRESS")
+        #customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "IN_PROGRESS")
         return[]
 
 class ActionUtterStartingQuestionnaire(Action):
@@ -694,7 +696,7 @@ class ActionUtterStartingQuestionnaire(Action):
                 [
                     "Starting '{}' questionnaire...".format(q_name),
                     " ",
-                    "Di partenza '{}' questionario...".format(q_name),
+                    "Iniziamo il questionario {}...".format(q_name),
                     "Pornire '{}' chestionar...".format(q_name),
                 ],
             )
@@ -6231,7 +6233,7 @@ class ActionAskMSDomainIVRQ1(Action):  # STROKE case Domain IV RQ1
             [
                 "How are you feeling today?",
                 " ",
-                "Cum va simtiti astazi?",                 
+                "Cosa provi oggi? È possibile selezionare più di una parola",                 
                 " "
             ]
         )

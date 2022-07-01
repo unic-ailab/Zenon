@@ -139,6 +139,7 @@ nlu:
       - bună
       - howdy
       - hey
+      - ciao
   - intent: goodbye
     examples: |
       - cu
@@ -505,6 +506,8 @@ nlu:
       - vreau să anulez procesul
       - m-am răzgândit
       - vreau să mă opresc
+      - Pausa
+      - Attendi
   - intent: thank_you
     examples: |
       - thank you
