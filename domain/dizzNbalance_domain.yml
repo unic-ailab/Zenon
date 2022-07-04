@@ -175,6 +175,15 @@ slots:
   dizzNbalance_Habits_alcohol:
     type: any
     influence_conversation: false
+  dizzNbalance_Habits_tobacco_follow:
+    type: any
+    influence_conversation: false
+  dizzNbalance_Habits_caffeine_follow:
+    type: any
+    influence_conversation: false
+  dizzNbalance_Habits_alcohol_follow:
+    type: any
+    influence_conversation: false
   dizzNbalance_Medications:
     type: any
     influence_conversation: false
@@ -234,6 +243,9 @@ actions:
   - action_ask_dizzNbalance_Habits_tobacco
   - action_ask_dizzNbalance_Habits_alcohol
   - action_ask_dizzNbalance_Habits_caffeine
+  - action_ask_dizzNbalance_Habits_tobacco_follow
+  - action_ask_dizzNbalance_Habits_alcohol_follow
+  - action_ask_dizzNbalance_Habits_caffeine_follow
   - action_ask_dizzNbalance_Social_c
   - action_ask_dizzNbalance_Social_bi
   - action_ask_dizzNbalance_Social_b
@@ -458,13 +470,34 @@ forms:
         - entity: given_answer
           type: from_entity
       dizzNbalance_Habits_caffeine:
-        - entity: given_answer
-          type: from_entity
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dizzNbalance_Habits_caffeine_follow:
+        - type: from_text
+          not_intent: [cancel]
       dizzNbalance_Habits_tobacco:
-        - entity: given_answer
-          type: from_entity
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dizzNbalance_Habits_tobacco_follow:
+        - type: from_text
+          not_intent: [cancel]
       dizzNbalance_Habits_alcohol:
-        - entity: given_answer
-          type: from_entity
+        - type: from_intent
+          intent: affirm
+          value: true
+        - type: from_intent
+          intent: deny
+          value: false
+      dizzNbalance_Habits_alcohol_follow:
+        - type: from_text
+          not_intent: [cancel]
       dizzNbalance_Medications:
         - type: from_text

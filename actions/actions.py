@@ -3483,13 +3483,34 @@ class ActionAskDnBHabitsCaffeine(Action):  # DnB Questionnaire
                 ["nu consum cafeina", "consum cafeina"]
             ],
             [
-                '/inform{"given_answer":"don\'t consume caffeine"}', 
-                '/inform{"given_answer":"consume caffeine"}'
+                '/deny{"given_answer":"don\'t consume caffeine"}', 
+                '/affirm{"given_answer":"consume caffeine"}'
             ]
         )
         print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
+
+class ActionAskDnBHabitsCaffeineFollow(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Habits_caffeine_follow"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How much do you drink (hint: #cups per day/week/month)?",
+                " ",
+                " ",
+                "Beti (cate ?) căni de (de exemplu, cafea) pe zi, săptămâna lună ?"
+            ]
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []        
 
 class ActionAskDnBHabitsAlcohol(Action):  # DnB Questionnaire
     def name(self) -> Text:
@@ -3517,13 +3538,34 @@ class ActionAskDnBHabitsAlcohol(Action):  # DnB Questionnaire
                 ["nu consum alcool", "consum alcool"]
             ],
             [
-                '/inform{"given_answer":"don\'t consume alcohol"}', 
-                '/inform{"given_answer":"consume alcohol"}'
+                '/deny{"given_answer":"don\'t consume alcohol"}', 
+                '/affirm{"given_answer":"consume alcohol"}'
             ]
         )
         print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
-        return []      
+        return []     
+
+class ActionAskDnBHabitsAlcoholFollow(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Habits_alcohol_follow"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How much do you drink (hint: type of alcohol(e.g. wine) per day/week/month)?",
+                " ",
+                " ",
+                "Beti (cate ?) pahare de (de exemplu, vin) pe zi, săptămână, lună ?"
+            ]
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []           
 
 class ActionAskDnBHabitsTobacco(Action):  # DnB Questionnaire
     def name(self) -> Text:
@@ -3551,13 +3593,34 @@ class ActionAskDnBHabitsTobacco(Action):  # DnB Questionnaire
                 ["nu consum tutun", "consum tutun"]
             ],
             [
-                '/inform{"given_answer":"don\'t consume tobacco"}', 
-                '/inform{"given_answer":"consume tobacco"}'
+                '/deny{"given_answer":"don\'t consume tobacco"}', 
+                '/affirm{"given_answer":"consume tobacco"}'
             ]
         )
         print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return [] 
+
+class ActionAskDnBHabitsTobaccoFollow(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Habits_tobacco_follow"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How much do you smoke/chew (hint: #of product per day/week/month)?",
+                " ",
+                " ",
+                "Beti (cate ?) pahare de (de exemplu, vin) pe zi, săptămână, lună ?"
+            ]
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []            
 
 class ActionAskDnBMedications(Action):  # DnB Questionnaire
     def name(self) -> Text:
@@ -3636,6 +3699,15 @@ class ValidateDnBForm(FormValidationAction):
             slots_mapped_in_domain.remove("dizzNbalance_EarSymptomIIIa3i")
         elif not tracker.get_slot("dizzNbalance_EarSymptomIIIa3"):
             slots_mapped_in_domain.remove("dizzNbalance_EarSymptomIIIa3i")
+
+        if not tracker.get_slot("dizzNbalance_Habits_caffeine"):
+            slots_mapped_in_domain.remove("dizzNbalance_Habits_caffeine_follow")
+
+        if not tracker.get_slot("dizzNbalance_Habits_tobacco"):
+            slots_mapped_in_domain.remove("dizzNbalance_Habits_tobacco_follow")
+
+        if not tracker.get_slot("dizzNbalance_Habits_alcohol"):
+            slots_mapped_in_domain.remove("dizzNbalance_Habits_alcohol_follow")                        
 
         return slots_mapped_in_domain
 
