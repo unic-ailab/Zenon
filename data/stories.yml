@@ -690,7 +690,7 @@ stories:
           - action: action_questionnaire_completed
           - action: action_get_available_questionnaires
 
-   - story: MS Domain I relevant questions - cancellation
+    - story: MS Domain I relevant questions - cancellation
       steps:
           - intent: MSdomainI_start
           - action: action_set_questionnaire_slot
