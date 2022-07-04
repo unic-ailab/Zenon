@@ -517,7 +517,22 @@ responses:
           value: Romanian
       text: Din păcate, nu pot opri acest chestionar înainte de completare. Este foarte scurt și au mai rămas doar câteva întrebări.
   utter_not_available:
-    - text: Sorry, this functionality is not available at the moment.
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: Sorry, this functionality is not available at the moment.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Spiacenti, questa funzionalità non è al momento disponibile.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Ne pare rău, această funcționalitate nu este disponibilă momentan.
+
 actions:
   - action_utter_greet
   - action_utter_how_are_you

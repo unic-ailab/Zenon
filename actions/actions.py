@@ -5930,9 +5930,9 @@ class ValidateMSDomainIForm(FormValidationAction):
         else:
             text = get_text_from_lang(
                 tracker,
-                ["Please give a valid answer",
+                ["Please type your answer as a number.",
                 " ",
-                "Si prega di dare una risposta valida",
+                "Si prega di digitare la risposta come numero.",
                 " "]
             )
 
