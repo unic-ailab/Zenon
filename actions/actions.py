@@ -6394,8 +6394,17 @@ class ValidateMSDomainIVForm(FormValidationAction):
 # Other methods                                                                                    #
 #################################################################################################### 
 # method to store questionnaires
+
+questionnaire_per_usecase = {
+    "ms": ["MSdomainI", "MSdomainII", "MSdomainIII", "MSdomainIV", "MSdomainV"],
+    "stroke": ["activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
+}
+
 def storeQuestionnaireData(isFinished, tracker):
-    customTrackerInstance.saveQuestionnaireAnswers(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), isFinished, tracker)
+    sender_id = tracker.current_state()['sender_id']
+    usecase = sender_id[:len(sender_id)-2]
+    if tracker.get_slot("questionnaire") in questionnaire_per_usecase[usecase]: 
+        customTrackerInstance.saveQuestionnaireAnswers(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), isFinished, tracker)
 
 def storeRelevantQuestionsData(tracker):
     customTrackerInstance.saveRelevantQuestionsAnswers(tracker.current_state()['sender_id'], tracker.slots["questionnaire"].title(), tracker)

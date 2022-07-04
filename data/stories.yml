@@ -1,795 +1,795 @@
 version: "2.0"
 
 stories:
-      - story: User click on a notification for questionnaire
-        steps:
-              - intent: notification_greet
-              - action: action_utter_notification_greet
-              - action: action_utter_ask_questionnaire_start
+        - story: User click on a notification for questionnaire
+          steps:
+                  - intent: notification_greet
+                  - action: action_utter_notification_greet
+                  - action: action_utter_ask_questionnaire_start
 
-      - story: User click on a notification for questionnaire but doesn't want to start questionnaire #does this work for all cases?
-        steps:
-              - intent: notification_greet
-              - action: action_utter_notification_greet
-              - action: action_utter_ask_questionnaire_start
-              - or:
-                      - intent: deny
-                      - intent: cancel
-              - action: action_options_menu
+        - story: User click on a notification for questionnaire but doesn't want to start questionnaire #does this work for all cases?
+          steps:
+                  - intent: notification_greet
+                  - action: action_utter_notification_greet
+                  - action: action_utter_ask_questionnaire_start
+                  - or:
+                            - intent: deny
+                            - intent: cancel
+                  - action: action_options_menu
 
-      - story: Greeting, first time of the day using the agent, Agent receives positive sentiment
-        steps:
-              - intent: greet
-              - action: action_utter_greet
-              - slot_was_set:
-                      - is_first_time: true
-              - action: action_utter_how_are_you
-              - intent: inform
-              - slot_was_set:
-                      - sentiment: pos
-              - action: utter_glad_to_hear
-              - action: action_options_menu
+        - story: Greeting, first time of the day using the agent, Agent receives positive sentiment
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - slot_was_set:
+                            - is_first_time: true
+                  - action: action_utter_how_are_you
+                  - intent: inform
+                  - slot_was_set:
+                            - sentiment: pos
+                  - action: utter_glad_to_hear
+                  - action: action_options_menu
 
-      - story: Greeting, first time of the day using the agent, Agent receives neutral sentiment
-        steps:
-              - intent: greet
-              - action: action_utter_greet
-              - slot_was_set:
-                      - is_first_time: true
-              - action: action_utter_how_are_you
-              - intent: inform
-              - slot_was_set:
-                      - sentiment: neu
-              - action: action_options_menu
+        - story: Greeting, first time of the day using the agent, Agent receives neutral sentiment
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - slot_was_set:
+                            - is_first_time: true
+                  - action: action_utter_how_are_you
+                  - intent: inform
+                  - slot_was_set:
+                            - sentiment: neu
+                  - action: action_options_menu
 
-      - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user agrees to put the information in their report.
-        steps:
-              - intent: greet
-              - action: action_utter_greet
-              - slot_was_set:
-                      - is_first_time: true
-              - action: action_utter_how_are_you
-              - intent: inform
-              - slot_was_set:
-                      - sentiment: neg
-              - action: utter_inform_doctor
-              - intent: affirm
-              - action: utter_confirm_doctor
-              - action: action_options_menu
+        - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user agrees to put the information in their report.
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - slot_was_set:
+                            - is_first_time: true
+                  - action: action_utter_how_are_you
+                  - intent: inform
+                  - slot_was_set:
+                            - sentiment: neg
+                  - action: utter_inform_doctor
+                  - intent: affirm
+                  - action: utter_confirm_doctor
+                  - action: action_options_menu
 
-      - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report.
-        steps:
-              - intent: greet
-              - action: action_utter_greet
-              - slot_was_set:
-                      - is_first_time: true
-              - action: action_utter_how_are_you
-              - intent: inform
-              - slot_was_set:
-                      - sentiment: neg
-              - action: utter_inform_doctor
-              - or:
-                      - intent: deny
-                      - intent: cancel
-              - action: utter_inform_doctor_extra
-              - or:
-                      - intent: deny
-                      - intent: cancel
-              - action: utter_no_problem
-              - action: action_options_menu
+        - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report.
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - slot_was_set:
+                            - is_first_time: true
+                  - action: action_utter_how_are_you
+                  - intent: inform
+                  - slot_was_set:
+                            - sentiment: neg
+                  - action: utter_inform_doctor
+                  - or:
+                            - intent: deny
+                            - intent: cancel
+                  - action: utter_inform_doctor_extra
+                  - or:
+                            - intent: deny
+                            - intent: cancel
+                  - action: utter_no_problem
+                  - action: action_options_menu
 
-      - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report but want to report smothing extra.
-        steps:
-              - intent: greet
-              - action: action_utter_greet
-              - slot_was_set:
-                      - is_first_time: true
-              - action: action_utter_how_are_you
-              - intent: inform
-              - slot_was_set:
-                      - sentiment: neg
-              - action: utter_inform_doctor
-              - or:
-                      - intent: deny
-                      - intent: cancel
-              - action: utter_inform_doctor_extra
-              - intent: affirm
-              - action: utter_inform_doctor_go_on
-              - intent: inform
-              - action: utter_confirm_doctor
-              - action: action_options_menu
+        - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report but want to report smothing extra.
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - slot_was_set:
+                            - is_first_time: true
+                  - action: action_utter_how_are_you
+                  - intent: inform
+                  - slot_was_set:
+                            - sentiment: neg
+                  - action: utter_inform_doctor
+                  - or:
+                            - intent: deny
+                            - intent: cancel
+                  - action: utter_inform_doctor_extra
+                  - intent: affirm
+                  - action: utter_inform_doctor_go_on
+                  - intent: inform
+                  - action: utter_confirm_doctor
+                  - action: action_options_menu
 
-      - story: Greeting, not first time of the day using the agent - agent doesn't ask again for how the user is feeling
-        steps:
-              - intent: greet
-              - action: action_utter_greet
-              - slot_was_set:
-                      - is_first_time: false
-              - action: action_options_menu
+        - story: Greeting, not first time of the day using the agent - agent doesn't ask again for how the user is feeling
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - slot_was_set:
+                            - is_first_time: false
+                  - action: action_options_menu
 
-      - story: NO available questionnaires, user doesnt want to go back to main menu
-        steps:
-              - intent: available_questionnaires
-              - action: action_get_available_questionnaires
-              - or:
-                      - intent: deny
-                      - intent: cancel
+        - story: NO available questionnaires, user doesnt want to go back to main menu
+          steps:
+                  - intent: available_questionnaires
+                  - action: action_get_available_questionnaires
+                  - or:
+                            - intent: deny
+                            - intent: cancel
 
-      - story: NO available questionnaires, user wants to go back to main menu
-        steps:
-              - intent: available_questionnaires
-              - action: action_get_available_questionnaires
-              - intent: affirm
-              - action: action_options_menu_extra
+        - story: NO available questionnaires, user wants to go back to main menu
+          steps:
+                  - intent: available_questionnaires
+                  - action: action_get_available_questionnaires
+                  - intent: affirm
+                  - action: action_options_menu_extra
 
-      - story: Tutorial
-        steps:
-              - intent: tutorials
-              - action: utter_tutorial_link
-              - action: action_options_menu_extra
+        - story: Tutorial
+          steps:
+                  - intent: tutorials
+                  - action: utter_tutorial_link
+                  - action: action_options_menu_extra
 
-      - story: Health status update
-        steps:
-              - intent: health_update
-              - action: utter_not_available
-              - action: action_options_menu_extra
+        - story: Health status update
+          steps:
+                  - intent: health_update
+                  - action: utter_not_available
+                  - action: action_options_menu_extra
 
-      - story: set language
-        steps:
-              - intent: set_language
-              - action: action_utter_set_language
+        - story: set language
+          steps:
+                  - intent: set_language
+                  - action: action_utter_set_language
 
-      # - story: User wants to continue the latest available questionnaire # this shouldn't in theory happen
-      #   steps:
-      #           - intent: continue
-      #           - action: action_utter_continue_latest_questionnaire
+        # - story: User wants to continue the latest available questionnaire # this shouldn't in theory happen
+        #   steps:
+        #           - intent: continue
+        #           - action: action_utter_continue_latest_questionnaire
 
-      # - story: User wants to continue the latest available questionnaire but changes their mind # this shouldn't in theory happen
-      #   steps:
-      #           - intent: continue
-      #           - action: action_utter_continue_latest_questionnaire
-      #           - or:
-      #                     - intent: deny
-      #                     - intent: cancel
-      #           - action: action_options_menu_extra
-      # - story: Agent receives positive sentiment, user agrees to inform doctors # Works fine
-      #   steps:
-      #           - intent: greet
-      #           - action: action_utter_greet
-      #           - intent: inform
-      #           - slot_was_set:
-      #                     - sentiment: pos
-      #           - action: utter_inform_doctor
-      #           - intent: affirm
-      #           - action: utter_confirm_doctor
+        # - story: User wants to continue the latest available questionnaire but changes their mind # this shouldn't in theory happen
+        #   steps:
+        #           - intent: continue
+        #           - action: action_utter_continue_latest_questionnaire
+        #           - or:
+        #                     - intent: deny
+        #                     - intent: cancel
+        #           - action: action_options_menu_extra
+        # - story: Agent receives positive sentiment, user agrees to inform doctors # Works fine
+        #   steps:
+        #           - intent: greet
+        #           - action: action_utter_greet
+        #           - intent: inform
+        #           - slot_was_set:
+        #                     - sentiment: pos
+        #           - action: utter_inform_doctor
+        #           - intent: affirm
+        #           - action: utter_confirm_doctor
 
-      # - story: Agent receives positive sentiment, user doesn't agree to inform doctors. # Works fine
-      #   steps:
-      #           - intent: greet
-      #           - action: action_utter_greet
-      #           - intent: inform
-      #           - slot_was_set:
-      #                     - sentiment: pos
-      #           - action: utter_inform_doctor
-      #           - intent: deny
-      #           - action: action_utter_handle_user_deny_to_inform_doctors
-      #           - intent: affirm
-      #           - action: utter_no_problem
+        # - story: Agent receives positive sentiment, user doesn't agree to inform doctors. # Works fine
+        #   steps:
+        #           - intent: greet
+        #           - action: action_utter_greet
+        #           - intent: inform
+        #           - slot_was_set:
+        #                     - sentiment: pos
+        #           - action: utter_inform_doctor
+        #           - intent: deny
+        #           - action: action_utter_handle_user_deny_to_inform_doctors
+        #           - intent: affirm
+        #           - action: utter_no_problem
 
-      # - story: Agent receives negative sentiment, user agrees to inform doctors # Works fine
-      #   steps:
-      #           - intent: greet
-      #           - action: action_utter_greet
-      #           - intent: inform
-      #           - slot_was_set:
-      #                     - sentiment: neg
-      #           - action: utter_inform_doctor
-      #           - intent: affirm
-      #           - action: utter_confirm_doctor
+        # - story: Agent receives negative sentiment, user agrees to inform doctors # Works fine
+        #   steps:
+        #           - intent: greet
+        #           - action: action_utter_greet
+        #           - intent: inform
+        #           - slot_was_set:
+        #                     - sentiment: neg
+        #           - action: utter_inform_doctor
+        #           - intent: affirm
+        #           - action: utter_confirm_doctor
 
-      # - story: Agent receives negative sentiment, user doesn't agree to inform doctors. # Works fine
-      #   steps:
-      #           - intent: greet
-      #           - action: action_utter_greet
-      #           - intent: inform
-      #           - slot_was_set:
-      #                     - sentiment: neg
-      #           - action: utter_inform_doctor
-      #           - intent: deny
-      #           - action: action_utter_handle_user_deny_to_inform_doctors
-      #           - intent: affirm
-      #           - action: utter_no_problem
+        # - story: Agent receives negative sentiment, user doesn't agree to inform doctors. # Works fine
+        #   steps:
+        #           - intent: greet
+        #           - action: action_utter_greet
+        #           - intent: inform
+        #           - slot_was_set:
+        #                     - sentiment: neg
+        #           - action: utter_inform_doctor
+        #           - intent: deny
+        #           - action: action_utter_handle_user_deny_to_inform_doctors
+        #           - intent: affirm
+        #           - action: utter_no_problem
 
-      # - story: User doesn't want to answer open questionnaire ACTIVLIM
-      #   steps:
-      #           - slot_was_set:
-      #                     - questionnaire: activlim
-      #           - intent: greet
-      #           - action: action_utter_greet
-      #           - action: action_utter_ask_activlim_start
-      #           - intent: deny
-      #           - action: action_options_menu
+        # - story: User doesn't want to answer open questionnaire ACTIVLIM
+        #   steps:
+        #           - slot_was_set:
+        #                     - questionnaire: activlim
+        #           - intent: greet
+        #           - action: action_utter_greet
+        #           - action: action_utter_ask_activlim_start
+        #           - intent: deny
+        #           - action: action_options_menu
 
-      # - story: User doesn't want to answer open questionnaire PSQI
-      #   steps:
-      #           - slot_was_set:
-      #                     - questionnaire: psqi
-      #           - intent: greet
-      #           - action: action_utter_greet
-      #           - action: action_utter_ask_psqi_start
-      #           - intent: deny
-      #           - action: utter_how_to_help
+        # - story: User doesn't want to answer open questionnaire PSQI
+        #   steps:
+        #           - slot_was_set:
+        #                     - questionnaire: psqi
+        #           - intent: greet
+        #           - action: action_utter_greet
+        #           - action: action_utter_ask_psqi_start
+        #           - intent: deny
+        #           - action: utter_how_to_help
 
-      # - story: Agent doesn't want to answer open questionnaire Dizziness and Balance
-      #   steps:
-      #           - slot_was_set:
-      #                     - questionnaire: dizzinessandbalance
-      #           - intent: greet
-      #           - action: action_utter_greet
-      #           - action: action_utter_ask_dizzNbalance_start
-      #           - intent: deny
-      #           - action: utter_how_to_help
+        # - story: Agent doesn't want to answer open questionnaire Dizziness and Balance
+        #   steps:
+        #           - slot_was_set:
+        #                     - questionnaire: dizzinessandbalance
+        #           - intent: greet
+        #           - action: action_utter_greet
+        #           - action: action_utter_ask_dizzNbalance_start
+        #           - intent: deny
+        #           - action: utter_how_to_help
 
-      - story: ACTIVLIM Questionnaire - fully completed
-        steps:
-              - intent: activLim_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: activLim
-              - action: action_utter_starting_questionnaire
-              - action: utter_ACTIVLIM_intro_question
-              - action: activLim_form
-              - active_loop: activLim_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: ACTIVLIM Questionnaire - fully completed
+          steps:
+                  - intent: activLim_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: activLim
+                  - action: action_utter_starting_questionnaire
+                  - action: utter_ACTIVLIM_intro_question
+                  - action: activLim_form
+                  - active_loop: activLim_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: ACTIVLIM Questionnaire - cancellation
-        steps:
-              - intent: activLim_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: activLim
-              - action: action_utter_starting_questionnaire
-              - action: utter_ACTIVLIM_intro_question
-              - action: activLim_form
-              - active_loop: activLim_form
-              - intent: cancel
-              - action: utter_confirm_cancellation
-              - or:
-                      - intent: affirm
-                      - intent: cancel
-              - action: action_deactivate_loop
-              - active_loop: null
-              - action: action_questionnaire_cancelled
-              - action: action_options_menu_extra
+        - story: ACTIVLIM Questionnaire - cancellation
+          steps:
+                  - intent: activLim_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: activLim
+                  - action: action_utter_starting_questionnaire
+                  - action: utter_ACTIVLIM_intro_question
+                  - action: activLim_form
+                  - active_loop: activLim_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - or:
+                            - intent: affirm
+                            - intent: cancel
+                  - action: action_deactivate_loop
+                  - active_loop: null
+                  - action: action_questionnaire_cancelled
+                  - action: action_options_menu_extra
 
-      - story: ACTIVLIM Questionnaire - cancellation denied
-        steps:
-              - intent: activLim_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: activLim
-              - action: action_utter_starting_questionnaire
-              - action: utter_ACTIVLIM_intro_question
-              - action: activLim_form
-              - active_loop: activLim_form
-              - intent: cancel
-              - action: utter_confirm_cancellation
-              - intent: deny
-              - action: activLim_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: ACTIVLIM Questionnaire - cancellation denied
+          steps:
+                  - intent: activLim_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: activLim
+                  - action: action_utter_starting_questionnaire
+                  - action: utter_ACTIVLIM_intro_question
+                  - action: activLim_form
+                  - active_loop: activLim_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - intent: deny
+                  - action: activLim_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: ACTIVLIM Questionnaire - Interruption 1
-        steps:
-              - intent: activLim_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: activLim
-              - action: action_utter_starting_questionnaire
-              - action: utter_ACTIVLIM_intro_question
-              - action: activLim_form
-              - active_loop: activLim_form
-              - intent: bot_challenge
-              - action: utter_iamabot
-              - action: activLim_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: ACTIVLIM Questionnaire - Interruption 1
+          steps:
+                  - intent: activLim_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: activLim
+                  - action: action_utter_starting_questionnaire
+                  - action: utter_ACTIVLIM_intro_question
+                  - action: activLim_form
+                  - active_loop: activLim_form
+                  - intent: bot_challenge
+                  - action: utter_iamabot
+                  - action: activLim_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: PSQI Questionnaire - fully completed
-        steps:
-              - intent: psqi_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: psqi
-              - action: action_utter_starting_questionnaire
-              - action: psqi_form
-              - active_loop: psqi_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: PSQI Questionnaire - fully completed
+          steps:
+                  - intent: psqi_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: psqi
+                  - action: action_utter_starting_questionnaire
+                  - action: psqi_form
+                  - active_loop: psqi_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: PSQI Questionnaire - cancellation
-        steps:
-              - intent: psqi_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: psqi
-              - action: action_utter_starting_questionnaire
-              - action: psqi_form
-              - active_loop: psqi_form
-              - intent: cancel
-              - action: utter_confirm_cancellation
-              - or:
-                      - intent: affirm
-                      - intent: cancel
-              - action: action_deactivate_loop
-              - active_loop: null
-              - action: action_questionnaire_cancelled
-              - action: action_options_menu_extra
+        - story: PSQI Questionnaire - cancellation
+          steps:
+                  - intent: psqi_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: psqi
+                  - action: action_utter_starting_questionnaire
+                  - action: psqi_form
+                  - active_loop: psqi_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - or:
+                            - intent: affirm
+                            - intent: cancel
+                  - action: action_deactivate_loop
+                  - active_loop: null
+                  - action: action_questionnaire_cancelled
+                  - action: action_options_menu_extra
 
-      - story: PSQI Questionnaire - cancellation denied
-        steps:
-              - intent: psqi_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: psqi
-              - action: action_utter_starting_questionnaire
-              - action: psqi_form
-              - active_loop: psqi_form
-              - intent: cancel
-              - action: utter_confirm_cancellation
-              - intent: deny
-              - action: psqi_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: PSQI Questionnaire - cancellation denied
+          steps:
+                  - intent: psqi_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: psqi
+                  - action: action_utter_starting_questionnaire
+                  - action: psqi_form
+                  - active_loop: psqi_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - intent: deny
+                  - action: psqi_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: Dizziness and Balance Questionnaire - fully completed
-        steps:
-              - intent: dizzNbalance_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: dizzNbalance
-              - action: action_utter_starting_questionnaire
-              - action: dizzNbalance_form
-              - active_loop: dizzNbalance_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: Dizziness and Balance Questionnaire - fully completed
+          steps:
+                  - intent: dizzNbalance_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: dizzNbalance
+                  - action: action_utter_starting_questionnaire
+                  - action: dizzNbalance_form
+                  - active_loop: dizzNbalance_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: Dizziness and Balance Questionnaire - cancellation denied
-        steps:
-              - intent: dizzNbalance_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: dizzNbalance
-              - action: action_utter_starting_questionnaire
-              - action: dizzNbalance_form
-              - active_loop: dizzNbalance_form
-              - intent: cancel
-              - action: utter_confirm_cancellation
-              - intent: deny
-              - action: dizzNbalance_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: Dizziness and Balance Questionnaire - cancellation denied
+          steps:
+                  - intent: dizzNbalance_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: dizzNbalance
+                  - action: action_utter_starting_questionnaire
+                  - action: dizzNbalance_form
+                  - active_loop: dizzNbalance_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - intent: deny
+                  - action: dizzNbalance_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: Dizziness and Balance Questionnaire - cancellation
-        steps:
-              - intent: dizzNbalance_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: dizzNbalance
-              - action: action_utter_starting_questionnaire
-              - action: dizzNbalance_form
-              - active_loop: dizzNbalance_form
-              - intent: cancel
-              - action: utter_confirm_cancellation
-              - or:
-                      - intent: affirm
-                      - intent: cancel
-              - action: action_deactivate_loop
-              - active_loop: null
-              - action: action_questionnaire_cancelled
-              - action: action_options_menu_extra
+        - story: Dizziness and Balance Questionnaire - cancellation
+          steps:
+                  - intent: dizzNbalance_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: dizzNbalance
+                  - action: action_utter_starting_questionnaire
+                  - action: dizzNbalance_form
+                  - active_loop: dizzNbalance_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - or:
+                            - intent: affirm
+                            - intent: cancel
+                  - action: action_deactivate_loop
+                  - active_loop: null
+                  - action: action_questionnaire_cancelled
+                  - action: action_options_menu_extra
 
-      - story: Eating Habits Questionnaire - fully completed
-        steps:
-              - intent: eatinghabits_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: eatinghabits
-              - action: action_utter_starting_questionnaire
-              - action: eatinghabits_form
-              - active_loop: eatinghabits_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: Eating Habits Questionnaire - fully completed
+          steps:
+                  - intent: eatinghabits_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: eatinghabits
+                  - action: action_utter_starting_questionnaire
+                  - action: eatinghabits_form
+                  - active_loop: eatinghabits_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: Eating Habits Questionnaire - cancellation denied
-        steps:
-              - intent: eatinghabits_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: eatinghabits
-              - action: action_utter_starting_questionnaire
-              - action: eatinghabits_form
-              - active_loop: eatinghabits_form
-              - intent: cancel
-              - action: utter_confirm_cancellation
-              - intent: deny
-              - action: eatinghabits_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: Eating Habits Questionnaire - cancellation denied
+          steps:
+                  - intent: eatinghabits_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: eatinghabits
+                  - action: action_utter_starting_questionnaire
+                  - action: eatinghabits_form
+                  - active_loop: eatinghabits_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - intent: deny
+                  - action: eatinghabits_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: Eating Habits Questionnaire - cancellation
-        steps:
-              - intent: eatinghabits_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: eatinghabits
-              - action: action_utter_starting_questionnaire
-              - action: eatinghabits_form
-              - active_loop: eatinghabits_form
-              - intent: cancel
-              - action: utter_confirm_cancellation
-              - or:
-                      - intent: affirm
-                      - intent: cancel
-              - action: action_deactivate_loop
-              - active_loop: null
-              - action: action_questionnaire_cancelled
-              - action: action_options_menu_extra
+        - story: Eating Habits Questionnaire - cancellation
+          steps:
+                  - intent: eatinghabits_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: eatinghabits
+                  - action: action_utter_starting_questionnaire
+                  - action: eatinghabits_form
+                  - active_loop: eatinghabits_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - or:
+                            - intent: affirm
+                            - intent: cancel
+                  - action: action_deactivate_loop
+                  - active_loop: null
+                  - action: action_questionnaire_cancelled
+                  - action: action_options_menu_extra
 
-      - story: Muscle Tone Questionnaire - fully completed
-        steps:
-              - intent: muscletone_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: muscletone
-              - action: action_utter_starting_questionnaire
-              - action: muscletone_form
-              - active_loop: muscletone_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: Muscle Tone Questionnaire - fully completed
+          steps:
+                  - intent: muscletone_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: muscletone
+                  - action: action_utter_starting_questionnaire
+                  - action: muscletone_form
+                  - active_loop: muscletone_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: Muscle Tone Questionnaire - cancellation denied
-        steps:
-              - intent: muscletone_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: muscletone
-              - action: action_utter_starting_questionnaire
-              - action: muscletone_form
-              - active_loop: muscletone_form
-              - intent: cancel
-              - action: utter_confirm_cancellation
-              - intent: deny
-              - action: muscletone_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: Muscle Tone Questionnaire - cancellation denied
+          steps:
+                  - intent: muscletone_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: muscletone
+                  - action: action_utter_starting_questionnaire
+                  - action: muscletone_form
+                  - active_loop: muscletone_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - intent: deny
+                  - action: muscletone_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: Muscle Tone Questionnaire - cancellation
-        steps:
-              - intent: muscletone_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: muscletone
-              - action: action_utter_starting_questionnaire
-              - action: muscletone_form
-              - active_loop: muscletone_form
-              - intent: cancel
-              - action: utter_confirm_cancellation
-              - or:
-                      - intent: affirm
-                      - intent: cancel
-              - action: action_deactivate_loop
-              - active_loop: null
-              - action: action_questionnaire_cancelled
-              - action: action_options_menu_extra
+        - story: Muscle Tone Questionnaire - cancellation
+          steps:
+                  - intent: muscletone_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: muscletone
+                  - action: action_utter_starting_questionnaire
+                  - action: muscletone_form
+                  - active_loop: muscletone_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - or:
+                            - intent: affirm
+                            - intent: cancel
+                  - action: action_deactivate_loop
+                  - active_loop: null
+                  - action: action_questionnaire_cancelled
+                  - action: action_options_menu_extra
 
-      - story: Stroke Domain III relevant questions - fully completed
-        steps:
-              - intent: STROKEdomainIII_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: STROKEdomainIII
-              - action: action_utter_starting_questionnaire
-              - action: STROKEdomainIII_form
-              - active_loop: STROKEdomainIII_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: Stroke Domain III relevant questions - fully completed
+          steps:
+                  - intent: STROKEdomainIII_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: STROKEdomainIII
+                  - action: action_utter_starting_questionnaire
+                  - action: STROKEdomainIII_form
+                  - active_loop: STROKEdomainIII_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: Stroke Domain V relevant questions - fully completed
-        steps:
-              - intent: STROKEdomainV_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: STROKEdomainV
-              - action: action_utter_starting_questionnaire
-              - action: STROKEdomainV_form
-              - active_loop: STROKEdomainV_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: Stroke Domain V relevant questions - fully completed
+          steps:
+                  - intent: STROKEdomainV_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: STROKEdomainV
+                  - action: action_utter_starting_questionnaire
+                  - action: STROKEdomainV_form
+                  - active_loop: STROKEdomainV_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: Stroke Domain IV relevant questions - fully completed
-        steps:
-              - intent: STROKEdomainIV_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: STROKEdomainIV
-              - action: action_utter_starting_questionnaire
-              - action: STROKEdomainIV_form
-              - active_loop: STROKEdomainIV_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: Stroke Domain IV relevant questions - fully completed
+          steps:
+                  - intent: STROKEdomainIV_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: STROKEdomainIV
+                  - action: action_utter_starting_questionnaire
+                  - action: STROKEdomainIV_form
+                  - active_loop: STROKEdomainIV_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: Coast Questionnaire - fully completed
-        steps:
-              - intent: coast_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: coast
-              - action: action_utter_starting_questionnaire
-              - action: coast_form
-              - active_loop: coast_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: Coast Questionnaire - fully completed
+          steps:
+                  - intent: coast_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: coast
+                  - action: action_utter_starting_questionnaire
+                  - action: coast_form
+                  - active_loop: coast_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: Coast Questionnaire - cancellation denied
-        steps:
-              - intent: coast_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: coast
-              - action: action_utter_starting_questionnaire
-              - action: coast_form
-              - active_loop: coast_form
-              - intent: cancel
-              - action: utter_confirm_cancellation
-              - intent: deny
-              - action: coast_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: Coast Questionnaire - cancellation denied
+          steps:
+                  - intent: coast_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: coast
+                  - action: action_utter_starting_questionnaire
+                  - action: coast_form
+                  - active_loop: coast_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - intent: deny
+                  - action: coast_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: Coast Questionnaire - cancellation
-        steps:
-              - intent: coast_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: coast
-              - action: action_utter_starting_questionnaire
-              - action: coast_form
-              - active_loop: coast_form
-              - intent: cancel
-              - action: utter_confirm_cancellation
-              - or:
-                      - intent: affirm
-                      - intent: cancel
-              - action: action_deactivate_loop
-              - active_loop: null
-              - action: action_questionnaire_cancelled
-              - action: action_options_menu_extra
+        - story: Coast Questionnaire - cancellation
+          steps:
+                  - intent: coast_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: coast
+                  - action: action_utter_starting_questionnaire
+                  - action: coast_form
+                  - active_loop: coast_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - or:
+                            - intent: affirm
+                            - intent: cancel
+                  - action: action_deactivate_loop
+                  - active_loop: null
+                  - action: action_questionnaire_cancelled
+                  - action: action_options_menu_extra
 
-      - story: MS Domain V relevant questions - fully completed
-        steps:
-              - intent: MSdomainV_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: MSdomainV
-              - action: action_utter_starting_questionnaire
-              - action: MSdomainV_form
-              - active_loop: MSdomainV_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: MS Domain V relevant questions - fully completed
+          steps:
+                  - intent: MSdomainV_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: MSdomainV
+                  - action: action_utter_starting_questionnaire
+                  - action: MSdomainV_form
+                  - active_loop: MSdomainV_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: MS Domain IV relevant questions - fully completed
-        steps:
-              - intent: MSdomainIV_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: MSdomainIV
-              - action: action_utter_starting_questionnaire
-              - action: MSdomainIV_form
-              - active_loop: MSdomainIV_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: MS Domain IV relevant questions - fully completed
+          steps:
+                  - intent: MSdomainIV_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: MSdomainIV
+                  - action: action_utter_starting_questionnaire
+                  - action: MSdomainIV_form
+                  - active_loop: MSdomainIV_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: MS Domain III relevant questions - fully completed
-        steps:
-              - intent: MSdomainIII_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: MSdomainIII
-              - action: action_utter_starting_questionnaire
-              - action: MSdomainIII_form
-              - active_loop: MSdomainIII_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: MS Domain III relevant questions - fully completed
+          steps:
+                  - intent: MSdomainIII_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: MSdomainIII
+                  - action: action_utter_starting_questionnaire
+                  - action: MSdomainIII_form
+                  - active_loop: MSdomainIII_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: MS Domain II relevant questions - fully completed
-        steps:
-              - intent: MSdomainII_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: MSdomainII
-              - action: action_utter_starting_questionnaire
-              - action: MSdomainII_form
-              - active_loop: MSdomainII_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: MS Domain II relevant questions - fully completed
+          steps:
+                  - intent: MSdomainII_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: MSdomainII
+                  - action: action_utter_starting_questionnaire
+                  - action: MSdomainII_form
+                  - active_loop: MSdomainII_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: MS Domain I relevant questions - fully completed
-        steps:
-              - intent: MSdomainI_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: MSdomainI
-              - action: action_utter_starting_questionnaire
-              - action: MSdomainI_form
-              - active_loop: MSdomainI_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: MS Domain I relevant questions - fully completed
+          steps:
+                  - intent: MSdomainI_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: MSdomainI
+                  - action: action_utter_starting_questionnaire
+                  - action: MSdomainI_form
+                  - active_loop: MSdomainI_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      - story: MS Domain I relevant questions - cancellation
-        steps:
-              - intent: MSdomainI_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: MSdomainI
-              - action: action_utter_starting_questionnaire
-              - action: MSdomainI_form
-              - active_loop: MSdomainI_form
-              - intent: cancel
-              - action: utter_confirm_cancellation
-              - or:
-                      - intent: affirm
-                      - intent: cancel
-              - action: action_deactivate_loop
-              - active_loop: null
-              - action: action_questionnaire_cancelled
-              - action: action_options_menu_extra
+        - story: MS Domain I relevant questions - cancellation
+          steps:
+                  - intent: MSdomainI_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: MSdomainI
+                  - action: action_utter_starting_questionnaire
+                  - action: MSdomainI_form
+                  - active_loop: MSdomainI_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - or:
+                            - intent: affirm
+                            - intent: cancel
+                  - action: action_deactivate_loop
+                  - active_loop: null
+                  - action: action_questionnaire_cancelled
+                  - action: action_options_menu_extra
 
-      - story: MS Domain I relevant questions - cancellation denied
-        steps:
-              - intent: MSdomainI_start
-              - action: action_set_questionnaire_slot
-              - slot_was_set:
-                      - questionnaire: MSdomainI
-              - action: action_utter_starting_questionnaire
-              - action: MSdomainI_form
-              - active_loop: MSdomainI_form
-              - intent: cancel
-              - action: utter_confirm_cancellation
-              - intent: deny
-              - action: MSdomainI_form
-              - active_loop: null
-              - slot_was_set:
-                      - requested_slot: null
-              - action: action_questionnaire_completed
-              - action: action_get_available_questionnaires
+        - story: MS Domain I relevant questions - cancellation denied
+          steps:
+                  - intent: MSdomainI_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: MSdomainI
+                  - action: action_utter_starting_questionnaire
+                  - action: MSdomainI_form
+                  - active_loop: MSdomainI_form
+                  - intent: cancel
+                  - action: utter_confirm_cancellation
+                  - intent: deny
+                  - action: MSdomainI_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
-      # - story: ACTIVLIM with cancellation and stop
-      #   steps:
-      #           - intent: greet
-      #             entities:
-      #                     - sentiment: neu
-      #           - slot_was_set:
-      #                     - sentiment: neu
-      #           - action: action_utter_greet
-      #           - action: action_utter_ask_activLim_start
-      #           - intent: activLim_start
-      #           - action: utter_ACTIVLIM_intro_question
-      #           - action: activLim_form
-      #           - active_loop: activLim_form
-      #           - slot_was_set:
-      #                     - requested_slot: doorbell
-      #           - slot_was_set:
-      #                     - doorbell: difficult
-      #           - slot_was_set:
-      #                     - requested_slot: heavyLoad
-      #           - intent: cancel
-      #             entities:
-      #                     - sentiment: neu
-      #           - slot_was_set:
-      #                     - sentiment: neu
-      #           - action: utter_confirm_cancellation
-      #           - intent: deny
-      #             entities:
-      #                     - sentiment: neu
-      #           - slot_was_set:
-      #                     - sentiment: neu
-      #           - action: activLim_form
-      #           - slot_was_set:
-      #                     - requested_slot: heavyLoad
-      #           - slot_was_set:
-      #                     - heavyLoad: impossible
-      #           - slot_was_set:
-      #                     - requested_slot: pickFromFloor
-      #           - intent: need_help
-      #             entities:
-      #                     - sentiment: neu
-      #           - slot_was_set:
-      #                     - sentiment: neu
-      #           - action: utter_help
-      #           - action: activLim_form
-      #           - slot_was_set:
-      #                     - requested_slot: pickFromFloor
-      #           - intent: cancel
-      #             entities:
-      #                     - sentiment: neu
-      #           - slot_was_set:
-      #                     - sentiment: neu
-      #           - action: utter_confirm_cancellation
-      #           - intent: affirm
-      #             entities:
-      #                     - sentiment: pos
-      #           - slot_was_set:
-      #                     - sentiment: pos
-      #           - action: action_deactivate_loop
-      #           - active_loop: null
-      #           - slot_was_set:
-      #                     - requested_slot: null
-      #           - action: action_questionnaire_cancelled
+        # - story: ACTIVLIM with cancellation and stop
+        #   steps:
+        #           - intent: greet
+        #             entities:
+        #                     - sentiment: neu
+        #           - slot_was_set:
+        #                     - sentiment: neu
+        #           - action: action_utter_greet
+        #           - action: action_utter_ask_activLim_start
+        #           - intent: activLim_start
+        #           - action: utter_ACTIVLIM_intro_question
+        #           - action: activLim_form
+        #           - active_loop: activLim_form
+        #           - slot_was_set:
+        #                     - requested_slot: doorbell
+        #           - slot_was_set:
+        #                     - doorbell: difficult
+        #           - slot_was_set:
+        #                     - requested_slot: heavyLoad
+        #           - intent: cancel
+        #             entities:
+        #                     - sentiment: neu
+        #           - slot_was_set:
+        #                     - sentiment: neu
+        #           - action: utter_confirm_cancellation
+        #           - intent: deny
+        #             entities:
+        #                     - sentiment: neu
+        #           - slot_was_set:
+        #                     - sentiment: neu
+        #           - action: activLim_form
+        #           - slot_was_set:
+        #                     - requested_slot: heavyLoad
+        #           - slot_was_set:
+        #                     - heavyLoad: impossible
+        #           - slot_was_set:
+        #                     - requested_slot: pickFromFloor
+        #           - intent: need_help
+        #             entities:
+        #                     - sentiment: neu
+        #           - slot_was_set:
+        #                     - sentiment: neu
+        #           - action: utter_help
+        #           - action: activLim_form
+        #           - slot_was_set:
+        #                     - requested_slot: pickFromFloor
+        #           - intent: cancel
+        #             entities:
+        #                     - sentiment: neu
+        #           - slot_was_set:
+        #                     - sentiment: neu
+        #           - action: utter_confirm_cancellation
+        #           - intent: affirm
+        #             entities:
+        #                     - sentiment: pos
+        #           - slot_was_set:
+        #                     - sentiment: pos
+        #           - action: action_deactivate_loop
+        #           - active_loop: null
+        #           - slot_was_set:
+        #                     - requested_slot: null
+        #           - action: action_questionnaire_cancelled
 #TODO:
 # deactivate storeis for rq with different cancel message +add rules
 # fix storign messages
