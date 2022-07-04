@@ -5828,9 +5828,9 @@ class ActionAskMSDomainIRQ4(Action):
         text = get_text_from_lang(
             tracker,
             [
-                "How many times have you stumbled over the last few days?",
+                "How many times have you stumbled over the last few days?\n(hint: Your answer must be 0 or a positive number)",
                 " ",
-                "Quante volte ti è capitato di inciampare negli ultimi giorni?",                 
+                "Quante volte ti è capitato di inciampare negli ultimi giorni?\n(La tua risposta deve essere 0 o un numero positivo)",                 
                 " ",
             ]
         )
@@ -5849,9 +5849,9 @@ class ActionAskMSDomainIRQ5(Action):
         text = get_text_from_lang(
             tracker,
             [
-                "How many times have you fallen in the last few days?",
+                "How many times have you fallen in the last few days?\n(hint: Your answer must be 0 or a positive number)",
                 " ",
-                "Quante volte sei caduto/a negli ultimi giorni?",                 
+                "Quante volte sei caduto/a negli ultimi giorni?\n(La tua risposta deve essere 0 o un numero positivo)",                 
                 " "
             ]
         )
@@ -5924,6 +5924,7 @@ class ValidateMSDomainIForm(FormValidationAction):
     ) -> Dict[Text, Any]:
 
         slot_value = next(tracker.get_latest_entity_values("number"), None)
+        print(f"Slot value: {slot_value}")
         
         if slot_value is not None:
             return {"MSdomainI_RQ4": slot_value}
@@ -5948,6 +5949,7 @@ class ValidateMSDomainIForm(FormValidationAction):
     ) -> Dict[Text, Any]:
 
         slot_value = next(tracker.get_latest_entity_values("number"), None)
+        print(f"Slot value: {slot_value}")
         
         if slot_value is not None:
             return {"MSdomainI_RQ5": slot_value}
