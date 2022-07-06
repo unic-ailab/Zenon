@@ -17,7 +17,8 @@ from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormValidationAction
 
 import sys        
-sys.path.append("/home/unic/Zenon/")   
+#sys.path.append("/home/unic/Zenon/")   
+sys.path.append('C:/Users/chloe/Desktop/UNIC-AI Lab/ALAMEDA/Zenon_git/Zenon')   
 from custom_tracker_store import CustomSQLTrackerStore
 
 customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="demo.db")
@@ -505,7 +506,7 @@ class ActionOptionsMenuExtra(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
         
-        time.sleep(5) # 5 second delay before the next action
+        #time.sleep(5) # 5 second delay before the next action
         #smthg missing here but i dont remember
         text = get_text_from_lang(
             tracker, 
@@ -629,7 +630,7 @@ class ActionQuestionnaireCompleted(Action):
         #TODO: issue here, the query doesnt find the latest message
         # issue with size of answers cell
         storeQuestionnaireData(True, tracker)
-        #customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "COMPLETED")
+        customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "COMPLETED")
         return []
 
 # class ActionStoreQuestionnaire(Action):
@@ -672,7 +673,8 @@ class ActionQuestionnaireCancelled(Action):
         )
         dispatcher.utter_message(text=text)
         storeQuestionnaireData(False, tracker)
-        #customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "IN_PROGRESS")
+        if tracker.get_slot("questionnaire"):
+            customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "IN_PROGRESS")
         return[]
 
 class ActionUtterStartingQuestionnaire(Action):
@@ -682,7 +684,10 @@ class ActionUtterStartingQuestionnaire(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
         
-        q_abbreviation = tracker.latest_message["intent"].get("name").split('_')[0]
+        #q_abbreviation = tracker.latest_message["intent"].get("name").split('_')[0]
+
+        q_abbreviation = tracker.latest_message["intent"].get("name").replace("_start", "")
+
         #print(tracker.latest_message["intent"])
         #q_abbreviation = tracker.get_slot("questionnaire")
         if (q_abbreviation !=None and q_abbreviation in questionnaire_abbreviations.keys()):
@@ -724,6 +729,7 @@ class ActionSetQuestionnaireSlot(Action):
         announce(self, tracker)
         
         q_abbreviation = tracker.latest_message["intent"].get("name").split('_')[0]
+
         if q_abbreviation in questionnaire_abbreviations.keys():
             return [SlotSet("questionnaire", q_abbreviation)]
         else:
