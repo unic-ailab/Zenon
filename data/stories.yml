@@ -630,45 +630,90 @@ stories:
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
-        - story: MS Domain IV relevant questions - fully completed
+        - story: MS Domain IV weekly relevant questions - fully completed
           steps:
-                  - intent: MSdomainIV_start
+                  - intent: MSdomainIV_1W_start
                   - action: action_set_questionnaire_slot
                   - slot_was_set:
-                            - questionnaire: MSdomainIV
+                            - questionnaire: MSdomainIV_1W
                   - action: action_utter_starting_questionnaire
-                  - action: MSdomainIV_form
-                  - active_loop: MSdomainIV_form
+                  - action: MSdomainIV_1W_form
+                  - active_loop: MSdomainIV_1W_form
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
-        - story: MS Domain III relevant questions - fully completed
+        - story: MS Domain IV daily relevant questions - fully completed
           steps:
-                  - intent: MSdomainIII_start
+                  - intent: MSdomainIV_1D_start
                   - action: action_set_questionnaire_slot
                   - slot_was_set:
-                            - questionnaire: MSdomainIII
+                            - questionnaire: MSdomainIV_1D
                   - action: action_utter_starting_questionnaire
-                  - action: MSdomainIII_form
-                  - active_loop: MSdomainIII_form
+                  - action: MSdomainIV_1D_form
+                  - active_loop: MSdomainIV_1D_form
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
-        - story: MS Domain II relevant questions - fully completed
+        - story: MS Domain III weekly relevant questions - fully completed
           steps:
-                  - intent: MSdomainII_start
+                  - intent: MSdomainIII_1W_start
                   - action: action_set_questionnaire_slot
                   - slot_was_set:
-                            - questionnaire: MSdomainII
+                            - questionnaire: MSdomainIII_1W
                   - action: action_utter_starting_questionnaire
-                  - action: MSdomainII_form
-                  - active_loop: MSdomainII_form
+                  - action: MSdomainIII_1W_form
+                  - active_loop: MSdomainIII_1W_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
+
+        - story: MS Domain III biweekly relevant questions - fully completed
+          steps:
+                  - intent: MSdomainIII_2W_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: MSdomainIII_2W
+                  - action: action_utter_starting_questionnaire
+                  - action: MSdomainIII_2W_form
+                  - active_loop: MSdomainIII_2W_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
+
+        - story: MS Domain II monthly relevant questions - fully completed
+          steps:
+                  - intent: MSdomainII_1M_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: MSdomainII_1M
+                  - action: action_utter_starting_questionnaire
+                  - action: MSdomainII_1Μ_form
+                  - active_loop: MSdomainII_1Μ_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
+
+        - story: MS Domain II three months relevant questions - fully completed
+          steps:
+                  - intent: MSdomainII_3M_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: MSdomainII_3M
+                  - action: action_utter_starting_questionnaire
+                  - action: MSdomainII_3Μ_form
+                  - active_loop: MSdomainII_3Μ_form
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
@@ -727,69 +772,6 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
-
-        # - story: ACTIVLIM with cancellation and stop
-        #   steps:
-        #           - intent: greet
-        #             entities:
-        #                     - sentiment: neu
-        #           - slot_was_set:
-        #                     - sentiment: neu
-        #           - action: action_utter_greet
-        #           - action: action_utter_ask_activLim_start
-        #           - intent: activLim_start
-        #           - action: utter_ACTIVLIM_intro_question
-        #           - action: activLim_form
-        #           - active_loop: activLim_form
-        #           - slot_was_set:
-        #                     - requested_slot: doorbell
-        #           - slot_was_set:
-        #                     - doorbell: difficult
-        #           - slot_was_set:
-        #                     - requested_slot: heavyLoad
-        #           - intent: cancel
-        #             entities:
-        #                     - sentiment: neu
-        #           - slot_was_set:
-        #                     - sentiment: neu
-        #           - action: utter_confirm_cancellation
-        #           - intent: deny
-        #             entities:
-        #                     - sentiment: neu
-        #           - slot_was_set:
-        #                     - sentiment: neu
-        #           - action: activLim_form
-        #           - slot_was_set:
-        #                     - requested_slot: heavyLoad
-        #           - slot_was_set:
-        #                     - heavyLoad: impossible
-        #           - slot_was_set:
-        #                     - requested_slot: pickFromFloor
-        #           - intent: need_help
-        #             entities:
-        #                     - sentiment: neu
-        #           - slot_was_set:
-        #                     - sentiment: neu
-        #           - action: utter_help
-        #           - action: activLim_form
-        #           - slot_was_set:
-        #                     - requested_slot: pickFromFloor
-        #           - intent: cancel
-        #             entities:
-        #                     - sentiment: neu
-        #           - slot_was_set:
-        #                     - sentiment: neu
-        #           - action: utter_confirm_cancellation
-        #           - intent: affirm
-        #             entities:
-        #                     - sentiment: pos
-        #           - slot_was_set:
-        #                     - sentiment: pos
-        #           - action: action_deactivate_loop
-        #           - active_loop: null
-        #           - slot_was_set:
-        #                     - requested_slot: null
-        #           - action: action_questionnaire_cancelled
 #TODO:
 # deactivate storeis for rq with different cancel message +add rules
 # fix storign messages

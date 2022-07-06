@@ -21,31 +21,31 @@ slots:
   STROKEdomainIV_RQ3:
     type: any
     influence_conversation: false
-  MSdomainIII_RQ1:
+  MSdomainIII_1W_RQ1:
     type: any
     influence_conversation: false
-  MSdomainIII_RQ2:
+  MSdomainIII_1W_RQ2:
     type: any
     influence_conversation: false
-  MSdomainIII_RQ2a:
+  MSdomainIII_1W_RQ2a:
     type: any
     influence_conversation: false
-  MSdomainIII_RQ3:
+  MSdomainIII_1W_RQ3:
     type: any
     influence_conversation: false
-  MSdomainIII_RQ4:
+  MSdomainIII_1W_RQ4:
     type: any
     influence_conversation: false
-  MSdomainIII_RQ5:
+  MSdomainIII_1W_RQ5:
     type: any
     influence_conversation: false
-  MSdomainIII_RQ5a:
+  MSdomainIII_1W_RQ5a:
     type: any
     influence_conversation: false
-  MSdomainIII_RQ6:
+  MSdomainIII_2W_RQ6:
     type: any
     influence_conversation: false
-  MSdomainIII_RQ7:
+  MSdomainIII_2W_RQ7:
     type: any
     influence_conversation: false
   MSdomainI_RQ1:
@@ -84,13 +84,13 @@ slots:
   MSdomainI_RQ6:
     type: any
     influence_conversation: false
-  MSdomainII_RQ1:
+  MSdomainII_1Μ_RQ1:
     type: any
     influence_conversation: false
-  MSdomainII_RQ2:
+  MSdomainII_1Μ_RQ2:
     type: any
     influence_conversation: false
-  MSdomainII_RQ3:
+  MSdomainII_3Μ_RQ3:
     type: any
     influence_conversation: false
   MSdomainV_RQ1:
@@ -99,16 +99,19 @@ slots:
   MSdomainV_RQ2:
     type: any
     influence_conversation: false
-  MSdomainIV_RQ1:
+  MSdomainIV_1W_RQ1:
     type: any
     influence_conversation: false
-  MSdomainIV_RQ2:
+  MSdomainIV_1W_RQ2:
     type: any
     influence_conversation: false
-  MSdomainIV_RQ2a:
+  MSdomainIV_1W_RQ2a:
     type: any
     influence_conversation: false
-  MSdomainIV_RQ3:
+  MSdomainIV_1W_RQ3:
+    type: any
+    influence_conversation: false
+  MSdomainIV_1D_RQ1:
     type: any
     influence_conversation: false
 responses:
@@ -344,7 +347,7 @@ responses:
         - payload: /inform{{"given_answer":"often"}}
           title: Spesso
       text: Nell’ultimo mese hai avuto maggiore necessità di assistenza per svolgere le tue attività quotidiane?
-  utter_ask_MSdomainII_RQ1:
+  utter_ask_MSdomainII_1Μ_RQ1:
     - condition:
         - type: slot
           name: language
@@ -365,7 +368,7 @@ responses:
         - payload: /inform{{"given_answer":"no"}}
           title: No
       text: Fai fatica ad addormentarti (impieghi più di 30 minuti)?
-  utter_ask_MSdomainII_RQ2:
+  utter_ask_MSdomainII_1Μ_RQ2:
     - condition:
         - type: slot
           name: language
@@ -386,7 +389,7 @@ responses:
         - payload: /inform{{"given_answer":"no"}}
           title: No
       text: Definiresti il tuo sonno riposante?
-  utter_ask_MSdomainII_RQ3:
+  utter_ask_MSdomainII_3Μ_RQ3:
     - condition:
         - type: slot
           name: language
@@ -407,7 +410,7 @@ responses:
         - payload: /inform{{"given_answer":"no"}}
           title: No
       text: "Ti hanno detto che ”agisci i tuoi sogni” mentre dormi o pensi di farlo (per esempio: dare dei pugni, muovere le braccia in aria, fare dei movimenti come se corressi ecc.)?"
-  utter_ask_MSdomainIII_RQ1:
+  utter_ask_MSdomainIII_1W_RQ1:
     - condition:
         - type: slot
           name: language
@@ -436,7 +439,7 @@ responses:
         - payload: /inform{{"given_answer":"often"}}
           title: Spesso
       text: Negli ultimi giorni, ti è capitato di dover riguardare più volte le informazioni di cui hai bisogno per riuscire a ricordarle?
-  utter_ask_MSdomainIII_RQ3:
+  utter_ask_MSdomainIII_1W_RQ3:
     - condition:
         - type: slot
           name: language
@@ -465,7 +468,7 @@ responses:
         - payload: /inform{{"given_answer":"often"}}
           title: Spesso
       text: Quando occorre dare una risposta, hai bisogno prendere un momento in più per riprendere il filo e fornire la risposta migliore?
-  utter_ask_MSdomainIII_RQ4:
+  utter_ask_MSdomainIII_1W_RQ4:
     - condition:
         - type: slot
           name: language
@@ -494,7 +497,7 @@ responses:
         - payload: /inform{{"given_answer":"often"}}
           title: Spesso
       text: Durante la giornata, hai la sensazione di avere la testa piena che ti porta ad essere meno lucido/a?
-  utter_ask_MSdomainIII_RQ7:
+  utter_ask_MSdomainIII_2W_RQ7:
     - condition:
         - type: slot
           name: language
@@ -530,18 +533,20 @@ actions:
   - action_ask_MSdomainI_RQ5
   - action_ask_MSdomainI_RQ6
   - validate_MSdomainI_form
-  - action_ask_MSdomainIII_RQ2
-  - action_ask_MSdomainIII_RQ2a
-  - action_ask_MSdomainIII_RQ5
-  - action_ask_MSdomainIII_RQ5a
-  - action_ask_MSdomainIII_RQ6
-  - action_ask_MSdomainIII_RQ7
-  - validate_MSdomainIII_form
-  - action_ask_MSdomainIV_RQ1
-  - action_ask_MSdomainIV_RQ2
-  - action_ask_MSdomainIV_RQ2a
-  - action_ask_MSdomainIV_RQ3
-  - validate_MSdomainIV_form
+  - action_ask_MSdomainIII_1W_RQ2
+  - action_ask_MSdomainIII_1W_RQ2a
+  - action_ask_MSdomainIII_1W_RQ5
+  - action_ask_MSdomainIII_1W_RQ5a
+  - action_ask_MSdomainIII_2W_RQ6
+  - action_ask_MSdomainIII_2W_RQ7
+  - validate_MSdomainIII_1W_form
+  - action_ask_MSdomainIV_1D_RQ1
+  - action_ask_MSdomainIV_1W_RQ1
+  - action_ask_MSdomainIV_1W_RQ2
+  - action_ask_MSdomainIV_1W_RQ2a
+  - action_ask_MSdomainIV_1W_RQ3
+  - validate_MSdomainIV_1W_form
+  - validate_MSdomainIII_2W_form
 forms:
   MSdomainI_form:
     required_slots:
@@ -554,7 +559,7 @@ forms:
           value: false
       MSdomainI_RQ1a:
         - type: from_text
-          not_intent: 
+          not_intent:
             - cancel
             - out_of_scope
             - options_menu
@@ -573,7 +578,7 @@ forms:
           value: false
       MSdomainI_RQ2a:
         - type: from_text
-          not_intent: 
+          not_intent:
             - cancel
             - out_of_scope
             - options_menu
@@ -589,83 +594,83 @@ forms:
       MSdomainI_RQ4:
         - entity: number
           type: from_entity
-        # - type: from_text
-        #   not_intent:
-        #     - cancel
-        #     - out_of_scope
       MSdomainI_RQ5:
         - entity: number
           type: from_entity
-        # - type: from_text
-        #   not_intent:
-        #     - cancel
-        #     - out_of_scope
       MSdomainI_RQ6:
         - entity: given_answer
           type: from_entity
-  MSdomainII_form:
+  MSdomainII_1Μ_form:
     required_slots:
-      MSdomainII_RQ1:
+      MSdomainII_1Μ_RQ1:
         - entity: given_answer
           type: from_entity
-      MSdomainII_RQ2:
+      MSdomainII_1Μ_RQ2:
         - entity: given_answer
           type: from_entity
-      MSdomainII_RQ3:
-        - entity: given_answer
-          type: from_entity
-  MSdomainIII_form:
+  MSdomainII_3Μ_form:
     required_slots:
-      MSdomainIII_RQ1:
+      MSdomainII_3Μ_RQ3:
         - entity: given_answer
           type: from_entity
-      MSdomainIII_RQ2:
+  MSdomainIII_1W_form:
+    required_slots:
+      MSdomainIII_1W_RQ1:
+        - entity: given_answer
+          type: from_entity
+      MSdomainIII_1W_RQ2:
         - entity: number
           type: from_entity
-      MSdomainIII_RQ2a:
+      MSdomainIII_1W_RQ2a:
         - type: from_text
-          not_intent: 
+          not_intent:
             - cancel
             - out_of_scope
             - options_menu
-      MSdomainIII_RQ3:
+      MSdomainIII_1W_RQ3:
         - entity: given_answer
           type: from_entity
-      MSdomainIII_RQ4:
+      MSdomainIII_1W_RQ4:
         - entity: given_answer
           type: from_entity
-      MSdomainIII_RQ5:
+      MSdomainIII_1W_RQ5:
         - entity: number
           type: from_entity
-      MSdomainIII_RQ5a:
+      MSdomainIII_1W_RQ5a:
         - type: from_text
-          not_intent: 
+          not_intent:
             - cancel
             - out_of_scope
             - options_menu
-      MSdomainIII_RQ6:
+  MSdomainIII_2W_form:
+    required_slots:
+      MSdomainIII_2W_RQ6:
         - entity: number
           type: from_entity
-      MSdomainIII_RQ7:
+      MSdomainIII_2W_RQ7:
         - entity: given_answer
           type: from_entity
-  MSdomainIV_form:
+  MSdomainIV_1W_form:
     required_slots:
-      MSdomainIV_RQ1:
+      MSdomainIV_1W_RQ1:
         - type: from_text
-      MSdomainIV_RQ2:
+      MSdomainIV_1W_RQ2:
         - type: from_intent
           intent: affirm
           value: true
         - type: from_intent
           intent: deny
           value: false
-      MSdomainIV_RQ2a:
+      MSdomainIV_1W_RQ2a:
         - entity: given_answer
           type: from_entity
-      MSdomainIV_RQ3:
+      MSdomainIV_1W_RQ3:
         - entity: given_answer
           type: from_entity
+  MSdomainIV_1D_form:
+    required_slots:
+      MSdomainIV_1D_RQ1:
+        - type: from_text
   MSdomainV_form:
     required_slots:
       MSdomainV_RQ1:

@@ -11,9 +11,12 @@ intents:
   - continue
   - options_menu
   - MSdomainI_start
-  - MSdomainII_start
-  - MSdomainIII_start
-  - MSdomainIV_start
+  - MSdomainII_1M_start
+  - MSdomainII_3M_start
+  - MSdomainIII_1W_start
+  - MSdomainIII_2W_start
+  - MSdomainIV_1W_start
+  - MSdomainIV_1D_start
   - MSdomainV_start
   - STROKEdomainIII_start
   - STROKEdomainIV_start
@@ -60,15 +63,13 @@ slots:
       - STROKEdomainIV
       - STROKEdomainV
       - MSdomainI
-      - MSdomainII
-      - MSdomainIII
-      # - MSdomainII_1M
-      # - MSdomainII_3M
-      # - MSdomainIII_1W
-      # - MSdomainIII_2W
-      - MSdomainIV
+      - MSdomainII_1M
+      - MSdomainII_3M
+      - MSdomainIII_1W
+      - MSdomainIII_2W
+      - MSdomainIV_1W
+      - MSdomainIV_1D
       - MSdomainV
-      #- fh-q
   is_first_time:
     type: bool
     initial_value: True
