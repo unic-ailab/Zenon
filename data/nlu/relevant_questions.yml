@@ -24,20 +24,30 @@ nlu:
       - start MSdomainI relevant questions
       - MS domainI relevant questions
       - go for mobility, general motor or physical function questions
-  - intent: MSdomainII_start # MS case
+  - intent: MSdomainII_1M_start # MS case
     examples: |
-      - start Sleep Disorders relevant questions
-      - start MSdomainII relevant questions
-      - MSdomainII relevant questions
-      - go for sleep disorders questions
-  - intent: MSdomainIII_start # MS case
+      - start MSdomainII_1M relevant questions
+      - MSdomainII_1M relevant questions
+  - intent: MSdomainII_3M_start # MS case
     examples: |
-      - start MSdomainIII relevant questions
-      - MSdomainIII relevant questions
-  - intent: MSdomainIV_start # MS case
+      - start MSdomainII_3M relevant questions
+      - MSdomainII_3M relevant questions
+  - intent: MSdomainIII_1W_start # MS case
     examples: |
-      - start MSdomainIV relevant questions
-      - MSdomain IV relevant questions
+      - start MSdomainIII_1W relevant questions
+      - MSdomainIII_1W relevant questions
+  - intent: MSdomainIII_2W_start # MS case
+    examples: |
+      - start MSdomainIII_2W relevant questions
+      - MSdomainIII_2W relevant questions
+  - intent: MSdomainIV_1W_start # MS case
+    examples: |
+      - start MSdomainIV_1W relevant questions
+      - MSdomainIV_1W relevant questions
+  - intent: MSdomainIV_1D_start # MS case
+    examples: |
+      - start MSdomainIV_1D relevant questions
+      - MSdomainIV_1D relevant questions
   - intent: MSdomainV_start # MS case
     examples: |
       - start MSdomainV relevant questions

@@ -4,6 +4,8 @@ import random
 import datetime
 import time
 import re
+import requests
+import json
 
 from typing import Any, Dict, List, Text
 from urllib import response
@@ -37,9 +39,12 @@ questionnaire_abbreviations = {"activLim": ["ACTIVLIM", "", "", "ACTIVLIM"],
                                 "STROKEdomainIV": ["Emotional Status", "", "", "Statusul emotional"],
                                 "STROKEdomainV": ["Quality of Life and daily living", "", "", "Calitatea vietii"],
                                 "MSdomainI": ["Mobility and physical function", "", "Mobilità, funzioni motorie e fisiche", ""],
-                                "MSdomainII": ["Sleep Disorders", "", "Sonno", ""],
-                                "MSdomainIII": ["Mental and Cognitive Ability", "", "Abilità mentali e cognitive", ""],
-                                "MSdomainIV": ["Emotional Status", "", "Stato emotivo", ""],
+                                "MSdomainII_1M": ["Sleep Disorders", "", "Sonno", ""],
+                                "MSdomainII_3M": ["Sleep Disorders", "", "Sonno", ""],
+                                "MSdomainIII_1W": ["Mental and Cognitive Ability", "", "Abilità mentali e cognitive", ""],
+                                "MSdomainIII_2W": ["Mental and Cognitive Ability", "", "Abilità mentali e cognitive", ""],
+                                "MSdomainIV_1W": ["Emotional Status", "", "Stato emotivo", ""],
+                                "MSdomainIV_1D": ["Emotional Status", "", "Stato emotivo", ""],
                                 "MSdomainV": ["Quality of Life", "", "Qualità di vita", ""],}
 
 # cancel button
@@ -554,17 +559,43 @@ class ActionUtterHowAreYou(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
-        text = get_text_from_lang(
-            tracker,
-            [
-                random.choice(["How are you?", "How are you feeling today?", "How are you today?", "How is it going?", "How is your day going?"]),
-                " ",
-                random.choice(["Come stai?", "Come ti senti oggi?", "Come stai oggi?", "Come va?", "Come va la tua giornata?"]),
-                random.choice(["Cum mai faci?", "Cum te simți azi?", "Ce mai faci azi?", "Cum merge?", "Cum îți merge ziua?"]),
-            ],
-        )
+        #query the ontology for meaa results of the previous day
+        today = datetime.datetime.today().strftime("%Y-%m-%dT%H:%M:%S")
+        yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
+        response = requests.get("ONTOLOGY_MEAA_ENDPOINT", params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today})
+        try :
+            average_score_per_mood = json.loads(response.text)[0]
+            average_score_per_mood.pop("userId")
+            # returned classes ["avgPos","avgNeg","avgNeut","avgOth"]
+            max_mood = max(average_score_per_mood, key=average_score_per_mood.get)
+        except:
+            max_mood = ""
+            print("Error: no such entry in the ontology.")
+
+        if max_mood == "avgNeg":
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "From you facial expressions, I have noticed you were feeling down yesterday. Is there something troubling you?",
+                    " ",
+                    " ",
+                    " ",
+                ],
+            )
+            meaa_mood = "neg"
+        else: 
+            text = get_text_from_lang(
+                tracker,
+                [
+                    random.choice(["How are you?", "How are you feeling today?", "How are you today?", "How is it going?", "How is your day going?"]),
+                    " ",
+                    random.choice(["Come stai?", "Come ti senti oggi?", "Come stai oggi?", "Come va?", "Come va la tua giornata?"]),
+                    random.choice(["Cum mai faci?", "Cum te simți azi?", "Ce mai faci azi?", "Cum merge?", "Cum îți merge ziua?"]),
+                ],
+            )
+            meaa_mood = "non_neg"
         dispatcher.utter_message(text=text)
-        return []
+        return [SlotSet("meaa_mood", meaa_mood)]
 
 class ActionUtterNotificationGreet(Action):
     def name(self):
@@ -684,10 +715,7 @@ class ActionUtterStartingQuestionnaire(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
         
-        #q_abbreviation = tracker.latest_message["intent"].get("name").split('_')[0]
-
         q_abbreviation = tracker.latest_message["intent"].get("name").replace("_start", "")
-
         #print(tracker.latest_message["intent"])
         #q_abbreviation = tracker.get_slot("questionnaire")
         if (q_abbreviation !=None and q_abbreviation in questionnaire_abbreviations.keys()):
@@ -728,8 +756,7 @@ class ActionSetQuestionnaireSlot(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
         
-        q_abbreviation = tracker.latest_message["intent"].get("name").split('_')[0]
-
+        q_abbreviation = tracker.latest_message["intent"].get("name").replace("_start", "")
         if q_abbreviation in questionnaire_abbreviations.keys():
             return [SlotSet("questionnaire", q_abbreviation)]
         else:
@@ -3489,13 +3516,34 @@ class ActionAskDnBHabitsCaffeine(Action):  # DnB Questionnaire
                 ["nu consum cafeina", "consum cafeina"]
             ],
             [
-                '/inform{"given_answer":"don\'t consume caffeine"}', 
-                '/inform{"given_answer":"consume caffeine"}'
+                '/deny{"given_answer":"don\'t consume caffeine"}', 
+                '/affirm{"given_answer":"consume caffeine"}'
             ]
         )
         print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
+
+class ActionAskDnBHabitsCaffeineFollow(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Habits_caffeine_follow"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How much do you drink (hint: #cups per day/week/month)?",
+                " ",
+                " ",
+                "Beti (cate ?) căni de (de exemplu, cafea) pe zi, săptămâna lună ?"
+            ]
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []        
 
 class ActionAskDnBHabitsAlcohol(Action):  # DnB Questionnaire
     def name(self) -> Text:
@@ -3523,13 +3571,34 @@ class ActionAskDnBHabitsAlcohol(Action):  # DnB Questionnaire
                 ["nu consum alcool", "consum alcool"]
             ],
             [
-                '/inform{"given_answer":"don\'t consume alcohol"}', 
-                '/inform{"given_answer":"consume alcohol"}'
+                '/deny{"given_answer":"don\'t consume alcohol"}', 
+                '/affirm{"given_answer":"consume alcohol"}'
             ]
         )
         print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
-        return []      
+        return []     
+
+class ActionAskDnBHabitsAlcoholFollow(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Habits_alcohol_follow"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How much do you drink (hint: type of alcohol(e.g. wine) per day/week/month)?",
+                " ",
+                " ",
+                "Beti (cate ?) pahare de (de exemplu, vin) pe zi, săptămână, lună ?"
+            ]
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []           
 
 class ActionAskDnBHabitsTobacco(Action):  # DnB Questionnaire
     def name(self) -> Text:
@@ -3557,13 +3626,34 @@ class ActionAskDnBHabitsTobacco(Action):  # DnB Questionnaire
                 ["nu consum tutun", "consum tutun"]
             ],
             [
-                '/inform{"given_answer":"don\'t consume tobacco"}', 
-                '/inform{"given_answer":"consume tobacco"}'
+                '/deny{"given_answer":"don\'t consume tobacco"}', 
+                '/affirm{"given_answer":"consume tobacco"}'
             ]
         )
         print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return [] 
+
+class ActionAskDnBHabitsTobaccoFollow(Action):  # DnB Questionnaire
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_Habits_tobacco_follow"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How much do you smoke/chew (hint: #of product per day/week/month)?",
+                " ",
+                " ",
+                "Beti (cate ?) pahare de (de exemplu, vin) pe zi, săptămână, lună ?"
+            ]
+        )
+
+        print("\nBot:", text)
+        dispatcher.utter_message(text=text)
+        return []            
 
 class ActionAskDnBMedications(Action):  # DnB Questionnaire
     def name(self) -> Text:
@@ -3642,6 +3732,15 @@ class ValidateDnBForm(FormValidationAction):
             slots_mapped_in_domain.remove("dizzNbalance_EarSymptomIIIa3i")
         elif not tracker.get_slot("dizzNbalance_EarSymptomIIIa3"):
             slots_mapped_in_domain.remove("dizzNbalance_EarSymptomIIIa3i")
+
+        if not tracker.get_slot("dizzNbalance_Habits_caffeine"):
+            slots_mapped_in_domain.remove("dizzNbalance_Habits_caffeine_follow")
+
+        if not tracker.get_slot("dizzNbalance_Habits_tobacco"):
+            slots_mapped_in_domain.remove("dizzNbalance_Habits_tobacco_follow")
+
+        if not tracker.get_slot("dizzNbalance_Habits_alcohol"):
+            slots_mapped_in_domain.remove("dizzNbalance_Habits_alcohol_follow")                        
 
         return slots_mapped_in_domain
 
@@ -5834,9 +5933,9 @@ class ActionAskMSDomainIRQ4(Action):
         text = get_text_from_lang(
             tracker,
             [
-                "How many times have you stumbled over the last few days?",
+                "How many times have you stumbled over the last few days?\n(hint: Your answer must be 0 or a positive number)",
                 " ",
-                "Quante volte ti è capitato di inciampare negli ultimi giorni?",                 
+                "Quante volte ti è capitato di inciampare negli ultimi giorni?\n(La tua risposta deve essere 0 o un numero positivo)",                 
                 " ",
             ]
         )
@@ -5855,9 +5954,9 @@ class ActionAskMSDomainIRQ5(Action):
         text = get_text_from_lang(
             tracker,
             [
-                "How many times have you fallen in the last few days?",
+                "How many times have you fallen in the last few days?\n(hint: Your answer must be 0 or a positive number)",
                 " ",
-                "Quante volte sei caduto/a negli ultimi giorni?",                 
+                "Quante volte sei caduto/a negli ultimi giorni?\n(La tua risposta deve essere 0 o un numero positivo)",                 
                 " "
             ]
         )
@@ -5930,15 +6029,16 @@ class ValidateMSDomainIForm(FormValidationAction):
     ) -> Dict[Text, Any]:
 
         slot_value = next(tracker.get_latest_entity_values("number"), None)
+        print(f"Slot value: {slot_value}")
         
         if slot_value is not None:
             return {"MSdomainI_RQ4": slot_value}
         else:
             text = get_text_from_lang(
                 tracker,
-                ["Please give a valid answer",
+                ["Please type your answer as a number.",
                 " ",
-                "Si prega di dare una risposta valida",
+                "Si prega di digitare la risposta come numero.",
                 " "]
             )
 
@@ -5954,6 +6054,7 @@ class ValidateMSDomainIForm(FormValidationAction):
     ) -> Dict[Text, Any]:
 
         slot_value = next(tracker.get_latest_entity_values("number"), None)
+        print(f"Slot value: {slot_value}")
         
         if slot_value is not None:
             return {"MSdomainI_RQ5": slot_value}
@@ -5973,9 +6074,9 @@ class ValidateMSDomainIForm(FormValidationAction):
 # MS Case Domain III                                                                               #
 ####################################################################################################        
 
-class ActionAskMSDomainIIIRQ2(Action):
+class ActionAskMSDomainIII1WRQ2(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIII_RQ2"
+        return "action_ask_MSdomainIII_1W_RQ2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -5994,9 +6095,9 @@ class ActionAskMSDomainIIIRQ2(Action):
         dispatcher.utter_message(text=text)
         return [] 
 
-class ActionAskMSDomainIIIRQ2a(Action):
+class ActionAskMSDomainIII1WRQ2a(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIII_RQ2a"
+        return "action_ask_MSdomainIII_1W_RQ2a"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -6015,9 +6116,9 @@ class ActionAskMSDomainIIIRQ2a(Action):
         dispatcher.utter_message(text=text)
         return []    
 
-class ActionAskMSDomainIIIRQ5(Action):
+class ActionAskMSDomainIII1WRQ5(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIII_RQ5"
+        return "action_ask_MSdomainIII_1W_RQ5"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -6036,9 +6137,9 @@ class ActionAskMSDomainIIIRQ5(Action):
         dispatcher.utter_message(text=text)
         return [] 
 
-class ActionAskMSDomainIIIRQ5a(Action):
+class ActionAskMSDomainIII1WRQ5a(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIII_RQ5a"
+        return "action_ask_MSdomainIII_1W_RQ5a"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -6057,9 +6158,9 @@ class ActionAskMSDomainIIIRQ5a(Action):
         dispatcher.utter_message(text=text)
         return []   
 
-class ActionAskMSDomainIIIRQ6(Action):
+class ActionAskMSDomainIII2WRQ6(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIII_RQ6"
+        return "action_ask_MSdomainIII_2W_RQ6"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -6078,9 +6179,9 @@ class ActionAskMSDomainIIIRQ6(Action):
         dispatcher.utter_message(text=text)
         return []  
 
-class ActionAskMSDomainIIIRQ7(Action):
+class ActionAskMSDomainIII2WRQ7(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIII_RQ7"
+        return "action_ask_MSdomainIII_2W_RQ7"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -6113,23 +6214,23 @@ class ActionAskMSDomainIIIRQ7(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []                     
 
-class ValidateMSDomainIIIForm(FormValidationAction):
+class ValidateMSDomainIII1WForm(FormValidationAction):
     def name(self) -> Text:
-        return "validate_MSdomainIII_form"
+        return "validate_MSdomainIII_1W_form"
 
     async def required_slots(
         self, slots_mapped_in_domain, dispatcher, tracker, domain,
     ) -> List[Text]:
 
-        if tracker.get_slot("MSdomainIII_RQ2") is not None and tracker.get_slot("MSdomainIII_RQ2") < 6:
-            slots_mapped_in_domain.remove("MSdomainIII_RQ2a")
+        if tracker.get_slot("MSdomainIII_1W_RQ2") is not None and tracker.get_slot("MSdomainIII_1W_RQ2") < 6:
+            slots_mapped_in_domain.remove("MSdomainIII_1W_RQ2a")
 
-        if tracker.get_slot("MSdomainIII_RQ5") is not None and tracker.get_slot("MSdomainIII_RQ5") < 6:
-            slots_mapped_in_domain.remove("MSdomainIII_RQ5a")            
+        if tracker.get_slot("MSdomainIII_1W_RQ5") is not None and tracker.get_slot("MSdomainIII_1W_RQ5") < 6:
+            slots_mapped_in_domain.remove("MSdomainIII_1W_RQ5a")            
 
         return slots_mapped_in_domain 
 
-    def validate_MSdomainIII_RQ2(
+    def validate_MSdomainIII_1W_RQ2(
         self,
         slot_value: Any,
         dispatcher: CollectingDispatcher,
@@ -6140,7 +6241,7 @@ class ValidateMSDomainIIIForm(FormValidationAction):
         slot_value = next(tracker.get_latest_entity_values("number"), None)
         
         if (slot_value is not None) and (slot_value in list(range(1, 11))):
-            return {"MSdomainIII_RQ2": slot_value}
+            return {"MSdomainIII_1W_RQ2": slot_value}
         elif (slot_value is not None) and (slot_value not in list(range(1, 11))):
             text = get_text_from_lang(
                 tracker,
@@ -6151,7 +6252,7 @@ class ValidateMSDomainIIIForm(FormValidationAction):
             )
 
             dispatcher.utter_message(text=text)
-            return {"MSdomainIII_RQ2": None}  
+            return {"MSdomainIII_1W_RQ2": None}  
         else:
             text = get_text_from_lang(
                 tracker,
@@ -6162,9 +6263,9 @@ class ValidateMSDomainIIIForm(FormValidationAction):
             )
 
             dispatcher.utter_message(text=text)
-            return {"MSdomainIII_RQ2": None}     
+            return {"MSdomainIII_1W_RQ2": None}     
 
-    def validate_MSdomainIII_RQ5(
+    def validate_MSdomainIII_1W_RQ5(
         self,
         slot_value: Any,
         dispatcher: CollectingDispatcher,
@@ -6175,7 +6276,7 @@ class ValidateMSDomainIIIForm(FormValidationAction):
         slot_value = next(tracker.get_latest_entity_values("number"), None)
         
         if (slot_value is not None) and (slot_value in list(range(1, 11))):
-            return {"MSdomainIII_RQ5": slot_value}
+            return {"MSdomainIII_1W_RQ5": slot_value}
         elif (slot_value is not None) and (slot_value not in list(range(1, 11))):
             text = get_text_from_lang(
                 tracker,
@@ -6186,7 +6287,7 @@ class ValidateMSDomainIIIForm(FormValidationAction):
             )
 
             dispatcher.utter_message(text=text)
-            return {"MSdomainIII_RQ5": None}  
+            return {"MSdomainIII_1W_RQ5": None}  
         else:
             text = get_text_from_lang(
                 tracker,
@@ -6197,9 +6298,13 @@ class ValidateMSDomainIIIForm(FormValidationAction):
             )
 
             dispatcher.utter_message(text=text)
-            return {"MSdomainIII_RQ5": None}   
+            return {"MSdomainIII_1W_RQ5": None}   
 
-    def validate_MSdomainIII_RQ6(
+class ValidateMSDomainIII2WForm(FormValidationAction):
+    def name(self) -> Text:
+        return "validate_MSdomainIII_2W_form"
+
+    def validate_MSdomainIII_2W_RQ6(
         self,
         slot_value: Any,
         dispatcher: CollectingDispatcher,
@@ -6210,7 +6315,7 @@ class ValidateMSDomainIIIForm(FormValidationAction):
         slot_value = next(tracker.get_latest_entity_values("number"), None)
         
         if slot_value is not None:
-            return {"MSdomainIII_RQ6": slot_value}
+            return {"MSdomainIII_2W_RQ6": slot_value}
         else:
             text = get_text_from_lang(
                 tracker,
@@ -6221,15 +6326,56 @@ class ValidateMSDomainIIIForm(FormValidationAction):
             )
 
             dispatcher.utter_message(text=text)
-            return {"MSdomainIII_RQ6": None}                               
+            return {"MSdomainIII_2W_RQ6": None}                               
 
 ####################################################################################################
 # MS Case Domain IV                                                                                #
 ####################################################################################################   
 
-class ActionAskMSDomainIVRQ1(Action):  # STROKE case Domain IV RQ1
+class ActionAskMSDomainIV_1WRQ1(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIV_RQ1"
+        return "action_ask_MSdomainIV_1D_RQ1"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "How are you feeling today?",
+                " ",
+                "Cosa provi oggi? È possibile selezionare più di una parola",                 
+                " "
+            ]
+        )
+
+        if tracker.get_slot("language") == "English":
+            data = {
+                    "choices": [
+                        "Anger", "Fear", "Sadness", "Joy", "Contempt",
+                        "Cheer", "Shame", "Anxiety", "Disappointment", "Irritation",
+                        "Serenity", "Gratitude", "Grudge", "Resignation", "Hope",
+                        "Nostalgia"
+                    ]
+                }
+
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": [
+                    "Rabbia", "Paura", "Tristezza", "Gioia",
+                    "Disprezzo", "Allegria", "Vergogna", "Ansia",
+                    "Delusione", "Irritazione", "Serenità", "Gratitudine",
+                    "Rancore", "Rassegnazione", "Speranza", "Nostalgia"
+                ]
+            }
+
+        print("\nBOT:", text + "\n" + str(data))
+        dispatcher.utter_message(text=text, json_message=data)
+        return []  
+
+class ActionAskMSDomainIV_1WRQ1(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainIV_1W_RQ1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -6268,9 +6414,9 @@ class ActionAskMSDomainIVRQ1(Action):  # STROKE case Domain IV RQ1
         dispatcher.utter_message(text=text, json_message=data)
         return []   
 
-class ActionAskMSDomainIVRQ2(Action):
+class ActionAskMSDomainIV_1WRQ2(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIV_RQ2"
+        return "action_ask_MSdomainIV_1W_RQ2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -6303,9 +6449,9 @@ class ActionAskMSDomainIVRQ2(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []   
 
-class ActionAskMSDomainIVRQ2a(Action):
+class ActionAskMSDomainIV_1WRQ2a(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIV_RQ2a"
+        return "action_ask_MSdomainIV_1W_RQ2a"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -6346,9 +6492,9 @@ class ActionAskMSDomainIVRQ2a(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []   
 
-class ActionAskMSDomainIVRQ3(Action):
+class ActionAskMSDomainIV_1WRQ3(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIV_RQ3"
+        return "action_ask_MSdomainIV_1W_RQ3"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -6381,16 +6527,16 @@ class ActionAskMSDomainIVRQ3(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []               
 
-class ValidateMSDomainIVForm(FormValidationAction):
+class ValidateMSDomainIV_1WForm(FormValidationAction):
     def name(self) -> Text:
-        return "validate_MSdomainIV_form"
+        return "validate_MSdomainIV_1W_form"
 
     async def required_slots(
         self, slots_mapped_in_domain, dispatcher, tracker, domain,
     ) -> List[Text]:
 
-        if not tracker.get_slot("MSdomainIV_RQ2"):
-            slots_mapped_in_domain.remove("MSdomainIV_RQ2a")           
+        if not tracker.get_slot("MSdomainIV_1W_RQ2"):
+            slots_mapped_in_domain.remove("MSdomainIV_1W_RQ2a")           
 
         return slots_mapped_in_domain                           
 
@@ -6402,7 +6548,7 @@ class ValidateMSDomainIVForm(FormValidationAction):
 # method to store questionnaires
 
 questionnaire_per_usecase = {
-    "ms": ["MSdomainI", "MSdomainII", "MSdomainIII", "MSdomainIV", "MSdomainV"],
+    "ms": ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdomainIII_1W", "MSdomainIII_2W", "MSdomainIV_1W", "MSdomainIV_1D", "MSdomainV"],
     "stroke": ["activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
 }
 

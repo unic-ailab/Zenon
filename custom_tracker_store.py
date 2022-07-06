@@ -54,11 +54,11 @@ logger = logging.getLogger(__name__)
 
 # will relevant questions be available from the chatbot outside notifications?
 questionnaire_per_usecase = {
-    "ms": ["MSdomainI", "MSdomainII", "MSdomainIII", "MSdomainIV", "MSdomainV"],
+    "ms": ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdomainIII_1W", "MSdomainIII_2W", "MSdomainIV_1D", "MSdomainIV_1W", "MSdomainV"],
     "stroke": ["activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
 }
 
-#"ms_orig": ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdomainIII_1W", "MSdomainIII_2W", "MSdomainIV", "MSdomainV"],
+#"ms_orig": ["MSdomainI", "MSdomainII", "MSdomainIII", "MSdomainIV", "MSdomainV"],
 
 schedule_df = pd.read_csv ("pilot_schedule.csv")                       
 
@@ -845,7 +845,7 @@ class CustomSQLTrackerStore(TrackerStore):
         return isFirstTime
 
     def getAvailableQuestionnaires(self, sender_id, current_datetime) -> List[str]:
-        """ Retrieve currentlt available questionnaires"""
+        """ Retrieve current available questionnaires"""
         available_questionnaires, reset_questionnaires = [],[]
         current_timestamp = current_datetime.timestamp()
         with self.session_scope() as session:

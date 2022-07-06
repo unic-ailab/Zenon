@@ -24,7 +24,19 @@ nlu:
   #     - Alright
   #     - Alright, then
   # - intent: glag_to_hear
-  - intent: app_closed
+  - intent: close_questionnaire
+    examples: |
+      - app closed
+      - the app is now closed
+      - app is stopped
+      - app stopped
+      - closed app
+      - stopped app
+      - questionnaire closed
+      - the questionnaire is closed
+      - close the questionnaire
+      - questionnaire deactivated
+      - the questionnaire is stopped
   - intent: available_questionnaires
     examples: |
       - available questionnaires

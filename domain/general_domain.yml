@@ -5,17 +5,18 @@ session_config:
 intents:
   - available_questionnaires
   - notification_greet
-  - app_closed
-  # - ok
-  # - glag_to_hear
+  - close_questionnaire
   - health_update
   - tutorials
   - continue
   - options_menu
   - MSdomainI_start
-  - MSdomainII_start
-  - MSdomainIII_start
-  - MSdomainIV_start
+  - MSdomainII_1M_start
+  - MSdomainII_3M_start
+  - MSdomainIII_1W_start
+  - MSdomainIII_2W_start
+  - MSdomainIV_1W_start
+  - MSdomainIV_1D_start
   - MSdomainV_start
   - STROKEdomainIII_start
   - STROKEdomainIV_start
@@ -62,15 +63,13 @@ slots:
       - STROKEdomainIV
       - STROKEdomainV
       - MSdomainI
-      - MSdomainII
-      - MSdomainIII
-      # - MSdomainII_1M
-      # - MSdomainII_3M
-      # - MSdomainIII_1W
-      # - MSdomainIII_2W
-      - MSdomainIV
+      - MSdomainII_1M
+      - MSdomainII_3M
+      - MSdomainIII_1W
+      - MSdomainIII_2W
+      - MSdomainIV_1W
+      - MSdomainIV_1D
       - MSdomainV
-      #- fh-q
   is_first_time:
     type: bool
     initial_value: True
@@ -181,7 +180,7 @@ responses:
           name: language
           value: Italian
       text: Mi dispiace, non posso gestire questa richiesta.
-  utter_confirm_cancellation:
+  utter_confirm_cancellation: #TODO To add Italian version
     - condition:
         - type: slot
           name: language
@@ -197,7 +196,7 @@ responses:
           name: language
           value: Romanian
       text: Doriți să anulați procesul?
-  utter_process_cancelled:
+  utter_process_cancelled: #TODO To add Italian version
     - condition:
         - type: slot
           name: language
@@ -213,7 +212,7 @@ responses:
           name: language
           value: Romanian
       text: Am oprit procesul. O putem termina mai târziu.
-  utter_goodbye:
+  utter_goodbye: #TODO To add Italian version
     - condition:
         - type: slot
           name: language
@@ -272,53 +271,53 @@ responses:
           value: Italian
       text: Trovo ancora difficile il linguaggio umano, puoi per favore riformularlo?
   utter_inform_doctor:
-    - condition:
-        - type: slot
-          name: language
-          value: English
-        - type: slot
-          name: sentiment
-          value: pos
-      text: That's great! Is this something you want me to let your doctor know about? It might help with your progress.
+    # - condition:
+    #     - type: slot
+    #       name: language
+    #       value: English
+    #     - type: slot
+    #       name: sentiment
+    #       value: pos
+    #   text: That's great! Is this something you want me to let your doctor know about? It might help with your progress.
     - condition:
         - type: slot
           name: language
           value: English
       text: Is this something you would like me to report to your doctor? It might help with your progress.
-    - condition:
-        - type: slot
-          name: language
-          value: Greek
-        - type: slot
-          name: sentiment
-          value: pos
-      text: Αυτό είναι υπέροχο! Είναι κάτι που θα ήθελες να πω στον γιατρό σου; Ίσως βοηθήσει.
+    # - condition:
+    #     - type: slot
+    #       name: language
+    #       value: Greek
+    #     - type: slot
+    #       name: sentiment
+    #       value: pos
+    #   text: Αυτό είναι υπέροχο! Είναι κάτι που θα ήθελες να πω στον γιατρό σου; Ίσως βοηθήσει.
     - condition:
         - type: slot
           name: language
           value: Greek
       text: Είναι κάτι που θα ήθελες να πω στον γιατρό σου; Ίσως βοηθήσει.
-    - condition:
-        - type: slot
-          name: language
-          value: Romanian
-        - type: slot
-          name: sentiment
-          value: pos
-      text: Este grozav! Este ceva despre care vrei să-l anunț pe medicul tău? S-ar putea să te ajute la progresul tău.
+    # - condition:
+    #     - type: slot
+    #       name: language
+    #       value: Romanian
+    #     - type: slot
+    #       name: sentiment
+    #       value: pos
+    #   text: Este grozav! Este ceva despre care vrei să-l anunț pe medicul tău? S-ar putea să te ajute la progresul tău.
     - condition:
         - type: slot
           name: language
           value: Romanian
       text: Este ceva despre care vrei să-l anunț pe medicul tău? S-ar putea să te ajute la progresul tău.
-    - condition:
-        - type: slot
-          name: language
-          value: Italian
-        - type: slot
-          name: sentiment
-          value: pos
-      text: Fantastico! È qualcosa che vuoi che informi il tuo dottore? Potrebbe aiutarti con i tuoi progressi.
+    # - condition:
+    #     - type: slot
+    #       name: language
+    #       value: Italian
+    #     - type: slot
+    #       name: sentiment
+    #       value: pos
+    #   text: Fantastico! È qualcosa che vuoi che informi il tuo dottore? Potrebbe aiutarti con i tuoi progressi.
     - condition:
         - type: slot
           name: language
@@ -420,7 +419,7 @@ responses:
           name: language
           value: Italian
       text: Va bene, come desideri.
-  utter_you_are_welcome:
+  utter_you_are_welcome: #TODO To add Italian version
     - condition:
         - type: slot
           name: language
@@ -509,15 +508,30 @@ responses:
     - condition:
         - type: slot
           name: language
+          value: Romanian
+      text: Din păcate, nu pot opri acest chestionar înainte de completare. Este foarte scurt și au mai rămas doar câteva întrebări.
+    - condition:
+        - type: slot
+          name: language
           value: Italian
       text: Sfortunatamente, non posso interrompere questo questionario prima del completamento. È molto breve e sono rimaste solo poche domande.
+  utter_not_available:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: Sorry, this functionality is not available at the moment.
     - condition:
         - type: slot
           name: language
           value: Romanian
-      text: Din păcate, nu pot opri acest chestionar înainte de completare. Este foarte scurt și au mai rămas doar câteva întrebări.
-  utter_not_available:
-    - text: Sorry, this functionality is not available at the moment.
+      text: Ne pare rău, această funcționalitate nu este disponibilă momentan.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Spiacenti, questa funzionalità non è al momento disponibile.
+
 actions:
   - action_utter_greet
   - action_utter_how_are_you
