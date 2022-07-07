@@ -49,6 +49,14 @@ entities:
   - sentiment_classes
   - number
 slots:
+  MSdomainII_both:
+    type: bool
+    initial_value: False
+    influence_conversation: true
+  MSdomainIII_both:
+    type: bool
+    initial_value: False
+    influence_conversation: true
   questionnaire:
     type: categorical
     influence_conversation: true

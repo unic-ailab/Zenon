@@ -79,6 +79,7 @@ psqi_q5 = [
     "In ultima luna cat de des ati avut probleme cu somnul deoarece nu"
     ]
 
+# Muscle Tone Questionnaire Buttons
 muscletone_buttons = [
     ["Yes", "No", "Don't know/ refused"],
     [" ", " "],
@@ -86,7 +87,7 @@ muscletone_buttons = [
     ["Da", "Nu", "Nu stiu/ refuz sa raspund"]
 ]
 
-
+# COAST Questionnaire Buttons
 coast_buttons_1 = [
     ["😒 Couldn't do it at all", "With a lot of difficulty", "With some difficulty", "Quite well", "🙂 Very well"],
     [" ", " ", " ", " ", " "],
@@ -136,6 +137,7 @@ coast_buttons_7 = [
     ["😒 Afecteaza foarte mult", "Destul de mult", "Moderat", "Destul de putin", "🙂 Nu afecteaza deloc"]
 ]
 
+# Eating Habits Questionnaire Buttons
 eatingHabits_buttons = [
     ["Never", "Rarely", "Sometimes", "Often", "Very often", "Always"],
     [" ", " ", " ", " ", " ", " "],
@@ -336,63 +338,64 @@ class ActionUtterSetLanguage(Action):
 # SAVE CONVERSATION HISTORY                                                                        #
 ####################################################################################################
 
-class ActionSaveConversation(Action):   #TODO To be deleted
-    def name(self) -> Text:
-        return "action_save_conversation"
+# class ActionSaveConversation(Action):   #TODO To be deleted
+#     def name(self) -> Text:
+#         return "action_save_conversation"
 
-    def run(
-        self,
-        dispatcher: CollectingDispatcher,
-        tracker: Tracker,
-        domain: Dict[Text, Any],
-    ) -> List[Dict[Text, Any]]:
+#     def run(
+#         self,
+#         dispatcher: CollectingDispatcher,
+#         tracker: Tracker,
+#         domain: Dict[Text, Any],
+#     ) -> List[Dict[Text, Any]]:
 
-        conversation = tracker.events
-        print(conversation)
-        import os
+#         conversation = tracker.events
+#         print(conversation)
+#         import os
 
-        if not os.path.isfile("chats.csv"):
-            with open("chats.csv", "w") as file:
-                file.write(
-                    "intent,user_input,entity_name,entity_value,action,bot_reply\n"
-                )
-        chat_data = ""
-        for i in conversation:
-            if i["event"] == "user":
-                chat_data += i["parse_data"]["intent"]["name"] + "," + i["text"] + ","
-                print("user: {}".format(i["text"]))
-                if len(i["parse_data"]["entities"]) > 0:
-                    chat_data += (
-                        i["parse_data"]["entities"][0]["entity"]
-                        + ","
-                        + i["parse_data"]["entities"][0]["value"]
-                        + ","
-                    )
-                    print(
-                        "extra data:",
-                        i["parse_data"]["entities"][0]["entity"],
-                        "=",
-                        i["parse_data"]["entities"][0]["value"],
-                    )
-                else:
-                    chat_data += ",,"
-            elif i["event"] == "bot":
-                print("Bot: {}".format(i["text"]))
-                try:
-                    chat_data += i["metadata"]["utter_action"] + "," + i["text"] + "\n"
-                except KeyError:
-                    chat_data += ",," + "\n"
-        else:
-            with open("chats.csv", "a") as file:
-                file.write(chat_data)
+#         if not os.path.isfile("chats.csv"):
+#             with open("chats.csv", "w") as file:
+#                 file.write(
+#                     "intent,user_input,entity_name,entity_value,action,bot_reply\n"
+#                 )
+#         chat_data = ""
+#         for i in conversation:
+#             if i["event"] == "user":
+#                 chat_data += i["parse_data"]["intent"]["name"] + "," + i["text"] + ","
+#                 print("user: {}".format(i["text"]))
+#                 if len(i["parse_data"]["entities"]) > 0:
+#                     chat_data += (
+#                         i["parse_data"]["entities"][0]["entity"]
+#                         + ","
+#                         + i["parse_data"]["entities"][0]["value"]
+#                         + ","
+#                     )
+#                     print(
+#                         "extra data:",
+#                         i["parse_data"]["entities"][0]["entity"],
+#                         "=",
+#                         i["parse_data"]["entities"][0]["value"],
+#                     )
+#                 else:
+#                     chat_data += ",,"
+#             elif i["event"] == "bot":
+#                 print("Bot: {}".format(i["text"]))
+#                 try:
+#                     chat_data += i["metadata"]["utter_action"] + "," + i["text"] + "\n"
+#                 except KeyError:
+#                     chat_data += ",," + "\n"
+#         else:
+#             with open("chats.csv", "a") as file:
+#                 file.write(chat_data)
 
-        dispatcher.utter_message(text="All Chats saved.")
+#         dispatcher.utter_message(text="All Chats saved.")
 
-        return []
+#         return []
 
 ####################################################################################################
 # General                                                                                          #
 ####################################################################################################
+
 class ActionGetAvailableQuestions(Action):
     def name(self) -> Text:
         return "action_get_available_questionnaires"
@@ -431,17 +434,53 @@ class ActionGetAvailableQuestions(Action):
                     "Aveți la dispoziție următoarul(ele) chestionare:",
                 ]
             )
+            
+            # check if both questionnaires for a domain are available
+            tmp_dict = {
+                "tmpMSdomainII": [],
+                "tmpMSdomainIII": []
+            }
+
+            tmpMSdomainIIBoth = False
+            tmpMSdomainIIIBoth = False
+            for k in tmp_dict.keys():
+                r = re.compile(k[3:]+"_")
+                tmp_dict[k] = list(filter(r.match, available_questionnaires))
+                
+                # if both questionnaires are available remove the one with low frequency
+                if len(tmp_dict[k]) == 2:
+                    if "MSdomainII_3M" in available_questionnaires:
+                        available_questionnaires.remove("MSdomainII_3M")
+                        tmpMSdomainIIBoth = True
+                    elif "MSdomainIII_2W" in available_questionnaires:
+                        available_questionnaires.remove("MSdomainIII_2W")
+                        tmpMSdomainIIIBoth = True
+
             buttons = []
             for questionnaire in available_questionnaires:
                 button_title = get_text_from_lang(tracker, questionnaire_abbreviations[questionnaire])
-                buttons.append({"title": button_title, "payload": "/"+questionnaire+"_start"})
-             
+
+                # check if title is "MSdomainII*" or "MSdomainIII*"
+                if "MSdomainII_" in questionnaire and tmpMSdomainIIBoth:
+                    buttons.append({"title": button_title, "payload": "/"+questionnaire+"_start"})
+                elif "MSdomainIII_" in questionnaire and tmpMSdomainIIIBoth:
+                    buttons.append({"title": button_title, "payload": "/"+questionnaire+"_start"})
+                else:
+                    buttons.append({"title": button_title, "payload": "/"+questionnaire+"_start"})
+
             #add button for cancel that takes the user back to the general questions
             buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
             dispatcher.utter_message(text=text, buttons=buttons)
 
-            # return doesnt need [] because reset_form_slots returns a list
-            return reset_form_slots(tracker, domain, reset_questionnaires)
+            if len(tmp_dict["tmpMSdomainII"]) == 2 and len(tmp_dict["tmpMSdomainIII"]) == 2:
+                # return doesnt need [] because reset_form_slots returns a list
+                return reset_form_slots(tracker, domain, reset_questionnaires)+[SlotSet("MSdomainII_both", "True"), SlotSet("MSdomainIII_both", "True")]       
+            elif len(tmp_dict["tmpMSdomainII"]) == 2:
+                return reset_form_slots(tracker, domain, reset_questionnaires)+[SlotSet("MSdomainII_both", "True")]       
+            elif len(tmp_dict["tmpMSdomainIII"]) == 2:
+                return reset_form_slots(tracker, domain, reset_questionnaires)+[SlotSet("MSdomainIII_both", "True")]
+            else:
+                return reset_form_slots(tracker, domain, reset_questionnaires)
 
 class ActionContinueLatestQuestionnaire(Action):
     def name(self) -> Text:
@@ -6038,7 +6077,23 @@ class ValidateMSDomainIForm(FormValidationAction):
             )
 
             dispatcher.utter_message(text=text)
-            return {"MSdomainI_RQ5": None}            
+            return {"MSdomainI_RQ5": None}      
+
+####################################################################################################
+# MS Case Domain II                                                                                #
+####################################################################################################                  
+class ValidateMSDomainIIForm(FormValidationAction):
+    def name(self) -> Text:
+        return "validate_MSdomainII_form"   
+
+    async def required_slots(
+        self, slots_mapped_in_domain, dispatcher, tracker, domain,
+    ) -> List[Text]:
+
+        if not tracker.get_slot("MSdomainII_both"):
+            slots_mapped_in_domain.remove("MSdomainII_3Μ_RQ3")         
+
+        return slots_mapped_in_domain
 
 ####################################################################################################
 # MS Case Domain III                                                                               #
@@ -6196,7 +6251,11 @@ class ValidateMSDomainIII1WForm(FormValidationAction):
             slots_mapped_in_domain.remove("MSdomainIII_1W_RQ2a")
 
         if tracker.get_slot("MSdomainIII_1W_RQ5") is not None and tracker.get_slot("MSdomainIII_1W_RQ5") < 6:
-            slots_mapped_in_domain.remove("MSdomainIII_1W_RQ5a")            
+            slots_mapped_in_domain.remove("MSdomainIII_1W_RQ5a")  
+
+        if not tracker.get_slot("MSdomainIII_both"):
+            slots_mapped_in_domain.remove("MSdomainIII_2W_RQ6") 
+            slots_mapped_in_domain.remove("MSdomainIII_2W_RQ7")                          
 
         return slots_mapped_in_domain 
 
@@ -6302,7 +6361,7 @@ class ValidateMSDomainIII2WForm(FormValidationAction):
 # MS Case Domain IV                                                                                #
 ####################################################################################################   
 
-class ActionAskMSDomainIV_1WRQ1(Action):
+class ActionAskMSDomainIV1WRQ1(Action):
     def name(self) -> Text:
         return "action_ask_MSdomainIV_1D_RQ1"
 
@@ -6343,7 +6402,7 @@ class ActionAskMSDomainIV_1WRQ1(Action):
         dispatcher.utter_message(text=text, json_message=data)
         return []  
 
-class ActionAskMSDomainIV_1WRQ1(Action):
+class ActionAskMSDomainIV1WRQ1(Action):
     def name(self) -> Text:
         return "action_ask_MSdomainIV_1W_RQ1"
 
@@ -6384,7 +6443,7 @@ class ActionAskMSDomainIV_1WRQ1(Action):
         dispatcher.utter_message(text=text, json_message=data)
         return []   
 
-class ActionAskMSDomainIV_1WRQ2(Action):
+class ActionAskMSDomainIV1WRQ2(Action):
     def name(self) -> Text:
         return "action_ask_MSdomainIV_1W_RQ2"
 
@@ -6419,7 +6478,7 @@ class ActionAskMSDomainIV_1WRQ2(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []   
 
-class ActionAskMSDomainIV_1WRQ2a(Action):
+class ActionAskMSDomainIV1WRQ2a(Action):
     def name(self) -> Text:
         return "action_ask_MSdomainIV_1W_RQ2a"
 

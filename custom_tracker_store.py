@@ -941,7 +941,7 @@ class CustomSQLTrackerStore(TrackerStore):
                     now = now.replace(hour=0, minute=0, second=0, microsecond=0)
                     #timestamp = (now + datetime.timedelta(days=1)).timestamp()
                     timestamp = now.timestamp()
-                    print(timestamp)
+                    # print(f"This {timestamp} comes from custom_tracker_store checkUserID function")
                     session.add(
                         self.SQLQuestState(
                             sender_id=sender_id,
