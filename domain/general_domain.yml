@@ -4,7 +4,6 @@ session_config:
   carry_over_slots_to_new_session: true
 intents:
   - available_questionnaires
-  - notification_greet
   - close_questionnaire
   - health_update
   - tutorials
@@ -16,7 +15,7 @@ intents:
   - MSdomainIII_1W_start
   - MSdomainIII_2W_start
   - MSdomainIV_1W_start
-  - MSdomainIV_1D_start
+  - MSdomainIV_Daily_start
   - MSdomainV_start
   - STROKEdomainIII_start
   - STROKEdomainIV_start
@@ -25,6 +24,7 @@ intents:
   - set_language
   - greet
   - deny
+  - notification_questionnaire_open
   - questionnaire_open
   - dizzNbalance_start
   - affirm
@@ -68,11 +68,10 @@ slots:
       - MSdomainIII_1W
       - MSdomainIII_2W
       - MSdomainIV_1W
-      - MSdomainIV_1D
+      - MSdomainIV_Daily
       - MSdomainV
   is_first_time:
     type: bool
-    initial_value: True
     influence_conversation: true
   is_completed:
     type: bool

@@ -204,19 +204,19 @@ rules:
 
   - rule: Start MS Domain IV daily - Emotional Status relevant questions
     steps:
-      - intent: MSdomainIV_1D_start
+      - intent: MSdomainIV_Daily_start
       - action: action_set_questionnaire_slot
       - slot_was_set:
-          - questionnaire: MSdomainIV_1D
+          - questionnaire: MSdomainIV_Daily
       - action: action_utter_starting_questionnaire
-      - action: MSdomainIV_1D_form
-      - active_loop: MSdomainIV_1D_form
+      - action: MSdomainIV_Daily_form
+      - active_loop: MSdomainIV_Daily_form
 
   - rule: Submit Domain IV daily relevant questions
     condition:
-      - active_loop: MSdomainIV_1D_form
+      - active_loop: MSdomainIV_Daily_form
     steps:
-      - action: MSdomainIV_1D_form
+      - action: MSdomainIV_Daily_form
       - active_loop: null
       - slot_was_set:
           - requested_slot: null
@@ -225,9 +225,9 @@ rules:
 
   - rule: Interruption MS Domain IV daily relevant questions
     condition:
-      - active_loop: MSdomainIV_1D_form
+      - active_loop: MSdomainIV_Daily_form
     steps:
       - intent: cancel
       - action: utter_process_not_cancellable
-      - action: MSdomainIV_1D_form
-      - active_loop: MSdomainIV_1D_form
+      - action: MSdomainIV_Daily_form
+      - active_loop: MSdomainIV_Daily_form

@@ -44,7 +44,7 @@ questionnaire_abbreviations = {"activLim": ["ACTIVLIM", "", "", "ACTIVLIM"],
                                 "MSdomainIII_1W": ["Mental and Cognitive Ability", "", "Abilità mentali e cognitive", ""],
                                 "MSdomainIII_2W": ["Mental and Cognitive Ability", "", "Abilità mentali e cognitive", ""],
                                 "MSdomainIV_1W": ["Emotional Status", "", "Stato emotivo", ""],
-                                "MSdomainIV_1D": ["Emotional Status", "", "Stato emotivo", ""],
+                                "MSdomainIV_Daily": ["Emotional Status", "", "Stato emotivo", ""],
                                 "MSdomainV": ["Quality of Life", "", "Qualità di vita", ""],}
 
 # cancel button
@@ -403,7 +403,7 @@ class ActionGetAvailableQuestions(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
         now = datetime.datetime.now()
-        customTrackerInstance.checkUserID(tracker.current_state()['sender_id'])
+        customTrackerInstance.checkUserIDnew(tracker.current_state()['sender_id'])
         available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
         print(available_questionnaires)   
         if len(available_questionnaires) == 0:
@@ -560,10 +560,11 @@ class ActionUtterHowAreYou(Action):
         announce(self, tracker)
 
         #query the ontology for meaa results of the previous day
-        today = datetime.datetime.today().strftime("%Y-%m-%dT%H:%M:%S")
+        today = datetime.datetime.today()
         yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
-        response = requests.get("ONTOLOGY_MEAA_ENDPOINT", params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today})
+        today = today.strftime("%Y-%m-%dT%H:%M:%S")
         try :
+            response = requests.get("ONTOLOGY_MEAA_ENDPOINT", params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today})
             average_score_per_mood = json.loads(response.text)[0]
             average_score_per_mood.pop("userId")
             # returned classes ["avgPos","avgNeg","avgNeut","avgOth"]
@@ -605,8 +606,6 @@ class ActionUtterNotificationGreet(Action):
         announce(self, tracker)
 
         q_abbreviation = tracker.get_slot("questionnaire")
-        if q_abbreviation==None:
-            q_abbreviation = "psqi"
         q_name = get_text_from_lang(
             tracker,
             questionnaire_abbreviations[q_abbreviation],
@@ -628,6 +627,7 @@ class ActionUtterNotificationGreet(Action):
             dispatcher.utter_message(text=text)
             return []
         else:
+            # normally it shouldn't get to this point
             text = get_text_from_lang(
                 tracker,
                 [
@@ -6334,7 +6334,7 @@ class ValidateMSDomainIII2WForm(FormValidationAction):
 
 class ActionAskMSDomainIV_1WRQ1(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIV_1D_RQ1"
+        return "action_ask_MSdomainIV_Daily_RQ1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -6548,8 +6548,8 @@ class ValidateMSDomainIV_1WForm(FormValidationAction):
 # method to store questionnaires
 
 questionnaire_per_usecase = {
-    "ms": ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdomainIII_1W", "MSdomainIII_2W", "MSdomainIV_1W", "MSdomainIV_1D", "MSdomainV"],
-    "stroke": ["activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
+    "MS": ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdomainIII_1W", "MSdomainIII_2W", "MSdomainIV_1W", "MSdomainIV_Daily", "MSdomainV"],
+    "STROKE": ["activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
 }
 
 def storeQuestionnaireData(isFinished, tracker):

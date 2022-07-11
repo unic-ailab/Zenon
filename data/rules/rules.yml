@@ -6,6 +6,11 @@ rules:
       - intent: questionnaire_open
       - action: action_utter_set_questionnaire
 
+  # - rule: Questionnaire opened from notification
+  #   steps:
+  #     - intent: notification_questionnaire_open
+  #     - action: action_utter_notification_greet
+
   - rule: Get available questionnaires
     steps:
       - intent: available_questionnaires

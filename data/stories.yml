@@ -3,13 +3,13 @@ version: "2.0"
 stories:
         - story: User click on a notification for questionnaire
           steps:
-                  - intent: notification_greet
+                  - intent: notification_questionnaire_open
                   - action: action_utter_notification_greet
                   - action: action_utter_ask_questionnaire_start
 
         - story: User click on a notification for questionnaire but doesn't want to start questionnaire #does this work for all cases?
           steps:
-                  - intent: notification_greet
+                  - intent: notification_questionnaire_open
                   - action: action_utter_notification_greet
                   - action: action_utter_ask_questionnaire_start
                   - or:
@@ -75,11 +75,14 @@ stories:
                   - or:
                             - intent: deny
                             - intent: cancel
+                  #- slot_was_set:
+                  #          - include_in_report: false
                   - action: utter_inform_doctor_extra
                   - or:
                             - intent: deny
                             - intent: cancel
                   - action: utter_no_problem
+                  #- action: action_ontology_store_sentiment
                   - action: action_options_menu
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report but want to report smothing extra.
@@ -686,13 +689,13 @@ stories:
 
         - story: MS Domain IV daily relevant questions - fully completed
           steps:
-                  - intent: MSdomainIV_1D_start
+                  - intent: MSdomainIV_Daily_start
                   - action: action_set_questionnaire_slot
                   - slot_was_set:
-                            - questionnaire: MSdomainIV_1D
+                            - questionnaire: MSdomainIV_Daily
                   - action: action_utter_starting_questionnaire
-                  - action: MSdomainIV_1D_form
-                  - active_loop: MSdomainIV_1D_form
+                  - action: MSdomainIV_Daily_form
+                  - active_loop: MSdomainIV_Daily_form
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
@@ -811,16 +814,3 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
-#TODO:
-# deactivate storeis for rq with different cancel message +add rules
-# fix storign messages
-# check schedule
-# uplaod to git
-# check notifcation
-# do real scheduling
-# sent to ontology
-# divide rq to parts
-
-#for tmr
-#check ontology
-#do conversation flow research
