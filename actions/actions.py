@@ -403,7 +403,7 @@ class ActionGetAvailableQuestions(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
         now = datetime.datetime.now()
-        customTrackerInstance.checkUserIDnew(tracker.current_state()['sender_id'])
+        customTrackerInstance.checkUserID(tracker.current_state()['sender_id'])
         available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
         print(available_questionnaires)   
         if len(available_questionnaires) == 0:
