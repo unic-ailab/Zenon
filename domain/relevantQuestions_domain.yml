@@ -600,7 +600,7 @@ forms:
       MSdomainI_RQ6:
         - entity: given_answer
           type: from_entity
-  MSdomainII_1Μ_form:
+  MSdomainII_1M_form:
     required_slots:
       MSdomainII_1Μ_RQ1:
         - entity: given_answer

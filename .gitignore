@@ -14,6 +14,7 @@ demo.db
 test_stories.yml
 sentiment_old.py
 sentimentClasses.py
+test.py
 
 # Folders
 __pycache__/

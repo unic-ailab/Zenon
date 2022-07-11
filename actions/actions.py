@@ -335,64 +335,6 @@ class ActionUtterSetLanguage(Action):
         return [SlotSet("language", current_language)]
 
 ####################################################################################################
-# SAVE CONVERSATION HISTORY                                                                        #
-####################################################################################################
-
-# class ActionSaveConversation(Action):   #TODO To be deleted
-#     def name(self) -> Text:
-#         return "action_save_conversation"
-
-#     def run(
-#         self,
-#         dispatcher: CollectingDispatcher,
-#         tracker: Tracker,
-#         domain: Dict[Text, Any],
-#     ) -> List[Dict[Text, Any]]:
-
-#         conversation = tracker.events
-#         print(conversation)
-#         import os
-
-#         if not os.path.isfile("chats.csv"):
-#             with open("chats.csv", "w") as file:
-#                 file.write(
-#                     "intent,user_input,entity_name,entity_value,action,bot_reply\n"
-#                 )
-#         chat_data = ""
-#         for i in conversation:
-#             if i["event"] == "user":
-#                 chat_data += i["parse_data"]["intent"]["name"] + "," + i["text"] + ","
-#                 print("user: {}".format(i["text"]))
-#                 if len(i["parse_data"]["entities"]) > 0:
-#                     chat_data += (
-#                         i["parse_data"]["entities"][0]["entity"]
-#                         + ","
-#                         + i["parse_data"]["entities"][0]["value"]
-#                         + ","
-#                     )
-#                     print(
-#                         "extra data:",
-#                         i["parse_data"]["entities"][0]["entity"],
-#                         "=",
-#                         i["parse_data"]["entities"][0]["value"],
-#                     )
-#                 else:
-#                     chat_data += ",,"
-#             elif i["event"] == "bot":
-#                 print("Bot: {}".format(i["text"]))
-#                 try:
-#                     chat_data += i["metadata"]["utter_action"] + "," + i["text"] + "\n"
-#                 except KeyError:
-#                     chat_data += ",," + "\n"
-#         else:
-#             with open("chats.csv", "a") as file:
-#                 file.write(chat_data)
-
-#         dispatcher.utter_message(text="All Chats saved.")
-
-#         return []
-
-####################################################################################################
 # General                                                                                          #
 ####################################################################################################
 
@@ -441,8 +383,6 @@ class ActionGetAvailableQuestions(Action):
                 "tmpMSdomainIII": []
             }
 
-            tmpMSdomainIIBoth = False
-            tmpMSdomainIIIBoth = False
             for k in tmp_dict.keys():
                 r = re.compile(k[3:]+"_")
                 tmp_dict[k] = list(filter(r.match, available_questionnaires))
@@ -451,22 +391,13 @@ class ActionGetAvailableQuestions(Action):
                 if len(tmp_dict[k]) == 2:
                     if "MSdomainII_3M" in available_questionnaires:
                         available_questionnaires.remove("MSdomainII_3M")
-                        tmpMSdomainIIBoth = True
                     elif "MSdomainIII_2W" in available_questionnaires:
                         available_questionnaires.remove("MSdomainIII_2W")
-                        tmpMSdomainIIIBoth = True
 
             buttons = []
             for questionnaire in available_questionnaires:
                 button_title = get_text_from_lang(tracker, questionnaire_abbreviations[questionnaire])
-
-                # check if title is "MSdomainII*" or "MSdomainIII*"
-                if "MSdomainII_" in questionnaire and tmpMSdomainIIBoth:
-                    buttons.append({"title": button_title, "payload": "/"+questionnaire+"_start"})
-                elif "MSdomainIII_" in questionnaire and tmpMSdomainIIIBoth:
-                    buttons.append({"title": button_title, "payload": "/"+questionnaire+"_start"})
-                else:
-                    buttons.append({"title": button_title, "payload": "/"+questionnaire+"_start"})
+                buttons.append({"title": button_title, "payload": "/"+questionnaire+"_start"})
 
             #add button for cancel that takes the user back to the general questions
             buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
@@ -732,7 +663,7 @@ class ActionUtterStartingQuestionnaire(Action):
                 tracker,
                 questionnaire_abbreviations[q_abbreviation],
             )
-            print("rr", q_abbreviation)
+            # print("rr", q_abbreviation)
             text = get_text_from_lang(
                 tracker,
                 [
@@ -6082,16 +6013,17 @@ class ValidateMSDomainIForm(FormValidationAction):
 ####################################################################################################
 # MS Case Domain II                                                                                #
 ####################################################################################################                  
-class ValidateMSDomainIIForm(FormValidationAction):
+class ValidateMSDomainII1MForm(FormValidationAction):
     def name(self) -> Text:
-        return "validate_MSdomainII_form"   
+        return "validate_MSdomainII_1M_form"   
 
     async def required_slots(
         self, slots_mapped_in_domain, dispatcher, tracker, domain,
     ) -> List[Text]:
 
         if not tracker.get_slot("MSdomainII_both"):
-            slots_mapped_in_domain.remove("MSdomainII_3Μ_RQ3")         
+            slots_mapped_in_domain.remove("MSdomainII_3Μ_RQ3")
+            SlotSet(key="MSdomainII_both", value= "False")
 
         return slots_mapped_in_domain
 
@@ -6255,7 +6187,8 @@ class ValidateMSDomainIII1WForm(FormValidationAction):
 
         if not tracker.get_slot("MSdomainIII_both"):
             slots_mapped_in_domain.remove("MSdomainIII_2W_RQ6") 
-            slots_mapped_in_domain.remove("MSdomainIII_2W_RQ7")                          
+            slots_mapped_in_domain.remove("MSdomainIII_2W_RQ7")
+            SlotSet(key="MSdomainIII_both", value= "False")                          
 
         return slots_mapped_in_domain 
 
