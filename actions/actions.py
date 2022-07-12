@@ -498,10 +498,12 @@ class ActionOptionsMenu(Action):
         buttons = get_buttons_from_lang(
             tracker,
             options_menu_buttons,
+            # TODO: maybe add health_related_report as option
             ["/available_questionnaires", "/health_update", "/tutorials"]
         )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
+        #return [FollowupAction("action_ontology_store_sentiment")]
 
 # used when user ends up in the options menu more than once after greeting
 class ActionOptionsMenuExtra(Action):
@@ -611,6 +613,8 @@ class ActionUtterNotificationGreet(Action):
             questionnaire_abbreviations[q_abbreviation],
         )
 
+        isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
+
         # check if questionnaire is still pending
         isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(), q_abbreviation)
         if isAvailable:
@@ -625,20 +629,20 @@ class ActionUtterNotificationGreet(Action):
             )
             print("\nBOT:", text)
             dispatcher.utter_message(text=text)
-            return []
+            return [FollowupAction("action_utter_ask_questionnaire_start")]
         else:
             # normally it shouldn't get to this point
             text = get_text_from_lang(
                 tracker,
                 [
-                    "Hey there!",
+                    "Hey there! Apologies, this questionnaire is no longer available.",
                     "Χαίρεται!",
                     "Ehilà!",
                     "Hei acolo!",
                 ],
             )
             dispatcher.utter_message(text=text)
-            return []
+            return [SlotSet("questionnaire", None), SlotSet("is_first_time", isFirstTime)]
 
 
 class ActionQuestionnaireCompleted(Action):
@@ -772,7 +776,17 @@ class ActionUtterStartQuestionnaire(Action):
 
         q_abbreviation = tracker.get_slot("questionnaire")
         if q_abbreviation==None:
-            q_abbreviation = "psqi"
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "Something went wrong. Can you please type 'main menu' to return the conversation to a level I am more familiar with?",
+                    " ",
+                    "Qualcosa non va e non so come affrontarlo. Puoi digitare 'menu principale' per riportare la conversazione a un livello che mi è più familiare?",
+                    "Ceva nu este în regulă și nu sunt sigur cum să fac față. Poți, te rog, să tastați 'meniu principal' pentru a readuce conversația la un nivel cu care sunt mai familiarizat?",
+                ],
+            )
+            dispatcher.utter_message(text=text)
+            return []    
         q_name = get_text_from_lang(
             tracker,
             questionnaire_abbreviations[q_abbreviation],
@@ -6554,7 +6568,7 @@ questionnaire_per_usecase = {
 
 def storeQuestionnaireData(isFinished, tracker):
     sender_id = tracker.current_state()['sender_id']
-    usecase = sender_id[:len(sender_id)-2]
+    usecase = sender_id[:len(sender_id)-2].upper()
     if tracker.get_slot("questionnaire") in questionnaire_per_usecase[usecase]: 
         customTrackerInstance.saveQuestionnaireAnswers(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), isFinished, tracker)
 
