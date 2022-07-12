@@ -4,6 +4,8 @@ import random
 import datetime
 import time
 import re
+import requests
+import json
 
 from typing import Any, Dict, List, Text
 from urllib import response
@@ -17,7 +19,8 @@ from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormValidationAction
 
 import sys        
-sys.path.append("/home/unic/Zenon/")   
+#sys.path.append("/home/unic/Zenon/")   
+sys.path.append('C:/Users/chloe/Desktop/UNIC-AI Lab/ALAMEDA/Zenon_git/Zenon')   
 from custom_tracker_store import CustomSQLTrackerStore
 
 customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="demo.db")
@@ -41,7 +44,7 @@ questionnaire_abbreviations = {"activLim": ["ACTIVLIM", "", "", "ACTIVLIM"],
                                 "MSdomainIII_1W": ["Mental and Cognitive Ability", "", "Abilità mentali e cognitive", ""],
                                 "MSdomainIII_2W": ["Mental and Cognitive Ability", "", "Abilità mentali e cognitive", ""],
                                 "MSdomainIV_1W": ["Emotional Status", "", "Stato emotivo", ""],
-                                "MSdomainIV_1D": ["Emotional Status", "", "Stato emotivo", ""],
+                                "MSdomainIV_Daily": ["Emotional Status", "", "Stato emotivo", ""],
                                 "MSdomainV": ["Quality of Life", "", "Qualità di vita", ""],}
 
 # cancel button
@@ -478,7 +481,7 @@ class ActionOptionsMenuExtra(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
         
-        time.sleep(5) # 5 second delay before the next action
+        #time.sleep(5) # 5 second delay before the next action
         #smthg missing here but i dont remember
         text = get_text_from_lang(
             tracker, 
@@ -526,17 +529,44 @@ class ActionUtterHowAreYou(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
-        text = get_text_from_lang(
-            tracker,
-            [
-                random.choice(["How are you?", "How are you feeling today?", "How are you today?", "How is it going?", "How is your day going?"]),
-                " ",
-                random.choice(["Come stai?", "Come ti senti oggi?", "Come stai oggi?", "Come va?", "Come va la tua giornata?"]),
-                random.choice(["Cum mai faci?", "Cum te simți azi?", "Ce mai faci azi?", "Cum merge?", "Cum îți merge ziua?"]),
-            ],
-        )
+        #query the ontology for meaa results of the previous day
+        today = datetime.datetime.today()
+        yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
+        today = today.strftime("%Y-%m-%dT%H:%M:%S")
+        try :
+            response = requests.get("ONTOLOGY_MEAA_ENDPOINT", params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today})
+            average_score_per_mood = json.loads(response.text)[0]
+            average_score_per_mood.pop("userId")
+            # returned classes ["avgPos","avgNeg","avgNeut","avgOth"]
+            max_mood = max(average_score_per_mood, key=average_score_per_mood.get)
+        except:
+            max_mood = ""
+            print("Error: no such entry in the ontology.")
+
+        if max_mood == "avgNeg":
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "From you facial expressions, I have noticed you were feeling down yesterday. Is there something troubling you?",
+                    " ",
+                    " ",
+                    " ",
+                ],
+            )
+            meaa_mood = "neg"
+        else: 
+            text = get_text_from_lang(
+                tracker,
+                [
+                    random.choice(["How are you?", "How are you feeling today?", "How are you today?", "How is it going?", "How is your day going?"]),
+                    " ",
+                    random.choice(["Come stai?", "Come ti senti oggi?", "Come stai oggi?", "Come va?", "Come va la tua giornata?"]),
+                    random.choice(["Cum mai faci?", "Cum te simți azi?", "Ce mai faci azi?", "Cum merge?", "Cum îți merge ziua?"]),
+                ],
+            )
+            meaa_mood = "non_neg"
         dispatcher.utter_message(text=text)
-        return []
+        return [SlotSet("meaa_mood", meaa_mood)]
 
 class ActionUtterNotificationGreet(Action):
     def name(self):
@@ -546,8 +576,6 @@ class ActionUtterNotificationGreet(Action):
         announce(self, tracker)
 
         q_abbreviation = tracker.get_slot("questionnaire")
-        if q_abbreviation==None:
-            q_abbreviation = "psqi"
         q_name = get_text_from_lang(
             tracker,
             questionnaire_abbreviations[q_abbreviation],
@@ -569,6 +597,7 @@ class ActionUtterNotificationGreet(Action):
             dispatcher.utter_message(text=text)
             return []
         else:
+            # normally it shouldn't get to this point
             text = get_text_from_lang(
                 tracker,
                 [
@@ -602,7 +631,7 @@ class ActionQuestionnaireCompleted(Action):
         #TODO: issue here, the query doesnt find the latest message
         # issue with size of answers cell
         storeQuestionnaireData(True, tracker)
-        #customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "COMPLETED")
+        customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "COMPLETED")
         return []
 
 # class ActionStoreQuestionnaire(Action):
@@ -645,7 +674,8 @@ class ActionQuestionnaireCancelled(Action):
         )
         dispatcher.utter_message(text=text)
         storeQuestionnaireData(False, tracker)
-        #customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "IN_PROGRESS")
+        if tracker.get_slot("questionnaire"):
+            customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "IN_PROGRESS")
         return[]
 
 class ActionUtterStartingQuestionnaire(Action):
@@ -6296,7 +6326,7 @@ class ValidateMSDomainIII2WForm(FormValidationAction):
 
 class ActionAskMSDomainIV1WRQ1(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIV_1D_RQ1"
+        return "action_ask_MSdomainIV_Daily_RQ1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -6510,8 +6540,8 @@ class ValidateMSDomainIV_1WForm(FormValidationAction):
 # method to store questionnaires
 
 questionnaire_per_usecase = {
-    "ms": ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdomainIII_1W", "MSdomainIII_2W", "MSdomainIV_1W", "MSdomainIV_1D", "MSdomainV"],
-    "stroke": ["activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
+    "MS": ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdomainIII_1W", "MSdomainIII_2W", "MSdomainIV_1W", "MSdomainIV_Daily", "MSdomainV"],
+    "STROKE": ["activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
 }
 
 def storeQuestionnaireData(isFinished, tracker):

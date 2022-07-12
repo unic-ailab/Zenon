@@ -14,9 +14,6 @@ nlu:
       - Cum progresez
       - Cum este sănătatea mea
       - actualizare de sănătate
-  - intent: notification_greet ##needs to be redefined
-    examples: |
-      - weird
   # - intent: how_are_you
   # - intent: ok
   #   examples: |

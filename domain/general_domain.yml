@@ -4,7 +4,6 @@ session_config:
   carry_over_slots_to_new_session: true
 intents:
   - available_questionnaires
-  - notification_greet
   - close_questionnaire
   - health_update
   - tutorials
@@ -16,7 +15,7 @@ intents:
   - MSdomainIII_1W_start
   - MSdomainIII_2W_start
   - MSdomainIV_1W_start
-  - MSdomainIV_1D_start
+  - MSdomainIV_Daily_start
   - MSdomainV_start
   - STROKEdomainIII_start
   - STROKEdomainIV_start
@@ -25,6 +24,7 @@ intents:
   - set_language
   - greet
   - deny
+  - notification_questionnaire_open
   - questionnaire_open
   - dizzNbalance_start
   - affirm
@@ -76,11 +76,10 @@ slots:
       - MSdomainIII_1W
       - MSdomainIII_2W
       - MSdomainIV_1W
-      - MSdomainIV_1D
+      - MSdomainIV_Daily
       - MSdomainV
   is_first_time:
     type: bool
-    initial_value: True
     influence_conversation: true
   is_completed:
     type: bool
@@ -279,53 +278,53 @@ responses:
           value: Italian
       text: Trovo ancora difficile il linguaggio umano, puoi per favore riformularlo?
   utter_inform_doctor:
-    - condition:
-        - type: slot
-          name: language
-          value: English
-        - type: slot
-          name: sentiment
-          value: pos
-      text: That's great! Is this something you want me to let your doctor know about? It might help with your progress.
+    # - condition:
+    #     - type: slot
+    #       name: language
+    #       value: English
+    #     - type: slot
+    #       name: sentiment
+    #       value: pos
+    #   text: That's great! Is this something you want me to let your doctor know about? It might help with your progress.
     - condition:
         - type: slot
           name: language
           value: English
       text: Is this something you would like me to report to your doctor? It might help with your progress.
-    - condition:
-        - type: slot
-          name: language
-          value: Greek
-        - type: slot
-          name: sentiment
-          value: pos
-      text: Αυτό είναι υπέροχο! Είναι κάτι που θα ήθελες να πω στον γιατρό σου; Ίσως βοηθήσει.
+    # - condition:
+    #     - type: slot
+    #       name: language
+    #       value: Greek
+    #     - type: slot
+    #       name: sentiment
+    #       value: pos
+    #   text: Αυτό είναι υπέροχο! Είναι κάτι που θα ήθελες να πω στον γιατρό σου; Ίσως βοηθήσει.
     - condition:
         - type: slot
           name: language
           value: Greek
       text: Είναι κάτι που θα ήθελες να πω στον γιατρό σου; Ίσως βοηθήσει.
-    - condition:
-        - type: slot
-          name: language
-          value: Romanian
-        - type: slot
-          name: sentiment
-          value: pos
-      text: Este grozav! Este ceva despre care vrei să-l anunț pe medicul tău? S-ar putea să te ajute la progresul tău.
+    # - condition:
+    #     - type: slot
+    #       name: language
+    #       value: Romanian
+    #     - type: slot
+    #       name: sentiment
+    #       value: pos
+    #   text: Este grozav! Este ceva despre care vrei să-l anunț pe medicul tău? S-ar putea să te ajute la progresul tău.
     - condition:
         - type: slot
           name: language
           value: Romanian
       text: Este ceva despre care vrei să-l anunț pe medicul tău? S-ar putea să te ajute la progresul tău.
-    - condition:
-        - type: slot
-          name: language
-          value: Italian
-        - type: slot
-          name: sentiment
-          value: pos
-      text: Fantastico! È qualcosa che vuoi che informi il tuo dottore? Potrebbe aiutarti con i tuoi progressi.
+    # - condition:
+    #     - type: slot
+    #       name: language
+    #       value: Italian
+    #     - type: slot
+    #       name: sentiment
+    #       value: pos
+    #   text: Fantastico! È qualcosa che vuoi che informi il tuo dottore? Potrebbe aiutarti con i tuoi progressi.
     - condition:
         - type: slot
           name: language

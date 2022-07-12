@@ -1,0 +1,18 @@
+﻿usecase,questionnaire_name,questionnaire_abvr,dayOfWeek,weekOfMonth,frequencyInWeeks,lifespanInDays,totalDuration
+MS,Mobility and physical function,MSdomainI,5,0,1,1,12
+MS,Sleep Disorders,MSdomainII_1M,3,3,4,2,12
+MS,Sleep Disorders,MSdomainII_3M,3,3,12,2,12
+MS,Mental and Cognitive Ability,MSdomainIII_1W,1,0,1,1,12
+MS,Mental and Cognitive Ability,MSdomainIII_2W,1,2,2,1,12
+MS,Emotional Status,MSdomainIV_Daily,-1,0,1,0,12
+MS,Emotional Status,MSdomainIV,6,0,1,1,12
+MS,Quality of Life,MSdomainV,3,1,4,2,12
+STROKE,Activlim,activLim,4,1,4,2,12
+STROKE,Muscle Tone,muscletone,4,2,4,2,12
+STROKE,Dizziness and Balance,dizzNbalance,4,2,4,2,12
+STROKE,Eating habits,eatinghabits,4,4,4,2,12
+STROKE,PSQI,psqi,4,3,4,2,12
+STROKE,COAST,coast,4,4,4,2,12
+STROKE,Mental and Cognitive Ability,STROKEdomainIII,4,2,4,2,12
+STROKE,Emotional Status,STROKEdomainIV,4,1,4,2,12
+STROKE,Quality of Life,STROKEdomainV,4,4,4,2,12

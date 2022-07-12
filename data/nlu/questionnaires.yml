@@ -1,5 +1,24 @@
 version: "2.0"
 nlu:
+  - intent: notification_questionnaire_open
+    examples: |
+      - [activLim]{"entity": "questionnaire", "value": "activLim"}
+      - [psqi]{"entity": "questionnaire", "value": "psqi"}
+      - [eatinghabits]{"entity": "questionnaire", "value": "eatinghabits"} 
+      - [dizzNbalance]{"entity": "questionnaire", "value": "dizzNbalance"}
+      - [muscletone]{"entity": "questionnaire", "value": "muscletone"}
+      - [coast]{"entity": "questionnaire", "value": "coast"} 
+      - [STROKEdomainIII]{"entity": "questionnaire", "value": "STROKEdomainIII"}
+      - [STROKEdomainIV]{"entity": "questionnaire", "value": "STROKEdomainIV"}
+      - [STROKEdomainV]{"entity": "questionnaire", "value": "STROKEdomainV"} 
+      - [MSdomainI]{"entity": "questionnaire", "value": "MSdomainI"}
+      - [MSdomainII_1M]{"entity": "questionnaire", "value": "MSdomainII_1M"}
+      - [MSdomainII_3M]{"entity": "questionnaire", "value": "MSdomainII_3M"}
+      - [MSdomainIII_1W]{"entity": "questionnaire", "value": "MSdomainIII_1W"}
+      - [MSdomainIII_2W]{"entity": "questionnaire", "value": "MSdomainIII_2W"}
+      - [MSdomainIV_1W]{"entity": "questionnaire", "value": "MSdomainIV_1W"}
+      - [MSdomainIV_Daily]{"entity": "questionnaire", "value": "MSdomainIV_Daily"}
+      - [MSdomainV]{"entity": "questionnaire", "value": "MSdomainV"}
   - intent: questionnaire_open
     examples: |
       - [activlim]{"entity": "questionnaire", "value": "ACTIVLIM"} questionnare is open
