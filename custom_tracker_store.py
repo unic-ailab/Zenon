@@ -938,7 +938,7 @@ class CustomSQLTrackerStore(TrackerStore):
             exists = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first() is not None
             if not exists:
                 #temp
-                usecase = sender_id[:len(sender_id)-2]
+                usecase = sender_id[:len(sender_id)-2].upper()
                 if usecase not in questionnaire_per_usecase.keys():
                     return
                 now = datetime.datetime.now() 

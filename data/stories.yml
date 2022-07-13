@@ -140,7 +140,6 @@ stories:
                   - action: utter_no_problem
                   - action: action_options_menu
 
-
         - story: Greeting, not first time of the day using the agent - agent doesn't ask again for how the user is feeling
           steps:
                   - intent: greet
@@ -739,8 +738,8 @@ stories:
                   - slot_was_set:
                             - questionnaire: MSdomainII_1M
                   - action: action_utter_starting_questionnaire
-                  - action: MSdomainII_1Μ_form
-                  - active_loop: MSdomainII_1Μ_form
+                  - action: MSdomainII_1M_form
+                  - active_loop: MSdomainII_1M_form
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
@@ -754,8 +753,8 @@ stories:
                   - slot_was_set:
                             - questionnaire: MSdomainII_3M
                   - action: action_utter_starting_questionnaire
-                  - action: MSdomainII_3Μ_form
-                  - active_loop: MSdomainII_3Μ_form
+                  - action: MSdomainII_3M_form
+                  - active_loop: MSdomainII_3M_form
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null

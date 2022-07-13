@@ -611,7 +611,7 @@ forms:
       MSdomainII_3Μ_RQ3:
         - entity: given_answer
           type: from_entity
-  MSdomainII_3Μ_form:
+  MSdomainII_3M_form:
     required_slots:
       MSdomainII_3Μ_RQ3:
         - entity: given_answer

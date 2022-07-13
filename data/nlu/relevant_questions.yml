@@ -44,10 +44,10 @@ nlu:
     examples: |
       - start MSdomainIV_1W relevant questions
       - MSdomainIV_1W relevant questions
-  - intent: MSdomainIV_1D_start # MS case
+  - intent: MSdomainIV_Daily_start # MS case
     examples: |
-      - start MSdomainIV_1D relevant questions
-      - MSdomainIV_1D relevant questions
+      - start MSdomainIV_Daily relevant questions
+      - MSdomainIV_Daily relevant questions
   - intent: MSdomainV_start # MS case
     examples: |
       - start MSdomainV relevant questions
