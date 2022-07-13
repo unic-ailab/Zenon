@@ -37,6 +37,7 @@ stories:
                   - intent: inform
                   - slot_was_set:
                             - sentiment: pos
+                  - action: action_ontology_store_sentiment
                   - action: utter_glad_to_hear
                   - action: action_options_menu
 
@@ -50,6 +51,7 @@ stories:
                   - intent: inform
                   - slot_was_set:
                             - sentiment: neu
+                  - action: action_ontology_store_sentiment
                   - action: action_options_menu
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user agrees to put the information in their report.
@@ -67,6 +69,7 @@ stories:
                   - action: utter_inform_doctor
                   - intent: affirm
                   - action: utter_confirm_doctor
+                  - action: action_ontology_store_sentiment
                   - action: action_options_menu
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report.
@@ -85,14 +88,12 @@ stories:
                   - or:
                             - intent: deny
                             - intent: cancel
-                  #- slot_was_set:
-                  #          - include_in_report: false
                   - action: utter_inform_doctor_extra
                   - or:
                             - intent: deny
                             - intent: cancel
                   - action: utter_no_problem
-                  #- action: action_ontology_store_sentiment
+                  - action: action_ontology_store_sentiment
                   - action: action_options_menu
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report but want to report smothing extra.
@@ -113,8 +114,13 @@ stories:
                             - intent: cancel
                   - action: utter_inform_doctor_extra
                   - intent: affirm
-                  - action: utter_inform_doctor_go_on
-                  - intent: inform
+                  #- action: utter_inform_doctor_go_on
+                  - action: report_extra_form
+                  - active_loop: report_extra_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_ontology_store_sentiment
                   - action: utter_confirm_doctor
                   - action: action_options_menu
 
@@ -130,6 +136,7 @@ stories:
                             - meaa_mood: neg
                   - action: utter_inform_doctor
                   - intent: affirm
+                  - action: action_ontology_store_sentiment
                   - action: utter_confirm_doctor
                   - action: action_options_menu
 
@@ -147,6 +154,7 @@ stories:
                   - or:
                             - intent: deny
                             - intent: cancel
+                  - action: action_ontology_store_sentiment
                   - action: utter_no_problem
                   - action: action_options_menu
 

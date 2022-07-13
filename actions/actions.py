@@ -686,8 +686,7 @@ class ActionOntologyStoreSentiment(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        if tracker.get_slot("is_first_time"):
-            customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
+        customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
         return []
 
 class ActionQuestionnaireCancelled(Action):
@@ -708,7 +707,7 @@ class ActionQuestionnaireCancelled(Action):
         )
         dispatcher.utter_message(text=text)
         storeQuestionnaireData(False, tracker)
-        if tracker.get_slot("questionnaire"):
+        if tracker.get_slot("questionnaire") in questionnaire_abbreviations.keys():
             customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "IN_PROGRESS")
         return[]
 
