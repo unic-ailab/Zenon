@@ -199,19 +199,19 @@ stories:
                   - intent: set_language
                   - action: action_utter_set_language
 
-        # - story: User wants to continue the latest available questionnaire # this shouldn't in theory happen
-        #   steps:
-        #           - intent: continue
-        #           - action: action_utter_continue_latest_questionnaire
+        - story: User wants to continue the latest available questionnaire # this shouldn't in theory happen
+          steps:
+                  - intent: continue
+                  - action: action_utter_continue_latest_questionnaire
 
-        # - story: User wants to continue the latest available questionnaire but changes their mind # this shouldn't in theory happen
-        #   steps:
-        #           - intent: continue
-        #           - action: action_utter_continue_latest_questionnaire
-        #           - or:
-        #                     - intent: deny
-        #                     - intent: cancel
-        #           - action: action_options_menu_extra
+        - story: User wants to continue the latest available questionnaire but changes their mind # this shouldn't in theory happen
+          steps:
+                  - intent: continue
+                  - action: action_utter_continue_latest_questionnaire
+                  - or:
+                            - intent: deny
+                            - intent: cancel
+                  - action: action_options_menu_extra
         # - story: Agent receives positive sentiment, user agrees to inform doctors # Works fine
         #   steps:
         #           - intent: greet

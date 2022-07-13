@@ -452,33 +452,47 @@ class ActionContinueLatestQuestionnaire(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        questionnaire = tracker.get_slot("questionnaire")
-        q_name = get_text_from_lang(tracker, questionnaire_abbreviations[questionnaire])
+        q_abbreviation = tracker.get_slot("questionnaire")
+        isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(), q_abbreviation)
+        if isAvailable:        
+            q_name = get_text_from_lang(tracker, questionnaire_abbreviations[q_abbreviation])
 
-        text = get_text_from_lang(
-            tracker,
-            [
-                "Do you want to continue the {} questionnaire?".format(q_name),
-                " ",
-                "Vuoi continuare il questionario {}?".format(q_name),
-                "Doriți să continuați chestionarul {}?".format(q_name),
-            ]
-        )
-        buttons = []
-        start_button_title = get_text_from_lang(
-            tracker,
-            [
-                "Continue",
-                " ", 
-                "Continua",
-                "Continua",
-            ]
-        )
-        buttons.append({"title": start_button_title, "payload": "/"+questionnaire+"_start"})
-        #add button for cancel that takes the user back to the general questions
-        buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
-        dispatcher.utter_message(text=text, buttons=buttons)
-        return []
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "Do you want to continue the {} questionnaire?".format(q_name),
+                    " ",
+                    "Vuoi continuare il questionario {}?".format(q_name),
+                    "Doriți să continuați chestionarul {}?".format(q_name),
+                ]
+            )
+            buttons = []
+            start_button_title = get_text_from_lang(
+                tracker,
+                [
+                    "Continue",
+                    " ", 
+                    "Continua",
+                    "Continua",
+                ]
+            )
+            buttons.append({"title": start_button_title, "payload": "/"+ q_abbreviation+"_start"})
+            #add button for cancel that takes the user back to the general questions
+            buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
+            dispatcher.utter_message(text=text, buttons=buttons)
+            return []
+        else:
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "The {} questionnaire is not available".format(q_name),
+                    " ",
+                    "The {} questionnaire is not available".format(q_name),
+                    "The {} questionnaire is not available".format(q_name),
+                ]
+            )
+            dispatcher.utter_message(text=text)
+            return [FollowupAction("action_get_available_questionnaires")]
 
 class ActionOptionsMenu(Action):
     def name(self) -> Text:
