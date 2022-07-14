@@ -600,7 +600,7 @@ forms:
       MSdomainI_RQ6:
         - entity: given_answer
           type: from_entity
-  MSdomainII_1Μ_form:
+  MSdomainII_1M_form:
     required_slots:
       MSdomainII_1Μ_RQ1:
         - entity: given_answer
@@ -608,7 +608,10 @@ forms:
       MSdomainII_1Μ_RQ2:
         - entity: given_answer
           type: from_entity
-  MSdomainII_3Μ_form:
+      MSdomainII_3Μ_RQ3:
+        - entity: given_answer
+          type: from_entity
+  MSdomainII_3M_form:
     required_slots:
       MSdomainII_3Μ_RQ3:
         - entity: given_answer
@@ -642,6 +645,12 @@ forms:
             - cancel
             - out_of_scope
             - options_menu
+      MSdomainIII_2W_RQ6:
+        - entity: number
+          type: from_entity
+      MSdomainIII_2W_RQ7:
+        - entity: given_answer
+          type: from_entity
   MSdomainIII_2W_form:
     required_slots:
       MSdomainIII_2W_RQ6:
