@@ -536,7 +536,9 @@ class ActionUtterGreet(Action):
         dispatcher.utter_message(text=text)
         #check if it is the first time of the day
         isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
-        print(f"It is first time for today: {isFirstTime}")
+        
+        if isFirstTime:
+            print("This is the first time for today.")
         return [SlotSet("is_first_time", isFirstTime)]
 
 class ActionUtterHowAreYou(Action):
