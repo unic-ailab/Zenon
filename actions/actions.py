@@ -423,33 +423,47 @@ class ActionContinueLatestQuestionnaire(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        questionnaire = tracker.get_slot("questionnaire")
-        q_name = get_text_from_lang(tracker, questionnaire_abbreviations[questionnaire])
+        q_abbreviation = tracker.get_slot("questionnaire")
+        isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(), q_abbreviation)
+        if isAvailable:        
+            q_name = get_text_from_lang(tracker, questionnaire_abbreviations[q_abbreviation])
 
-        text = get_text_from_lang(
-            tracker,
-            [
-                "Do you want to continue the {} questionnaire?".format(q_name),
-                " ",
-                "Vuoi continuare il questionario {}?".format(q_name),
-                "Doriți să continuați chestionarul {}?".format(q_name),
-            ]
-        )
-        buttons = []
-        start_button_title = get_text_from_lang(
-            tracker,
-            [
-                "Continue",
-                " ", 
-                "Continua",
-                "Continua",
-            ]
-        )
-        buttons.append({"title": start_button_title, "payload": "/"+questionnaire+"_start"})
-        #add button for cancel that takes the user back to the general questions
-        buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
-        dispatcher.utter_message(text=text, buttons=buttons)
-        return []
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "Do you want to continue the {} questionnaire?".format(q_name),
+                    " ",
+                    "Vuoi continuare il questionario {}?".format(q_name),
+                    "Doriți să continuați chestionarul {}?".format(q_name),
+                ]
+            )
+            buttons = []
+            start_button_title = get_text_from_lang(
+                tracker,
+                [
+                    "Continue",
+                    " ", 
+                    "Continua",
+                    "Continua",
+                ]
+            )
+            buttons.append({"title": start_button_title, "payload": "/"+ q_abbreviation+"_start"})
+            #add button for cancel that takes the user back to the general questions
+            buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
+            dispatcher.utter_message(text=text, buttons=buttons)
+            return []
+        else:
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "The {} questionnaire is not available".format(q_name),
+                    " ",
+                    "The {} questionnaire is not available".format(q_name),
+                    "The {} questionnaire is not available".format(q_name),
+                ]
+            )
+            dispatcher.utter_message(text=text)
+            return [FollowupAction("action_get_available_questionnaires")]
 
 class ActionOptionsMenu(Action):
     def name(self) -> Text:
@@ -469,10 +483,12 @@ class ActionOptionsMenu(Action):
         buttons = get_buttons_from_lang(
             tracker,
             options_menu_buttons,
+            # TODO: maybe add health_related_report as option
             ["/available_questionnaires", "/health_update", "/tutorials"]
         )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
+        #return [FollowupAction("action_ontology_store_sentiment")]
 
 # used when user ends up in the options menu more than once after greeting
 class ActionOptionsMenuExtra(Action):
@@ -582,6 +598,8 @@ class ActionUtterNotificationGreet(Action):
             questionnaire_abbreviations[q_abbreviation],
         )
 
+        isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
+
         # check if questionnaire is still pending
         isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(), q_abbreviation)
         if isAvailable:
@@ -596,20 +614,20 @@ class ActionUtterNotificationGreet(Action):
             )
             print("\nBOT:", text)
             dispatcher.utter_message(text=text)
-            return []
+            return [FollowupAction("action_utter_ask_questionnaire_start")]
         else:
             # normally it shouldn't get to this point
             text = get_text_from_lang(
                 tracker,
                 [
-                    "Hey there!",
+                    "Hey there! Apologies, this questionnaire is no longer available.",
                     "Χαίρεται!",
                     "Ehilà!",
                     "Hei acolo!",
                 ],
             )
             dispatcher.utter_message(text=text)
-            return []
+            return [SlotSet("questionnaire", None), SlotSet("is_first_time", isFirstTime)]
 
 
 class ActionQuestionnaireCompleted(Action):
@@ -653,8 +671,7 @@ class ActionOntologyStoreSentiment(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        if tracker.get_slot("is_first_time"):
-            customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
+        customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
         return []
 
 class ActionQuestionnaireCancelled(Action):
@@ -742,13 +759,14 @@ class ActionUtterStartQuestionnaire(Action):
             text = get_text_from_lang(
                 tracker,
                 [
-                    "Something is wrong and I am not sure how to deal with it. Can you please type 'main menu' to return the conversation to a level I am more familiar with?",
+                    "Something went wrong. Can you please type 'main menu' to return the conversation to a level I am more familiar with?",
                     " ",
                     "Qualcosa non va e non so come affrontarlo. Puoi digitare 'menu principale' per riportare la conversazione a un livello che mi è più familiare?",
                     "Ceva nu este în regulă și nu sunt sigur cum să fac față. Poți, te rog, să tastați 'meniu principal' pentru a readuce conversația la un nivel cu care sunt mai familiarizat?",
                 ],
             )
-
+            dispatcher.utter_message(text=text)
+            return []    
         q_name = get_text_from_lang(
             tracker,
             questionnaire_abbreviations[q_abbreviation],

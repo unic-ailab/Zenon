@@ -1,12 +1,22 @@
 version: "2.0"
 
 stories:
-        - story: User click on a notification for questionnaire
+        - story: User click on a notification for questionnaire but the questionnaire is not available and is the first time of the day using the agent #this shouldn't happen
           steps:
                   - intent: notification_questionnaire_open
                   - action: action_utter_notification_greet
-                  - action: action_utter_ask_questionnaire_start
+                  - slot_was_set:
+                            - is_first_time: true
+                  - action: action_utter_how_are_you
 
+        - story: User click on a notification for questionnaire but the questionnaire is not available and is not the first time of the day using the agent #this shouldn't happen
+          steps:
+                  - intent: notification_questionnaire_open
+                  - action: action_utter_notification_greet
+                  - slot_was_set:
+                            - is_first_time: false
+                  - action: action_get_available_questionnaires
+        # the above 2 stories are a bad idea but it seems to work
         - story: User click on a notification for questionnaire but doesn't want to start questionnaire #does this work for all cases?
           steps:
                   - intent: notification_questionnaire_open
@@ -27,6 +37,7 @@ stories:
                   - intent: inform
                   - slot_was_set:
                             - sentiment: pos
+                  - action: action_ontology_store_sentiment
                   - action: utter_glad_to_hear
                   - action: action_options_menu
 
@@ -40,6 +51,7 @@ stories:
                   - intent: inform
                   - slot_was_set:
                             - sentiment: neu
+                  - action: action_ontology_store_sentiment
                   - action: action_options_menu
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user agrees to put the information in their report.
@@ -57,6 +69,7 @@ stories:
                   - action: utter_inform_doctor
                   - intent: affirm
                   - action: utter_confirm_doctor
+                  - action: action_ontology_store_sentiment
                   - action: action_options_menu
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report.
@@ -75,14 +88,12 @@ stories:
                   - or:
                             - intent: deny
                             - intent: cancel
-                  #- slot_was_set:
-                  #          - include_in_report: false
                   - action: utter_inform_doctor_extra
                   - or:
                             - intent: deny
                             - intent: cancel
                   - action: utter_no_problem
-                  #- action: action_ontology_store_sentiment
+                  - action: action_ontology_store_sentiment
                   - action: action_options_menu
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report but want to report smothing extra.
@@ -103,8 +114,13 @@ stories:
                             - intent: cancel
                   - action: utter_inform_doctor_extra
                   - intent: affirm
-                  - action: utter_inform_doctor_go_on
-                  - intent: inform
+                  #- action: utter_inform_doctor_go_on
+                  - action: report_extra_form
+                  - active_loop: report_extra_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_ontology_store_sentiment
                   - action: utter_confirm_doctor
                   - action: action_options_menu
 
@@ -120,6 +136,7 @@ stories:
                             - meaa_mood: neg
                   - action: utter_inform_doctor
                   - intent: affirm
+                  - action: action_ontology_store_sentiment
                   - action: utter_confirm_doctor
                   - action: action_options_menu
 
@@ -137,6 +154,7 @@ stories:
                   - or:
                             - intent: deny
                             - intent: cancel
+                  - action: action_ontology_store_sentiment
                   - action: utter_no_problem
                   - action: action_options_menu
 
@@ -180,19 +198,19 @@ stories:
                   - intent: set_language
                   - action: action_utter_set_language
 
-        # - story: User wants to continue the latest available questionnaire # this shouldn't in theory happen
-        #   steps:
-        #           - intent: continue
-        #           - action: action_utter_continue_latest_questionnaire
+        - story: User wants to continue the latest available questionnaire # this shouldn't in theory happen
+          steps:
+                  - intent: continue
+                  - action: action_utter_continue_latest_questionnaire
 
-        # - story: User wants to continue the latest available questionnaire but changes their mind # this shouldn't in theory happen
-        #   steps:
-        #           - intent: continue
-        #           - action: action_utter_continue_latest_questionnaire
-        #           - or:
-        #                     - intent: deny
-        #                     - intent: cancel
-        #           - action: action_options_menu_extra
+        - story: User wants to continue the latest available questionnaire but changes their mind # this shouldn't in theory happen
+          steps:
+                  - intent: continue
+                  - action: action_utter_continue_latest_questionnaire
+                  - or:
+                            - intent: deny
+                            - intent: cancel
+                  - action: action_options_menu_extra
         # - story: Agent receives positive sentiment, user agrees to inform doctors # Works fine
         #   steps:
         #           - intent: greet

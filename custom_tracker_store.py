@@ -580,15 +580,20 @@ class CustomSQLTrackerStore(TrackerStore):
 
     def _sentiment_query(
         self, session: "Session", sender_id: Text) -> "Query":
-        """Provide the query to retrieve the sender message events for a specific sender which contain sentiment 
-            and are not questionnaire-related.
+        """Provide the query to retrieve the sender message and their sentiment for a specific sender.
+           The messages were the result of free-text questions about the user's mood or a general question asking where the user
+           wants to report anything of any nature.
 
         Args:
             session: Current database session.
             sender_id: Sender id whose conversation events should be retrieved.
 
         Returns:
-            Query to get the user message events
+            Returns the following objects with max 2 items each. The two objects should have the same length.
+            - Dictionary in the form {"message": Query result of the first user message,contains sentiment data, 
+                                    "slot": [Query result of the second user message, Query result of the sentiment of the second message]
+            - A list with whether the messages in the dictionary whould be included in the user's report
+              potential list elements "deny", "affirm", "cancel"
         """
         # Subquery to find the timestamp of the latest `SessionStarted` event
         # session_start_sub_query = (
@@ -604,32 +609,54 @@ class CustomSQLTrackerStore(TrackerStore):
                 self.SQLEvent.sender_id == sender_id,
                 self.SQLEvent.type_name == SessionStarted.type_name,
             ).first()[0]
+       
 
-        session_stop_timestamp = session.query(sa.func.min(self.SQLEvent.timestamp)).filter(
-                self.SQLEvent.sender_id == sender_id,
-                self.SQLEvent.action_name == "action_options_menu",
-                self.SQLEvent.type_name == "action",
-                self.SQLEvent.timestamp >= session_start_timestamp,
-            ).first()[0]        
-
-        print(session_start_timestamp, session_stop_timestamp)
-        # sentiment_entries = session.query(self.SQLEvent).filter(
-        #     self.SQLEvent.sender_id == sender_id,
-        #     self.SQLEvent.type_name == "slot",
-        #     self.SQLEvent.action_name == "sentiment_classes",
-        #     self.SQLEvent.timestamp.between(session_start_timestamp, session_stop_timestamp),
-        # ).order_by(self.SQLEvent.timestamp).all()
-
-        # sentiment_timestamps = [entry.timestamp for entry in sentiment_entries]
-        # print(sentiment_timestamps)
-        message_entries = session.query(self.SQLEvent).filter(
+        #get first message, question: How are you?
+        message_entry = session.query(self.SQLEvent).filter(
             self.SQLEvent.sender_id == sender_id,
             self.SQLEvent.type_name == "user",
-            self.SQLEvent.intent_name.notin_(["set_language", "app_closed"]),
-            self.SQLEvent.timestamp.between(session_start_timestamp, session_stop_timestamp),
-        ).order_by(self.SQLEvent.timestamp)
+            self.SQLEvent.intent_name == "inform",
+            self.SQLEvent.timestamp >= session_start_timestamp,
+        ).order_by(self.SQLEvent.timestamp).first()
 
-        return message_entries
+        # if there is no second message, it means the first message had positive or neutral sentiment
+        # and is not included in the report
+        try: 
+            include_in_report_intent = session.query(self.SQLEvent.intent_name).filter(
+                self.SQLEvent.sender_id == sender_id,
+                self.SQLEvent.type_name == "user",
+                self.SQLEvent.intent_name.in_(["deny", "affirm", "cancel"]),
+                self.SQLEvent.timestamp >= message_entry.timestamp,
+                ).order_by(self.SQLEvent.timestamp).first()[0]
+        except:
+            include_in_report_intent = "deny"
+
+        # get second message, question: Is there anything else you would like ot report..?
+        message_entry2 = session.query(self.SQLEvent).filter(
+            self.SQLEvent.sender_id == sender_id,
+            self.SQLEvent.type_name == "slot",
+            self.SQLEvent.action_name == "report_extra_Q1",
+            self.SQLEvent.timestamp >= message_entry.timestamp,
+        ).order_by(self.SQLEvent.timestamp).first()
+
+
+        if message_entry2:
+            # get the sentiment of the second message seperatly because the message is stored in a slot and does not included it
+            # sort in descending order to get the correct sentiment_classes slot
+            sentiment2 = session.query(self.SQLEvent).filter(
+                self.SQLEvent.sender_id == sender_id,
+                self.SQLEvent.type_name == "slot",
+                self.SQLEvent.action_name == "sentiment_classes",
+                self.SQLEvent.timestamp.between(message_entry.timestamp, message_entry2.timestamp),
+                ).order_by(self.SQLEvent.timestamp.desc()).first()
+
+            message_entries = {"message": message_entry, "slot": [message_entry2, sentiment2]}
+            report = [include_in_report_intent, "affirm"]
+        else:
+            message_entries = {"message": message_entry}
+            report = [include_in_report_intent]
+
+        return message_entries, report
 
     def _first_time_of_day_query(
         self, session: "Session", sender_id: Text) -> "Query":
@@ -680,7 +707,9 @@ class CustomSQLTrackerStore(TrackerStore):
                 #     }
                 # else:
                 #     sentiment = None
-
+                # temp_data = json.dumps(data)
+                # if "sentiment_classes" in temp_data:
+                #     data["in_dashboard"] = "true" 
                 # noinspection PyArgumentList
                 session.add(
                     self.SQLEvent(
@@ -805,7 +834,7 @@ class CustomSQLTrackerStore(TrackerStore):
     def getSpecificQuestionnaireAvailability(self, sender_id, current_datetime, questionnaire_name) -> bool:
         current_timestamp = current_datetime.timestamp()
         with self.session_scope() as session:
-            isAvailable = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first() is None
+            isAvailable = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first() is not None
         return isAvailable
 
     def isFirstTimeToday(self, sender_id) -> bool:
@@ -909,22 +938,33 @@ class CustomSQLTrackerStore(TrackerStore):
     def saveToOntology(self, sender_id):
         ontology_data = {"user_id": sender_id, "source": "Conversational Agent", "observations" : []}
         with self.session_scope() as session:
-            message_entries = self._sentiment_query(session, sender_id).all()
-            for message in message_entries:
-                message_data = json.loads(message.data)
-                print(datetime.datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%dT%H:%M:%SZ"))
-                sentiment = message_data.get("parse_data", {}).get("entities", {})[1].get("value") # returns a list of dicts
-                #sentiment = json.loads(message_data.get("parse_data", {}).get("entities", {})[1].get("value")[0])
+            message_entries, include_in_report_intents = self._sentiment_query(session, sender_id)
 
+            intent_to_bool = {"affirm": True, "deny": False, "cancel": False}
+
+            for (type, message), intent  in zip(message_entries.items(), include_in_report_intents):
+                if type == "message":
+                    message_data = json.loads(message.data)
+                    message_sentiment = message_data.get("parse_data", {}).get("entities", {})[1].get("value") # returns a list of dicts
+                    #sentiment = json.loads(message_data.get("parse_data", {}).get("entities", {})[1].get("value")[0])
+                    timestamp = datetime.datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
+                    message_text = message.message
+                elif type == "slot":
+                    message_sentiment = json.loads(message[1].data).get("value")
+                    timestamp = datetime.datetime.fromtimestamp(message[0].timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
+                    message_text = json.loads(message[0].data).get("value")
+
+                # this change is required to match the ontolody format
                 # this might be removed in the future
-                temp_sentiment = json.dumps(sentiment)
+                temp_sentiment = json.dumps(message_sentiment)
                 temp_sentiment = temp_sentiment.replace("positive", "Positive")
                 temp_sentiment = temp_sentiment.replace("negative", "Negative")
                 temp_sentiment = temp_sentiment.replace("neutral", "Neutral")
 
                 data = {"sentiment_scores": json.loads(temp_sentiment),
-                    "timestamp": datetime.datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    "explanation": message.message}
+                    "timestamp": timestamp,
+                    "explanation": message_text,
+                    "in_dashboard": intent_to_bool[intent]}
                 ontology_data["observations"].append(data)
             
             print(ontology_data)
@@ -979,13 +1019,13 @@ class CustomSQLTrackerStore(TrackerStore):
             if not exists:
                 response = requests.get("WCS_ONBOARDING_ENDPOINT", json={"patient_uuid": sender_id})
                 # need to check this
-                resp = json.loads(response.text)[0] 
+                resp = response.json() 
                 if resp["partner"] == "FISM":
                   usecase = "MS"
                 elif resp["partner"] == "SUUB":
                   usecase = "STROKE"
                 else:
-                   usecase = "pd"
+                   usecase = "PD"
                 if usecase not in questionnaire_per_usecase.keys():
                     return
                 registration_date = resp["registration_date"]
@@ -1061,8 +1101,8 @@ class CustomSQLTrackerStore(TrackerStore):
 
         #TODO:send to wcs
         print(questionnaire_data)
-        response = requests.post("WCS_STATUS_ENDPOINT", json=questionnaire_data)
-        print(response)
+        #response = requests.post("WCS_STATUS_ENDPOINT", json=questionnaire_data)
+        #print(response)
 
     def getDizzinessNbalanceSymptoms(self, sender_id):
         
@@ -1077,7 +1117,7 @@ class CustomSQLTrackerStore(TrackerStore):
             new_symptoms = [x for x in symptoms if x not in previous_symptoms]
             session.commit()
 
-        if new_symptoms:
+        if len(new_symptoms) > 0:
             print(new_symptoms)
             #TODO:send to wcs
             # response = requests.post("wcs_link", json=questionnaire_data)
@@ -1148,7 +1188,7 @@ if __name__ == "__main__":
     now = datetime.datetime.today()
     first_monday = now + datetime.timedelta(days=(0-now.weekday())%7)
     q_day = first_monday + datetime.timedelta(days=5, weeks=max(0,4-1))
-    print(q_day)
+    #print(q_day)
 
     #print(1654808400<now)
     with ts.session_scope() as session:
@@ -1159,12 +1199,12 @@ if __name__ == "__main__":
         # question_events, slot = ts._questionnaire_query(session, "stroke19", "STROKEdomainIII")
         # print([json.loads(event.data) for event in question_events])
         # print([json.loads(event.data) for event in slot])
-        print(ts._first_time_of_day_query(session, "stroke23"))
+        #print(ts._first_time_of_day_query(session, "stroke23"))
 
         #answers, previous_answers = ts._questionnaire_state_query(session, "stroke04", now, "activLim")
         #print(previous_answers)
 
-        #ts.saveToOntology("stroke41")
+        ts.saveToOntology("stroke14")
 
 
 
