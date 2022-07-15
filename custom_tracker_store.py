@@ -531,16 +531,19 @@ class CustomSQLTrackerStore(TrackerStore):
 
     def _questionnaire_answers_query(
         self, session: "Session", sender_id: Text, questionnaire_name: Text, onlyFinished:bool=False, previous: int=0):
-        """Provide the query to retrieve the questionnaire state events for a specific sender.
+        """Provide the query to retrieve a specific questionnaire's answers for a specific sender.
 
         Args:
             session: Current database session.
             sender_id: Sender id whose conversation events should be retrieved.
             questionnaire_name: The name of the questionnaire whose questions and responses should be retrieved.
+            onlyFinished: boolean, whether to search for only finished questionnaires or also pending questionnaires
+            previous: integer, how many questionnaires before the latest one to retrieve
 
 
         Returns:
-            One database row entry.
+            - latest questionnaire answers database cell
+            - latest questionnaire answers database cell, list of the k-previous questionnaire answers database cell
         """
         if onlyFinished:
             states = ["finished"]
@@ -548,14 +551,14 @@ class CustomSQLTrackerStore(TrackerStore):
             states = ["finished", "pending"]
 
         latest_questionnaire_sub_query = session.query(sa.func.max(self.SQLQuestState.timestamp_end).label("latest_timestamp")).filter(
-            sa.or_(
+            sa.and_(
                 self.SQLQuestState.sender_id == sender_id,
                 self.SQLQuestState.questionnaire_name == questionnaire_name,
                 self.SQLQuestState.state.in_(states),
             )).subquery()
 
         answers_entry = (
-                session.query(self.SQLQuestState.answers)
+                session.query(self.SQLQuestState)
                 .filter(
                     self.SQLQuestState.sender_id == sender_id,
                     self.SQLQuestState.questionnaire_name == questionnaire_name,
@@ -570,10 +573,11 @@ class CustomSQLTrackerStore(TrackerStore):
                     self.SQLQuestState.sender_id == sender_id,
                     self.SQLQuestState.questionnaire_name == questionnaire_name,
                     self.SQLQuestState.state.in_(["finished", "pending", "incomplete"]),
+                    self.SQLQuestState.timestamp_end < answers_entry.timestamp_end,
                 )
-            ).order_by(self.SQLQuestState.timestamp_end.desc()).limit(previous)
+            ).order_by(self.SQLQuestState.timestamp_end.desc()).limit(previous).all()
         #tell wcs you send all answers not only the new
-            return answers_entry, reversed(previous_answers_entries)
+            return answers_entry, previous_answers_entries
         else:
             return answers_entry
 
@@ -880,8 +884,11 @@ class CustomSQLTrackerStore(TrackerStore):
                     # entry.answers = None
 
                     # questionnaires that are passed the time limit need to be reset
-                    reset_questionnaires.append(entry.questionnaire_name)
+                    #reset_questionnaires.append(entry.questionnaire_name)
                 else:
+                    # when the questionnaire becomes available again, reset its slots 
+                    if entry.state == "available":
+                        reset_questionnaires.append(entry.questionnaire_name)
                     available_questionnaires.append(entry.questionnaire_name)
             session.commit()
         return available_questionnaires, reset_questionnaires 
@@ -1098,33 +1105,36 @@ class CustomSQLTrackerStore(TrackerStore):
                 res_answers = [{key : val for key, val in d.items() if key != "timestamp"} for d in answers]
                 session.commit()    
             questionnaire_data["questionnaire_answers"] = res_answers
+        elif questionnare_abvr == "dizzNbalance":
+            new_symptoms = self.getDizzinessNbalanceNewSymptoms(sender_id)
+            areNewSymptoms = str(len(new_symptoms) > 0)
+            questionnaire_data["questionnaire_answers"] =[{
+                    "number": "Symptoms",
+                    "question": "SYMPTOMS: Select all that apply and press send:",
+                    "answer": areNewSymptoms}]
 
         #TODO:send to wcs
         print(questionnaire_data)
         #response = requests.post("WCS_STATUS_ENDPOINT", json=questionnaire_data)
         #print(response)
 
-    def getDizzinessNbalanceSymptoms(self, sender_id):
-        
+    def getDizzinessNbalanceNewSymptoms(self, sender_id):
+        """ Gets the symptoms of the latest Dizziness and Balance questionnaire and of the one before that
+            Compares the symptoms and sends all new symptoms to wcs for the alert mechanism"""
         with self.session_scope() as session:
-            answers_events, previous_answers_events  = self._questionnaire_answers_query(session, sender_id, "dizzNbalance", 1)
+            answers_events, previous_answers_events  = self._questionnaire_answers_query(session, sender_id, "dizzNbalance", False, 1)
             answers = json.loads(answers_events.answers)
-            previous_answers = json.loads(previous_answers_events.answers)
-            symptoms= [answer for answer in answers if answer["number"] == "Symptoms"]
-            previous_symptoms= [answer for answer in previous_answers if answer["number"] == "Symptoms"]
-
-            previous_symptoms = set(previous_symptoms)
-            new_symptoms = [x for x in symptoms if x not in previous_symptoms]
+            new_symptoms = []
+            if previous_answers_events:
+                previous_answers = json.loads(previous_answers_events[0].answers)   
+                symptoms= [answer["answers"] for answer in answers if answer["number"] == "Symptoms"]
+                previous_symptoms= [answer["answers"] for answer in previous_answers if answer["number"] == "Symptoms"]
+                # do this because anwers are in the form ["symptom1, symptom2"]
+                symptoms = symptoms[0].split(", ")
+                previous_symptoms = previous_symptoms[0].split(", ")
+                new_symptoms = [x for x in symptoms if x not in previous_symptoms]
             session.commit()
-
-        if len(new_symptoms) > 0:
-            print(new_symptoms)
-            #TODO:send to wcs
-            # response = requests.post("wcs_link", json=questionnaire_data)
-            #      
-
-# get the name of the active form 
-#active_loop = tracker.active_loop.get(‘name’)
+            return new_symptoms   
 
 def getFirstQuestTimestamp(schedule_df, questionnaire_name, init_date):
     """Get the date the specified questionnaire will be available for the first time
@@ -1204,10 +1214,9 @@ if __name__ == "__main__":
         #answers, previous_answers = ts._questionnaire_state_query(session, "stroke04", now, "activLim")
         #print(previous_answers)
 
-        ts.saveToOntology("stroke14")
-
-
-
+        #ts.saveToOntology("stroke14")
+        ts.sendQuestionnareStatus("stroke01", "dizzNbalance", "COMPLETED")
+        ts.getDizzinessNbalanceNewSymptoms("stroke01")
 
 
   
