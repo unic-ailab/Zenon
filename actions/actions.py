@@ -18,9 +18,10 @@ from rasa_sdk.events import SlotSet, FollowupAction
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormValidationAction
 
-import sys        
-#sys.path.append("/home/unic/Zenon/")   
-sys.path.append('C:/Users/chloe/Desktop/UNIC-AI Lab/ALAMEDA/Zenon_git/Zenon')   
+import sys     
+import os
+
+sys.path.append(os.getcwd())  
 from custom_tracker_store import CustomSQLTrackerStore
 
 customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="demo.db")
@@ -60,8 +61,8 @@ cancel_button = [
 options_menu_buttons = [
     ["Questionnaires", "Health Status update", "Tutorials"],
     ["", "", ""],
-    ["Questionari", "Aggiornamento dello stato di salute", "Tutorials"],
-    ["Chestionare", "Actualizare stare de sănătate", "Tutoriales"]
+    ["Questionari", "Aggiornamento dello stato di salute", "Tutorial"],
+    ["Chestionare", "Actualizare stare de sănătate", "Tutoriale"]
 ]
 
 
@@ -363,7 +364,7 @@ class ActionGetAvailableQuestions(Action):
                     "Currently there are no available questionnaires. Would you like to be redirected to the main menu?",
                     "",
                     "Al momento non ci sono questionari disponibili. Vuoi essere reindirizzato al menu principale?",
-                    "Momentan nu sunt disponibile chestionare. Doriți să fiți redirecționat către meniul principal?"
+                    "Momentan nu este disponibil niciun chestionar. Dorești redirecționarea către meniul principal?"
                     ]
             )
             # shows first question or asks if there is anything else you would like help with
@@ -375,8 +376,8 @@ class ActionGetAvailableQuestions(Action):
                 [
                     "You have the following questionnaire(s) available:",
                     " ",
-                    "Hai a disposizione il seguente questionario(i):",
-                    "Aveți la dispoziție următoarul(ele) chestionare:",
+                    "Hai a disposizione i seguenti questionari:",
+                    "Ai la dispoziție următorul(ele) chestionar(e):",
                 ]
             )
             
@@ -434,7 +435,7 @@ class ActionContinueLatestQuestionnaire(Action):
                     "Do you want to continue the {} questionnaire?".format(q_name),
                     " ",
                     "Vuoi continuare il questionario {}?".format(q_name),
-                    "Doriți să continuați chestionarul {}?".format(q_name),
+                    "Dorești să continui chestionarul {}?".format(q_name),
                 ]
             )
             buttons = []
@@ -444,7 +445,7 @@ class ActionContinueLatestQuestionnaire(Action):
                     "Continue",
                     " ", 
                     "Continua",
-                    "Continua",
+                    "Continuă",
                 ]
             )
             buttons.append({"title": start_button_title, "payload": "/"+ q_abbreviation+"_start"})
@@ -505,8 +506,8 @@ class ActionOptionsMenuExtra(Action):
             [
                 "Is there anything else that I can help you with?",
                 " ",
-                "C'è qualcos'altro con cui posso aiutarti?",
-                "Mai este ceva cu care te pot ajuta?",
+                "C'è qualcos'altro in cui posso aiutarti?",
+                "Te mai pot ajuta cu ceva?",
             ]
             )
         buttons = get_buttons_from_lang(
@@ -527,18 +528,28 @@ class ActionUtterGreet(Action):
         text = get_text_from_lang(
             tracker,
             [
-                "Hey there! I am Zenon, your ALAMEDA personal assistant bot.",
-                "Χαίρεται!",
-                "Ciao! Sono Zenon, il tuo assistente personale ALAMEDA.",
-                "Hei acolo! Sunt Zenon, robotul tău asistent personal ALAMEDA.",
+                random.choice(["Hey there! I am Zenon, your ALAMEDA personal assistant bot.", 
+                                "Welcome, I am your ALAMEDA personal assistant bot.", 
+                                "Hi, I am Zenon.",
+                                "Greetings!"
+                                ]),
+                " ",
+                random.choice(["Ciao! Sono Zenon, il tuo assistente personale ALAMEDA.",
+                                "Benvenuto, sono il tuo assistente personale ALAMEDA",
+                                "Ciao, sono Zenon.",
+                                "Saluti!"]),
+                random.choice(["Salutare! Sunt Zenon, asistentul tău personal ALAMEDA.",
+                                "Bine ai venit, sunt asistentul tău personal ALAMEDA.",
+                                "Bună, sunt Zenon.",
+                                "Salutări!"])
             ],
         )
         dispatcher.utter_message(text=text)
         #check if it is the first time of the day
         isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
-        
         if isFirstTime:
             print("This is the first time for today.")
+
         return [SlotSet("is_first_time", isFirstTime)]
 
 class ActionUtterHowAreYou(Action):
@@ -580,7 +591,7 @@ class ActionUtterHowAreYou(Action):
                     random.choice(["How are you?", "How are you feeling today?", "How are you today?", "How is it going?", "How is your day going?"]),
                     " ",
                     random.choice(["Come stai?", "Come ti senti oggi?", "Come stai oggi?", "Come va?", "Come va la tua giornata?"]),
-                    random.choice(["Cum mai faci?", "Cum te simți azi?", "Ce mai faci azi?", "Cum merge?", "Cum îți merge ziua?"]),
+                    random.choice(["Ce mai faci?", "Cum te simți azi?", "Ce mai faci azi?", "Cum merge?", "Cum îți merge ziua?"]),
                 ],
             )
             meaa_mood = "non_neg"
@@ -645,15 +656,19 @@ class ActionQuestionnaireCompleted(Action):
                 "We are good. Thank you for your time.",
                 "Το ερωτηματολόγιο ολοκληρώθηκε. Ευχαριστώ.",
                 "A posto! Grazie per il tuo tempo.",
-                "Suntem buni. Multumesc pentru timpul acordat.",
+                "Suntem buni! Mulțumesc pentru timpul acordat.",
             ],
         )
         dispatcher.utter_message(text=text)
         #TODO: issue here, the query doesnt find the latest message
         # issue with size of answers cell
-        # storeQuestionnaireData(True, tracker)
-        # customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "COMPLETED")
-        return []
+        storeQuestionnaireData(True, tracker)
+        customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "COMPLETED")
+        usecase = tracker.current_state()['sender_id'][:2]
+        if usecase == "ms":
+            return [SlotSet("MSdomainII_both", "False"), SlotSet("MSdomainIII_both", "False")]
+        else:                
+            return []
 
 # class ActionStoreQuestionnaire(Action):
 #     def name(self):
@@ -689,14 +704,19 @@ class ActionQuestionnaireCancelled(Action):
                 "I stopped the process. We can finish it later.",
                 "Σταμάτησα το ερωτηματολόγιο, μπορούμε να συνεχίσουμε αργότερα.",
                 "Ho interrotto il processo. Possiamo finirlo più tardi.",
-                "Am oprit procesul. O putem termina mai târziu.",
+                "Am oprit procesul. Putem termina mai târziu.",
             ],
         )
         dispatcher.utter_message(text=text)
         # storeQuestionnaireData(False, tracker)
-        # if tracker.get_slot("questionnaire"):
-        #     customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "IN_PROGRESS")
-        return[]
+        if tracker.get_slot("questionnaire"):
+            customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "IN_PROGRESS")
+
+        usecase = tracker.current_state()['sender_id'][:2]
+        if usecase == "ms":
+            return [SlotSet("MSdomainII_both", "False"), SlotSet("MSdomainIII_both", "False")]
+        else:                
+            return[]
 
 class ActionUtterStartingQuestionnaire(Action):
     def name(self):
@@ -717,7 +737,7 @@ class ActionUtterStartingQuestionnaire(Action):
                     "Starting '{}' questionnaire...".format(q_name),
                     " ",
                     "Iniziamo il questionario {}...".format(q_name),
-                    "Pornire '{}' chestionar...".format(q_name),
+                    "Pornește chestionarul '{}' ...".format(q_name),
                 ],
             )
             dispatcher.utter_message(text=text)
@@ -729,7 +749,7 @@ class ActionUtterStartingQuestionnaire(Action):
                     "Something is wrong and I am not sure how to deal with it. Can you please type 'main menu' to return the conversation to a level I am more familiar with?",
                     " ",
                     "Qualcosa non va e non so come affrontarlo. Puoi digitare 'menu principale' per riportare la conversazione a un livello che mi è più familiare?",
-                    "Ceva nu este în regulă și nu sunt sigur cum să fac față. Poți, te rog, să tastați 'meniu principal' pentru a readuce conversația la un nivel cu care sunt mai familiarizat?",
+                    "Ceva nu este în regulă și nu sunt sigur cum să mă descurc. Poți, te rog, tasta 'meniu principal' pentru a readuce conversația la un nivel cu care sunt mai familiarizat?",
                 ],
             )
             dispatcher.utter_message(text=text)
@@ -764,7 +784,7 @@ class ActionUtterStartQuestionnaire(Action):
                     "Something went wrong. Can you please type 'main menu' to return the conversation to a level I am more familiar with?",
                     " ",
                     "Qualcosa non va e non so come affrontarlo. Puoi digitare 'menu principale' per riportare la conversazione a un livello che mi è più familiare?",
-                    "Ceva nu este în regulă și nu sunt sigur cum să fac față. Poți, te rog, să tastați 'meniu principal' pentru a readuce conversația la un nivel cu care sunt mai familiarizat?",
+                    "Ceva nu este în regulă și nu sunt sigur cum să mă descurc. Poți, te rog, tasta 'meniu principal' pentru a readuce conversația la un nivel cu care sunt mai familiarizat?",
                 ],
             )
             dispatcher.utter_message(text=text)
@@ -785,8 +805,8 @@ class ActionUtterStartQuestionnaire(Action):
             [
                 "Would you like to fill it? It shouldn't take more than {} minutes.".format(minutes),
                 " ",
-                "Ti piacerebbe riempirlo? Non dovrebbero volerci più di {} minuti.".format(minutes),
-                "Doriți să-l umpleți? Nu ar trebui să dureze mai mult de {} minute.".format(minutes),
+                "Ti piacerebbe compilarlo? Non dovrebbero volerci più di {} minuti.".format(minutes),
+                "Dorești să-l completezi? Nu ar trebui să dureze mai mult de {} minute.".format(minutes),
             ],
         )
 
@@ -795,8 +815,8 @@ class ActionUtterStartQuestionnaire(Action):
             [
                 ["Start {} Questionnaire".format(q_name), "No"],
                 [" ", " "],
-                ["Inizio {} Questionario".format(q_name), "No"],
-                ["Porniți chestionarul {}".format(q_name), "Nu"],
+                ["Inizio il questionario {}".format(q_name), "No"],
+                ["Pornește chestionarul {}".format(q_name), "Nu"],
             ],
             ['/{}_start'.format(q_abbreviation), '/deny']
         )
@@ -3533,7 +3553,7 @@ class ActionAskDnBHabitsCaffeineFollow(Action):  # DnB Questionnaire
                 "How much do you drink (hint: #cups per day/week/month)?",
                 " ",
                 " ",
-                "Beti (cate ?) căni de (de exemplu, cafea) pe zi, săptămâna lună ?"
+                "Câtă cafea consumi? (răspunde în număr de cești pe zi/săptămâna/lună)?"
             ]
         )
 
@@ -3588,7 +3608,7 @@ class ActionAskDnBHabitsAlcoholFollow(Action):  # DnB Questionnaire
                 "How much do you drink (hint: type of alcohol(e.g. wine) per day/week/month)?",
                 " ",
                 " ",
-                "Beti (cate ?) pahare de (de exemplu, vin) pe zi, săptămână, lună ?"
+                "Cât alcool (ex. vin) consumi (răspunde în număr de pahare pe zi/săptămână/lună)?"
             ]
         )
 
@@ -3643,7 +3663,7 @@ class ActionAskDnBHabitsTobaccoFollow(Action):  # DnB Questionnaire
                 "How much do you smoke/chew (hint: #of product per day/week/month)?",
                 " ",
                 " ",
-                "Beti (cate ?) pahare de (de exemplu, vin) pe zi, săptămână, lună ?"
+                "Cât de mult fumezi (răspunde în număr de țigări consumate pe zi/săptămână/lună)?"
             ]
         )
 
@@ -3788,7 +3808,7 @@ class ValidateDnBForm(FormValidationAction):
                         "You can't provide a date after today.",
                         " ",
                         " ",
-                        "Nu puteți furniza o dată după astăzi."
+                        "Nu poți furniza o dată care este după ziua de astăzi."
                     ]
                 )
 
@@ -3827,7 +3847,7 @@ class ValidateDnBForm(FormValidationAction):
                     "Please provide an answer in the form of '# hours/days/weeks/months'\ne.g. 3 days or 1 month",
                     " ",
                     " ",
-                    "Vă rugăm să furnizați un răspuns sub forma „# ore/zile/săptămâni/luni”\ne.g. 3 zile sau 1 luna"
+                    "Te rog furnizează un răspuns sub forma „număr de ore/zile/săptămâni/luni” (de ex. 3 zile, 1 lună)"
                 ]
             )
 
@@ -5553,8 +5573,8 @@ class ActionHandleUserDenyInformDoctors(Action):
             [
                 "Are you sure? How you feel is also an important part of your physical progress.",
                 "Είσαι σίγουρος? Το πως αισθάνεσαι είναι σημαντικό μέρος της προόδου σου.",
-                "Sei sicuro? Anche il modo in cui ti senti è una parte importante del tuo progresso fisico.",
-                "Esti sigur? Modul în care te simți este, de asemenea, o parte importantă a progresului tău fizic."
+                "Sei sicuro? Anche il modo in cui ti senti è una parte importante del tuo andamento fisico.",
+                "Ești sigur(ă)? Modul în care te simți este, de asemenea, o parte importantă a progresului tău fizic."
             ]
         )
 
@@ -6077,8 +6097,9 @@ class ValidateMSDomainII1MForm(FormValidationAction):
 
         if not tracker.get_slot("MSdomainII_both"):
             slots_mapped_in_domain.remove("MSdomainII_3Μ_RQ3")
+            # SlotSet(key="MSdomainII_both", value="False")
 
-        return slots_mapped_in_domain + [SlotSet(key="MSdomainII_both", value="False")]
+        return slots_mapped_in_domain
 
 ####################################################################################################
 # MS Case Domain III                                                                               #
@@ -6240,9 +6261,10 @@ class ValidateMSDomainIII1WForm(FormValidationAction):
 
         if not tracker.get_slot("MSdomainIII_both"):
             slots_mapped_in_domain.remove("MSdomainIII_2W_RQ6") 
-            slots_mapped_in_domain.remove("MSdomainIII_2W_RQ7")                        
+            slots_mapped_in_domain.remove("MSdomainIII_2W_RQ7")
+            # SlotSet(key="MSdomainIII_both", value="False")                     
 
-        return slots_mapped_in_domain + [SlotSet(key="MSdomainIII_both", value="False")]
+        return slots_mapped_in_domain
 
     def validate_MSdomainIII_1W_RQ2(
         self,

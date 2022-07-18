@@ -2,27 +2,24 @@ version: "2.0"
 nlu:
   - intent: health_update
     examples: |
+      # English
       - How am i doing?
       - how am i progressing
       - how is my health
       - health update
+      # Italian
       - Come lo sto facendo?
-      - come sto procedendo
-      - come va la mia salute
-      - aggiornamento sanitario
-      - Ce mai fac?
+      - Come sto progredendo
+      - Com'è la mia salute
+      - Aggiornamento per la salute
+      # Romanian
+      - Cum mă descurc?
       - Cum progresez
-      - Cum este sănătatea mea
-      - actualizare de sănătate
-  # - intent: how_are_you
-  # - intent: ok
-  #   examples: |
-  #     - Ok
-  #     - Alright
-  #     - Alright, then
-  # - intent: glag_to_hear
+      - Cum este starea mea de sănătate
+      - Actualizare a stării de sănătate
   - intent: close_questionnaire
     examples: |
+      # English
       - app closed
       - the app is now closed
       - app is stopped
@@ -34,25 +31,31 @@ nlu:
       - close the questionnaire
       - questionnaire deactivated
       - the questionnaire is stopped
+      # Italian
+      # Romanian
   - intent: available_questionnaires
     examples: |
+      # English
       - available questionnaires
       - answer questionnaire
       - go to questionnaires
       - I want to see the questionnaires
       - other questionnaires
-      - questionari disponibili
-      - rispondere al questionario
-      - vai ai questionari
+      # Italian
+      - Questionari disponibili
+      - Rispondi al questionario
+      - Vai ai questionari
       - Voglio vedere i questionari
-      - altri questionari
+      - Altri questionari
+      # Romanian
       - chestionare disponibile
-      - raspunde la chestionar
-      - mergi la chestionare
+      - Răspunde la chestionar
+      - Mergeți la chestionare
       - Vreau să văd chestionarele
-      - alte chestionare
+      - Alte chestionare
   - intent: options_menu
     examples: |
+      # English
       - options menu
       - menu
       - go to main menu
@@ -62,54 +65,63 @@ nlu:
       - start menu
       - start options
       - other options
-      - menu delle opzioni
-      - menù
-      - vai al menu principale
-      - Voglio vedere le altre opzioni
-      - portami al menu principale
-      - menu iniziale
+      # Italian
+      - Menu Opzioni
+      - menu
+      - Vai al menu principale
+      - Visualizza le altre opzioni
+      - Portami al menu principale
       - menu principale
-      - Opzioni di avvio
+      - menu iniziale
+      - Opzioni di inizio
       - altre opzioni
-      - meniul de opțiuni
-      - meniul
-      - meniu principal
-      - accesați meniul principal
+      # Romanian
+      - Meniu Opțiuni
+      - meniu
+      - Accesați meniul principal
       - Vreau să văd celelalte opțiuni
-      - duce-mă la meniul principal
-      - meniul de pornire
-      - opțiuni de pornire
+      - Du-mă la meniul principal
+      - Meniul de pornire
+      - meniu principal
+      - Opțiuni de pornire
       - alte optiuni
   - intent: tutorials
     examples: |
+      # English
       - I want to see the tutorials
       - can you show me the tutorial page
       - tutorials
-      - Voglio vedere i tutorial
-      - puoi mostrarmi la pagina del tutorial
-      - tutorial
+      # Italian
+      - Visualizza i tutorial
+      - Puoi mostrarmi la pagina del tutorial
+      - Tutorial
+      # Romanian
       - Vreau să văd tutorialele
-      - îmi puteți arăta pagina de tutorial
+      - Poți să-mi arăți pagina tutorialului
       - tutoriale
   - intent: continue
     examples: |
+      # English
       - I want to resume the questionnaire
       - resume questionnaire
       - continue the questionnaire
       - can i continue the questionnaire
       - i want to continue the questionnaire
+      # Italian
       - Voglio riprendere il questionario
-      - riprendere il questionario
-      - continuare il questionario
-      - posso continuare il questionario?
+      - riprendi il questionario
+      - Continua il questionario
+      - Posso continuare il questionario
       - Voglio continuare il questionario
+      # Romanian
       - Vreau să reiau chestionarul
-      - chestionar pentru CV
+      - Reia chestionarul
       - continua chestionarul
       - Pot continua chestionarul
       - vreau să continui chestionarul
   - intent: greet
     examples: |
+      # English
       - hey
       - hello
       - hi
@@ -129,6 +141,7 @@ nlu:
       - Hello
       - Goodmorning
       - good day
+      # Greek
       - καλημέρα
       - χαίρεται
       - τι γίνεται;
@@ -137,20 +150,44 @@ nlu:
       - τι λέει;
       - όλα καλά;
       - γεια σας
-      - hei
-      - bună ziua
-      - salut
-      - salutare
-      - bună dimineața
-      - bună seara
-      - hai să mergem
-      - ce faci?
-      - bună
-      - howdy
-      - hey
+      # Italian
+      - Hey
       - ciao
+      - Buondì
+      - Buongiorno
+      - buonasera
+      - Ehilà
+      - andiamo
+      - Hey amico
+      - Buongiorno
+      - buonasera
+      - buon pomeriggio
+      - Come va?
+      - Uè
+      - buona giornata
+      - Salve
+      # Romanian
+      - hei
+      - Bună
+      - Salut
+      - salutare
+      - Bună dimineața
+      - bună seara
+      - Neața
+      - Salutare
+      - Haide
+      - Salut omule
+      - Buna dimineata
+      - bună seara
+      - buna ziua
+      - Ce faci?
+      - Hyia
+      - Howdie
+      - o zi buna
+      - Salutare
   - intent: goodbye
     examples: |
+      # English
       - cu
       - good by
       - cee you later
@@ -163,6 +200,7 @@ nlu:
       - see you later
       - cya around
       - bb
+      # Greek
       - αντίο
       - τα λέμε
       - καλό απόγευμα
@@ -171,14 +209,30 @@ nlu:
       - μιλάμε
       - μιλάμε αργότερα
       - θα μιλήσουμε
-      - la revedere
-      - ne vedem mai târziu
-      - noapte bună
+      # Italian
+      - arrivederci
+      - a più tardi
+      - Buona Notte
+      - a presto
+      - buona giornata
+      - Ci vediamo in giro
+      - A dopo 
+      - ci vediamo dopo
+      - Ci vediamo     
+      # Romanian
       - pa
-      - o zi bună
-      - ne mai vedem
+      - La revedere
+      - Pe mai târziu
+      - noapte bună
+      - O zi bună
+      - Ne mai vedem
+      - Pa! Pa!
+      - Ne vedem mai târziu
+      - Ne mai vedem
+      - pa pa
   - intent: affirm
     examples: |
+      # English
       - yes
       - y
       - indeed
@@ -199,6 +253,7 @@ nlu:
       - yes please
       - lets do it
       - go on!
+      # Greek
       - προχώρα
       - ναι
       - προχωράμε
@@ -208,21 +263,48 @@ nlu:
       - εννοείται
       - έγινε
       - σύμφωνοι
+      # Italian
+      - sì
+      - infatti
+      - certamente
+      - Ottima idea
+      - esatto
+      - assolutamente
+      - certo
+      - fantastico
+      - Giusto
+      - continua
+      - facciamolo
+      - si
+      - ok
+      - Certo
+      - sicuro
+      - sì grazie
+      - vai
+      - continua!
+      - Certo, vai avanti
+      # Romanian
       - da
-      - într-adevăr
+      - intr-adevar
       - desigur
-      - sună bine
+      - Sună bine
       - corect
-      - este bine
-      - să o facem
+      - absolut
+      - fain
+      - așa
+      - continua
+      - hai să facem asta
+      - Da
+      - O.K
+      - desigur
       - sigur
-      - cu siguranță
       - da, te rog
       - hai să o facem
       - continua!
-      - sure, go on
+      - Sigur, continuă
   - intent: deny
     examples: |
+      # English
       - no
       - nah
       - better not
@@ -236,6 +318,7 @@ nlu:
       - not in mood
       - i prefer not
       - nope
+      # Greek
       - δεν θέλω
       - όχι
       - όχι καλύτερα
@@ -246,16 +329,37 @@ nlu:
       - δε νομίζω
       - μπα
       - ουτε γι' αστείο
-      - nu
+      # Italian
+      - No
+      - meglio di no
+      - non adesso
+      - mai
+      - penso di no
+      - non mi piace
+      - non proprio
+      - assolutamente no
+      - non voglio
+      - non in vena
+      - preferisco di no
+      - no      
+      # Romanian
+      - nop
+      - Nah
+      - Nu
+      - mai bine nu
+      - nu acum
       - niciodată
-      - nu cred
-      - nu-mi place
-      - în nici un caz
+      - Eu nu cred acest lucru
+      - nu -mi place asta
       - nu chiar
+      - în nici un caz
       - nu vreau
-      - nu sunt în starea de spirit bună
+      - nu am stare
+      - prefer să nu
+      - nu
   - intent: bot_challenge
     examples: |
+      # English
       - are you a bot?
       - are you a human?
       - am I talking to a bot?
@@ -265,24 +369,36 @@ nlu:
       - am I talking to an actual person?
       - you're a bot aren't you?
       - are you even a real person?
+      # Greek
       - μιλάω σε άνθρωπο;
       - είσαι άνθρωπος;
       - μιλάω με ρομπότ;
       - με ποιον μιλάω;
       - ποιος είσαι
       - σε τι μιλάω
-      - ești un robot?
-      - ești un om?
-      - vorbesc cu un robot?
-      - vorbesc cu un om?
-      - care este numele tău?
-      - cum te cheamă?
-      - cine ești tu
-      - vorbesc cu o persoană reală?
-      - ești un robot, nu-i așa?
-      - ești chiar o persoana reala?
+      # Italian
+      - sei un robot?
+      - Sei umano?
+      - sto parlando con un robot?
+      - Sto parlando con un essere umano?
+      - come ti chiami?
+      - chi sei?
+      - Sto parlando con una persona reale?
+      - Sei un robot, vero?
+      - Sei anche una persona reale?      
+      # Romanian
+      - Esti un robot?
+      - Esti un om?
+      - Vorbesc cu un bot?
+      - Vorbesc cu un om?
+      - Cum te cheamă?
+      - Cine eşti tu?
+      - Vorbesc cu o persoană reală?
+      - Ești un bot, nu -i așa?
+      - Ești măcar o persoană reală?
   - intent: inform
     examples: |
+      # English
       - Today, I went to the park and my legs suddenly gave out, I felt embarrassed.
       - Yesterday while I was playing with my kids my hands started shake too much. I felt terrible and my kids were very sad.
       - I went for a walk and adter a while I didn't remember how I put my self there. It was terrible. I was frustrated and I couldn't understand what happened. Really bad situation.
@@ -325,6 +441,156 @@ nlu:
       - very happy
       - super happy
       - better
+      - ah not good
+      - a month ago
+      - I fell down the stairs and hit my head
+      - a month ago    
+      - good
+      - not well
+      - I am not very good
+      - I am doing my best
+      - I work on this.
+      - my day was horrible
+      - I am sad
+      - I don't feel very well
+      - I am disappointed
+      - super sad
+      - I'm so sad
+      - sad
+      - very sad
+      - unhappy
+      - not good
+      - not very good
+      - extremly sad
+      - so sad
+      - I'm sad
+      # Italian
+      - Oggi sono andato al parco e improvvisamente mi hanno ceduto le gambe, mi sono sentito imbarazzato.
+      - Ieri mentre giocavo con i miei figli, le mie mani hanno iniziato a tremare moltissimo. È stato terribile e i miei figli erano molto tristi.
+      - Sono andato a fare una passeggiata e dopo un po' non ricordavo di come fossi finito lì. È stato terribile! Ero frustrato e non riuscivo a capire cosa fosse successo. Situazione davvero brutta.
+      - Ieri sono stato davvero bene con i miei figli. Ne sono stato molto felice.
+      - Oggi sono stato al parco con la mia famiglia. È stata una bellissima esperienza.
+      - Ieri sono andato al parco con i miei figli e ci siamo divertiti molto. Mi sono sentito molto bene a riuscire a giocare con loro.
+      - Spesso non riesco a controllare le mie mani. È davvero imbarazzante e mi sento terribile. Sai, devo chiedere aiuto anche per mangiare e non mi va a genio.
+      - Penso che peggiori ogni giorno. :(
+      - Mi sono svegliato oggi ma mi sento depresso e non voglio fare nulla. È una brutta giornata.
+      - Oggi è una grande giornata. Mi sono svegliato stamattina e le mie mani tremavano molto meno. È stata una bella sensazione.
+      - Mi sento benissimo oggi. È una bella giornata.
+      - Mi sento benissimo
+      - sto bene
+      - sentirsi bene
+      - Sono di buon umore
+      - Sono molto felice
+      - sentirsi soddisfatto
+      - mi sento alla grande
+      - Mi sento bene
+      - va bene
+      - Oggi è un grande giorno
+      - sono veramente felice
+      - va tutto bene
+      - sentirsi bene
+      - sentirsi bene
+      - Perfetto
+      - grande
+      - incredibile
+      - Sentirsi come un re
+      - meraviglioso
+      - Mi sento molto bene
+      - mi sento alla grande
+      - mi sento incredibilmente bene
+      - Super entusiasta
+      - estremamente bene
+      - fantastico
+      - così bene
+      - sono felice
+      - molto felice
+      - felicissimo
+      - meglio
+      - non bene
+      - non sto molto bene
+      - sto facendo del mio meglio
+      - Lavoro su questo.
+      - La mia giornata è stata orribile
+      - sono triste
+      - Non mi sento molto bene
+      - Io sono deluso
+      - super triste
+      - sono così triste
+      - triste
+      - molto triste
+      - infelice
+      - non bene
+      - non molto bene
+      - estremamente triste
+      - così triste
+      - sono triste
+      - ah non va bene
+      - Sono caduto dalle scale e ho battuto la testa
+      - un mese fa      
+      # Romanian
+      - Astăzi, m-am dus în parc și picioarele mi-au cedat dat brusc, m-am simțit jenat.
+      - Ieri, în timp ce mă jucam cu copiii, mâinile mele au început să tremure prea mult. M -am simțit groaznic și copiii mei erau foarte triști.
+      - Am plecat în plimbare și după un timp nu mi-am mai dat seama cum am ajuns unde eram. A fost teribil. Am fost frustrat și nu am putut înțelege ce s-a întâmplat. A fost o situație foarte grea.
+      - Am petrecut un timp foarte frumos cu copiii mei ieri. M-am simțit fericit(ă) făcând asta.
+      - Astăzi am fost în parc și m-am distrat cu familia. A fost o experienta placuta.
+      - Ieri m-am dus cu copiii mei în parc și ne-am distrat foarte mult. M-am simțit foarte bine să mă pot juca cu copiii mei.
+      - Îmi pierd controlul asupra mâinilor mele de multe ori. Este într -adevăr jenant și mă simt groaznic. Tu stii. Trebuie să cer ajutor chiar și să mănânc și nu -mi place.
+      - Cred că se înrăutățește în fiecare zi. :(
+      - M -am trezit astăzi, dar mă simt deprimat și nu vreau să fac nimic. Este o zi proastă.
+      - Astăzi este o zi minunată. M-am trezit dimineața și mâinile mele tremurau cu mult mai puțin. A fost un sentiment plăcut.
+      - Mă simt minunat astăzi. Este o zi frumoasă.
+      - ma simt minunat
+      - sunt bine
+      - mă simt bine
+      - Am o bună dispoziție
+      - Sunt foarte fericit
+      - mă simt mulțumit
+      - sunt grozav
+      - mă simt bine
+      - este bine
+      - Astăzi este o zi minunată
+      - sunt foarte fericit
+      - totul e bine
+      - se simte plăcut
+      - se simte bine
+      - perfect
+      - Grozav
+      - uimitor
+      - Ma simt ca un rege
+      - minunat
+      - Mă simt foarte bine
+      - mă simt grozav
+      - mă simt uimitor
+      - super entuziasmat
+      - extrem de bine
+      - atât de perfect
+      - atat de bun
+      - sunt fericit
+      - foarte fericit
+      - extrem de fericit
+      - mai bine
+      - nu bine
+      - nu sunt prea bine
+      - fac tot ce pot
+      - Lucrez la asta.
+      - Ziua mea a fost oribilă
+      - Sunt trist
+      - Nu mă simt foarte bine
+      - Sunt dezamăgit
+      - super trist
+      - sunt atât de trist
+      - trist
+      - foarte trist
+      - nefericit
+      - nu e bine
+      - nu prea bine
+      - extrem de trist
+      - atat de trist
+      - sunt trist
+      - Ah nu este bine
+      - Am căzut pe scări și mi -am lovit capul
+      - acum o lună      
+      # General        
       - 12
       - 5
       - 12 a.m
@@ -389,81 +655,9 @@ nlu:
       - Rassegnazione
       - Speranza
       - Nostalgia
-      - τέλεια
-      - μια χαρά
-      - υπέροχα
-      - καλά
-      - είμαι καλά
-      - νιώθω ωραία
-      - grozav
-      - extraordinar
-      - mă simt minunat
-      - sunt bine
-      - mă simt bine
-      - am o dispoziție bună
-      - sunt foarte fericit
-      - mă simt mulțumit
-      - mă simt ca un rege
-      - minunat
-      - mă simt foarte bine
-      - sunt grozav
-      - sunt extraordinar
-      - super entuziasmat
-      - extrem de bine
-      - foarte bine
-      - atât de perfect
-      - sunt fericit
-      - fericit
-      - foarte fericit
-      - bine
-      - mai bine
-      - good
-      - not well
-      - I am not very good
-      - I am doing my best
-      - I work on this.
-      - my day was horrible
-      - I am sad
-      - I don't feel very well
-      - I am disappointed
-      - super sad
-      - I'm so sad
-      - sad
-      - very sad
-      - unhappy
-      - not good
-      - not very good
-      - extremly sad
-      - so sad
-      - I'm sad
-      - δεν νιώθω ιδιαίτερα καλά
-      - δεν έχω όρεξη
-      - δεν έχω διάθεση
-      - όχι καλά
-      - έχω υπάρξει και καλύτερα
-      - δεν είχα καλή μέρα σήμερα
-      - η ζωή μου είναι χάλια
-      - nu sunt foarte bun
-      - fac tot ce pot
-      - lucrez la acest lucru.
-      - ziua mea a fost oribilă
-      - sunt trist
-      - nu mă simt foarte bine
-      - sunt dezamăgit
-      - sunt foarte trist
-      - trist
-      - foarte trist
-      - nefericit
-      - nu mă simt bine
-      - nu prea bine
-      - extrem de trist
-      - nu sunt în apele mele
-      - ah not good
-      - a month ago
-      - I fell down the stairs and hit my head
-      - a month ago
   - intent: cancel
     examples: |
+      # English
       - I changed my mind, cancel it.
       - Cancel the process.
       - Don't want to continue
@@ -487,6 +681,7 @@ nlu:
       - I changed my mind
       - stop
       - i want to stop
+      # Greek
       - σταματάμε
       - θέλω να σταματήσω
       - ακύρωσε
@@ -495,44 +690,79 @@ nlu:
       - παράτα το
       - βαρεθηκα
       - κλείστο
-      - m-am răzgândit, anulează-l.
-      - anulați procesul.
-      - nu vreau să continui
-      - oprește-te, te rog.
-      - nu sunt sigur că vreau să continui
-      - nu vreau să mai răspund
-      - anuleaza
-      - renunț.
-      - vreau să opresc procesul.
-      - lasă-l pentru mai tarziu.
-      - putem termina mai târziu?
-      - putem anula procesul?
-      - aș vrea să termin mai târziu
-      - facem o pauză te rog și continuam mai târziu.
-      - anulare
-      - vreau să termin mai târziu
-      - vreau să anulez
-      - vreau să anulez procesul
-      - m-am răzgândit
-      - vreau să mă opresc
+      # Italian
+      - Ho cambiato idea, annullalo.
+      - Annulla il processo.
+      - Non voglio continuare
+      - Ferma
+      - Interrompi per piacere
+      - Non sono sicuro di voler procedere.
+      - Non voglio più rispondere
+      - Annulla
+      - Ci rinuncio
+      - Voglio fermare il processo.
+      - Lascialo per dopo.
+      - Possiamo finire più tardi?
+      - Possiamo annullare il processo?
+      - Vorrei finirlo più tardi
+      - Metti in pausa e continua più tardi.
+      - Annulla
+      - Voglio finirlo più tardi
+      - Voglio annullare
+      - Voglio annullare il processo
+      - Ho cambiato idea
+      - Voglio fermarmi
       - Pausa
-      - Attendi
+      - aspetta      
+      # Romanian
+      - M-am răzgândit, anulează.
+      - Anulează procesul.
+      - Nu vreau să continui
+      - Stop
+      - Oprește te rog
+      - Nu sunt sigur(ă) că vreau să continui.
+      - Nu mai vreau să răspund
+      - Anuleaza
+      - Renunț.
+      - Vreau să opresc procesul.
+      - Lasă pentru mai târziu.
+      - Putem termina mai târziu?
+      - Putem anula procesul?
+      - Aș vrea să-l termin mai târziu
+      - Fă o pauză, te rog, și continuăm mai târziu.
+      - Anulare
+      - Vreau să -l termin mai târziu
+      - Vreau să anulez
+      - Vreau să anulez procesul
+      - M-am răzgândit
+      - Vreau să mă opresc
+      - Pauză
+      - așteaptă
   - intent: thank_you
     examples: |
+      # English
       - thank you
       - thanks
       - thank you!
       - ok thank you.
+      # Greek
       - ευχαριστώ
       - σ' ευχαριστω
       - να 'σαι καλα
       - νιώθω υπόχρεος
+      # Italian
+      - grazie
+      - Grazie
+      - grazie!
+      - ok grazie      
+      # Romanian
       - mulțumesc
-      - îți mulțumesc
+      - Mulțumiri
       - mulțumesc!
-      - bine, îți mulțumesc.
+      - bine, mulțumesc.
   - intent: out_of_scope
     examples: |
+      # English
       - What's the weather today?
       - What about football?
       - what is the square root of 5
@@ -566,6 +796,7 @@ nlu:
       - do you make coffe?
       - I want ice cream
       - cafe please.
+      # Greek
       - τι καιρό κάνει τώρα;
       - πόσο ήρθε χθες το παιχνίδι;
       - όχι άλλο κάρβουνο
@@ -573,37 +804,49 @@ nlu:
       - θέλω πίτες
       - ασξκηφγλξκησ
       - ηρθε το τελος του κοσμου
-      - cum va fi vremea astăzi?
-      - despre fotbal?
-      - care este rădăcina pătrată a lui 5?
-      - vreau să știu vremea
-      - care este sensul vieții
-      - frigiderul nu funcționează
-      - televizorul nu merge
-      - vreau o pizza
-      - mașina de spălat nu funcționează
+      # Italian
+      - Qual è la radice quadrata di 5
+      - Vorrei sapere il meteo
+      - La mia lavatrice non funziona
+      - che anno è
+      - com'è il tempo oggi
+      - Raccontami una barzelletta
+      - Posso avere un hamburger?
+      - Puoi richiamarmi ?
+      - Puoi preparare dei panini?
+      - Puoi chiamarmi un taxi?
+      - Sai preparare il caffè?
+      - voglio un gelato     
+      # Romanian
+      - Cât este rădăcina pătrată din 5
+      - Vreau să știu cum e vremea
+      - Mașina mea de spălat nu funcționează
       - ce an este
-      - comanda o pizza
-      - vreau să comand o pizza
-      - care este vremea
-      - cum va fi vremea?
-      - ce vreme e azi?
-      - spune-mi o glumă
-      - pot să iau un hamburger?
-      - poate YouTube să vorbească?
-      - poți să mă suni înapoi?
-      - îmi puteți da parola dumneavoastră de acces pentru centrul de date?
-      - poți să faci sandvișuri?
-      - poți te rog să-mi trimiți un uber?
-      - tenis
-      - ai vre-o problemă?
-      - e vre-o problema?
-      - este vre-o problema?
-      - ce?
+      - Cum este vremea astăzi
+      - spune-mi o gluma
+      - Pot obține un hamburger?
+      - Poți să mă suni înapoi ?
+      - Poți face sandvișuri?
+      - Poți să -mi trimiți un uber
+      - Faci cafea?
+      - vreau inghetata
   - intent: need_help
     examples: |
+      # English
       - help
       - need some help here
       - I don't know what to do
       - what should I answer here?
       - any suggestions?
+      # Italian
+      - aiuto
+      - Hai bisogno di aiuto per farlo
+      - Io non so cosa fare
+      - Cosa dovrei rispondere qui?
+      - hai suggerimenti?      
+      # Romanian
+      - Ajutor
+      - Am nevoie de niște ajutor
+      - Nu știu ce să fac
+      - Ce ar trebui să răspund aici?
+      - ceva sugestii?
