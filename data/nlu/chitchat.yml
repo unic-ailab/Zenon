@@ -164,7 +164,6 @@ nlu:
       - buon pomeriggio
       - Come va?
       - Uè
-      - buona giornata
       - Salve
       # Romanian
       - hei
@@ -271,7 +270,6 @@ nlu:
       - esatto
       - assolutamente
       - certo
-      - fantastico
       - Giusto
       - continua
       - facciamolo
