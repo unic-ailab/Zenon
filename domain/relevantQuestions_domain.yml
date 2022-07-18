@@ -84,13 +84,13 @@ slots:
   MSdomainI_RQ6:
     type: any
     influence_conversation: false
-  MSdomainII_1Μ_RQ1:
+  MSdomainII_1M_RQ1:
     type: any
     influence_conversation: false
-  MSdomainII_1Μ_RQ2:
+  MSdomainII_1M_RQ2:
     type: any
     influence_conversation: false
-  MSdomainII_3Μ_RQ3:
+  MSdomainII_3M_RQ3:
     type: any
     influence_conversation: false
   MSdomainV_RQ1:
@@ -317,7 +317,7 @@ responses:
           title: A volte
         - payload: /inform{{"given_answer":"often"}}
           title: Spesso
-      text: Nell’ultimo mese hai dovuto rinunciare ad attività sociali (es. uscire con gli amici, cene con parenti, partecipare ad eventi, ecc) a causa della SM?
+      text: Nell'ultimo mese hai dovuto rinunciare ad attività sociali (es. uscire con gli amici, cene con parenti, partecipare ad eventi, ecc) a causa della SM?
   utter_ask_MSdomainV_RQ2:
     - condition:
         - type: slot
@@ -346,8 +346,8 @@ responses:
           title: A volte
         - payload: /inform{{"given_answer":"often"}}
           title: Spesso
-      text: Nell’ultimo mese hai avuto maggiore necessità di assistenza per svolgere le tue attività quotidiane?
-  utter_ask_MSdomainII_1Μ_RQ1:
+      text: Nell'ultimo mese hai avuto maggiore necessità di assistenza per svolgere le tue attività quotidiane?
+  utter_ask_MSdomainII_1M_RQ1:
     - condition:
         - type: slot
           name: language
@@ -368,7 +368,7 @@ responses:
         - payload: /inform{{"given_answer":"no"}}
           title: No
       text: Fai fatica ad addormentarti (impieghi più di 30 minuti)?
-  utter_ask_MSdomainII_1Μ_RQ2:
+  utter_ask_MSdomainII_1M_RQ2:
     - condition:
         - type: slot
           name: language
@@ -378,7 +378,7 @@ responses:
           title: Yes
         - payload: /inform{{"given_answer":"no"}}
           title: No
-      text: Would you define your sleep “restful”?
+      text: Would you define your sleep "restful"?
     - condition:
         - type: slot
           name: language
@@ -388,28 +388,28 @@ responses:
           title: Sì
         - payload: /inform{{"given_answer":"no"}}
           title: No
-      text: Definiresti il tuo sonno riposante?
-  utter_ask_MSdomainII_3Μ_RQ3:
-    - condition:
-        - type: slot
-          name: language
-          value: English
-      buttons:
-        - payload: /inform{{"given_answer":"yes"}}
-          title: Yes
-        - payload: /inform{{"given_answer":"no"}}
-          title: No
-      text: Have you ever been told, or suspected yourself, that you seem to  act out your dreams" while asleep (for example, punching, flailing your arms in the air, making running movements, etc.)?
-    - condition:
-        - type: slot
-          name: language
-          value: Italian
-      buttons:
-        - payload: /inform{{"given_answer":"yes"}}
-          title: Sì
-        - payload: /inform{{"given_answer":"no"}}
-          title: No
-      text: "Ti hanno detto che ”agisci i tuoi sogni” mentre dormi o pensi di farlo (per esempio: dare dei pugni, muovere le braccia in aria, fare dei movimenti come se corressi ecc.)?"
+      text: Definiresti il tuo sonno "riposante"?
+  # utter_ask_MSdomainII_3M_RQ3:
+  #   - condition:
+  #       - type: slot
+  #         name: language
+  #         value: English
+  #     buttons:
+  #       - payload: /affirm{{"given_answer":"yes"}}
+  #         title: Yes
+  #       - payload: /deny{{"given_answer":"no"}}
+  #         title: No
+  #     text: Have you ever been told, or suspected yourself, that you seem to act out your dreams while asleep (for example, punching, flailing your arms in the air, making running movements, etc.)?
+  #   - condition:
+  #       - type: slot
+  #         name: language
+  #         value: Italian
+  #     buttons:
+  #       - payload: /affirm{{"given_answer":"yes"}}
+  #         title: Sì
+  #       - payload: /deny{{"given_answer":"no"}}
+  #         title: No
+  #     text: Ti hanno detto che agisci i tuoi sogni mentre dormi o pensi di farlo (per esempio, dare dei pugni, muovere le braccia in aria, fare dei movimenti come se corressi ecc.)?
   utter_ask_MSdomainIII_1W_RQ1:
     - condition:
         - type: slot
@@ -533,6 +533,8 @@ actions:
   - action_ask_MSdomainI_RQ5
   - action_ask_MSdomainI_RQ6
   - validate_MSdomainI_form
+  #- action_ask_MSdomainII_1M_RQ2
+  - action_ask_MSdomainII_3M_RQ3
   - action_ask_MSdomainIII_1W_RQ2
   - action_ask_MSdomainIII_1W_RQ2a
   - action_ask_MSdomainIII_1W_RQ5
@@ -602,20 +604,21 @@ forms:
           type: from_entity
   MSdomainII_1M_form:
     required_slots:
-      MSdomainII_1Μ_RQ1:
+      MSdomainII_1M_RQ1:
         - entity: given_answer
           type: from_entity
-      MSdomainII_1Μ_RQ2:
-        - entity: given_answer
-          type: from_entity
-      MSdomainII_3Μ_RQ3:
+      MSdomainII_1M_RQ2:
         - entity: given_answer
           type: from_entity
   MSdomainII_3M_form:
     required_slots:
-      MSdomainII_3Μ_RQ3:
-        - entity: given_answer
-          type: from_entity
+      MSdomainII_3M_RQ3:
+        - type: from_intent
+          intent: affirm
+          value: yes
+        - type: from_intent
+          intent: deny
+          value: no
   MSdomainIII_1W_form:
     required_slots:
       MSdomainIII_1W_RQ1:
@@ -645,12 +648,12 @@ forms:
             - cancel
             - out_of_scope
             - options_menu
-      MSdomainIII_2W_RQ6:
-        - entity: number
-          type: from_entity
-      MSdomainIII_2W_RQ7:
-        - entity: given_answer
-          type: from_entity
+      # MSdomainIII_2W_RQ6:
+      #   - entity: number
+      #     type: from_entity
+      # MSdomainIII_2W_RQ7:
+      #   - entity: given_answer
+      #     type: from_entity
   MSdomainIII_2W_form:
     required_slots:
       MSdomainIII_2W_RQ6:

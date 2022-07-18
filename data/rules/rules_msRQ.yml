@@ -1,7 +1,6 @@
 version: "2.0"
-#will we allow domain questions to be stopped?
 rules:
-  - rule: Start MS Domain I – Mobility, general motor or physical function relevant questions
+  - rule: Start MS Domain I - Mobility, general motor or physical function relevant questions
     steps:
       - intent: MSdomainI_start
       - action: action_set_questionnaire_slot
@@ -22,7 +21,7 @@ rules:
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
 
-  - rule: Start MS Domain II per month – Sleep Disorders relevant questions
+  - rule: Start MS Domain II monthly - Sleep Disorders relevant questions
     steps:
       - intent: MSdomainII_1M_start
       - action: action_set_questionnaire_slot
@@ -32,9 +31,48 @@ rules:
       - action: MSdomainII_1M_form
       - active_loop: MSdomainII_1M_form
 
-  - rule: Submit MS Domain II relevant questions
+  - rule: Start MS Domain II 3-months - Sleep Disorders relevant questions
+    steps:
+      - intent: MSdomainII_3M_start
+      - action: action_set_questionnaire_slot
+      - slot_was_set:
+          - questionnaire: MSdomainII_3M
+      - action: action_utter_starting_questionnaire
+      - action: MSdomainII_3M_form
+      - active_loop: MSdomainII_3M_form
+
+  #  - rule: Start MS Domain II 3 month – Sleep Disorders relevant questions
+  #    steps:
+  #     - action: action_questionnaire_completed_first_part
+  #     - slot_was_set:
+  #           - MSdomainII_both: False
+  #     - slot_was_set:
+  #           - questionnaire: MSdomainII_3M 
+  #     - action: MSdomainII_3M_form
+  #     - active_loop: MSdomainII_3M_form
+
+  #  - rule: Start MS Domain III biweekly – Sleep Disorders relevant questions
+  #    steps:
+  #     - action: action_questionnaire_completed_first_part
+  #     - slot_was_set:
+  #           - MSdomainIII_both: False
+  #     - slot_was_set:
+  #           - questionnaire: MSdomainIII_2W 
+  #     - action: MSdomainIII_2W_form
+  #     - active_loop: MSdomainIII_2W_form
+
+  #  - rule: Start MS Domain II 3 month – Sleep Disorders relevant questions
+  #    steps:
+  #     - action: action_questionnaire_completed_first_part
+  #     - action: MSdomainII_3M_form
+  #     - active_loop: MSdomainII_3M_form
+
+
+  - rule: Submit MS Domain II monthly relevant questions 
     condition:
       - active_loop: MSdomainII_1M_form
+      - slot_was_set:
+          - MSdomainII_both: False
     steps:
       - action: MSdomainII_1M_form
       - active_loop: null
@@ -42,6 +80,21 @@ rules:
           - requested_slot: null
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
+
+  - rule: Submit MS Domain II monthly relevant questions and start MS Domain II-3 months
+    condition:
+      - active_loop: MSdomainII_1M_form
+      - slot_was_set:
+          - MSdomainII_both: True
+    steps:
+      - action: MSdomainII_1M_form
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null
+      - action: action_questionnaire_completed_first_part
+      - action: MSdomainII_3M_form
+      - active_loop: MSdomainII_3M_form
+
 
   - rule: Interruption MS Domain II relevant questions
     condition:
@@ -51,16 +104,6 @@ rules:
       - action: utter_process_not_cancellable
       - action: MSdomainII_1M_form
       - active_loop: MSdomainII_1M_form
-
-  - rule: Start MS Domain II 3M – Sleep Disorders relevant questions
-    steps:
-      - intent: MSdomainII_3M_start
-      - action: action_set_questionnaire_slot
-      - slot_was_set:
-          - questionnaire: MSdomainII_3M
-      - action: action_utter_starting_questionnaire
-      - action: MSdomainII_3M_form
-      - active_loop: MSdomainII_3M_form
 
   - rule: Submit MS Domain II 3M relevant questions
     condition:
@@ -82,7 +125,7 @@ rules:
       - action: MSdomainII_3M_form
       - active_loop: MSdomainII_3M_form
 
-  - rule: Start MS Domain III weekly – Mental and Cognitive Ability relevant questions
+  - rule: Start MS Domain III weekly - Mental and Cognitive Ability relevant questions
     steps:
       - intent: MSdomainIII_1W_start
       - action: action_set_questionnaire_slot
@@ -92,9 +135,20 @@ rules:
       - action: MSdomainIII_1W_form
       - active_loop: MSdomainIII_1W_form
 
+  - rule: Start MS Domain III biweekly – Mental and Cognitive Ability relevant questions
+    steps:
+      - intent: MSdomainIII_2W_start
+      - action: action_set_questionnaire_slot
+      - slot_was_set:
+          - questionnaire: MSdomainIII_2W
+      - action: MSdomainIII_2W_form
+      - active_loop: MSdomainIII_2W_form
+
   - rule: Submit MS Domain III weekly relevant questions
     condition:
       - active_loop: MSdomainIII_1W_form
+      - slot_was_set:
+          - MSdomainIII_both: False
     steps:
       - action: MSdomainIII_1W_form
       - active_loop: null
@@ -102,6 +156,20 @@ rules:
           - requested_slot: null
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
+
+  - rule: Submit MS Domain III weekly relevant questions and start MS Domain III biweekly
+    condition:
+      - active_loop: MSdomainIII_1W_form
+      - slot_was_set:
+          - MSdomainIII_both: True
+    steps:
+      - action: MSdomainIII_1W_form
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null
+      - action: action_questionnaire_completed_first_part
+      - action: MSdomainIII_2W_form
+      - active_loop: MSdomainIII_2W_form
 
   - rule: Interruption MS Domain III weekly relevant questions
     condition:
@@ -111,16 +179,6 @@ rules:
       - action: utter_process_not_cancellable
       - action: MSdomainIII_1W_form
       - active_loop: MSdomainIII_1W_form
-
-  - rule: Start MS Domain III biweekly – Mental and Cognitive Ability relevant questions
-    steps:
-      - intent: MSdomainIII_2W_start
-      - action: action_set_questionnaire_slot
-      - slot_was_set:
-          - questionnaire: MSdomainIII_2W
-      - action: action_utter_starting_questionnaire
-      - action: MSdomainIII_2W_form
-      - active_loop: MSdomainIII_2W_form
 
   - rule: Submit MS Domain III biweekly relevant questions
     condition:
@@ -132,6 +190,18 @@ rules:
           - requested_slot: null
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
+
+  # - rule: Submit MS Domain III biweekly relevant questions
+  #   condition:
+  #     - active_loop: MSdomainIII_1W_form
+  #   steps:
+  #     - action: MSdomainIII_1W_form
+  #     - active_loop: null
+  #     - slot_was_set:
+  #         - requested_slot: null
+  #     - slot_was_set:
+  #         - MSdomainIII_both: True 
+  #     - action: action_questionnaire_completed_first_part
 
   - rule: Interruption MS Domain III biweekly relevant questions
     condition:

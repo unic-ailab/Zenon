@@ -4,6 +4,7 @@ import random
 import datetime
 import time
 import re
+import os
 import requests
 import json
 
@@ -14,14 +15,13 @@ from numpy import true_divide
 from pytz import timezone
 
 from rasa_sdk import Action, Tracker
-from rasa_sdk.events import SlotSet, FollowupAction
+from rasa_sdk.events import SlotSet, FollowupAction, UserUttered
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormValidationAction
 
-import sys     
-import os
-
-sys.path.append(os.getcwd())  
+import sys        
+#sys.path.append('C:/Users/chloe/Desktop/UNIC-AI Lab/ALAMEDA/Zenon_git/Zenon') 
+sys.path.append(os.getcwd().replace("\\","/"))
 from custom_tracker_store import CustomSQLTrackerStore
 
 customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="demo.db")
@@ -381,23 +381,37 @@ class ActionGetAvailableQuestions(Action):
                 ]
             )
             
-            if usecase == "ms":
-                # check if both questionnaires for a domain are available
-                tmp_dict = {
-                    "tmpMSdomainII": [],
-                    "tmpMSdomainIII": []
-                }
+            # if usecase == "ms":
+            #     # check if both questionnaires for a domain are available
+            #     tmp_dict = {
+            #         "tmpMSdomainII": [],
+            #         "tmpMSdomainIII": []
+            #     }
 
-                for k in tmp_dict.keys():
-                    r = re.compile(k[3:]+"_")
-                    tmp_dict[k] = list(filter(r.match, available_questionnaires))
+            #     for k in tmp_dict.keys():
+            #         r = re.compile(k[3:]+"_")
+            #         tmp_dict[k] = list(filter(r.match, available_questionnaires))
                     
-                    # if both questionnaires are available remove the one with low frequency
-                    if len(tmp_dict[k]) == 2:
-                        if "MSdomainII_3M" in available_questionnaires:
-                            available_questionnaires.remove("MSdomainII_3M")
-                        elif "MSdomainIII_2W" in available_questionnaires:
-                            available_questionnaires.remove("MSdomainIII_2W")
+            #         # if both questionnaires are available remove the one with low frequency
+            #         if len(tmp_dict[k]) == 2:
+            #             if "MSdomainII_3M" in available_questionnaires:
+            #                 available_questionnaires.remove("MSdomainII_3M")
+            #             elif "MSdomainIII_2W" in available_questionnaires:
+            #                 available_questionnaires.remove("MSdomainIII_2W")
+            
+            slots_to_set = []
+            if all(x in available_questionnaires for x in ["MSdomainII_3M", "MSdomainII_3M"]):
+                available_questionnaires.remove("MSdomainII_3M")
+                slots_to_set.append(SlotSet("MSdomainII_both", True))
+            else:
+                slots_to_set.append(SlotSet("MSdomainII_both", False))
+
+
+            if all(x in available_questionnaires for x in ["MSdomainIII_1W", "MSdomainIII_2W"]):
+                available_questionnaires.remove("MSdomainIII_2W")
+                slots_to_set.append(SlotSet("MSdomainIII_both", True))
+            else:
+                slots_to_set.append(SlotSet("MSdomainIII_both", False))
 
             buttons = []
             for questionnaire in available_questionnaires:
@@ -407,16 +421,17 @@ class ActionGetAvailableQuestions(Action):
             #add button for cancel that takes the user back to the general questions
             buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
             dispatcher.utter_message(text=text, buttons=buttons)
+            return reset_form_slots(tracker, domain, reset_questionnaires)+slots_to_set
 
-            if len(tmp_dict["tmpMSdomainII"]) == 2 and len(tmp_dict["tmpMSdomainIII"]) == 2:
-                # return doesnt need [] because reset_form_slots returns a list
-                return reset_form_slots(tracker, domain, reset_questionnaires)+[SlotSet("MSdomainII_both", "True"), SlotSet("MSdomainIII_both", "True")]       
-            elif len(tmp_dict["tmpMSdomainII"]) == 2:
-                return reset_form_slots(tracker, domain, reset_questionnaires)+[SlotSet("MSdomainII_both", "True")]       
-            elif len(tmp_dict["tmpMSdomainIII"]) == 2:
-                return reset_form_slots(tracker, domain, reset_questionnaires)+[SlotSet("MSdomainIII_both", "True")]
-            else:
-                return reset_form_slots(tracker, domain, reset_questionnaires)
+            # if len(tmp_dict["tmpMSdomainII"]) == 2 and len(tmp_dict["tmpMSdomainIII"]) == 2:
+            #     # return doesnt need [] because reset_form_slots returns a list
+            #     return reset_form_slots(tracker, domain, reset_questionnaires)+[SlotSet("MSdomainII_both", "True"), SlotSet("MSdomainIII_both", "True")]       
+            # elif len(tmp_dict["tmpMSdomainII"]) == 2:
+            #     return reset_form_slots(tracker, domain, reset_questionnaires)+[SlotSet("MSdomainII_both", "True")]       
+            # elif len(tmp_dict["tmpMSdomainIII"]) == 2:
+            #     return reset_form_slots(tracker, domain, reset_questionnaires)+[SlotSet("MSdomainIII_both", "True")]
+            # else:
+            #     return reset_form_slots(tracker, domain, reset_questionnaires)
 
 class ActionContinueLatestQuestionnaire(Action):
     def name(self) -> Text:
@@ -424,47 +439,52 @@ class ActionContinueLatestQuestionnaire(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        q_abbreviation = tracker.get_slot("questionnaire")
-        isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(), q_abbreviation)
-        if isAvailable:        
-            q_name = get_text_from_lang(tracker, questionnaire_abbreviations[q_abbreviation])
-
-            text = get_text_from_lang(
-                tracker,
-                [
-                    "Do you want to continue the {} questionnaire?".format(q_name),
-                    " ",
-                    "Vuoi continuare il questionario {}?".format(q_name),
-                    "Dorești să continui chestionarul {}?".format(q_name),
-                ]
-            )
-            buttons = []
-            start_button_title = get_text_from_lang(
-                tracker,
-                [
-                    "Continue",
-                    " ", 
-                    "Continua",
-                    "Continuă",
-                ]
-            )
-            buttons.append({"title": start_button_title, "payload": "/"+ q_abbreviation+"_start"})
-            #add button for cancel that takes the user back to the general questions
-            buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
-            dispatcher.utter_message(text=text, buttons=buttons)
+        #check if there is currently an active questionnaire and ignore this action if there is
+        if tracker.active_loop.get("name"):
             return []
         else:
-            text = get_text_from_lang(
-                tracker,
-                [
-                    "The {} questionnaire is not available".format(q_name),
-                    " ",
-                    "The {} questionnaire is not available".format(q_name),
-                    "The {} questionnaire is not available".format(q_name),
-                ]
-            )
-            dispatcher.utter_message(text=text)
-            return [FollowupAction("action_get_available_questionnaires")]
+            q_abbreviation = tracker.get_slot("questionnaire")
+            isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(), q_abbreviation)
+            if isAvailable:        
+                q_name = get_text_from_lang(tracker, questionnaire_abbreviations[q_abbreviation])
+
+                #TODO: fix translation
+                text = get_text_from_lang(
+                    tracker,
+                    [
+                        "Do you want to continue the {} questionnaire?".format(q_name),
+                        " ",
+                        "Vuoi continuare il questionario {}?".format(q_name),
+                        "Doriți să continuați chestionarul {}?".format(q_name),
+                    ]
+                )
+                buttons = []
+                start_button_title = get_text_from_lang(
+                    tracker,
+                    [
+                        "Continue",
+                        " ", 
+                        "Continua",
+                        "Continua",
+                    ]
+                )
+                buttons.append({"title": start_button_title, "payload": "/"+ q_abbreviation+"_start"})
+                #add button for cancel that takes the user back to the general questions
+                buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
+                dispatcher.utter_message(text=text, buttons=buttons)
+                return []
+            else:
+                text = get_text_from_lang(
+                    tracker,
+                    [
+                        "The {} questionnaire is not available".format(q_name),
+                        " ",
+                        "The {} questionnaire is not available".format(q_name),
+                        "The {} questionnaire is not available".format(q_name),
+                    ]
+                )
+                dispatcher.utter_message(text=text)
+                return [FollowupAction("action_get_available_questionnaires")]
 
 class ActionOptionsMenu(Action):
     def name(self) -> Text:
@@ -664,11 +684,28 @@ class ActionQuestionnaireCompleted(Action):
         # issue with size of answers cell
         storeQuestionnaireData(True, tracker)
         customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "COMPLETED")
-        usecase = tracker.current_state()['sender_id'][:2]
-        if usecase == "ms":
-            return [SlotSet("MSdomainII_both", "False"), SlotSet("MSdomainIII_both", "False")]
-        else:                
-            return []
+        return []
+
+class ActionQuestionnaireCompletedFirstPart(Action):
+    def name(self):
+        return "action_questionnaire_completed_first_part"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        q_abbreviation = tracker.get_slot("questionnaire")
+        storeQuestionnaireData(True, tracker)
+        customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], q_abbreviation, "COMPLETED")
+
+        #fake_intent={"name": "/"+q_abbreviation+"_start", "confidence": 1.0}
+        #UserUttered("/MSdomainIII_2W_start", fake_intent)
+
+        if q_abbreviation == "MSdomainIII_1W":
+            return [SlotSet("questionnaire", "MSdomainIII_2W"), FollowupAction("MSdomainIII_2W_form")] #UserUttered("/MSdomainIII_2W_start", fake_intent)]
+        elif q_abbreviation == "MSdomainII_1M":
+            return [SlotSet("questionnaire", "MSdomainII_3M"), FollowupAction("MSdomainII_3M_form")] #UserUttered("/MSdomainII_3M_start")]
+        else:
+            return [FollowupAction("action_options_menu")]
 
 # class ActionStoreQuestionnaire(Action):
 #     def name(self):
@@ -708,15 +745,10 @@ class ActionQuestionnaireCancelled(Action):
             ],
         )
         dispatcher.utter_message(text=text)
-        # storeQuestionnaireData(False, tracker)
-        if tracker.get_slot("questionnaire"):
-            customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "IN_PROGRESS")
-
-        usecase = tracker.current_state()['sender_id'][:2]
-        if usecase == "ms":
-            return [SlotSet("MSdomainII_both", "False"), SlotSet("MSdomainIII_both", "False")]
-        else:                
-            return[]
+        storeQuestionnaireData(False, tracker)
+        if tracker.get_slot("questionnaire") in questionnaire_abbreviations.keys():
+             customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "IN_PROGRESS")
+        return[]
 
 class ActionUtterStartingQuestionnaire(Action):
     def name(self):
@@ -6087,19 +6119,53 @@ class ValidateMSDomainIForm(FormValidationAction):
 ####################################################################################################
 # MS Case Domain II                                                                                #
 ####################################################################################################                  
-class ValidateMSDomainII1MForm(FormValidationAction):
+# class ValidateMSDomainII1MForm(FormValidationAction):
+#     def name(self) -> Text:
+#         return "validate_MSdomainII_1M_form"   
+
+#     async def required_slots(
+#         self, slots_mapped_in_domain, dispatcher, tracker, domain,
+#     ) -> List[Text]:
+
+#         # if not tracker.get_slot("MSdomainII_both"):
+#         #     slots_mapped_in_domain.remove("MSdomainII_3Μ_RQ3")
+
+#         return slots_mapped_in_domain# + [SlotSet("MSdomainII_both", "False")]
+
+class ActionAskMSDomainII3MRQ3(Action):
     def name(self) -> Text:
-        return "validate_MSdomainII_1M_form"   
+        return "action_ask_MSdomainII_3M_RQ3"
 
-    async def required_slots(
-        self, slots_mapped_in_domain, dispatcher, tracker, domain,
-    ) -> List[Text]:
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
 
-        if not tracker.get_slot("MSdomainII_both"):
-            slots_mapped_in_domain.remove("MSdomainII_3Μ_RQ3")
-            # SlotSet(key="MSdomainII_both", value="False")
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Have you ever been told, or suspected yourself, that you seem to act out your dreams while asleep (for example, punching, flailing your arms in the air, making running movements, etc.)?",
+                " ",
+                "Ti hanno detto che agisci i tuoi sogni mentre dormi o pensi di farlo (per esempio, dare dei pugni, muovere le braccia in aria, fare dei movimenti come se corressi ecc.)?",                 
+                " "
+            ]
+        )
 
-        return slots_mapped_in_domain
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                ["Sì", "No"],                
+                [" ", " "], 
+            ],
+            [
+                '/affirm',
+                '/deny'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return [] 
 
 ####################################################################################################
 # MS Case Domain III                                                                               #
@@ -6253,16 +6319,15 @@ class ValidateMSDomainIII1WForm(FormValidationAction):
         self, slots_mapped_in_domain, dispatcher, tracker, domain,
     ) -> List[Text]:
 
-        if tracker.get_slot("MSdomainIII_1W_RQ2") is not None and tracker.get_slot("MSdomainIII_1W_RQ2") < 6:
-            slots_mapped_in_domain.remove("MSdomainIII_1W_RQ2a")
+        # if tracker.get_slot("MSdomainIII_1W_RQ2") is not None and tracker.get_slot("MSdomainIII_1W_RQ2") < 6:
+        #     slots_mapped_in_domain.remove("MSdomainIII_1W_RQ2a")
 
-        if tracker.get_slot("MSdomainIII_1W_RQ5") is not None and tracker.get_slot("MSdomainIII_1W_RQ5") < 6:
-            slots_mapped_in_domain.remove("MSdomainIII_1W_RQ5a")  
+        # if tracker.get_slot("MSdomainIII_1W_RQ5") is not None and tracker.get_slot("MSdomainIII_1W_RQ5") < 6:
+        #     slots_mapped_in_domain.remove("MSdomainIII_1W_RQ5a")  
 
-        if not tracker.get_slot("MSdomainIII_both"):
-            slots_mapped_in_domain.remove("MSdomainIII_2W_RQ6") 
-            slots_mapped_in_domain.remove("MSdomainIII_2W_RQ7")
-            # SlotSet(key="MSdomainIII_both", value="False")                     
+        # if not tracker.get_slot("MSdomainIII_both"):
+        #     slots_mapped_in_domain.remove("MSdomainIII_2W_RQ6") 
+        #     slots_mapped_in_domain.remove("MSdomainIII_2W_RQ7")                        
 
         return slots_mapped_in_domain
 
@@ -6540,7 +6605,7 @@ class ActionAskMSDomainIV_1WRQ3(Action):
             [
                 "In the last week, have you experienced symptoms of previous relapses again?",
                 " ",
-                "Nell’ultima settimana ti è capitato di avvertire nuovamente sintomi di precedenti ricadute?",                 
+                "Nell'ultima settimana ti è capitato di avvertire nuovamente sintomi di precedenti ricadute?",                 
                 " "
             ]
         )
@@ -6593,6 +6658,3 @@ def storeQuestionnaireData(isFinished, tracker):
     usecase = sender_id[:len(sender_id)-2].upper()
     if tracker.get_slot("questionnaire") in questionnaire_per_usecase[usecase]: 
         customTrackerInstance.saveQuestionnaireAnswers(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), isFinished, tracker)
-
-def storeRelevantQuestionsData(tracker):
-    customTrackerInstance.saveRelevantQuestionsAnswers(tracker.current_state()['sender_id'], tracker.slots["questionnaire"].title(), tracker)
