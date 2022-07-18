@@ -693,7 +693,7 @@ class ActionQuestionnaireCompletedFirstPart(Action):
         if q_abbreviation == "MSdomainIII_1W":
             return [SlotSet("questionnaire", "MSdomainIII_2W"), FollowupAction("MSdomainIII_2W_form")] #UserUttered("/MSdomainIII_2W_start", fake_intent)]
         elif q_abbreviation == "MSdomainII_1M":
-            return [SlotSet("questionnaire", "MSdomainII_3M"), SlotSet("MSdomainII_3M_RQ3", None), FollowupAction("MSdomainII_3M_form")] #UserUttered("/MSdomainII_3M_start")]
+            return [SlotSet("questionnaire", "MSdomainII_3M"), FollowupAction("MSdomainII_3M_form")] #UserUttered("/MSdomainII_3M_start")]
         else:
             return [FollowupAction("action_options_menu")]
 
