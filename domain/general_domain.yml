@@ -4,16 +4,18 @@ session_config:
   carry_over_slots_to_new_session: true
 intents:
   - available_questionnaires
-  - notification_greet
   - close_questionnaire
   - health_update
   - tutorials
   - continue
   - options_menu
   - MSdomainI_start
-  - MSdomainII_start
-  - MSdomainIII_start
-  - MSdomainIV_start
+  - MSdomainII_1M_start
+  - MSdomainII_3M_start
+  - MSdomainIII_1W_start
+  - MSdomainIII_2W_start
+  - MSdomainIV_1W_start
+  - MSdomainIV_Daily_start
   - MSdomainV_start
   - STROKEdomainIII_start
   - STROKEdomainIV_start
@@ -22,6 +24,7 @@ intents:
   - set_language
   - greet
   - deny
+  - notification_questionnaire_open
   - questionnaire_open
   - dizzNbalance_start
   - affirm
@@ -46,6 +49,14 @@ entities:
   - sentiment_classes
   - number
 slots:
+  MSdomainII_both:
+    type: bool
+    initial_value: False
+    influence_conversation: true
+  MSdomainIII_both:
+    type: bool
+    initial_value: False
+    influence_conversation: true
   questionnaire:
     type: categorical
     influence_conversation: true
@@ -60,18 +71,15 @@ slots:
       - STROKEdomainIV
       - STROKEdomainV
       - MSdomainI
-      - MSdomainII
-      - MSdomainIII
-      # - MSdomainII_1M
-      # - MSdomainII_3M
-      # - MSdomainIII_1W
-      # - MSdomainIII_2W
-      - MSdomainIV
+      - MSdomainII_1M
+      - MSdomainII_3M
+      - MSdomainIII_1W
+      - MSdomainIII_2W
+      - MSdomainIV_1W
+      - MSdomainIV_Daily
       - MSdomainV
-      #- fh-q
   is_first_time:
     type: bool
-    initial_value: True
     influence_conversation: true
   is_completed:
     type: bool
@@ -101,6 +109,9 @@ slots:
   sentiment_classes:
     type: any
     influence_conversation: false
+  report_extra_Q1:
+    type: any
+    influence_conversation: false
   requested_slot:
     type: unfeaturized
     influence_conversation: false
@@ -115,12 +126,12 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Poți să-mi spui cum te simți astăzi sau poți împărtăși ceva cu mine. În plus, vă pot ajuta să completați toate chestionarele disponibile.
+      text: Poți să-mi spui cum te simți astăzi sau poți împărtăși ceva cu mine. În plus, te pot ajuta să completezi toate chestionarele disponibile.
     - condition:
         - type: slot
           name: language
           value: Italian
-      text: Puoi dirmi come ti senti oggi o puoi condividere qualcosa con me. Inoltre, posso aiutarti a completare tutti i questionari disponibili.
+      text: Puoi dirmi come ti senti oggi o puoi condividere qualcosa con me. Inoltre, posso aiutarti a completare i questionari disponibili.
     - condition:
         - type: slot
           name: language
@@ -136,7 +147,7 @@ responses:
         - type: slot
           name: questionnaire
           value: ACTIVLIM
-      text: Bifați "?" pentru activități necunoscute carora nu le puteți estima dificultatea (pentru că nu trebuie să le faceți niciodată, nu pentru că sunt imposibile).
+      text: Selectează "?" pentru activități necunoscute cărora nu le poți estima dificultatea (pentru că nu trebuie să le faci vreodată, nu pentru că sunt imposibile).
   utter_greet:
     - condition:
         - type: slot
@@ -147,7 +158,7 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Hei acolo. Cu ce ​​vă pot ajuta?
+      text: Salutare. Cu ce ​​te pot ajuta?
     - condition:
         - type: slot
           name: language
@@ -157,7 +168,7 @@ responses:
         - type: slot
           name: language
           value: Italian
-      text: Ehilà. Come posso aiutarla?
+      text: Ehilà. Come posso aiutarti?
   utter_handle_out_of_scope:
     - condition:
         - type: slot
@@ -168,7 +179,7 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Îmi pare rău, nu pot face față acestei cereri.
+      text: Îmi pare rău, nu pot gestiona această cerere.
     - condition:
         - type: slot
           name: language
@@ -179,12 +190,12 @@ responses:
           name: language
           value: Italian
       text: Mi dispiace, non posso gestire questa richiesta.
-  utter_confirm_cancellation: #TODO To add Italian version
+  utter_confirm_cancellation:
     - condition:
         - type: slot
           name: language
           value: English
-      text: Do you want to cancel the process?
+      text: Do you want to pause the questionnaire?
     - condition:
         - type: slot
           name: language
@@ -194,8 +205,13 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Doriți să anulați procesul?
-  utter_process_cancelled: #TODO To add Italian version
+      text: Dorești să anulezi procesul?
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Vuoi annullare il processo?
+  utter_process_cancelled:
     - condition:
         - type: slot
           name: language
@@ -210,8 +226,13 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Am oprit procesul. O putem termina mai târziu.
-  utter_goodbye: #TODO To add Italian version
+      text: Am oprit procesul. Putem termina mai târziu.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Ho fermato il processo. Possiamo finirlo più tardi.
+  utter_goodbye:
     - condition:
         - type: slot
           name: language
@@ -227,6 +248,11 @@ responses:
           name: language
           value: Romanian
       text: La revedere.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: A presto
   utter_iamabot:
     - condition:
         - type: slot
@@ -242,7 +268,7 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Sunt Zenon, asistentul tău personal Alameda.
+      text: Sunt Zenon, asistentul tău personal în ALAMEDA.
     - condition:
         - type: slot
           name: language
@@ -263,7 +289,7 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Vă rog să reformulați.
+      text: Limbajul uman e încă o provocare pentru mine. Ai putea să reformulezi, te rog?
     - condition:
         - type: slot
           name: language
@@ -274,23 +300,7 @@ responses:
         - type: slot
           name: language
           value: English
-        - type: slot
-          name: sentiment
-          value: pos
-      text: That's great! Is this something you want me to let your doctor know about? It might help with your progress.
-    - condition:
-        - type: slot
-          name: language
-          value: English
       text: Is this something you would like me to report to your doctor? It might help with your progress.
-    - condition:
-        - type: slot
-          name: language
-          value: Greek
-        - type: slot
-          name: sentiment
-          value: pos
-      text: Αυτό είναι υπέροχο! Είναι κάτι που θα ήθελες να πω στον γιατρό σου; Ίσως βοηθήσει.
     - condition:
         - type: slot
           name: language
@@ -300,23 +310,7 @@ responses:
         - type: slot
           name: language
           value: Romanian
-        - type: slot
-          name: sentiment
-          value: pos
-      text: Este grozav! Este ceva despre care vrei să-l anunț pe medicul tău? S-ar putea să te ajute la progresul tău.
-    - condition:
-        - type: slot
-          name: language
-          value: Romanian
-      text: Este ceva despre care vrei să-l anunț pe medicul tău? S-ar putea să te ajute la progresul tău.
-    - condition:
-        - type: slot
-          name: language
-          value: Italian
-        - type: slot
-          name: sentiment
-          value: pos
-      text: Fantastico! È qualcosa che vuoi che informi il tuo dottore? Potrebbe aiutarti con i tuoi progressi.
+      text: Este ceva despre care vrei să-l anunț pe medicul tău? S-ar putea să ajute la progresul tău.
     - condition:
         - type: slot
           name: language
@@ -333,13 +327,13 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Mai există ceva pe care ați dori să raportați? Poate cu privire la un eveniment din viața ta de zi cu zi care ar putea avea legătură cu progresul tău?
+      text: Mai există ceva ce ai dori să semnalezi? Poate cu privire la un eveniment din viața ta de zi cu zi, care ar putea avea legătură cu progresul tău?
     - condition:
         - type: slot
           name: language
           value: Italian
-      text: C'è qualcos'altro che vorresti segnalare? Forse per quanto riguarda un evento della tua vita quotidiana che potrebbe riguardare i tuoi progressi?
-  utter_inform_doctor_go_on:
+      text: C'è qualcos'altro che vorresti segnalare? Per esempio un evento della vita quotidiana che potrebbe riguardare l'andamento della tua salute?
+  utter_ask_report_extra_Q1:
     - condition:
         - type: slot
           name: language
@@ -349,12 +343,12 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Este ceva despre care vrei să-l anunț pe medicul tău? S-ar putea să te ajute la progresul tău.
+      text: Ce ai vrea să transmit mai departe?
     - condition:
         - type: slot
           name: language
           value: Italian
-      text: Ce ai vrea să transmit mai departe?
+      text: Cosa vorresti che comunicassi?
   utter_confirm_doctor:
     - condition:
         - type: slot
@@ -370,12 +364,12 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Ok, O voi include în raportul dumneavoastră.
+      text: Ok, voi include aceasta în raportul tău.
     - condition:
         - type: slot
           name: language
           value: Italian
-      text: Ok, Lo includerò nella tua relazione.
+      text: Ok, lo includerò nella tua relazione.
   utter_handle_user_deny_to_inform_doctors:
     - condition:
         - type: slot
@@ -391,12 +385,12 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Esti sigur? Modul în care te simți este, de asemenea, o parte importantă a progresului tău fizic.
+      text: Ești sigur(ă)? Modul în care te simți este, de asemenea, o parte importantă a progresului tău fizic.
     - condition:
         - type: slot
           name: language
           value: Italian
-      text: Sei sicuro? Anche il modo in cui ti senti è una parte importante del tuo progresso fisico.
+      text: Sei sicuro? Anche il modo in cui ti senti è una parte importante del tuo andamento fisico.
   utter_no_problem:
     - condition:
         - type: slot
@@ -412,13 +406,13 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Bine, așa cum doriți
+      text: Bine, cum dorești.
     - condition:
         - type: slot
           name: language
           value: Italian
-      text: Va bene, come desideri.
-  utter_you_are_welcome: #TODO To add Italian version
+      text: Va bene, come preferisci.
+  utter_you_are_welcome:
     - condition:
         - type: slot
           name: language
@@ -434,6 +428,11 @@ responses:
           name: language
           value: Romanian
       text: Cu plăcere.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Prego.
   utter_how_to_help:
     - condition:
         - type: slot
@@ -449,7 +448,7 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Cu ce ​​vă pot ajuta?
+      text: Cu ce te pot ajuta?
     - condition:
         - type: slot
           name: language
@@ -461,12 +460,11 @@ responses:
           name: language
           value: English
       text: I am glad to hear that!
-      # text: That's good.
     - condition:
         - type: slot
           name: language
           value: Romanian
-      text: Mă bucur să aud că!
+      text: Mă bucur să aud!
     - condition:
         - type: slot
           name: language
@@ -487,7 +485,7 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Dacă aveți probleme cu dispozitivele ALAMEDA, puteți consulta această pagină de tutorial /n/n <link>
+      text: Dacă ai probleme cu dispozitivele ALAMEDA, poți consulta această pagină de tutorial /n/n <link>
     - condition:
         - type: slot
           name: language
@@ -524,13 +522,12 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Ne pare rău, această funcționalitate nu este disponibilă momentan.
+      text: Îmi pare rău, această funcționalitate nu este disponibilă momentan.
     - condition:
         - type: slot
           name: language
           value: Italian
-      text: Spiacenti, questa funzionalità non è al momento disponibile.
-
+      text: Mi spiace, questa funzionalità non è al momento disponibile.
 actions:
   - action_utter_greet
   - action_utter_how_are_you
@@ -545,9 +542,15 @@ actions:
   - action_save_conversation
   - action_questionnaire_cancelled
   - action_questionnaire_completed
+  - action_questionnaire_completed_first_part
   - action_utter_ask_questionnaire_start
   - action_utter_ask_language
   - action_utter_notification_greet
   - action_utter_handle_user_deny_to_inform_doctors
   - action_utter_set_language
   - action_utter_set_questionnaire
+forms:
+  report_extra_form:
+    required_slots:
+      report_extra_Q1:
+        - type: from_text

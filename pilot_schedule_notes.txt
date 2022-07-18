@@ -1,0 +1,14 @@
+dayOfWeek: 
+    which day of the week from 0-6, 0 being monday and 6 being sunday
+    -1 indicates all days of the week
+
+weekOfMonth:
+    which which of the month from 1-4, 1=first week and so on
+    0 indicates every week
+
+frequencyInWeeks:
+    how many weeks after the first time the questionnaire became available will it be available again
+    e.g. 12 weeks means every 3 months
+
+lifespanInDays:
+    how many days will the questionnaire stay active from the time it became available
