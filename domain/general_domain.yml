@@ -52,11 +52,11 @@ slots:
   MSdomainII_both:
     type: bool
     initial_value: False
-    influence_conversation: false
+    influence_conversation: true
   MSdomainIII_both:
     type: bool
     initial_value: False
-    influence_conversation: false
+    influence_conversation: true
   questionnaire:
     type: categorical
     influence_conversation: true
@@ -555,6 +555,7 @@ actions:
   - action_save_conversation
   - action_questionnaire_cancelled
   - action_questionnaire_completed
+  - action_questionnaire_completed_first_part
   - action_utter_ask_questionnaire_start
   - action_utter_ask_language
   - action_utter_notification_greet

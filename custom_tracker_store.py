@@ -421,25 +421,38 @@ class CustomSQLTrackerStore(TrackerStore):
 
         # different time per pilot or save in specific timezone
 
-        latest_questionnaire_sub_query = (
-            session.query(sa.func.max(self.SQLEvent.timestamp).label("questionnaire_start"))
-            .filter(
-                self.SQLEvent.sender_id == sender_id,
-                self.SQLEvent.intent_name == questionnaire_name+"_start",
-                self.SQLEvent.type_name == "user",
-                #self.SQLEvent.timestamp >= timestamp,
+        #not so great approach
+        if  questionnaire_name in ["MSdomainIII_2W", "MSdomainII_3M"]:
+            latest_questionnaire_sub_query = (
+                session.query(sa.func.max(self.SQLEvent.timestamp).label("questionnaire_start"))
+                .filter(
+                    self.SQLEvent.sender_id == sender_id,
+                    self.SQLEvent.action_name == "action_questionnaire_completed_first_part",
+                    self.SQLEvent.type_name == "action",
+                    #self.SQLEvent.timestamp >= timestamp,
+                )
+                .subquery()
             )
-            .subquery()
-        )
+        else:
+            latest_questionnaire_sub_query = (
+                session.query(sa.func.max(self.SQLEvent.timestamp).label("questionnaire_start"))
+                .filter(
+                    self.SQLEvent.sender_id == sender_id,
+                    self.SQLEvent.intent_name == questionnaire_name +"_start",
+                    self.SQLEvent.type_name == "user",
+                    #self.SQLEvent.timestamp >= timestamp,
+                )
+                .subquery()
+            )
 
-        # latest_questionnaire_sub_query = session.query(sa.func.max(self.SQLEvent.timestamp)).filter(
+        # latest_questionnaire_sub_query1 = session.query(self.SQLEvent.timestamp).filter(
         #         self.SQLEvent.sender_id == sender_id,
-        #         self.SQLEvent.intent_name == questionnaire_name+"_start",
-        #         self.SQLEvent.type_name == "user",
+        #         self.SQLEvent.action_name == "action_questionnaire_completed_first_part",
+        #         self.SQLEvent.type_name == "action",
         #         #self.SQLEvent.timestamp >= timestamp,
-        #     ).first()
+        #     ).first()[0]
+        # print(latest_questionnaire_sub_query1)
 
-        #print("ff",latest_questionnaire_sub_query[0])
         # this returns a tuple in the form (1655132361.3270664,)
         latest_start_time = session.query(sa.func.min(self.SQLEvent.timestamp)).filter(
                 self.SQLEvent.sender_id == sender_id,
@@ -448,6 +461,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 self.SQLEvent.timestamp > latest_questionnaire_sub_query.c.questionnaire_start,
             ).first()[0]
 
+        print(latest_start_time)
         cancel_request_timestamp = session.query(sa.func.min(self.SQLEvent.timestamp)).filter(
                 self.SQLEvent.sender_id == sender_id,
                 self.SQLEvent.intent_name == "cancel",
@@ -784,7 +798,7 @@ class CustomSQLTrackerStore(TrackerStore):
                     # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
                     answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
 
-                #print(answers_data)
+                print(answers_data)
                 try:
                     database_entry = self._questionnaire_state_query(session, sender_id, init_timestamp, questionnaire_name).first()
                     if database_entry.state=="available":
@@ -1206,7 +1220,7 @@ if __name__ == "__main__":
         #print(question_events.first().state)
         #q = [json.loads(event.data) for event in question_events]
         #print(q)
-        # question_events, slot = ts._questionnaire_query(session, "stroke19", "STROKEdomainIII")
+        question_events, slot = ts._questionnaire_query(session, "ms11", "MSdomainII_3M")
         # print([json.loads(event.data) for event in question_events])
         # print([json.loads(event.data) for event in slot])
         #print(ts._first_time_of_day_query(session, "stroke23"))
@@ -1214,9 +1228,10 @@ if __name__ == "__main__":
         #answers, previous_answers = ts._questionnaire_state_query(session, "stroke04", now, "activLim")
         #print(previous_answers)
 
-        #ts.saveToOntology("stroke14")
-        ts.sendQuestionnareStatus("stroke01", "dizzNbalance", "COMPLETED")
-        ts.getDizzinessNbalanceNewSymptoms("stroke01")
+        #ts.saveToOntology("ms24")
+        ts._sentiment_query(session, "ms28")
+        #ts.sendQuestionnareStatus("stroke01", "dizzNbalance", "COMPLETED")
+        #ts.getDizzinessNbalanceNewSymptoms("stroke01")
 
 
   

@@ -731,16 +731,28 @@ stories:
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
+                  - slot_was_set:
+                            - MSdomainIII_both: False 
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
-        - story: MS Domain III biweekly relevant questions - fully completed
+        - story: MS Domain III weekly and biweekly relevant questions - fully completed
           steps:
-                  - intent: MSdomainIII_2W_start
+                  - intent: MSdomainIII_1W_start
                   - action: action_set_questionnaire_slot
                   - slot_was_set:
-                            - questionnaire: MSdomainIII_2W
+                            - questionnaire: MSdomainIII_1W
                   - action: action_utter_starting_questionnaire
+                  - action: MSdomainIII_1W_form
+                  - active_loop: MSdomainIII_1W_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - slot_was_set:
+                            - MSdomainIII_both: True 
+                  - action: action_questionnaire_completed_first_part
+                  - slot_was_set:
+                            - questionnaire: MSdomainIII_2W 
                   - action: MSdomainIII_2W_form
                   - active_loop: MSdomainIII_2W_form
                   - active_loop: null
@@ -761,16 +773,28 @@ stories:
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
+                  - slot_was_set:
+                            - MSdomainIII_both: False 
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
-        - story: MS Domain II three months relevant questions - fully completed
+        - story: MS Domain II monthly and every 3 months relevant questions - fully completed
           steps:
-                  - intent: MSdomainII_3M_start
+                  - intent: MSdomainII_1M_start
                   - action: action_set_questionnaire_slot
                   - slot_was_set:
-                            - questionnaire: MSdomainII_3M
+                            - questionnaire: MSdomainII_1M
                   - action: action_utter_starting_questionnaire
+                  - action: MSdomainII_1M_form
+                  - active_loop: MSdomainII_1M_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - slot_was_set:
+                            - MSdomainII_both: True 
+                  - action: action_questionnaire_completed_first_part
+                  - slot_was_set:
+                            - questionnaire: MSdomainII_3M 
                   - action: MSdomainII_3M_form
                   - active_loop: MSdomainII_3M_form
                   - active_loop: null
