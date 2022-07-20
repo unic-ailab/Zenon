@@ -1879,7 +1879,7 @@ class ActionAskDnBQ2i(Action):  # DnB Questionnaire
 
         text = get_text_from_lang(
             tracker,
-            ["If yes, please explain:", " ", " ", "DA/NU ; Daca da, explicati...",],
+            ["Please explain:", " ", " ", "Daca da, explicati...",],
         )
 
         print("\nBot:", text)
@@ -2070,10 +2070,10 @@ class ActionAskDnBQ4ci(Action):  # DnB Questionnaire
         text = get_text_from_lang(
             tracker,
             [
-                "If yes, please describe:",
+                "Please describe:",
                 " ",
                 " ",
-                "Daca da, descrieti."
+                "Descrieti:"
             ]
         )
         
@@ -2122,10 +2122,10 @@ class ActionAskDnBSymptoms(Action):
         
         text = get_text_from_lang(
             tracker, [
-                "SYMPTOMS: Check all that apply:",
+                "SYMPTOMS: Please select all that apply and press send:",
                 " ",
                 " ",
-                "Simptome (bifati simptomele care se regasesc in cazul dumneavoastra) :"
+                "Simptome: Te rog bifează tot ce se aplică și apasă 'Trimite':"
             ]
         )
 
@@ -2194,10 +2194,10 @@ class ActionAskDnBQ5i(Action):
         
         text = get_text_from_lang(
             tracker, [
-                "If yes, check all that apply:",
+                "Please select all that apply and press send:",
                 " ",
                 " ",
-                "Daca da, bifati ceea ce va caracterizeaza :"
+                "Te rog bifează tot ce va caracterizeaza și apasă 'Trimite':"
             ]
         )
 
@@ -2264,7 +2264,7 @@ class ActionAskDnBQ6i(Action):
         
         text = get_text_from_lang(
             tracker, [
-                "If yes, check all that apply:",
+                "Please select all that apply and press send:",
                 " ",
                 " ",
                 "Daca da, bifati ce va caracterizeaza :"
@@ -2334,7 +2334,7 @@ class ActionAskDnBQ7i(Action):  # DnB Questionnaire
 
         text = get_text_from_lang(
             tracker,
-            ["If yes, please explain:", " ", " ", "Daca da, detaliati."]
+            ["Please explain:", " ", " ", "Detaliati:"]
         )
 
         print("\nBot:", text)
@@ -2418,10 +2418,10 @@ class ActionAskDnBQ9i(Action):  # DnB Questionnaire
         text = get_text_from_lang(
             tracker,
             [
-                "If yes, how do you support yourself?",
+                "How do you support yourself?",
                 " ", 
                 " ", 
-                "Dacă da, cum vă întrețineți?"
+                "Cum vă întrețineți?"
             ]
         )
 
@@ -2505,10 +2505,10 @@ class ActionAskDnBQ11i(Action):  # DnB Questionnaire
 
         text = get_text_from_lang(
             tracker,
-            ["If yes, # of falls in the last 6 months...",
+            ["How many times did you fall in the last 6 months?",
              " ", 
              " ", 
-             "Daca da, cate caderi au fost pe parcursul a 6 luni ?"]
+             "Cate caderi au fost pe parcursul a 6 luni?"]
         )
 
         print("\nBot:", text)
@@ -2578,10 +2578,10 @@ class ActionAskDnBPastMedicalHistory(Action):
         
         text = get_text_from_lang(
             tracker, [
-                "Past medical history - Please circle all that apply:",
+                "Past medical history - Please select all that apply and press send:",
                 " ",
                 " ",
-                "Antecedente personale patologice - Incercuiti ce va caracterizeaza :"
+                "Antecedente personale patologice - Te rog bifează tot ce va caracterizeaza și apasă 'Trimite':"
             ]
         )
 
@@ -2784,10 +2784,10 @@ class ActionAskDnBEarSymptomIa(Action):  # DnB Questionnaire
         text = get_text_from_lang(
             tracker,
             [
-                "If yes, which ear(s):",
+                "Which ear(s):",
                 " ",
                 " ",
-                "Dacă da, care ureche(e):"
+                "Care ureche(e):"
             ]
         )
 
@@ -2876,10 +2876,10 @@ class ActionAskDnBEarSymptomIIa(Action):  # DnB Questionnaire
         text = get_text_from_lang(
             tracker,
             [
-                "If yes, which ear(s):",
+                "Which ear(s):",
                 " ",
                 " ",
-                "Dacă da, care ureche(e):"
+                "Care ureche(e):"
             ]
         )
 
@@ -2947,10 +2947,10 @@ class ActionAskDnBEarSymptomIIIa(Action):  # DnB Questionnaire
         text = get_text_from_lang(
             tracker,
             [
-                "If yes, which ear(s):",
+                "Which ear(s):",
                 " ",
                 " ",
-                "Dacă da, care ureche(e):"
+                "Care ureche(e):"
             ]
         )
 
@@ -3090,10 +3090,10 @@ class ActionAskDnBEarSymptomIIIa3i(Action):  # DnB Questionnaire
         text = get_text_from_lang(
             tracker,
             [
-                "If yes, explain:",
+                "Please explain:",
                 " ",
                 " ",
-                "Dacă da, explicați."
+                "Explicați:"
             ]
         )
 
@@ -3513,10 +3513,10 @@ class ActionAskDnBSocial_c(Action):  # DnB Questionnaire
         
         text = get_text_from_lang(
             tracker, [
-                "If your activity is light or inactive, what are the major barriers? (check all that apply):",
+                "If your activity is light or inactive, what are the major barriers? (choose all that apply and press send):",
                 " ",
                 " ",
-                "Dacă activitatea dumneavoastră este ușoară sau inactivă, care sunt barierele majore? (bifați tot ce se aplică):"
+                "Dacă activitatea dumneavoastră este ușoară sau inactivă, care sunt barierele majore? (bifează tot ce se aplică și apasă 'Trimite'):"
             ]
         )
 
