@@ -1,43 +1,100 @@
 version: "2.0"
 slots:
   # PSQI - Related slots
-  psqi_Q1: # PSQI
+  psqi_global_score:
     type: any
     influence_conversation: false
-  psqi_Q2: # PSQI
+  psqi_comp_1_score:
     type: any
     influence_conversation: false
-  psqi_Q3: # PSQI
+  psqi_comp_2_score:
     type: any
     influence_conversation: false
-  psqi_Q4: # PSQI
+  psqi_comp_3_score:
+    type: any
+    influence_conversation: false
+  psqi_comp_4_score:
+    type: any
+    influence_conversation: false
+  psqi_comp_5_score:
+    type: any
+    influence_conversation: false
+  psqi_comp_6_score:
+    type: any
+    influence_conversation: false
+  psqi_comp_7_score:
+    type: any
+    influence_conversation: false
+  psqi_Q1:
+    type: any
+    influence_conversation: false
+  psqi_Q2:
+    type: any
+    influence_conversation: false
+  psqi_Q2_score:
+    type: any
+    influence_conversation: false
+  psqi_Q3:
+    type: any
+    influence_conversation: false
+  psqi_Q4:
+    type: any
+    influence_conversation: false
+  psqi_Q4_score:
     type: any
     influence_conversation: false
   psqi_Q5a:
     type: any
     influence_conversation: false
+  psqi_Q5a_score:
+    type: any
+    influence_conversation: false
   psqi_Q5b:
+    type: any
+    influence_conversation: false
+  psqi_Q5b_score:
     type: any
     influence_conversation: false
   psqi_Q5c:
     type: any
     influence_conversation: false
+  psqi_Q5c_score:
+    type: any
+    influence_conversation: false
   psqi_Q5d:
+    type: any
+    influence_conversation: false
+  psqi_Q5d_score:
     type: any
     influence_conversation: false
   psqi_Q5e:
     type: any
     influence_conversation: false
+  psqi_Q5e_score:
+    type: any
+    influence_conversation: false
   psqi_Q5f:
+    type: any
+    influence_conversation: false
+  psqi_Q5f_score:
     type: any
     influence_conversation: false
   psqi_Q5g:
     type: any
     influence_conversation: false
+  psqi_Q5g_score:
+    type: any
+    influence_conversation: false
   psqi_Q5h:
     type: any
     influence_conversation: false
+  psqi_Q5h_score:
+    type: any
+    influence_conversation: false
   psqi_Q5i:
+    type: any
+    influence_conversation: false
+  psqi_Q5i_score:
     type: any
     influence_conversation: false
   psqi_Q5j:
@@ -46,16 +103,31 @@ slots:
   psqi_Q5k:
     type: any
     influence_conversation: false
+  psqi_Q5k_score:
+    type: any
+    influence_conversation: false
   psqi_Q6:
+    type: any
+    influence_conversation: false
+  psqi_Q6_score:
     type: any
     influence_conversation: false
   psqi_Q7:
     type: any
     influence_conversation: false
+  psqi_Q7_score:
+    type: any
+    influence_conversation: false
   psqi_Q8:
     type: any
     influence_conversation: false
+  psqi_Q8_score:
+    type: any
+    influence_conversation: false
   psqi_Q9:
+    type: any
+    influence_conversation: false
+  psqi_Q9_score:
     type: any
     influence_conversation: false
   psqi_Q10:
@@ -75,6 +147,7 @@ slots:
     influence_conversation: false
 actions:
   - validate_psqi_form
+  - action_calculate_psqi_score
   - action_ask_psqi_Q10
   - action_ask_psqi_Q10a
   - action_ask_psqi_Q10b

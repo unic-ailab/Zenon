@@ -97,6 +97,7 @@ class CustomSQLTrackerStore(TrackerStore):
         timestamp_start = sa.Column(sa.Float)
         timestamp_end = sa.Column(sa.Float)
         answers = sa.Column(sa.Text)
+        scoring = sa.Column(sa.Text)
 
     class SQLUserID(Base):
         """Represents a user id event in the SQL Tracker Store."""
@@ -461,14 +462,13 @@ class CustomSQLTrackerStore(TrackerStore):
                 self.SQLEvent.timestamp > latest_questionnaire_sub_query.c.questionnaire_start,
             ).first()[0]
 
-        print(latest_start_time)
         cancel_request_timestamp = session.query(sa.func.min(self.SQLEvent.timestamp)).filter(
                 self.SQLEvent.sender_id == sender_id,
                 self.SQLEvent.intent_name == "cancel",
                 self.SQLEvent.type_name == "user",
                 self.SQLEvent.timestamp >= latest_start_time,
             ).first()[0]
-        print(cancel_request_timestamp)
+
         if cancel_request_timestamp is not None:
             latest_end_time = cancel_request_timestamp
         else:
@@ -479,7 +479,6 @@ class CustomSQLTrackerStore(TrackerStore):
                 self.SQLEvent.timestamp > latest_start_time,
             ).first()[0]
 
-        print(latest_start_time, latest_end_time)
         question_events = session.query(self.SQLEvent).filter(
             self.SQLEvent.sender_id == sender_id,
             #self.SQLEvent.timestamp >= latest_questionnaire_sub_query.c.questionnaire_start,
@@ -785,7 +784,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 answers_data = []
 
                 for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
-                    print(question_data, slot_data)
+                    # print(question_data, slot_data)
                     if i==0:
                         init_timestamp = slot_data.get("timestamp")
                     timestamp = slot_data.get("timestamp")
@@ -796,9 +795,15 @@ class CustomSQLTrackerStore(TrackerStore):
                         question_number = slot_data.get("name").split(questionnaire_name + "_")[1]
                 
                     # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
-                    answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
+                    answers_data.append(
+                        {
+                            "number": question_number, 
+                            "question": question_data.get("text"), 
+                            "answer": slot_data.get("value"), 
+                            "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
+                        }
+                    )
 
-                print(answers_data)
                 try:
                     database_entry = self._questionnaire_state_query(session, sender_id, init_timestamp, questionnaire_name).first()
                     if database_entry.state=="available":
