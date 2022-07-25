@@ -315,7 +315,7 @@ responses:
         - type: slot
           name: language
           value: Italian
-      text: C’è qualcosa di cui vuoi informare il tuo dottore? Potrebbe aiutarti con i tuoi progressi.
+      text: C'è qualcosa di cui vuoi informare il tuo dottore? Potrebbe aiutarti con i tuoi progressi.
   utter_inform_doctor_extra:
     - condition:
         - type: slot
