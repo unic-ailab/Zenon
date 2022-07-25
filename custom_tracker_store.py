@@ -58,6 +58,8 @@ questionnaire_per_usecase = {
     "STROKE": ["activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
 }
 
+questionnaire_names_list = ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdomainIII_1W", "MSdomainIII_2W", "MSdomainIV_Daily", "MSdomainIV_1W", "MSdomainV", "activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
+
 schedule_df = pd.read_csv("pilot_schedule.csv")                       
 
 class CustomSQLTrackerStore(TrackerStore):
@@ -310,7 +312,6 @@ class CustomSQLTrackerStore(TrackerStore):
     #     with self.session_scope as session:
             
 
-
     def keys(self) -> Iterable[Text]:
         """Returns sender_ids of the SQLTrackerStore"""
         with self.session_scope() as session:
@@ -419,7 +420,7 @@ class CustomSQLTrackerStore(TrackerStore):
         #     .subquery()
         # )
 
-        # different time per pilot or save in specific timezone
+        # TODO: different time per pilot or save in specific timezone
 
         #not so great approach
         if  questionnaire_name in ["MSdomainIII_2W", "MSdomainII_3M"]:
@@ -445,14 +446,6 @@ class CustomSQLTrackerStore(TrackerStore):
                 .subquery()
             )
 
-        # latest_questionnaire_sub_query1 = session.query(self.SQLEvent.timestamp).filter(
-        #         self.SQLEvent.sender_id == sender_id,
-        #         self.SQLEvent.action_name == "action_questionnaire_completed_first_part",
-        #         self.SQLEvent.type_name == "action",
-        #         #self.SQLEvent.timestamp >= timestamp,
-        #     ).first()[0]
-        # print(latest_questionnaire_sub_query1)
-
         # this returns a tuple in the form (1655132361.3270664,)
         latest_start_time = session.query(sa.func.min(self.SQLEvent.timestamp)).filter(
                 self.SQLEvent.sender_id == sender_id,
@@ -461,14 +454,13 @@ class CustomSQLTrackerStore(TrackerStore):
                 self.SQLEvent.timestamp > latest_questionnaire_sub_query.c.questionnaire_start,
             ).first()[0]
 
-        print(latest_start_time)
         cancel_request_timestamp = session.query(sa.func.min(self.SQLEvent.timestamp)).filter(
                 self.SQLEvent.sender_id == sender_id,
                 self.SQLEvent.intent_name == "cancel",
                 self.SQLEvent.type_name == "user",
                 self.SQLEvent.timestamp >= latest_start_time,
             ).first()[0]
-        print(cancel_request_timestamp)
+
         if cancel_request_timestamp is not None:
             latest_end_time = cancel_request_timestamp
         else:
@@ -479,7 +471,6 @@ class CustomSQLTrackerStore(TrackerStore):
                 self.SQLEvent.timestamp > latest_start_time,
             ).first()[0]
 
-        print(latest_start_time, latest_end_time)
         question_events = session.query(self.SQLEvent).filter(
             self.SQLEvent.sender_id == sender_id,
             #self.SQLEvent.timestamp >= latest_questionnaire_sub_query.c.questionnaire_start,
@@ -594,6 +585,38 @@ class CustomSQLTrackerStore(TrackerStore):
             return answers_entry, previous_answers_entries
         else:
             return answers_entry
+
+
+    def _questionnaire_name_query(
+        self, session: "Session", sender_id: Text, action_name: Text,
+    ) -> "Query":
+        """Provide the query to retrieve the questionnaire name (abbreviation) after it has been completed or cancelled for a specific sender.
+
+        Args:
+            session: Current database session.
+            sender_id: Sender id whose conversation events should be retrieved.
+            action_name: The name of the action before which the questionnaire name should be retrieved.
+
+        Returns:
+            String with questionnaire name.
+        """
+        latest_timestamp_sub_query = session.query(sa.func.max(self.SQLEvent.timestamp).label("latest_timestamp")).filter(
+                self.SQLEvent.sender_id == sender_id,
+                self.SQLEvent.action_name == action_name,
+                self.SQLEvent.type_name == "action",
+            ).subquery()
+
+        latest_questionnaire_name = (
+            session.query(self.SQLEvent.action_name)
+            .filter(
+                self.SQLEvent.sender_id == sender_id,
+                self.SQLEvent.action_name.ilike("%_form"),
+                self.SQLEvent.type_name == "action",
+                self.SQLEvent.timestamp <= latest_timestamp_sub_query.c.latest_timestamp,
+            )
+        ).order_by(self.SQLEvent.timestamp.desc()).first()[0]
+
+        return latest_questionnaire_name.replace("_form", "")
 
 
     def _sentiment_query(
@@ -740,7 +763,20 @@ class CustomSQLTrackerStore(TrackerStore):
                         action_name=action,
                         data=json.dumps(data),
                     )
-                )                 
+                )
+
+                if event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_completed_first_part", "action_questionnaire_cancelled"]:
+                    # commit to store the events in the database so they can be found by the query
+                    session.commit() 
+                    # get questionnaire name because at that stage the questionnaire slot value might have changed
+                    questionnaire_name = self._questionnaire_name_query(session, sender_id, event.action_name)
+                    if questionnaire_name in questionnaire_names_list:
+                        if event.action_name=="action_questionnaire_cancelled":
+                            self.saveQuestionnaireAnswers(sender_id, questionnaire_name, False, tracker)
+                            self.sendQuestionnareStatus(sender_id, questionnaire_name, "IN_PROGRESS")
+                        else:                 
+                            self.saveQuestionnaireAnswers(sender_id, questionnaire_name, True, tracker)
+                            self.sendQuestionnareStatus(sender_id, questionnaire_name, "COMPLETED")                 
 
             session.commit()
 
@@ -1111,7 +1147,7 @@ class CustomSQLTrackerStore(TrackerStore):
                         "submission_date" : submission_date.strftime("%Y-%m-%d")}
     
         # msdomainIV check again
-        if questionnare_abvr in ["MSdomainIV_Daily", "STROKEdomainIV"]:            
+        if questionnare_abvr in ["MSdomainIV_Daily", "STROKEdomainIV", "STROKEdomainV", "STROKEdomainIV"]:            
             with self.session_scope() as session:
                 answers_events  = self._questionnaire_answers_query(session, sender_id, questionnare_abvr)
                 answers = json.loads(answers_events.answers)

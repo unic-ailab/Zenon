@@ -538,7 +538,6 @@ actions:
   - action_utter_starting_questionnaire
   - action_set_questionnaire_slot
   - action_ontology_store_sentiment
-  - action_store_questionnaire
   - action_save_conversation
   - action_questionnaire_cancelled
   - action_questionnaire_completed

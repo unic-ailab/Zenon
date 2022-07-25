@@ -20,7 +20,6 @@ from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormValidationAction
 
 import sys        
-#sys.path.append('C:/Users/chloe/Desktop/UNIC-AI Lab/ALAMEDA/Zenon_git/Zenon') 
 sys.path.append(os.getcwd().replace("\\","/"))
 from custom_tracker_store import CustomSQLTrackerStore
 
@@ -356,7 +355,6 @@ class ActionGetAvailableQuestions(Action):
         customTrackerInstance.checkUserID(tracker.current_state()['sender_id'])
         available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
         print(available_questionnaires)
-        usecase = tracker.current_state()['sender_id'][:2] 
         if len(available_questionnaires) == 0:
             text = get_text_from_lang(
                 tracker, 
@@ -680,10 +678,6 @@ class ActionQuestionnaireCompleted(Action):
             ],
         )
         dispatcher.utter_message(text=text)
-        #TODO: issue here, the query doesnt find the latest message
-        # issue with size of answers cell
-        storeQuestionnaireData(True, tracker)
-        customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "COMPLETED")
         return []
 
 class ActionQuestionnaireCompletedFirstPart(Action):
@@ -694,8 +688,6 @@ class ActionQuestionnaireCompletedFirstPart(Action):
         announce(self, tracker)
 
         q_abbreviation = tracker.get_slot("questionnaire")
-        storeQuestionnaireData(True, tracker)
-        customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], q_abbreviation, "COMPLETED")
 
         #fake_intent={"name": "/"+q_abbreviation+"_start", "confidence": 1.0}
         #UserUttered("/MSdomainIII_2W_start", fake_intent)
@@ -706,18 +698,6 @@ class ActionQuestionnaireCompletedFirstPart(Action):
             return [SlotSet("questionnaire", "MSdomainII_3M"), FollowupAction("MSdomainII_3M_form")] #UserUttered("/MSdomainII_3M_start")]
         else:
             return [FollowupAction("action_options_menu")]
-
-# class ActionStoreQuestionnaire(Action):
-#     def name(self):
-#         return "action_store_questionnaire"
-
-#     def run(self, dispatcher, tracker, domain):
-#         announce(self, tracker)
-
-#         #tracker.get_slot("is_finished")
-#         #print(domain["slots"])
-#         storeQuestionnaireData(True, tracker)
-#         return[]
 
 class ActionOntologyStoreSentiment(Action):
     def name(self):
@@ -745,9 +725,6 @@ class ActionQuestionnaireCancelled(Action):
             ],
         )
         dispatcher.utter_message(text=text)
-        storeQuestionnaireData(False, tracker)
-        if tracker.get_slot("questionnaire") in questionnaire_abbreviations.keys():
-             customTrackerInstance.sendQuestionnareStatus(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), "IN_PROGRESS")
         return[]
 
 class ActionUtterStartingQuestionnaire(Action):
@@ -6628,15 +6605,3 @@ class ValidateMSDomainIV_1WForm(FormValidationAction):
 ####################################################################################################
 # Other methods                                                                                    #
 #################################################################################################### 
-# method to store questionnaires
-
-questionnaire_per_usecase = {
-    "MS": ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdomainIII_1W", "MSdomainIII_2W", "MSdomainIV_1W", "MSdomainIV_Daily", "MSdomainV"],
-    "STROKE": ["activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
-}
-
-def storeQuestionnaireData(isFinished, tracker):
-    sender_id = tracker.current_state()['sender_id']
-    usecase = sender_id[:len(sender_id)-2].upper()
-    if tracker.get_slot("questionnaire") in questionnaire_per_usecase[usecase]: 
-        customTrackerInstance.saveQuestionnaireAnswers(tracker.current_state()['sender_id'], tracker.get_slot("questionnaire"), isFinished, tracker)
