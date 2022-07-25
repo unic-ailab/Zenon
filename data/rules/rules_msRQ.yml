@@ -83,7 +83,8 @@ rules:
 
   - rule: Submit MS Domain II monthly relevant questions and start MS Domain II-3 months
     condition:
-      - active_loop: MSdomainII_1M_form
+      - slot_was_set:
+          - questionnaire: MSdomainII_1M
       - slot_was_set:
           - MSdomainII_both: True
     steps:
@@ -159,7 +160,8 @@ rules:
 
   - rule: Submit MS Domain III weekly relevant questions and start MS Domain III biweekly
     condition:
-      - active_loop: MSdomainIII_1W_form
+      - slot_was_set:
+          - questionnaire: MSdomainIII_1W
       - slot_was_set:
           - MSdomainIII_both: True
     steps:
