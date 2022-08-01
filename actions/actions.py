@@ -351,7 +351,7 @@ class ActionGetAvailableQuestions(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        now = datetime.datetime.now()
+        now = datetime.datetime.now().timestamp()
         customTrackerInstance.checkUserID(tracker.current_state()['sender_id'])
         available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
         print(available_questionnaires)
@@ -442,7 +442,7 @@ class ActionContinueLatestQuestionnaire(Action):
             return []
         else:
             q_abbreviation = tracker.get_slot("questionnaire")
-            isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(), q_abbreviation)
+            isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now().timestamp(), q_abbreviation)
             if isAvailable:        
                 q_name = get_text_from_lang(tracker, questionnaire_abbreviations[q_abbreviation])
 
@@ -632,7 +632,7 @@ class ActionUtterNotificationGreet(Action):
         isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
 
         # check if questionnaire is still pending
-        isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(), q_abbreviation)
+        isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now().timestamp(), q_abbreviation)
         if isAvailable:
             text = get_text_from_lang(
                 tracker,

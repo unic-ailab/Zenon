@@ -197,6 +197,14 @@ stories:
           steps:
                   - intent: set_language
                   - action: action_utter_set_language
+        
+        - story: Close questionnaire when app is closed unexpectedly
+          steps:
+                  - intent: close_questionnaire
+                  - action: action_deactivate_loop
+                  - active_loop: null
+                  - action: action_questionnaire_cancelled
+
 
         - story: User wants to continue the latest available questionnaire # this shouldn't in theory happen
           steps:
