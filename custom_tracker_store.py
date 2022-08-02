@@ -424,6 +424,7 @@ class CustomSQLTrackerStore(TrackerStore):
 
         #not so great approach
         if  questionnaire_name in ["MSdomainIII_2W", "MSdomainII_3M"]:
+            # Subquery to find the timestamp of the latest `Questionnaire_Start` event
             latest_questionnaire_sub_query = (
                 session.query(sa.func.max(self.SQLEvent.timestamp).label("questionnaire_start"))
                 .filter(
@@ -506,11 +507,6 @@ class CustomSQLTrackerStore(TrackerStore):
         Returns:
             One database row entry.
         """
-        # available_questionnaire_sub_query = (session.query(self.SQLQuestState.state).label("available_state")).filter(
-        #     sa.or_(
-        #         self.SQLQuestState.state == "available",
-        #         self.SQLQuestState.state == "pending",
-        #     )).subquery()
 
         if questionnaire_name:
             database_entries = (
@@ -622,7 +618,7 @@ class CustomSQLTrackerStore(TrackerStore):
     def _sentiment_query(
         self, session: "Session", sender_id: Text) -> "Query":
         """Provide the query to retrieve the sender message and their sentiment for a specific sender.
-           The messages were the result of free-text questions about the user's mood or a general question asking where the user
+           The messages were the result of free-text questions about the user's mood or a general question asking whether the user
            wants to report anything of any nature.
 
         Args:
@@ -633,7 +629,7 @@ class CustomSQLTrackerStore(TrackerStore):
             Returns the following objects with max 2 items each. The two objects should have the same length.
             - Dictionary in the form {"message": Query result of the first user message,contains sentiment data, 
                                     "slot": [Query result of the second user message, Query result of the sentiment of the second message]
-            - A list with whether the messages in the dictionary whould be included in the user's report
+            - A list with whether the messages in the dictionary would be included in the user's report
               potential list elements "deny", "affirm", "cancel"
         """
         # Subquery to find the timestamp of the latest `SessionStarted` event
@@ -652,7 +648,7 @@ class CustomSQLTrackerStore(TrackerStore):
             ).first()[0]
        
 
-        #get first message, question: How are you?
+        # get first message, question: How are you?
         message_entry = session.query(self.SQLEvent).filter(
             self.SQLEvent.sender_id == sender_id,
             self.SQLEvent.type_name == "user",
@@ -740,7 +736,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 action = data.get("name")
                 timestamp = data.get("timestamp")
                 message = data.get("text")
-                sender_id=tracker.sender_id
+                sender_id = tracker.sender_id
                 # if event.type_name == "user":
                 #     sentiment = {
                 #         "value": data.get("parse_data", {}).get("entities", {})[0].get("value", ""),
@@ -763,7 +759,7 @@ class CustomSQLTrackerStore(TrackerStore):
                         action_name=action,
                         data=json.dumps(data),
                     )
-                )
+                )                 
 
                 if event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_completed_first_part", "action_questionnaire_cancelled"]:
                     # commit to store the events in the database so they can be found by the query
@@ -812,14 +808,14 @@ class CustomSQLTrackerStore(TrackerStore):
         if self.event_broker:
             self.stream_events(tracker)
 
-        #boolean to know when any questionnaire answers have been saved
+        # boolean to know when any questionnaire answers have been saved
         isSaved = True
         with self.session_scope() as session:
             q_events, s_events  = self._questionnaire_query(session, sender_id, questionnaire_name)
             if q_events:
                 question_events = [json.loads(event.data) for event in q_events]
                 slot_events = [json.loads(event.data) for event in s_events]
-                #answers_data = UniqueDict()
+                # answers_data = UniqueDict()
                 answers_data = []
 
                 for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
@@ -835,9 +831,9 @@ class CustomSQLTrackerStore(TrackerStore):
                     except:
                         if questionnaire_name in ["activLim", "dizzNbalance"]:
                             question_number = slot_data.get("name").split(questionnaire_name + "_")[1]
-                            # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
-                            answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
-                    
+                    # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
+                    answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
+
                 print(answers_data)
                 try:
                     # next line is only necessary for avoiding mistakes when intent /close_questionnaire is sent
@@ -1073,10 +1069,10 @@ class CustomSQLTrackerStore(TrackerStore):
         with self.session_scope() as session:
             exists = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first() is not None
             if not exists:
-                #temp
+                # temp
                 usecase = sender_id[:len(sender_id)-2].upper()
                 if usecase not in questionnaire_per_usecase.keys():
-                    return
+                    return  #TODO Something needs to be added here
                 now = datetime.datetime.now() 
                 session.add(
                     self.SQLUserID(
@@ -1105,60 +1101,60 @@ class CustomSQLTrackerStore(TrackerStore):
 
             session.commit()
 
-    def checkUserIDnew(self, sender_id):
-        """ Checks if the specific user id is in the database. 
-            If not
-            - adds the user id and his/her onboarding date on the information provided by WCS
-            - adds the first set of questionnaires"""
-        with self.session_scope() as session:
-            exists = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first() is not None
-            if not exists:
-                response = requests.get("WCS_ONBOARDING_ENDPOINT", json={"patient_uuid": sender_id})
-                # need to check this
-                resp = response.json() 
-                if resp["partner"] == "FISM":
-                  usecase = "MS"
-                elif resp["partner"] == "SUUB":
-                  usecase = "STROKE"
-                else:
-                   usecase = "PD"
-                if usecase not in questionnaire_per_usecase.keys():
-                    return
-                registration_date = resp["registration_date"]
-                registration_timestamp = datetime.datetime.strptime(registration_date, "%Y-%m-%d").timestamp()
-                # usecase = sender_id[:len(sender_id)-2].upper()
-                # if usecase not in questionnaire_per_usecase.keys():
-                #     return
-                # now = datetime.datetime.today() 
-                session.add(
-                    self.SQLUserID(
-                        sender_id=sender_id,
-                        usecase=usecase,
-                        onboarding_timestamp=registration_timestamp,
-                        #timezone=timezone,                        
-                    )
-                )
+    # def checkUserIDnew(self, sender_id):
+    #     """ Checks if the specific user id is in the database. 
+    #         If not
+    #         - adds the user id and his/her onboarding date on the information provided by WCS
+    #         - adds the first set of questionnaires"""
+    #     with self.session_scope() as session:
+    #         exists = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first() is not None
+    #         if not exists:
+    #             response = requests.get("WCS_ONBOARDING_ENDPOINT", json={"patient_uuid": sender_id})
+    #             # need to check this
+    #             resp = response.json() 
+    #             if resp["partner"] == "FISM":
+    #               usecase = "MS"
+    #             elif resp["partner"] == "SUUB":
+    #               usecase = "STROKE"
+    #             else:
+    #                usecase = "PD"
+    #             if usecase not in questionnaire_per_usecase.keys():
+    #                 return
+    #             registration_date = resp["registration_date"]
+    #             registration_timestamp = datetime.datetime.strptime(registration_date, "%Y-%m-%d").timestamp()
+    #             # usecase = sender_id[:len(sender_id)-2].upper()
+    #             # if usecase not in questionnaire_per_usecase.keys():
+    #             #     return
+    #             # now = datetime.datetime.today() 
+    #             session.add(
+    #                 self.SQLUserID(
+    #                     sender_id=sender_id,
+    #                     usecase=usecase,
+    #                     onboarding_timestamp=registration_timestamp,
+    #                     #timezone=timezone,                        
+    #                 )
+    #             )
 
-                df_questionnaires=schedule_df[schedule_df["usecase"]==usecase]
-                #onboarding_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    #             df_questionnaires=schedule_df[schedule_df["usecase"]==usecase]
+    #             #onboarding_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
                 
-                for questionnaire in df_questionnaires["questionnaire_abvr"]: 
-                    first_monday = registration_date + datetime.timedelta(days=(0-registration_date.weekday())%7)
-                    #doing this everyday for the msdomain_dialy might not be so efficient
-                    timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday)
-                    session.add(
-                        self.SQLQuestState(
-                        sender_id=sender_id,
-                        questionnaire_name=questionnaire,
-                        available_at=timestamp,
-                        state="available",
-                        timestamp_start=None,
-                        timestamp_end=None,
-                        answers=None,                          
-                        )
-                    )
+    #             for questionnaire in df_questionnaires["questionnaire_abvr"]: 
+    #                 first_monday = registration_date + datetime.timedelta(days=(0-registration_date.weekday())%7)
+    #                 #doing this everyday for the msdomain_dialy might not be so efficient
+    #                 timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday)
+    #                 session.add(
+    #                     self.SQLQuestState(
+    #                     sender_id=sender_id,
+    #                     questionnaire_name=questionnaire,
+    #                     available_at=timestamp,
+    #                     state="available",
+    #                     timestamp_start=None,
+    #                     timestamp_end=None,
+    #                     answers=None,                          
+    #                     )
+    #                 )
 
-            session.commit()
+    #         session.commit()
 
     def sendQuestionnareStatus(self, sender_id, questionnare_abvr, status):
         """ Sends the status of the questionnaire to WCS

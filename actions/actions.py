@@ -143,7 +143,7 @@ coast_buttons_7 = [
 # Eating Habits Questionnaire Buttons
 eatingHabits_buttons = [
     ["Never", "Rarely", "Sometimes", "Often", "Very often", "Always"],
-    [" ", " ", " ", " ", " ", " "],
+    [" ", " ", " ", " ", " ", " "], #TODO might needs to add an extra line here
     ["Niciodată", "Rareori", "Uneori", "Adesea", "Foarte des", "Întotdeauna"]
 ]
 
@@ -162,16 +162,6 @@ def announce(action, tracker=None):
             output += "\n- Text:       " + str(msg["text"])
             output += "\n- Intent:     " + str(msg["intent"]["name"])
             output += "\n- Confidence: " + str(msg["intent"]["confidence"])
-            
-            # Add Slots section
-            output += "\n- Slots:      "
-            for slot_key, slot_value in slots.items():
-                if slot_value is not None:
-                    filled_slots[slot_key] = slot_value
-            if len(filled_slots) > 0:
-                for slot_key, slot_value in filled_slots.items():
-                    output += str(slot_key) + ": " + str(slot_value) + ", "
-                output = output[:-2]
 
             # Add Entities section
             if "value" in msg["entities"][0].keys():
@@ -184,6 +174,16 @@ def announce(action, tracker=None):
             else:
                 output += "\n- Entities:   " + str(msg["entities"][0]["entity"])
 
+            # Add Slots section
+            output += "\n- Slots:      "
+            for slot_key, slot_value in slots.items():
+                if slot_value is not None:
+                    filled_slots[slot_key] = slot_value
+            if len(filled_slots) > 0:
+                for slot_key, slot_value in filled_slots.items():
+                    output += str(slot_key) + ": " + str(slot_value) + ", "
+                output = output[:-2]    # clear the last ", "
+
         except Exception as e:
             print(f"\n> announce: [ERROR] {e}")
     print(output)
@@ -192,23 +192,23 @@ def announce(action, tracker=None):
 # SLOTS                                                                                            #
 ####################################################################################################
 
-def reset_slots(tracker, slots, exceptions=[]):
-    events = []
-    none_slots = []
+# def reset_slots(tracker, slots, exceptions=[]):
+#     events = []
+#     none_slots = []
 
-    for exception in exceptions:
-        if exception in slots:
-            slots.remove(exception)
+#     for exception in exceptions:
+#         if exception in slots:
+#             slots.remove(exception)
 
-    for slot in slots:
-        if tracker.get_slot(slot) is not None:
-            none_slots.append(slot)
+#     for slot in slots:
+#         if tracker.get_slot(slot) is not None:
+#             none_slots.append(slot)
 
-    for slot in none_slots:
-        events.append(SlotSet(slot, None))
+#     for slot in none_slots:
+#         events.append(SlotSet(slot, None))
 
-    print("\n> reset_slots:", ", ".join(none_slots))
-    return events
+#     print("\n> reset_slots:", ", ".join(none_slots))
+#     return events
 
 def reset_form_slots(tracker, domain, list_questionnaire_abbreviation):
     #async def required_slots(self, domain_slots, dispatcher, tracker, domain):
@@ -216,28 +216,27 @@ def reset_form_slots(tracker, domain, list_questionnaire_abbreviation):
 
     if list_questionnaire_abbreviation is not None:
         for slot_name in domain['slots'].keys():
-            if slot_name.split("_")[0] in list_questionnaire_abbreviation:
-                if tracker.get_slot(slot_name) is not None:
-                    print(slot_name)
-                    required.append(SlotSet(slot_name, None))
+            if slot_name.split("_")[0] in list_questionnaire_abbreviation and tracker.get_slot(slot_name) is not None:
+                print(slot_name)
+                required.append(SlotSet(slot_name, None))
            
     return required
 
-def list_slots(tracker, slots, exceptions=[]):
-    filled_slots = ""
+# def list_slots(tracker, slots, exceptions=[]):
+#     filled_slots = ""
 
-    for exception in exceptions:
-        if exception in slots:
-            slots.remove(exception)
+#     for exception in exceptions:
+#         if exception in slots:
+#             slots.remove(exception)
 
-    for slot in slots:
-        value = tracker.get_slot(slot)
+#     for slot in slots:
+#         value = tracker.get_slot(slot)
 
-        if value is not None:
-            filled_slots += f"\t- {slot}: {value}\n"
+#         if value is not None:
+#             filled_slots += f"\t- {slot}: {value}\n"
 
-    # print(filled_slots[:-1])
-    return filled_slots[:-1]
+#     # print(filled_slots[:-1])
+#     return filled_slots[:-1]
 
 ####################################################################################################
 # LANGUAGES                                                                                        #
@@ -365,7 +364,7 @@ class ActionGetAvailableQuestions(Action):
                     "Momentan nu este disponibil niciun chestionar. Dorești redirecționarea către meniul principal?"
                     ]
             )
-            # shows first question or asks if there is anything else you would like help with
+
             dispatcher.utter_message(text=text)
             return []
         else :
@@ -379,31 +378,12 @@ class ActionGetAvailableQuestions(Action):
                 ]
             )
             
-            # if usecase == "ms":
-            #     # check if both questionnaires for a domain are available
-            #     tmp_dict = {
-            #         "tmpMSdomainII": [],
-            #         "tmpMSdomainIII": []
-            #     }
-
-            #     for k in tmp_dict.keys():
-            #         r = re.compile(k[3:]+"_")
-            #         tmp_dict[k] = list(filter(r.match, available_questionnaires))
-                    
-            #         # if both questionnaires are available remove the one with low frequency
-            #         if len(tmp_dict[k]) == 2:
-            #             if "MSdomainII_3M" in available_questionnaires:
-            #                 available_questionnaires.remove("MSdomainII_3M")
-            #             elif "MSdomainIII_2W" in available_questionnaires:
-            #                 available_questionnaires.remove("MSdomainIII_2W")
-            
             slots_to_set = []
-            if all(x in available_questionnaires for x in ["MSdomainII_3M", "MSdomainII_3M"]):
+            if all(x in available_questionnaires for x in ["MSdomainII_1M", "MSdomainII_3M"]):
                 available_questionnaires.remove("MSdomainII_3M")
                 slots_to_set.append(SlotSet("MSdomainII_both", True))
             else:
                 slots_to_set.append(SlotSet("MSdomainII_both", False))
-
 
             if all(x in available_questionnaires for x in ["MSdomainIII_1W", "MSdomainIII_2W"]):
                 available_questionnaires.remove("MSdomainIII_2W")
@@ -416,20 +396,10 @@ class ActionGetAvailableQuestions(Action):
                 button_title = get_text_from_lang(tracker, questionnaire_abbreviations[questionnaire])
                 buttons.append({"title": button_title, "payload": "/"+questionnaire+"_start"})
 
-            #add button for cancel that takes the user back to the general questions
+            # add button for cancel that takes the user back to the general questions
             buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
             dispatcher.utter_message(text=text, buttons=buttons)
             return reset_form_slots(tracker, domain, reset_questionnaires)+slots_to_set
-
-            # if len(tmp_dict["tmpMSdomainII"]) == 2 and len(tmp_dict["tmpMSdomainIII"]) == 2:
-            #     # return doesnt need [] because reset_form_slots returns a list
-            #     return reset_form_slots(tracker, domain, reset_questionnaires)+[SlotSet("MSdomainII_both", "True"), SlotSet("MSdomainIII_both", "True")]       
-            # elif len(tmp_dict["tmpMSdomainII"]) == 2:
-            #     return reset_form_slots(tracker, domain, reset_questionnaires)+[SlotSet("MSdomainII_both", "True")]       
-            # elif len(tmp_dict["tmpMSdomainIII"]) == 2:
-            #     return reset_form_slots(tracker, domain, reset_questionnaires)+[SlotSet("MSdomainIII_both", "True")]
-            # else:
-            #     return reset_form_slots(tracker, domain, reset_questionnaires)
 
 class ActionContinueLatestQuestionnaire(Action):
     def name(self) -> Text:
@@ -437,7 +407,7 @@ class ActionContinueLatestQuestionnaire(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        #check if there is currently an active questionnaire and ignore this action if there is
+        # check if there is currently an active questionnaire and ignore this action if there is
         if tracker.active_loop.get("name"):
             return []
         else:
@@ -467,7 +437,7 @@ class ActionContinueLatestQuestionnaire(Action):
                     ]
                 )
                 buttons.append({"title": start_button_title, "payload": "/"+ q_abbreviation+"_start"})
-                #add button for cancel that takes the user back to the general questions
+                # add button for cancel that takes the user back to the general questions
                 buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
                 dispatcher.utter_message(text=text, buttons=buttons)
                 return []
@@ -563,7 +533,7 @@ class ActionUtterGreet(Action):
             ],
         )
         dispatcher.utter_message(text=text)
-        #check if it is the first time of the day
+        # check if it is the first time of the day
         isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
         if isFirstTime:
             print("This is the first time for today.")
@@ -577,7 +547,7 @@ class ActionUtterHowAreYou(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
-        #query the ontology for meaa results of the previous day
+        # query the ontology for meaa results of the previous day
         today = datetime.datetime.today()
         yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
         today = today.strftime("%Y-%m-%dT%H:%M:%S")
@@ -786,7 +756,7 @@ class ActionUtterStartQuestionnaire(Action):
         announce(self, tracker)
 
         q_abbreviation = tracker.get_slot("questionnaire")
-        if q_abbreviation==None:
+        if q_abbreviation == None:
             text = get_text_from_lang(
                 tracker,
                 [
@@ -835,15 +805,10 @@ class ActionUtterStartQuestionnaire(Action):
         return []
 
 ####################################################################################################
-# ACTIVLIM Questionnaire                                                                           #
-####################################################################################################
-
-
-####################################################################################################
 # PSQI Questionnaire                                                                               #
 ####################################################################################################
 
-class ActionAskPSQIQ1(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ1(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q1"
 
@@ -870,7 +835,7 @@ class ActionAskPSQIQ1(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskPSQIQ2(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ2(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q2"
 
@@ -897,7 +862,7 @@ class ActionAskPSQIQ2(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskPSQIQ3(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ3(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q3"
 
@@ -924,7 +889,7 @@ class ActionAskPSQIQ3(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskPSQIQ4(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ4(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q4"
 
@@ -951,7 +916,7 @@ class ActionAskPSQIQ4(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskPSQIQ5a(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ5a(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q5a"
 
@@ -989,7 +954,7 @@ class ActionAskPSQIQ5a(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ5b(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ5b(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q5b"
 
@@ -1027,7 +992,7 @@ class ActionAskPSQIQ5b(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ5c(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ5c(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q5c"
 
@@ -1065,7 +1030,7 @@ class ActionAskPSQIQ5c(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ5d(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ5d(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q5d"
 
@@ -1103,7 +1068,7 @@ class ActionAskPSQIQ5d(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ5e(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ5e(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q5e"
 
@@ -1141,7 +1106,7 @@ class ActionAskPSQIQ5e(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ5f(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ5f(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q5f"
 
@@ -1179,7 +1144,7 @@ class ActionAskPSQIQ5f(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ5g(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ5g(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q5g"
 
@@ -1217,7 +1182,7 @@ class ActionAskPSQIQ5g(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ5h(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ5h(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q5h"
 
@@ -1255,7 +1220,7 @@ class ActionAskPSQIQ5h(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ5i(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ5i(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q5i"
 
@@ -1293,7 +1258,7 @@ class ActionAskPSQIQ5i(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ5j(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ5j(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q5j"
 
@@ -1320,7 +1285,7 @@ class ActionAskPSQIQ5j(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskPSQIQ5k(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ5k(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q5k"
 
@@ -1352,7 +1317,7 @@ class ActionAskPSQIQ5k(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ6(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ6(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q6"
 
@@ -1394,7 +1359,7 @@ class ActionAskPSQIQ6(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
         
-class ActionAskPSQIQ7(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ7(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q7"
 
@@ -1436,7 +1401,7 @@ class ActionAskPSQIQ7(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ8(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ8(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q8"
 
@@ -1478,7 +1443,7 @@ class ActionAskPSQIQ8(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ9(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ9(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q9"
 
@@ -1520,7 +1485,7 @@ class ActionAskPSQIQ9(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ10(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ10(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q10"
 
@@ -1556,7 +1521,7 @@ class ActionAskPSQIQ10(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ10a(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ10a(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q10a"
 
@@ -1592,7 +1557,7 @@ class ActionAskPSQIQ10a(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ10b(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ10b(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q10b"
 
@@ -1628,7 +1593,7 @@ class ActionAskPSQIQ10b(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskPSQIQ10c(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ10c(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q10c"
 
@@ -1664,7 +1629,7 @@ class ActionAskPSQIQ10c(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []  
 
-class ActionAskPSQIQ10d(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ10d(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q10d"
 
@@ -1794,7 +1759,7 @@ class ValidatePSQIForm(FormValidationAction):
 # Dizziness and Balance Questionnaire                                                              #
 ####################################################################################################
 
-class ActionAskDnBQ1(Action):  # DnB Questionnaire
+class ActionAskDnBQ1(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q1"
 
@@ -1815,7 +1780,7 @@ class ActionAskDnBQ1(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDnBQ2(Action):  # DnB Questionnaire
+class ActionAskDnBQ2(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q2"
 
@@ -1847,7 +1812,7 @@ class ActionAskDnBQ2(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBQ2i(Action):  # DnB Questionnaire
+class ActionAskDnBQ2i(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q2i"
 
@@ -1863,7 +1828,7 @@ class ActionAskDnBQ2i(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDnBQ3(Action):  # DnB Questionnaire
+class ActionAskDnBQ3(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q3"
 
@@ -1895,7 +1860,7 @@ class ActionAskDnBQ3(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBQ3i(Action):  # DnB Questionnaire
+class ActionAskDnBQ3i(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q3i"
 
@@ -1911,7 +1876,7 @@ class ActionAskDnBQ3i(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDnBQ4(Action):  # DnB Questionnaire
+class ActionAskDnBQ4(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q4"
 
@@ -1943,7 +1908,7 @@ class ActionAskDnBQ4(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBQ4a(Action):  # DnB Questionnaire
+class ActionAskDnBQ4a(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q4a"
 
@@ -1964,7 +1929,7 @@ class ActionAskDnBQ4a(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDnBQ4b(Action):  # DnB Questionnaire
+class ActionAskDnBQ4b(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q4b"
 
@@ -2005,7 +1970,7 @@ class ActionAskDnBQ4b(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBQ4c(Action):  # DnB Questionnaire
+class ActionAskDnBQ4c(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q4c"
 
@@ -2037,7 +2002,7 @@ class ActionAskDnBQ4c(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBQ4ci(Action):  # DnB Questionnaire
+class ActionAskDnBQ4ci(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q4ci"
 
@@ -2058,7 +2023,7 @@ class ActionAskDnBQ4ci(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDnBQ4d(Action):  # DnB Questionnaire
+class ActionAskDnBQ4d(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q4d"
 
@@ -2130,7 +2095,7 @@ class ActionAskDnBSymptoms(Action):
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
-class ActionAskDnBQ5(Action):  # DnB Questionnaire
+class ActionAskDnBQ5(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q5"
 
@@ -2200,7 +2165,7 @@ class ActionAskDnBQ5i(Action):
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
-class ActionAskDnBQ6(Action):  # DnB Questionnaire
+class ActionAskDnBQ6(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q6"
 
@@ -2270,7 +2235,7 @@ class ActionAskDnBQ6i(Action):
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
-class ActionAskDnBQ7(Action):  # DnB Questionnaire
+class ActionAskDnBQ7(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q7"
 
@@ -2302,7 +2267,7 @@ class ActionAskDnBQ7(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBQ7i(Action):  # DnB Questionnaire
+class ActionAskDnBQ7i(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q7i"
 
@@ -2318,7 +2283,7 @@ class ActionAskDnBQ7i(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDnBQ8(Action):  # DnB Questionnaire
+class ActionAskDnBQ8(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q8"
 
@@ -2353,7 +2318,7 @@ class ActionAskDnBQ8(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBQ9(Action):  # DnB Questionnaire
+class ActionAskDnBQ9(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q9"
 
@@ -2385,7 +2350,7 @@ class ActionAskDnBQ9(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBQ9i(Action):  # DnB Questionnaire
+class ActionAskDnBQ9i(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q9i"
 
@@ -2406,7 +2371,7 @@ class ActionAskDnBQ9i(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDnBQ10(Action):  # DnB Questionnaire
+class ActionAskDnBQ10(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q10"
 
@@ -2441,7 +2406,7 @@ class ActionAskDnBQ10(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBQ11(Action):  # DnB Questionnaire
+class ActionAskDnBQ11(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q11"
 
@@ -2473,7 +2438,7 @@ class ActionAskDnBQ11(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBQ11i(Action):  # DnB Questionnaire
+class ActionAskDnBQ11i(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q11i"
 
@@ -2492,7 +2457,7 @@ class ActionAskDnBQ11i(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDnBQ12(Action):  # DnB Questionnaire
+class ActionAskDnBQ12(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q12"
 
@@ -2527,7 +2492,7 @@ class ActionAskDnBQ12(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBQ12i(Action):  # DnB Questionnaire
+class ActionAskDnBQ12i(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Q12i"
 
@@ -2594,7 +2559,7 @@ class ActionAskDnBPastMedicalHistory(Action):
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
-class ActionAskDnBPastMedicalHistoryOther(Action):  # DnB Questionnaire
+class ActionAskDnBPastMedicalHistoryOther(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_PastMedicalHistoryOther"
 
@@ -2649,7 +2614,7 @@ class ActionAskDnBMedicalTests(Action):
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
-class ActionAskDnBMedicalTestsOther(Action):  # DnB Questionnaire
+class ActionAskDnBMedicalTestsOther(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_MedicalTestsOther"
 
@@ -2670,7 +2635,7 @@ class ActionAskDnBMedicalTestsOther(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDnBOnSetType(Action):  # DnB Questionnaire
+class ActionAskDnBOnSetType(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_OnSetType"
 
@@ -2705,7 +2670,7 @@ class ActionAskDnBOnSetType(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
-class ActionAskDnBEarSymptomI(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomI(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomI"
 
@@ -2751,7 +2716,7 @@ class ActionAskDnBEarSymptomI(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomIa(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomIa(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomIa"
 
@@ -2787,7 +2752,7 @@ class ActionAskDnBEarSymptomIa(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomIb(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomIb(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomIb"
 
@@ -2808,7 +2773,7 @@ class ActionAskDnBEarSymptomIb(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDnBEarSymptomII(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomII(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomII"
 
@@ -2843,7 +2808,7 @@ class ActionAskDnBEarSymptomII(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomIIa(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomIIa(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomIIa"
 
@@ -2879,7 +2844,7 @@ class ActionAskDnBEarSymptomIIa(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomIII(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomIII(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomIII"
 
@@ -2914,7 +2879,7 @@ class ActionAskDnBEarSymptomIII(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomIIIa(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomIIIa(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomIIIa"
 
@@ -2950,7 +2915,7 @@ class ActionAskDnBEarSymptomIIIa(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomIIIa1(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomIIIa1(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomIIIa1"
 
@@ -2986,7 +2951,7 @@ class ActionAskDnBEarSymptomIIIa1(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomIIIa2(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomIIIa2(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomIIIa2"
 
@@ -3022,7 +2987,7 @@ class ActionAskDnBEarSymptomIIIa2(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomIIIa3(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomIIIa3(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomIIIa3"
 
@@ -3057,7 +3022,7 @@ class ActionAskDnBEarSymptomIIIa3(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomIIIa3i(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomIIIa3i(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomIIIa3i"
 
@@ -3078,7 +3043,7 @@ class ActionAskDnBEarSymptomIIIa3i(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDnBEarSymptomIV(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomIV(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomIV"
 
@@ -3113,7 +3078,7 @@ class ActionAskDnBEarSymptomIV(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomV(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomV(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomV"
 
@@ -3148,7 +3113,7 @@ class ActionAskDnBEarSymptomV(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomVI(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomVI(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomVI"
 
@@ -3194,7 +3159,7 @@ class ActionAskDnBEarSymptomVI(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomVII(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomVII(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomVII"
 
@@ -3228,7 +3193,7 @@ class ActionAskDnBEarSymptomVII(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomVIII(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomVIII(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomVIII"
 
@@ -3262,7 +3227,7 @@ class ActionAskDnBEarSymptomVIII(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomIX(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomIX(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomIX"
 
@@ -3296,7 +3261,7 @@ class ActionAskDnBEarSymptomIX(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomX(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomX(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomX"
 
@@ -3330,7 +3295,7 @@ class ActionAskDnBEarSymptomX(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBEarSymptomXI(Action):  # DnB Questionnaire
+class ActionAskDnBEarSymptomXI(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_EarSymptomXI"
 
@@ -3365,7 +3330,7 @@ class ActionAskDnBEarSymptomXI(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBSocial_a(Action):  # DnB Questionnaire
+class ActionAskDnBSocial_a(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Social_a"
 
@@ -3401,7 +3366,7 @@ class ActionAskDnBSocial_a(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBSocial_ai(Action):  # DnB Questionnaire
+class ActionAskDnBSocial_ai(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Social_ai"
 
@@ -3423,7 +3388,7 @@ class ActionAskDnBSocial_ai(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDnBSocial_b(Action):  # DnB Questionnaire
+class ActionAskDnBSocial_b(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Social_b"
 
@@ -3459,7 +3424,7 @@ class ActionAskDnBSocial_b(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBSocial_bi(Action):  # DnB Questionnaire
+class ActionAskDnBSocial_bi(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Social_bi"
 
@@ -3481,7 +3446,7 @@ class ActionAskDnBSocial_bi(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskDnBSocial_c(Action):  # DnB Questionnaire
+class ActionAskDnBSocial_c(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Social_c"
 
@@ -3515,7 +3480,7 @@ class ActionAskDnBSocial_c(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
-class ActionAskDnBHabitsCaffeine(Action):  # DnB Questionnaire
+class ActionAskDnBHabitsCaffeine(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Habits_caffeine"
 
@@ -3549,7 +3514,7 @@ class ActionAskDnBHabitsCaffeine(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-class ActionAskDnBHabitsCaffeineFollow(Action):  # DnB Questionnaire
+class ActionAskDnBHabitsCaffeineFollow(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Habits_caffeine_follow"
 
@@ -3570,7 +3535,7 @@ class ActionAskDnBHabitsCaffeineFollow(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []        
 
-class ActionAskDnBHabitsAlcohol(Action):  # DnB Questionnaire
+class ActionAskDnBHabitsAlcohol(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Habits_alcohol"
 
@@ -3604,7 +3569,7 @@ class ActionAskDnBHabitsAlcohol(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return []     
 
-class ActionAskDnBHabitsAlcoholFollow(Action):  # DnB Questionnaire
+class ActionAskDnBHabitsAlcoholFollow(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Habits_alcohol_follow"
 
@@ -3625,7 +3590,7 @@ class ActionAskDnBHabitsAlcoholFollow(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []           
 
-class ActionAskDnBHabitsTobacco(Action):  # DnB Questionnaire
+class ActionAskDnBHabitsTobacco(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Habits_tobacco"
 
@@ -3659,7 +3624,7 @@ class ActionAskDnBHabitsTobacco(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text, buttons=buttons)
         return [] 
 
-class ActionAskDnBHabitsTobaccoFollow(Action):  # DnB Questionnaire
+class ActionAskDnBHabitsTobaccoFollow(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Habits_tobacco_follow"
 
@@ -3680,7 +3645,7 @@ class ActionAskDnBHabitsTobaccoFollow(Action):  # DnB Questionnaire
         dispatcher.utter_message(text=text)
         return []            
 
-class ActionAskDnBMedications(Action):  # DnB Questionnaire
+class ActionAskDnBMedications(Action):
     def name(self) -> Text:
         return "action_ask_dizzNbalance_Medications"
 
@@ -4586,6 +4551,7 @@ class ActionAskMuscleToneQ2(Action):
         print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
+
 class ActionAskMuscleToneQ3(Action):
     def name(self) -> Text:
         return "action_ask_muscletone_Q3"
@@ -5577,22 +5543,22 @@ class ActionHandleUserDenyInformDoctors(Action):
 # Set Questionnaire Slot Value                                                                     #
 ####################################################################################################
 
-class ActionUtterSetQuestionnaire(Action):
-    def name(self) -> Text:
-        return "action_utter_set_questionnaire"
+# class ActionUtterSetQuestionnaire(Action):
+#     def name(self) -> Text:
+#         return "action_utter_set_questionnaire"
 
-    def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
+#     def run(self, dispatcher, tracker, domain):
+#         announce(self, tracker)
 
-        open_questionnaire = tracker.slots["questionnaire"].title()
+#         open_questionnaire = tracker.slots["questionnaire"].title()
 
-        return []
+#         return []
 
 ####################################################################################################
 # STROKE Case Domain IV RQ1                                                                        #
 ####################################################################################################
 
-class ActionAskStrokeDomainIVRQ1(Action):  # STROKE case Domain IV RQ1
+class ActionAskStrokeDomainIVRQ1(Action):
     def name(self) -> Text:
         return "action_ask_STROKEdomainIV_RQ1"
 
@@ -6078,19 +6044,6 @@ class ValidateMSDomainIForm(FormValidationAction):
 ####################################################################################################
 # MS Case Domain II                                                                                #
 ####################################################################################################                  
-# class ValidateMSDomainII1MForm(FormValidationAction):
-#     def name(self) -> Text:
-#         return "validate_MSdomainII_1M_form"   
-
-#     async def required_slots(
-#         self, slots_mapped_in_domain, dispatcher, tracker, domain,
-#     ) -> List[Text]:
-
-#         # if not tracker.get_slot("MSdomainII_both"):
-#         #     slots_mapped_in_domain.remove("MSdomainII_3Μ_RQ3")
-
-#         return slots_mapped_in_domain# + [SlotSet("MSdomainII_both", "False")]
-
 class ActionAskMSDomainII3MRQ3(Action):
     def name(self) -> Text:
         return "action_ask_MSdomainII_3M_RQ3"

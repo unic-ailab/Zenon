@@ -139,7 +139,7 @@ stories:
                   - action: utter_confirm_doctor
                   - action: action_ontology_store_sentiment
                   - action: action_options_menu
-
+        # all above in test_stories
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment from the ontoloy, user doesn't agree to put the information in their report.
           steps:
                   - intent: greet
@@ -197,14 +197,13 @@ stories:
           steps:
                   - intent: set_language
                   - action: action_utter_set_language
-        
+
         - story: Close questionnaire when app is closed unexpectedly
           steps:
                   - intent: close_questionnaire
                   - action: action_deactivate_loop
                   - active_loop: null
                   - action: action_questionnaire_cancelled
-
 
         - story: User wants to continue the latest available questionnaire # this shouldn't in theory happen
           steps:
@@ -663,7 +662,7 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - slot_was_set:
-                            - MSdomainIII_both: False 
+                            - MSdomainIII_both: False
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
@@ -680,10 +679,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - slot_was_set:
-                            - MSdomainIII_both: True 
+                            - MSdomainIII_both: True
                   - action: action_questionnaire_completed_first_part
                   - slot_was_set:
-                            - questionnaire: MSdomainIII_2W 
+                            - questionnaire: MSdomainIII_2W
                   - action: MSdomainIII_2W_form
                   - active_loop: MSdomainIII_2W_form
                   - active_loop: null
@@ -705,7 +704,7 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - slot_was_set:
-                            - MSdomainIII_both: False 
+                            - MSdomainIII_both: False
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
@@ -722,10 +721,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - slot_was_set:
-                            - MSdomainII_both: True 
+                            - MSdomainII_both: True
                   - action: action_questionnaire_completed_first_part
                   - slot_was_set:
-                            - questionnaire: MSdomainII_3M 
+                            - questionnaire: MSdomainII_3M
                   - action: MSdomainII_3M_form
                   - active_loop: MSdomainII_3M_form
                   - active_loop: null
