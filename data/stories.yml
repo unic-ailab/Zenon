@@ -307,6 +307,7 @@ stories:
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
+                  - action: action_calculate_psqi_score
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
@@ -345,6 +346,7 @@ stories:
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
+                  - action: action_calculate_psqi_score
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
@@ -663,7 +665,7 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - slot_was_set:
-                            - MSdomainIII_both: False 
+                            - MSdomainIII_both: False
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
@@ -680,10 +682,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - slot_was_set:
-                            - MSdomainIII_both: True 
+                            - MSdomainIII_both: True
                   - action: action_questionnaire_completed_first_part
                   - slot_was_set:
-                            - questionnaire: MSdomainIII_2W 
+                            - questionnaire: MSdomainIII_2W
                   - action: MSdomainIII_2W_form
                   - active_loop: MSdomainIII_2W_form
                   - active_loop: null
@@ -705,7 +707,7 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - slot_was_set:
-                            - MSdomainIII_both: False 
+                            - MSdomainIII_both: False
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
@@ -722,10 +724,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - slot_was_set:
-                            - MSdomainII_both: True 
+                            - MSdomainII_both: True
                   - action: action_questionnaire_completed_first_part
                   - slot_was_set:
-                            - questionnaire: MSdomainII_3M 
+                            - questionnaire: MSdomainII_3M
                   - action: MSdomainII_3M_form
                   - active_loop: MSdomainII_3M_form
                   - active_loop: null

@@ -99,6 +99,7 @@ class CustomSQLTrackerStore(TrackerStore):
         timestamp_start = sa.Column(sa.Float)
         timestamp_end = sa.Column(sa.Float)
         answers = sa.Column(sa.Text)
+        scoring = sa.Column(sa.Text)
 
     class SQLUserID(Base):
         """Represents a user id event in the SQL Tracker Store."""
@@ -823,7 +824,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 answers_data = []
 
                 for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
-                    print(question_data, slot_data)
+                    # print(question_data, slot_data)
                     if i==0:
                         init_timestamp = slot_data.get("timestamp")
                     timestamp = slot_data.get("timestamp")

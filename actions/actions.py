@@ -82,6 +82,7 @@ psqi_q5 = [
     "In ultima luna cat de des ati avut probleme cu somnul deoarece nu"
     ]
 
+
 # Muscle Tone Questionnaire Buttons
 muscletone_buttons = [
     ["Yes", "No", "Don't know/ refused"],
@@ -835,13 +836,94 @@ class ActionUtterStartQuestionnaire(Action):
         return []
 
 ####################################################################################################
-# ACTIVLIM Questionnaire                                                                           #
-####################################################################################################
-
-
-####################################################################################################
 # PSQI Questionnaire                                                                               #
 ####################################################################################################
+
+class CalculatePSQIScore(Action):
+    def name(self) -> Text:
+        return "action_calculate_psqi_score"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        # Calculate Component 1 Score
+        psqi_comp_1_score = int(tracker.get_slot("psqi_Q6_score"))
+        print(f"Component 1 Score: {psqi_comp_1_score}")
+
+        # Calculate Component 2 Score
+        psqi_comp_2_score = int(tracker.get_slot("psqi_Q2_score")) + int(tracker.get_slot("psqi_Q5a_score"))
+
+        if 1 <= psqi_comp_2_score <= 2:
+            psqi_comp_2_score = 1
+        elif 3 <= psqi_comp_2_score <= 4:
+            psqi_comp_2_score = 2
+        elif 5 <= psqi_comp_2_score <= 6:
+            psqi_comp_2_score = 3
+        else:
+            psqi_comp_2_score = 0
+        print(f"Component 2 Score: {psqi_comp_2_score}")
+
+        # Calculate Component 3 Score
+        psqi_comp_3_score = int(tracker.get_slot("psqi_Q4_score"))
+        print(f"Component 3 Score: {psqi_comp_3_score}")
+        
+        # Calcualte Component 4 Score
+        start_time = datetime.datetime.strptime(tracker.get_slot("psqi_Q1"), "%H:%M:%S")
+        end_time = datetime.datetime.strptime(tracker.get_slot("psqi_Q3"), "%H:%M:%S") + datetime.timedelta(1)
+
+        dt = end_time - start_time
+        print(f"Timedelta: {dt}")
+        hours_spent_in_bed = dt.total_seconds() / 3600
+        print(f"Hours spent in bed: {hours_spent_in_bed}")
+        habitual_sleep_efficiency = (float(tracker.get_slot("psqi_Q4")) / hours_spent_in_bed) * 100
+        print(f"Habitual Sleep Efficiency: {habitual_sleep_efficiency}")
+        if habitual_sleep_efficiency < 65:
+            psqi_comp_4_score = 3
+        elif 65 <= habitual_sleep_efficiency <= 74:
+            psqi_comp_4_score = 2
+        elif 75 <= habitual_sleep_efficiency <= 84:
+            psqi_comp_4_score = 1
+        else:
+            psqi_comp_4_score = 0
+        print(f"Component 4 Score: {psqi_comp_4_score}")
+
+        # Calculate Component 5 Score
+        psqi_Q5b2j_sum = sum([int(tracker.get_slot("psqi_Q5"+i+"_score")) for i in ["b", "c", "d", "e", "f", "g", "h", "i", "k"]])
+
+        if psqi_Q5b2j_sum == 0:
+            psqi_comp_5_score = 0
+        elif 1 <= psqi_Q5b2j_sum <= 9:
+            psqi_comp_5_score = 1
+        elif 10 <= psqi_Q5b2j_sum <= 18:
+            psqi_comp_5_score = 2
+        else:
+            psqi_comp_5_score = 3
+        print(f"Component 5 Score: {psqi_comp_5_score}")
+
+        # Calculate Component 6 Score
+        psqi_comp_6_score = int(tracker.get_slot("psqi_Q7_score"))
+        print(f"Component 6 Score: {psqi_comp_6_score}")
+
+        # Calculate Component 7 Score
+        psqi_comp_7_score = int(tracker.get_slot("psqi_Q8_score")) + int(tracker.get_slot("psqi_Q9_score"))
+
+        if psqi_comp_7_score == 0:
+            psqi_comp_7_score = 0
+        elif 1 <= psqi_comp_7_score <= 2:
+            psqi_comp_7_score = 1
+        elif 3 <= psqi_comp_7_score <= 4:
+            psqi_comp_7_score = 2
+        else:
+            psqi_comp_7_score = 3
+        print(f"Component 7 Score: {psqi_comp_7_score}")
+
+        # Calculate Global PSQI score
+        psqi_global_score = psqi_comp_1_score + psqi_comp_2_score + psqi_comp_3_score + psqi_comp_4_score + psqi_comp_5_score + psqi_comp_6_score + psqi_comp_7_score
+
+        print(f"Global PSQI Score: {psqi_global_score}")
+        return [SlotSet("psqi_global_score", psqi_global_score)]
+
+        
 
 class ActionAskPSQIQ1(Action):  # PSQI Questionnaire
     def name(self) -> Text:
@@ -870,9 +952,9 @@ class ActionAskPSQIQ1(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskPSQIQ2(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ4(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqi_Q2"
+        return "action_ask_psqi_Q4"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -924,9 +1006,9 @@ class ActionAskPSQIQ3(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskPSQIQ4(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ2(Action):  # PSQI Questionnaire
     def name(self) -> Text:
-        return "action_ask_psqi_Q4"
+        return "action_ask_psqi_Q2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1307,14 +1389,14 @@ class ActionAskPSQIQ5j(Action):  # PSQI Questionnaire
         text = get_text_from_lang(
             tracker,
             [
-                " Other reason? (please describe)",
+                " other reason? (please describe)",
                 " ",
                 " ",
-                " Alte motive?"
+                " alte motive?"
             ]
         )
 
-        text = entry_text + text
+        text = entry_text[:-3] + "of" + text
 
         print("\nBOT:", text)
         dispatcher.utter_message(text=text)
@@ -1734,14 +1816,20 @@ class ValidatePSQIForm(FormValidationAction):
         domain
     ) -> Dict[Text, Any]:
         """
-        Validation for the question 
-        'how many hours of actual sleep did you get at night? 
-        (This may be different than the number of hours you spend in bed.)' 
+        Validation for the question 'how long (in minutes) has it usually take you to fall asleep each night?'
         """ 
 
         try:
             slot_value = next(tracker.get_latest_entity_values("number"), None)
-            return {"psqi_Q2": slot_value}
+            
+            if int(slot_value) <= 15:
+                return {"psqi_Q2": slot_value, "psqi_Q2_score": "0"}
+            elif int(slot_value) <= 30:
+                return {"psqi_Q2": slot_value, "psqi_Q2_score": "1"}
+            elif int(slot_value) <= 60:
+                return {"psqi_Q2": slot_value, "psqi_Q2_score": "2"}
+            else:
+                return {"psqi_Q2": slot_value, "psqi_Q2_score": "3"}
 
         except:
             dispatcher.utter_message(text="Please give a valid answer")
@@ -1779,15 +1867,277 @@ class ValidatePSQIForm(FormValidationAction):
         tracker: Tracker,
         domain
     ) -> Dict[Text, Any]:
-        """Validation for the question 'how long (in minutes) has it usually take you to fall asleep each night?' """
+        """Validation for the question  
+        'how many hours of actual sleep did you get at night? 
+        (This may be different than the number of hours you spend in bed.)' """
 
         try:
             slot_value = next(tracker.get_latest_entity_values("number"), None)
-            return {"psqi_Q4": slot_value}
 
+            if int(slot_value) > 7:
+                return {"psqi_Q4": slot_value, "psqi_Q4_score": "0"}
+            elif 6 <= int(slot_value) <= 7:
+                return {"psqi_Q4": slot_value, "psqi_Q4_score": "1"}
+            elif 5 <= int(slot_value) < 6:
+                return {"psqi_Q4": slot_value, "psqi_Q4_score": "2"}
+            else:
+                return {"psqi_Q4": slot_value, "psqi_Q4_score": "3"}
+            
         except:
             dispatcher.utter_message(text="Please give a valid answer")
-            return {"psqi_Q4": None}                      
+            return {"psqi_Q4": None}   
+
+    def validate_psqi_Q6(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 6"""
+
+        if slot_value == "Very good":
+            return{"psqi_Q6_score": "0"}
+        elif slot_value == "Fairly good":
+            return{"psqi_Q6_score": "1"}
+        elif slot_value == "Fairly bad":
+            return{"psqi_Q6_score": "2"}
+        else:
+            return{"psqi_Q6_score": "3"}
+
+    def validate_psqi_Q5a(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 5a"""
+
+        if slot_value == "Not during the past month":
+            return{"psqi_Q5a_score": "0"}
+        elif slot_value == "Less than once a week":
+            return{"psqi_Q5a_score": "1"}
+        elif slot_value == "Once or twice a week":
+            return{"psqi_Q5a_score": "2"}
+        else:
+            return{"psqi_Q5a_score": "3"}   
+
+    def validate_psqi_Q5b(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 5b"""
+
+        if slot_value == "Not during the past month":
+            return{"psqi_Q5b_score": "0"}
+        elif slot_value == "Less than once a week":
+            return{"psqi_Q5b_score": "1"}
+        elif slot_value == "Once or twice a week":
+            return{"psqi_Q5b_score": "2"}
+        else:
+            return{"psqi_Q5b_score": "3"}      
+
+    def validate_psqi_Q5c(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 5c"""
+
+        if slot_value == "Not during the past month":
+            return{"psqi_Q5c_score": "0"}
+        elif slot_value == "Less than once a week":
+            return{"psqi_Q5c_score": "1"}
+        elif slot_value == "Once or twice a week":
+            return{"psqi_Q5c_score": "2"}
+        else:
+            return{"psqi_Q5c_score": "3"}        
+
+    def validate_psqi_Q5d(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 5d"""
+
+        if slot_value == "Not during the past month":
+            return{"psqi_Q5d_score": "0"}
+        elif slot_value == "Less than once a week":
+            return{"psqi_Q5d_score": "1"}
+        elif slot_value == "Once or twice a week":
+            return{"psqi_Q5d_score": "2"}
+        else:
+            return{"psqi_Q5d_score": "3"}     
+
+    def validate_psqi_Q5e(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 5e"""
+
+        if slot_value == "Not during the past month":
+            return{"psqi_Q5e_score": "0"}
+        elif slot_value == "Less than once a week":
+            return{"psqi_Q5e_score": "1"}
+        elif slot_value == "Once or twice a week":
+            return{"psqi_Q5e_score": "2"}
+        else:
+            return{"psqi_Q5e_score": "3"}     
+
+    def validate_psqi_Q5f(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 5f"""
+
+        if slot_value == "Not during the past month":
+            return{"psqi_Q5f_score": "0"}
+        elif slot_value == "Less than once a week":
+            return{"psqi_Q5f_score": "1"}
+        elif slot_value == "Once or twice a week":
+            return{"psqi_Q5f_score": "2"}
+        else:
+            return{"psqi_Q5f_score": "3"}          
+
+    def validate_psqi_Q5g(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 5g"""
+
+        if slot_value == "Not during the past month":
+            return{"psqi_Q5g_score": "0"}
+        elif slot_value == "Less than once a week":
+            return{"psqi_Q5g_score": "1"}
+        elif slot_value == "Once or twice a week":
+            return{"psqi_Q5g_score": "2"}
+        else:
+            return{"psqi_Q5g_score": "3"}   
+
+    def validate_psqi_Q5h(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 5h"""
+
+        if slot_value == "Not during the past month":
+            return{"psqi_Q5h_score": "0"}
+        elif slot_value == "Less than once a week":
+            return{"psqi_Q5h_score": "1"}
+        elif slot_value == "Once or twice a week":
+            return{"psqi_Q5h_score": "2"}
+        else:
+            return{"psqi_Q5h_score": "3"}   
+
+    def validate_psqi_Q5i(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 5i"""
+
+        if slot_value == "Not during the past month":
+            return{"psqi_Q5i_score": "0"}
+        elif slot_value == "Less than once a week":
+            return{"psqi_Q5i_score": "1"}
+        elif slot_value == "Once or twice a week":
+            return{"psqi_Q5i_score": "2"}
+        else:
+            return{"psqi_Q5i_score": "3"}        
+
+    def validate_psqi_Q5k(  # Q5j from real questionnaire corresponds to Q5k to our version
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 5k"""
+
+        if slot_value == "Not during the past month":
+            return{"psqi_Q5k_score": "0"}
+        elif slot_value == "Less than once a week":
+            return{"psqi_Q5k_score": "1"}
+        elif slot_value == "Once or twice a week":
+            return{"psqi_Q5k_score": "2"}
+        else:
+            return{"psqi_Q5k_score": "3"}    
+
+    def validate_psqi_Q7(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 7"""
+
+        if slot_value == "Not during the past month":
+            return{"psqi_Q7_score": "0"}
+        elif slot_value == "Less than once a week":
+            return{"psqi_Q7_score": "1"}
+        elif slot_value == "Once or twice a week":
+            return{"psqi_Q7_score": "2"}
+        else:
+            return{"psqi_Q7_score": "3"}   
+
+    def validate_psqi_Q8(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 8"""
+
+        if slot_value == "Not during the past month":
+            return{"psqi_Q8_score": "0"}
+        elif slot_value == "Less than once a week":
+            return{"psqi_Q8_score": "1"}
+        elif slot_value == "Once or twice each week":
+            return{"psqi_Q8_score": "2"}
+        else:
+            return{"psqi_Q8_score": "3"}     
+
+    def validate_psqi_Q9(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        """Validation for the question 9"""
+
+        if slot_value == "No problem at all":
+            return{"psqi_Q9_score": "0"}
+        elif slot_value == "Only a very slight problem":
+            return{"psqi_Q9_score": "1"}
+        elif slot_value == "Somewhat of a problem":
+            return{"psqi_Q9_score": "2"}
+        else:
+            return{"psqi_Q9_score": "3"}                                                                                                                                                          
 
 
 ####################################################################################################
@@ -4850,6 +5200,142 @@ class ActionAskMuscleToneQ10(Action):
         print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
+
+class ValidateMuscleToneForm(FormValidationAction):
+    def name(self) -> Text:
+        return "validate_muscletone_form"
+
+    def validate_muscletone_Q1(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        
+        muscletone_score = 0
+
+        if "Yes" in slot_value:
+            return {"muscletone_score": muscletone_score + 1}
+        else:
+            return {"muscletone_score": muscletone_score}
+
+    def validate_muscletone_Q2(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        
+        muscletone_score = tracker.get_slot("muscletone_score")
+
+        if "Yes" in slot_value:
+            return {"muscletone_score": muscletone_score + 1}
+
+    def validate_muscletone_Q3(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        
+        muscletone_score = tracker.get_slot("muscletone_score")
+
+        if "Yes" in slot_value:
+            return {"muscletone_score": muscletone_score + 1}
+
+    def validate_muscletone_Q4(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        
+        muscletone_score = tracker.get_slot("muscletone_score")
+
+        if "Yes" in slot_value:
+            return {"muscletone_score": muscletone_score + 1}
+
+    def validate_muscletone_Q5(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        
+        muscletone_score = tracker.get_slot("muscletone_score")
+
+        if "Yes" in slot_value:
+            return {"muscletone_score": muscletone_score + 1}
+
+    def validate_muscletone_Q6(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        
+        muscletone_score = tracker.get_slot("muscletone_score")
+
+        if "Yes" in slot_value:
+            return {"muscletone_score": muscletone_score + 1}
+
+    def validate_muscletone_Q7(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        
+        muscletone_score = tracker.get_slot("muscletone_score")
+
+        if "Yes" in slot_value:
+            return {"muscletone_score": muscletone_score + 1}
+
+    def validate_muscletone_Q8(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        
+        muscletone_score = tracker.get_slot("muscletone_score")
+
+        if "Yes" in slot_value:
+            return {"muscletone_score": muscletone_score + 1}
+
+    def validate_muscletone_Q9(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        
+        muscletone_score = tracker.get_slot("muscletone_score")
+
+        if "Yes" in slot_value:
+            return {"muscletone_score": muscletone_score + 1}
+
+    def validate_muscletone_Q10(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain
+    ) -> Dict[Text, Any]:
+        
+        muscletone_score = tracker.get_slot("muscletone_score")
+
+        if "Yes" in slot_value:
+            return {"muscletone_score": muscletone_score + 1}
 
 ####################################################################################################
 # Coast Questionnaire                                                                              #
