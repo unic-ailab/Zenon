@@ -99,6 +99,7 @@ class CustomSQLTrackerStore(TrackerStore):
         timestamp_start = sa.Column(sa.Float)
         timestamp_end = sa.Column(sa.Float)
         answers = sa.Column(sa.Text)
+        scoring = sa.Column(sa.Text)
 
     class SQLUserID(Base):
         """Represents a user id event in the SQL Tracker Store."""
@@ -819,7 +820,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 answers_data = []
 
                 for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
-                    print(question_data, slot_data)
+                    # print(question_data, slot_data)
                     if i==0:
                         init_timestamp = slot_data.get("timestamp")
                     timestamp = slot_data.get("timestamp")
@@ -832,9 +833,15 @@ class CustomSQLTrackerStore(TrackerStore):
                         if questionnaire_name in ["activLim", "dizzNbalance"]:
                             question_number = slot_data.get("name").split(questionnaire_name + "_")[1]
                     # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
-                    answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
+                    answers_data.append(
+                        {
+                            "number": question_number, 
+                            "question": question_data.get("text"), 
+                            "answer": slot_data.get("value"), 
+                            "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
+                        }
+                    )
 
-                print(answers_data)
                 try:
                     # next line is only necessary for avoiding mistakes when intent /close_questionnaire is sent
                     _ = self.checkQuestionnaireTimelimit(sender_id, init_timestamp, questionnaire_name)
