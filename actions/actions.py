@@ -4817,6 +4817,40 @@ class ActionAskMuscleToneQ10(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
+class ActionAskMuscleToneQ10i(Action):
+    def name(self) -> Text:
+        return "action_ask_muscletone_Q10i"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Please specify...",
+                " ",
+                " ",
+                "Vă rugăm să specificați..."
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text)
+        return []        
+
+class ValidateMuscleToneForm(FormValidationAction):
+    def name(self) -> Text:
+        return "validate_muscletone_form"
+
+    async def required_slots(
+        self, slots_mapped_in_domain, dispatcher, tracker, domain,
+    ) -> List[Text]:
+
+        if tracker.get_slot("muscletone_Q10") != "Yes, other (specify)":
+            slots_mapped_in_domain.remove("muscletone_Q10i")
+
+        return slots_mapped_in_domain
+
 ####################################################################################################
 # Coast Questionnaire                                                                              #
 ####################################################################################################
