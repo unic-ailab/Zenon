@@ -921,7 +921,7 @@ class CalculatePSQIScore(Action):
         psqi_global_score = psqi_comp_1_score + psqi_comp_2_score + psqi_comp_3_score + psqi_comp_4_score + psqi_comp_5_score + psqi_comp_6_score + psqi_comp_7_score
 
         print(f"Global PSQI Score: {psqi_global_score}")
-        return [SlotSet("psqi_global_score", psqi_global_score)]
+        return [SlotSet("psqi_score", psqi_global_score)]
 
         
 
