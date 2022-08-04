@@ -197,7 +197,12 @@ stories:
           steps:
                   - intent: set_language
                   - action: action_utter_set_language
-        
+
+        - story: Onboard user
+          steps:
+                  - intent: onboard_user
+                  - action: action_onboard_user
+
         - story: Close questionnaire when app is closed unexpectedly
           steps:
                   - intent: close_questionnaire

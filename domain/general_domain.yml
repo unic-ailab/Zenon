@@ -22,6 +22,7 @@ intents:
   - STROKEdomainV_start
   - inform
   - set_language
+  - onboard_user
   - greet
   - deny
   - notification_questionnaire_open
@@ -540,6 +541,7 @@ actions:
   - action_utter_handle_user_deny_to_inform_doctors
   - action_utter_set_language
   - action_utter_set_questionnaire
+  - action_onboard_user
 forms:
   report_extra_form:
     required_slots:

@@ -343,6 +343,20 @@ class ActionUtterSetLanguage(Action):
         return [SlotSet("language", current_language)]
 
 ####################################################################################################
+# Onboarding                                                                                          #
+####################################################################################################
+
+class ActionOnboardUser(Action):
+    def name(self) -> Text:
+        return "action_onboard_user"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+        language = customTrackerInstance.checkUserID(tracker.current_state()['sender_id'])
+        dispatcher.utter_message(text=language)
+        return [SlotSet("language", language)]
+
+####################################################################################################
 # General                                                                                          #
 ####################################################################################################
 
@@ -353,7 +367,7 @@ class ActionGetAvailableQuestions(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
         now = datetime.datetime.now().timestamp()
-        customTrackerInstance.checkUserID(tracker.current_state()['sender_id'])
+        #customTrackerInstance.checkUserIDWCS(tracker.current_state()['sender_id'])
         available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
         print(available_questionnaires)
         if len(available_questionnaires) == 0:
