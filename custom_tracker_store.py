@@ -1111,7 +1111,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 # assumes user ids are of the form "ms00" or "stroke00"
                 usecase = sender_id[:len(sender_id)-2].upper()
                 if usecase not in questionnaire_per_usecase.keys():
-                    return language
+                    return
 
                 if usecase == "MS":
                     language = "Italian"
