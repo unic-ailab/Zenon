@@ -7,6 +7,7 @@ import re
 import os
 import requests
 import json
+import pandas as pd
 
 from typing import Any, Dict, List, Text
 from urllib import response
@@ -24,6 +25,7 @@ sys.path.append(os.getcwd().replace("\\","/"))
 from custom_tracker_store import CustomSQLTrackerStore
 
 customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="demo.db")
+endpoints_df = pd.read_csv("alameda_endpoints.csv")                       
 
 # Define this list as the values for the `language` slot. Arguments of the `get_..._lang` functions should respect this order.
 lang_list = ["English", "Greek", "Italian", "Romanian"]  # Same as slot values
@@ -597,7 +599,8 @@ class ActionUtterHowAreYou(Action):
         yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
         today = today.strftime("%Y-%m-%dT%H:%M:%S")
         try :
-            response = requests.get("ONTOLOGY_MEAA_ENDPOINT", params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today})
+            ontology_meaa_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_MEAA_ENDPOINT"]["endpoint"].values[0]
+            response = requests.get(ontology_meaa_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today})
             average_score_per_mood = json.loads(response.text)[0]
             average_score_per_mood.pop("userId")
             # returned classes ["avgPos","avgNeg","avgNeut","avgOth"]

@@ -61,6 +61,7 @@ questionnaire_per_usecase = {
 questionnaire_names_list = ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdomainIII_1W", "MSdomainIII_2W", "MSdomainIV_Daily", "MSdomainIV_1W", "MSdomainV", "activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
 
 schedule_df = pd.read_csv("pilot_schedule.csv")                       
+endpoints_df = pd.read_csv("alameda_endpoints.csv")                       
 
 class CustomSQLTrackerStore(TrackerStore):
     """Store which can save and retrieve trackers from an SQL database. Based on rasa's original SQLTrackerStore"""
@@ -1062,8 +1063,9 @@ class CustomSQLTrackerStore(TrackerStore):
 
         print(ontology_data)
         #TODO:send to ontology
-        #response = requests.post("ONTOLOGY_SEND_SCORE_ENDPOINT", json=ontology_data)
-        #print(response)        
+        ontology_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_SEND_SCORE_ENDPOINT"]["endpoint"].values[0]
+        response = requests.post(ontology_endpoint, json=ontology_data)
+        print(response)        
 
 
     def saveToOntology(self, sender_id):
@@ -1100,8 +1102,9 @@ class CustomSQLTrackerStore(TrackerStore):
             session.commit()
             print(ontology_data)
         #TODO:send to ontology
-        #response = requests.post("ONTOLOGY_CA_ENDPOINT", json=ontology_data)
-        #print(response)
+        ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
+        response = requests.post(ontology_ca_endpoint, json=ontology_data)
+        print(response)
 
     def checkUserIDdemo(self, sender_id):
         """ Checks if the specific user id is in the database. If not it adds it"""
@@ -1157,7 +1160,8 @@ class CustomSQLTrackerStore(TrackerStore):
             user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
             if user_entry is None:
                 try:
-                    response = requests.get("WCS_ONBOARDING_ENDPOINT", json={"patient_uuid": sender_id})
+                    wcs_endpoint= endpoints_df[endpoints_df["name"]=="WCS_ONBOARDING_ENDPOINT"]["endpoint"].values[0]
+                    response = requests.get(wcs_endpoint, json={"patient_uuid": sender_id})
                     # need to check this
                     resp = response.json() 
                     if resp["partner"] == "FISM":
@@ -1259,8 +1263,9 @@ class CustomSQLTrackerStore(TrackerStore):
 
         #TODO:send to wcs
         print(questionnaire_data)
-        #response = requests.post("WCS_STATUS_ENDPOINT", json=questionnaire_data)
-        #print(response)
+        wcs_status_endpoint= endpoints_df[endpoints_df["name"]=="WCS_STATUS_ENDPOINT"]["endpoint"].values[0]
+        response = requests.post(wcs_status_endpoint, json=questionnaire_data)
+        print(response)
 
     def getDizzinessNbalanceNewSymptoms(self, sender_id):
         """ Gets the symptoms of the latest Dizziness and Balance questionnaire and of the one before that
