@@ -113,6 +113,7 @@ class CustomSQLTrackerStore(TrackerStore):
         usecase = sa.Column(sa.String(255), nullable=False)
         onboarding_timestamp = sa.Column(sa.Float)
         language = sa.Column(sa.String(255))
+        timezone = sa.Column(sa.String(255))
 
     # class SQLSchedule(Base):
     #     """Represents an event in the SQL Tracker Store."""
@@ -1118,15 +1119,18 @@ class CustomSQLTrackerStore(TrackerStore):
 
                 if usecase == "MS":
                     language = "Italian"
+                    timezone = "Europe/Brussels"
                 elif usecase =="STROKE":
                     language = "Romanian"
+                    timezone = "Europe/Bucharest"
                 now = datetime.datetime.now() 
                 session.add(
                     self.SQLUserID(
                         sender_id=sender_id,
                         usecase=usecase,
                         language = language,
-                        onboarding_timestamp=now.timestamp()                        
+                        onboarding_timestamp=now.timestamp(),
+                        timezone=timezone,                                                
                     )
                 )
 
@@ -1167,14 +1171,18 @@ class CustomSQLTrackerStore(TrackerStore):
                     if resp["partner"] == "FISM":
                         usecase = "MS"
                         language = "Italian"
+                        timezone = "Europe/Brussels"
                     elif resp["partner"] == "SUUB":
                         usecase = "STROKE"
                         language = "Romanian"
+                        timezone = "Europe/Bucharest"
                     elif resp["partner"] == "NKUA":
                         usecase = "PD"
                         language = "Greek"        
+                        timezone = "Europe/Athens"
                     else:
                         language = "English"
+                        timezone = "UTC"
                     registration_date = resp["registration_date"]
                     registration_timestamp = datetime.datetime.strptime(registration_date, "%Y-%m-%d").timestamp()
 
@@ -1190,7 +1198,7 @@ class CustomSQLTrackerStore(TrackerStore):
                             usecase=usecase,
                             language=language,
                             onboarding_timestamp=registration_timestamp,
-                            #timezone=timezone,                        
+                            timezone=timezone,                        
                         )
                     )
 
