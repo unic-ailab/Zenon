@@ -22,6 +22,7 @@ intents:
   - STROKEdomainV_start
   - inform
   - set_language
+  - onboard_user
   - greet
   - deny
   - notification_questionnaire_open
@@ -49,14 +50,6 @@ entities:
   - sentiment_classes
   - number
 slots:
-  MSdomainII_both:
-    type: bool
-    initial_value: False
-    influence_conversation: true
-  MSdomainIII_both:
-    type: bool
-    initial_value: False
-    influence_conversation: true
   questionnaire:
     type: categorical
     influence_conversation: true
@@ -547,7 +540,8 @@ actions:
   - action_utter_notification_greet
   - action_utter_handle_user_deny_to_inform_doctors
   - action_utter_set_language
-  # - action_utter_set_questionnaire
+  - action_utter_set_questionnaire
+  - action_onboard_user
 forms:
   report_extra_form:
     required_slots:

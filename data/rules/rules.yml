@@ -10,6 +10,10 @@ rules:
   #   steps:
   #     - intent: notification_questionnaire_open
   #     - action: action_utter_notification_greet
+  - rule: Onboard user
+    steps:
+      - intent: onboard_user
+      - action: action_onboard_user
 
   - rule: Get available questionnaires
     steps:

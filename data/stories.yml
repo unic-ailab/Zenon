@@ -306,6 +306,7 @@ stories:
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
+                  - action: action_calculate_psqi_score
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
@@ -344,6 +345,7 @@ stories:
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
+                  - action: action_calculate_psqi_score
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 

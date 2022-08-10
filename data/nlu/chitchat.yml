@@ -1,5 +1,9 @@
 version: "2.0"
 nlu:
+  - intent: onboard_user
+    examples: |
+      - onboarding
+      - onboarding user
   - intent: health_update
     examples: |
       # English
