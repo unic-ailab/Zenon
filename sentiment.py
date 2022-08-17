@@ -13,7 +13,7 @@ class SentimentAnalyzer(Component):
     provides = ["entities"]
     requires = []
     defaults = {}
-    language_list = ["en", "el"]
+    language_list = ["en", "el", "ro", "it"]
 
     def __init__(self, component_config=None):
         super(SentimentAnalyzer, self).__init__(component_config)

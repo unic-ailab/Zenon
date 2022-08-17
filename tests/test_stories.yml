@@ -2,90 +2,146 @@
 #### If you want to learn more, please see the docs: https://rasa.com/docs/rasa/testing-your-assistant
 
 stories:
-- story: happy path 1
-  steps:
-  - user: |
-      hello there!
-    intent: greet
-  - action: utter_greet
-  - user: |
-      amazing
-    intent: mood_great
-  - action: utter_happy
+  - story: Greeting, first time of the day using the agent, Agent receives positive sentiment
+    steps:
+      - user: |
+          hey
+        intent: greet
+      - action: action_utter_greet
+      - slot_was_set:
+          - is_first_time: true
+      - action: action_utter_how_are_you
+      - user: |
+          I feel very nice today!
+        intent: inform
+      - slot_was_set:
+          - sentiment: pos
+      - action: utter_glad_to_hear
+      - action: action_ontology_store_sentiment
+      - action: action_options_menu
 
-- story: happy path 2
-  steps:
-  - user: |
-      hello there!
-    intent: greet
-  - action: utter_greet
-  - user: |
-      amazing
-    intent: mood_great
-  - action: utter_happy
-  - user: |
-      bye-bye!
-    intent: goodbye
-  - action: utter_goodbye
+  - story: Greeting, first time of the day using the agent, Agent receives neutral sentiment
+    steps:
+      - user: |
+          hello
+        intent: greet
+      - action: action_utter_greet
+      - slot_was_set:
+          - is_first_time: true
+      - action: action_utter_how_are_you
+      - user: |
+          Just fine!
+        intent: inform
+      - slot_was_set:
+          - sentiment: neu
+      - action: action_ontology_store_sentiment
+      - action: action_options_menu
 
-- story: sad path 1
-  steps:
-  - user: |
-      hello
-    intent: greet
-  - action: utter_greet
-  - user: |
-      not good
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      yes
-    intent: affirm
-  - action: utter_happy
+  - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user agrees to put the information in their report.
+    steps:
+      - user: |
+          hi
+        intent: greet
+      - action: action_utter_greet
+      - slot_was_set:
+          - is_first_time: true
+      - action: action_utter_how_are_you
+      - user: |
+          Not very good.
+        intent: inform
+      - slot_was_set:
+          - sentiment: neg
+      - slot_was_set:
+          - meaa_mood: non_neg
+      - action: utter_inform_doctor
+      - user: |
+          sure
+        intent: affirm
+      - action: utter_confirm_doctor
+      - action: action_ontology_store_sentiment
+      - action: action_options_menu
 
-- story: sad path 2
-  steps:
-  - user: |
-      hello
-    intent: greet
-  - action: utter_greet
-  - user: |
-      not good
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      not really
-    intent: deny
-  - action: utter_goodbye
+  - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report.
+    steps:
+      - user: |
+          hey there
+        intent: greet
+      - action: action_utter_greet
+      - slot_was_set:
+          - is_first_time: true
+      - action: action_utter_how_are_you
+      - user: |
+          I don't feel good. I have a headache since I woke up.
+        intent: inform
+      - slot_was_set:
+          - sentiment: neg
+      - slot_was_set:
+          - meaa_mood: non_neg
+      - action: utter_inform_doctor
+      - user: |
+          please don't
+        intent: deny
+      - action: utter_inform_doctor_extra
+      - user: |
+          No I don't
+        intent: deny
+      - action: utter_no_problem
+      - action: action_ontology_store_sentiment
+      - action: action_options_menu
 
-- story: sad path 3
-  steps:
-  - user: |
-      hi
-    intent: greet
-  - action: utter_greet
-  - user: |
-      very terrible
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      no
-    intent: deny
-  - action: utter_goodbye
+  - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report but want to report smothing extra.
+    steps:
+      - user: |
+          hello
+        intent: greet
+      - action: action_utter_greet
+      - slot_was_set:
+          - is_first_time: true
+      - action: action_utter_how_are_you
+      - user: |
+          Not well. I feel a pain on my chest
+        intent: inform
+      - slot_was_set:
+          - sentiment: neg
+      - slot_was_set:
+          - meaa_mood: non_neg
+      - action: utter_inform_doctor
+      - user: |
+          I think not
+        intent: deny
+      - action: utter_inform_doctor_extra
+      - user: |
+          sure
+        intent: affirm
+      - action: report_extra_form
+      - active_loop: report_extra_form
+      - user: |
+          Yesterday, while I was in the park my legs cut off and I wasn't able to move.
+        intent: inform
+      - action: report_extra_form
+      - active_loop: null
+      - action: utter_confirm_doctor
+      - action: action_ontology_store_sentiment
+      - action: action_options_menu
 
-- story: say goodbye
-  steps:
-  - user: |
-      bye-bye!
-    intent: goodbye
-  - action: utter_goodbye
-
-- story: bot challenge
-  steps:
-  - user: |
-      are you a bot?
-    intent: bot_challenge
-  - action: utter_iamabot
+  - story: Greeting, first time of the day using the agent, Agent receives negative sentiment from the ontoloy, user agrees to put the information in their report.
+    steps:
+      - user: |
+          hi
+        intent: greet
+      - action: action_utter_greet
+      - slot_was_set:
+          - is_first_time: true
+      - action: action_utter_how_are_you
+      - user: |
+          I feel stressed and bad.
+        intent: inform
+      - slot_was_set:
+          - meaa_mood: neg
+      - action: utter_inform_doctor
+      - user: |
+          yes please
+        intent: affirm
+      - action: utter_confirm_doctor
+      - action: action_ontology_store_sentiment
+      - action: action_options_menu

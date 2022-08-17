@@ -15,6 +15,7 @@ test_stories.yml
 sentiment_old.py
 sentimentClasses.py
 test.py
+alameda_endpoints.csv
 
 # Folders
 __pycache__/

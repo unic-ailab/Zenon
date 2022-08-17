@@ -428,6 +428,7 @@ class CustomSQLTrackerStore(TrackerStore):
 
         #not so great approach
         if  questionnaire_name in ["MSdomainIII_2W", "MSdomainII_3M"]:
+            # Subquery to find the timestamp of the latest `Questionnaire_Start` event
             latest_questionnaire_sub_query = (
                 session.query(sa.func.max(self.SQLEvent.timestamp).label("questionnaire_start"))
                 .filter(
@@ -511,11 +512,6 @@ class CustomSQLTrackerStore(TrackerStore):
         Returns:
             One database row entry.
         """
-        # available_questionnaire_sub_query = (session.query(self.SQLQuestState.state).label("available_state")).filter(
-        #     sa.or_(
-        #         self.SQLQuestState.state == "available",
-        #         self.SQLQuestState.state == "pending",
-        #     )).subquery()
 
         if questionnaire_name:
             database_entries = (
@@ -654,7 +650,7 @@ class CustomSQLTrackerStore(TrackerStore):
     def _sentiment_query(
         self, session: "Session", sender_id: Text) -> "Query":
         """Provide the query to retrieve the sender message and their sentiment for a specific sender.
-           The messages were the result of free-text questions about the user's mood or a general question asking where the user
+           The messages were the result of free-text questions about the user's mood or a general question asking whether the user
            wants to report anything of any nature.
 
         Args:
@@ -665,7 +661,7 @@ class CustomSQLTrackerStore(TrackerStore):
             Returns the following objects with max 2 items each. The two objects should have the same length.
             - Dictionary in the form {"message": Query result of the first user message,contains sentiment data, 
                                     "slot": [Query result of the second user message, Query result of the sentiment of the second message]
-            - A list with whether the messages in the dictionary whould be included in the user's report
+            - A list with whether the messages in the dictionary would be included in the user's report
               potential list elements "deny", "affirm", "cancel"
         """
         # Subquery to find the timestamp of the latest `SessionStarted` event
@@ -684,7 +680,7 @@ class CustomSQLTrackerStore(TrackerStore):
             ).first()[0]
        
 
-        #get first message, question: How are you?
+        # get first message, question: How are you?
         message_entry = session.query(self.SQLEvent).filter(
             self.SQLEvent.sender_id == sender_id,
             self.SQLEvent.type_name == "user",
@@ -772,7 +768,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 action = data.get("name")
                 timestamp = data.get("timestamp")
                 message = data.get("text")
-                sender_id=tracker.sender_id
+                sender_id = tracker.sender_id
                 # if event.type_name == "user":
                 #     sentiment = {
                 #         "value": data.get("parse_data", {}).get("entities", {})[0].get("value", ""),
@@ -795,7 +791,7 @@ class CustomSQLTrackerStore(TrackerStore):
                         action_name=action,
                         data=json.dumps(data),
                     )
-                )
+                )                 
 
                 if event.type_name == "action" and event.action_name=="action_ontology_store_sentiment":
                     # commit to store the events in the database so they can be found by the query
@@ -855,7 +851,7 @@ class CustomSQLTrackerStore(TrackerStore):
             if q_events:
                 question_events = [json.loads(event.data) for event in q_events]
                 slot_events = [json.loads(event.data) for event in s_events]
-                #answers_data = UniqueDict()
+                # answers_data = UniqueDict()
                 answers_data = []
 
                 for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
@@ -873,9 +869,9 @@ class CustomSQLTrackerStore(TrackerStore):
                     except:
                         if questionnaire_name in ["activLim", "dizzNbalance"]:
                             question_number = slot_data.get("name").split(questionnaire_name + "_")[1]
-                            # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
-                            answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
-                    
+                    # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
+                    answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
+
                 print(answers_data)
                 #TODO: only have unique question numbers
                 try:

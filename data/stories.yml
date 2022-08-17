@@ -139,7 +139,7 @@ stories:
                   - action: utter_confirm_doctor
                   - action: action_ontology_store_sentiment
                   - action: action_options_menu
-
+        # all above in test_stories
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment from the ontoloy, user doesn't agree to put the information in their report.
           steps:
                   - intent: greet
@@ -198,18 +198,12 @@ stories:
                   - intent: set_language
                   - action: action_utter_set_language
 
-        - story: Onboard user
-          steps:
-                  - intent: onboard_user
-                  - action: action_onboard_user
-
         - story: Close questionnaire when app is closed unexpectedly
           steps:
                   - intent: close_questionnaire
                   - action: action_deactivate_loop
                   - active_loop: null
                   - action: action_questionnaire_cancelled
-
 
         - story: User wants to continue the latest available questionnaire # this shouldn't in theory happen
           steps:
