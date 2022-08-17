@@ -723,7 +723,7 @@ class ActionOntologyStoreSentiment(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
+        #customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
         return []
 
 class ActionQuestionnaireCancelled(Action):

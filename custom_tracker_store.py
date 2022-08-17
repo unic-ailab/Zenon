@@ -797,7 +797,11 @@ class CustomSQLTrackerStore(TrackerStore):
                     )
                 )
 
-                if event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_completed_first_part", "action_questionnaire_cancelled"]:
+                if event.type_name == "action" and event.action_name=="action_ontology_store_sentiment":
+                    # commit to store the events in the database so they can be found by the query
+                    session.commit() 
+                    self.saveToOntology(sender_id)
+                elif event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_completed_first_part", "action_questionnaire_cancelled"]:
                     # commit to store the events in the database so they can be found by the query
                     session.commit() 
                     # get questionnaire name because at that stage the questionnaire slot value might have changed
@@ -1359,11 +1363,11 @@ if __name__ == "__main__":
 
     #print(1654808400<now)
     with ts.session_scope() as session:
-        d = ts.checkQuestionnaireTimelimit(session, "stroke99", datetime.datetime.now().timestamp(), "psqi")
-        #print(d)
-        #print(ts._questionnaire_score_query(session, "stroke98", "muscletone"))
-        question_events = ts._questionnaire_state_query(session, "stroke92", datetime.datetime.now().timestamp(), "psqi").first()
-        print(question_events)
+        # d = ts.checkQuestionnaireTimelimit(session, "stroke99", datetime.datetime.now().timestamp(), "psqi")
+        # #print(d)
+        # #print(ts._questionnaire_score_query(session, "stroke98", "muscletone"))
+        # question_events = ts._questionnaire_state_query(session, "stroke92", datetime.datetime.now().timestamp(), "psqi").first()
+        # print(question_events)
         #ts.storeNsendQuestionnaireScore("stroke97", "muscletone")
         #question_events = ts._questionnaire_state_query(session, "stroke05", now, "activLim")
         #print(question_events.first().state)
@@ -1378,7 +1382,7 @@ if __name__ == "__main__":
         #print(previous_answers)
 
         #ts.saveToOntology("ms24")
-        #ts._sentiment_query(session, "ms28")
+        ts._sentiment_query(session, "stroke98")
         #ts.sendQuestionnareStatus("stroke01", "dizzNbalance", "COMPLETED")
         #ts.getDizzinessNbalanceNewSymptoms("stroke01")
 
