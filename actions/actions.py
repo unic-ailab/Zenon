@@ -7,6 +7,7 @@ import re
 import os
 import requests
 import json
+import pytz
 import pandas as pd
 
 from typing import Any, Dict, List, Text
@@ -367,7 +368,7 @@ class ActionGetAvailableQuestions(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        now = datetime.datetime.now().timestamp()
+        now = datetime.datetime.now(tz=pytz.utc).timestamp()
         #customTrackerInstance.checkUserIDWCS(tracker.current_state()['sender_id'])
         available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
         print(available_questionnaires)
@@ -429,7 +430,7 @@ class ActionContinueLatestQuestionnaire(Action):
             return []
         else:
             q_abbreviation = tracker.get_slot("questionnaire")
-            isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now().timestamp(), q_abbreviation)
+            isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
             if isAvailable:        
                 q_name = get_text_from_lang(tracker, questionnaire_abbreviations[q_abbreviation])
 
@@ -565,9 +566,9 @@ class ActionUtterHowAreYou(Action):
         announce(self, tracker)
 
         # query the ontology for meaa results of the previous day
-        today = datetime.datetime.today()
-        yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
-        today = today.strftime("%Y-%m-%dT%H:%M:%S")
+        today = datetime.datetime.now(datetime.timezone.utc)
+        yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
         try :
             ontology_meaa_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_MEAA_ENDPOINT"]["endpoint"].values[0]
             response = requests.get(ontology_meaa_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today})
@@ -620,7 +621,7 @@ class ActionUtterNotificationGreet(Action):
         isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
 
         # check if questionnaire is still pending
-        isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now().timestamp(), q_abbreviation)
+        isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
         if isAvailable:
             text = get_text_from_lang(
                 tracker,

@@ -7,6 +7,7 @@ import logging
 import datetime
 import requests
 import pandas as pd
+import pytz
 from sqlite3 import Timestamp
 
 from time import sleep
@@ -738,7 +739,7 @@ class CustomSQLTrackerStore(TrackerStore):
         Returns:
             Boolean, True=first time, False=not first time
         """
-        today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+        today = datetime.datetime.now(tz=pytz.utc).replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
         return session.query(sa.func.min(self.SQLEvent.timestamp)).filter(
             self.SQLEvent.sender_id == sender_id,
             self.SQLEvent.type_name == "action",
@@ -891,16 +892,14 @@ class CustomSQLTrackerStore(TrackerStore):
                         # store score
                         if questionnaire_name in ["psqi", "muscletone"]:
                             self.storeNsendQuestionnaireScore(session, sender_id, questionnaire_name, database_entry)
-                            
-                        # create new row in database
-                        
-                        #TODO: uncomment for schedule
+                                                    
                         #doing this everyday for the msdomain_daily might not be so efficient
-                        #new_timestamp = getNextQuestTimestamp(schedule_df, questionnaire_name, datetime.datetime.fromtimestamp(database_entry.available_at))
-
-                        #TODO: uncomment for schedule (1 line)                 
-                        new_timestamp = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
+                        if sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys():
+                            new_timestamp = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
+                        else:
+                            new_timestamp = getNextQuestTimestamp(schedule_df, questionnaire_name, datetime.datetime.fromtimestamp(database_entry.available_at))
                     
+                        # create new row in database
                         session.add(
                             self.SQLQuestState(
                             sender_id=sender_id,
@@ -1123,7 +1122,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 elif usecase =="STROKE":
                     language = "Romanian"
                     timezone = "Europe/Bucharest"
-                now = datetime.datetime.now() 
+                now = datetime.datetime.now(tz=pytz.utc)
                 session.add(
                     self.SQLUserID(
                         sender_id=sender_id,
@@ -1135,6 +1134,9 @@ class CustomSQLTrackerStore(TrackerStore):
                 )
 
                 # add the corresponding questionnaires based on the usecase
+                #change time to local time and then back to utc
+                tz_timezone = pytz.timezone(timezone) 
+                now = now.astimezone(tz_timezone)
                 now = now.replace(hour=0, minute=0, second=0, microsecond=0)
                 for questionnaire in questionnaire_per_usecase[usecase]:
                     #timestamp = (now + datetime.timedelta(days=1)).timestamp()
@@ -1184,7 +1186,11 @@ class CustomSQLTrackerStore(TrackerStore):
                         language = "English"
                         timezone = "UTC"
                     registration_date = resp["registration_date"]
+                    #TODO:convert this to timezone aware object
                     registration_timestamp = datetime.datetime.strptime(registration_date, "%Y-%m-%d").timestamp()
+
+                    #TODO: confirm this with wcs
+                    #registration_timestamp
 
                     if usecase not in questionnaire_per_usecase.keys():
                         return
@@ -1227,6 +1233,12 @@ class CustomSQLTrackerStore(TrackerStore):
                 language = user_entry.language
         return language
 
+    def getUserTimezone(self, sender_id):
+        """ Retrieves the specific user's timezone from the database."""
+        with self.session_scope() as session:
+            user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
+        return user_entry.timezone
+
     def sendQuestionnareStatus(self, sender_id, questionnare_abvr, status):
         """ Sends the status of the questionnaire to WCS
 
@@ -1246,7 +1258,7 @@ class CustomSQLTrackerStore(TrackerStore):
         Available Status: COMPLETED, IN_PROGRESS, CANCELED
         """
 
-        submission_date = datetime.date.today()
+        submission_date = datetime.datetime.now(datetime.timezone.utc)
         questionnaire_data = {"patient_uuid": sender_id, 
                         "abbreviation": questionnare_abvr, 
                         "status": status, 
