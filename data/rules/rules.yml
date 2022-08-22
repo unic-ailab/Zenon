@@ -28,9 +28,8 @@ rules:
 
   - rule: Get health status update
     steps:
-      - intent: health_update
-      - action: utter_not_available
-      - action: action_options_menu_extra
+      - intent: health_update_menu
+      - action: action_health_update_menu
 
   - rule: Ask the user to rephrase in case of low NLU confidence
     steps:

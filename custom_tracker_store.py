@@ -1239,6 +1239,12 @@ class CustomSQLTrackerStore(TrackerStore):
             user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
         return user_entry.timezone
 
+    def getUserUsecase(self, sender_id):
+        """ Retrieves the specific user's timezone from the database."""
+        with self.session_scope() as session:
+            user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
+        return user_entry.usecase
+
     def sendQuestionnareStatus(self, sender_id, questionnare_abvr, status):
         """ Sends the status of the questionnaire to WCS
 

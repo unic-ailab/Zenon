@@ -5,7 +5,11 @@ session_config:
 intents:
   - available_questionnaires
   - close_questionnaire
-  - health_update
+  - health_update_menu
+  - sleep_status
+  - sleep_status_fitbit
+  - mobility_status
+  - qol_status
   - tutorials
   - continue
   - options_menu
@@ -526,6 +530,8 @@ actions:
   - action_utter_how_are_you
   - action_options_menu
   - action_options_menu_extra
+  - action_health_update_menu
+  - action_get_sleep_status_fitbit
   - action_get_available_questionnaires
   - action_utter_continue_latest_questionnaire
   - action_utter_starting_questionnaire

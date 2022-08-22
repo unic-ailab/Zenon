@@ -187,11 +187,32 @@ stories:
                   - action: utter_tutorial_link
                   - action: action_options_menu_extra
 
-        - story: Health status update
+        - story: Health status update menu
           steps:
-                  - intent: health_update
+                  - intent: health_update_menu
+                  - action: action_health_update_menu
+                  #- action: utter_not_available
+                  #- action: action_options_menu_extra
+
+        - story: Sleep status update
+          steps:
+                  - intent: sleep_status
+                  - action: action_get_sleep_status_fitbit
+                  - action: action_health_update_menu
+
+
+        - story: Mobility status update
+          steps:
+                  - intent: mobility_status
                   - action: utter_not_available
-                  - action: action_options_menu_extra
+                  - action: action_health_update_menu
+
+
+        - story: Quality of life status update
+          steps:
+                  - intent: qol_status
+                  - action: utter_not_available
+                  - action: action_health_update_menu
 
         - story: set language
           steps:

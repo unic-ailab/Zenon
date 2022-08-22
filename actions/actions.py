@@ -67,6 +67,19 @@ options_menu_buttons = [
     ["Chestionare", "Actualizare stare de sănătate", "Tutoriale"]
 ]
 
+# The helath status update options the agent offers
+health_update_menu_buttons = { "MS": [["Sleep Quality", "Mobility", "Quality of Life", "Cancel"],
+                                      ["", "", "", ""],
+                                      ["Qualità del Sonno", "Mobilità", "Qualità di Vita", "Annulla"],
+                                      ["", "", "", ""]],
+                               "STROKE": [["Sleep Quality", "Mobility", "Cancel"],
+                                         ["", "", ""],
+                                         ["", "", ""],
+                                         ["Calitatii Somnului ", "Mobilitate", "Anulare"]] }
+
+health_update_menu_payloads = { "MS": ["/sleep_status", "/mobility_status", "/qol_status", "/options_menu"],
+                                "STROKE": ["/sleep_status", "/mobility_status", "/options_menu"]}
+
 
 # PSQI Questionnaire
 psqi_start_text = ["During the past month,", " ", " ", "In ultima luna,"]
@@ -491,7 +504,7 @@ class ActionOptionsMenu(Action):
             tracker,
             options_menu_buttons,
             # TODO: maybe add health_related_report as option
-            ["/available_questionnaires", "/health_update", "/tutorials"]
+            ["/available_questionnaires", "/health_update_menu", "/tutorials"]
         )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
@@ -522,6 +535,197 @@ class ActionOptionsMenuExtra(Action):
             ["/available_questionnaires", "/health_update", "/tutorials"]
         )
         dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+
+#TODO: translate
+class ActionHealthUpdateMenu(Action):
+    def name(self) -> Text:
+        return "action_health_update_menu"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        usecase = customTrackerInstance.getUserUsecase(tracker.current_state()['sender_id'])
+        if usecase in ["MS", "STROKE"]:
+            text = get_text_from_lang(
+                tracker, 
+                [
+                    "Choose domain:",
+                    "",
+                    "Scegli dominio:",
+                    "Alege domeniul:"
+                ]
+            )
+            buttons = get_buttons_from_lang(
+                tracker,
+                health_update_menu_buttons[usecase],
+                health_update_menu_payloads[usecase],
+                )
+            dispatcher.utter_message(text=text, buttons=buttons)
+        else:
+            #TODO: translate
+            text = get_text_from_lang(
+                tracker, 
+                [
+                    "Something went wrong, you were not assigned a valid usecase.",
+                    "",
+                    "Qualcosa è andato storto, non ti è stato assegnato un caso d'uso valido. Per favore, dillo al tuo medico.",
+                    "A apărut o eroare, nu vi s-a atribuit un caz de utilizare valid. Vă rugăm să spuneți acest lucru asistentului medical."
+                ]
+            )
+            dispatcher.utter_message(text=text)
+        return []
+
+
+#TODO: translate
+class ActionSleepStatus(Action):
+    def name(self) -> Text:
+        return "action_get_sleep_status_fitbit"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        try :
+            today = datetime.datetime.now(datetime.timezone.utc)
+            seven_days_ago = (today - datetime.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
+            today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
+            wcs_sleep_endpoint= endpoints_df[endpoints_df["name"]=="WCS_FITBIT_SLEEP_ENDPOINT"]["endpoint"].values[0]
+            response = requests.get(wcs_sleep_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":seven_days_ago, "endDate":today})
+            sleep_efficiency_score = json.loads(response.text)[0]
+            
+            #High 60-100
+            #Low 0-60 
+
+            if int(sleep_efficiency_score) > 60:
+                average_score_text = get_text_from_lang(
+                    tracker, 
+                    [
+                        "high",
+                        "",
+                        "elevatp",
+                        "ridicat"
+                    ]
+                )
+                average_score_text2 = get_text_from_lang(
+                    tracker, 
+                    [
+                        "not",
+                        "",
+                        "non",
+                        "nu"
+                    ]
+                )
+            else:
+                average_score_text = get_text_from_lang(
+                    tracker, 
+                    [
+                        "low",
+                        "",
+                        "basso",
+                        "scăzut"
+                    ]
+                )
+                average_score_text2 =""
+
+            try :
+                fourteen_days_ago = (today - datetime.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
+                response = requests.get(wcs_sleep_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":fourteen_days_ago, "endDate":seven_days_ago})
+                previous_sleep_efficiency_score = json.loads(response.text)[0]
+
+                if abs(previous_sleep_efficiency_score - sleep_efficiency_score) < 10:
+                    comparison_text = get_text_from_lang(
+                        tracker, 
+                        [
+                            "slightly",
+                            "",
+                            "leggermente",
+                            "ușor"
+                        ]
+                    )
+                elif abs(previous_sleep_efficiency_score - sleep_efficiency_score) > 21:
+                    comparison_text = get_text_from_lang(
+                        tracker, 
+                        [
+                            "significantly",
+                            "",
+                            "notevolmente",
+                            "semnificativ"
+                        ]
+                    )
+                else:
+                    comparison_text = get_text_from_lang(
+                        tracker, 
+                        [
+                            "moderately",
+                            "",
+                            "moderatamente",
+                            "moderat"
+                        ]
+                    )
+
+                if previous_sleep_efficiency_score > sleep_efficiency_score:
+                    comparison_text2 = get_text_from_lang(
+                        tracker, 
+                        [
+                            "decreased",
+                            "",
+                            "diminuita",
+                            "scăzut"
+                        ]
+                    )
+                elif previous_sleep_efficiency_score < sleep_efficiency_score:
+                    comparison_text2 = get_text_from_lang(
+                        tracker, 
+                        [
+                            "increased",
+                            "",
+                            "aumentata",
+                            "crescut"
+                        ]
+                    )
+                else:
+                    comparison_text = ""
+                    comparison_text2 = get_text_from_lang(
+                        tracker, 
+                        [
+                            "remained the same",
+                            "",
+                            "rimasta la stessa",
+                            "rămas aceeași"
+                        ]
+                    )
+                text = get_text_from_lang(
+                    tracker, 
+                    [
+                        "According to the Fitbit measurements, the last 7 days your average sleep duration score was %s. Meaning you were %s getting enough hours of sleep at night. Compared to the 7 days before that, your average sleep duration has %s %s.".format(average_score_text, average_score_text2, comparison_text, comparison_text2),
+                        "",
+                        "Secondo le misurazioni Fitbit, negli ultimi 7 giorni il punteggio medio della durata del sonno è stato %s. Significa che %s dormivi abbastanza ore di notte. Rispetto ai 7 giorni precedenti, la durata media del sonno è %s %s.".format(average_score_text, average_score_text2, comparison_text, comparison_text2),
+                        "Conform măsurătorilor Fitbit, în ultimele 7 zile, scorul tău mediu al duratei de somn a fost %s. Înseamnă că %s dormi destule ore noaptea. Comparativ cu cele 7 zile de dinainte, durata medie de somn a %s %s.".format(average_score_text, average_score_text2, comparison_text2, comparison_text),
+                    ]
+                )
+            except:
+                text = get_text_from_lang(
+                    tracker, 
+                    [
+                        "According to the Fitbit measurements, the last 7 days your average sleep duration score was %s. Meaning you were %s getting enough hours of sleep at night.".format(average_score_text, average_score_text2),
+                        "",
+                        "Secondo le misurazioni Fitbit, negli ultimi 7 giorni il punteggio medio della durata del sonno è stato %s. Significa che %s dormivi abbastanza ore di notte.".format(average_score_text, average_score_text2),
+                        "Conform măsurătorilor Fitbit, în ultimele 7 zile, scorul tău mediu al duratei de somn a fost %s. Înseamnă că %s dormi destule ore noaptea.".format(average_score_text, average_score_text2),
+                    ]
+                )
+        except:
+            text = get_text_from_lang(
+                tracker, 
+                [
+                    "There no update from the Fitbit sleep data.",
+                    "",
+                    "Non ci sono aggiornamenti dai dati sul sonno di Fitbit.",
+                    "Nu există nicio actualizare de la datele de somn Fitbit."
+                ]
+            )
+
+        dispatcher.utter_message(text=text)
         return []
 
 class ActionUtterGreet(Action):
