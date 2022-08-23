@@ -1,6 +1,11 @@
 version: "2.0"
 
 stories:
+        - story: Onboard user
+          steps:
+                  - intent: onboard_user
+                  - action: action_onboard_user
+                  
         - story: User click on a notification for questionnaire but the questionnaire is not available and is the first time of the day using the agent #this shouldn't happen
           steps:
                   - intent: notification_questionnaire_open
