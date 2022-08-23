@@ -1167,8 +1167,7 @@ class CustomSQLTrackerStore(TrackerStore):
             if user_entry is None:
                 try:
                     wcs_endpoint= endpoints_df[endpoints_df["name"]=="WCS_ONBOARDING_ENDPOINT"]["endpoint"].values[0]
-                    response = requests.get(wcs_endpoint, json={"patient_uuid": sender_id})
-                    # need to check this
+                    response = requests.get(wcs_endpoint, params={"patient_uuid": sender_id})
                     resp = response.json() 
                     if resp["partner"] == "FISM":
                         usecase = "MS"
@@ -1185,12 +1184,8 @@ class CustomSQLTrackerStore(TrackerStore):
                     else:
                         language = "English"
                         timezone = "UTC"
-                    registration_date = resp["registration_date"]
-                    #TODO:convert this to timezone aware object
-                    registration_timestamp = datetime.datetime.strptime(registration_date, "%Y-%m-%d").timestamp()
-
-                    #TODO: confirm this with wcs
-                    #registration_timestamp
+                    registration_date = datetime.datetime.strptime(resp["registration_date"], "%Y-%m-%d")
+                    registration_timestamp = registration_date.timestamp()
 
                     if usecase not in questionnaire_per_usecase.keys():
                         return
@@ -1209,7 +1204,8 @@ class CustomSQLTrackerStore(TrackerStore):
                     )
 
                     df_questionnaires=schedule_df[schedule_df["usecase"]==usecase]
-                    #onboarding_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
+                    #onboarding_date = datetime.datetime.strptime(registration_date, "%Y-%m-%d")
+                    #onboarding_timestamp = onboarding_date.replace(hour=0, minute=0, second=0, microsecond=0)
                 
                     for questionnaire in df_questionnaires["questionnaire_abvr"]: 
                         first_monday = registration_date + datetime.timedelta(days=(0-registration_date.weekday())%7)
