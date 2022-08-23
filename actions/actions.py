@@ -592,6 +592,7 @@ class ActionSleepStatus(Action):
             today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
             wcs_sleep_endpoint= endpoints_df[endpoints_df["name"]=="WCS_FITBIT_SLEEP_ENDPOINT"]["endpoint"].values[0]
             response = requests.get(wcs_sleep_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":seven_days_ago, "endDate":today})
+            response.close()
             sleep_efficiency_score = json.loads(response.text)[0]
             
             #High 60-100
@@ -631,6 +632,7 @@ class ActionSleepStatus(Action):
             try :
                 fourteen_days_ago = (today - datetime.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
                 response = requests.get(wcs_sleep_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":fourteen_days_ago, "endDate":seven_days_ago})
+                response.close()
                 previous_sleep_efficiency_score = json.loads(response.text)[0]
 
                 if abs(previous_sleep_efficiency_score - sleep_efficiency_score) < 10:
@@ -776,6 +778,7 @@ class ActionUtterHowAreYou(Action):
         try :
             ontology_meaa_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_MEAA_ENDPOINT"]["endpoint"].values[0]
             response = requests.get(ontology_meaa_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today})
+            response.close()
             average_score_per_mood = json.loads(response.text)[0]
             average_score_per_mood.pop("userId")
             # returned classes ["avgPos","avgNeg","avgNeut","avgOth"]
