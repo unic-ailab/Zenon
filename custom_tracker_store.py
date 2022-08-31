@@ -7,6 +7,7 @@ import logging
 import datetime
 import requests
 import pandas as pd
+import pytz
 from sqlite3 import Timestamp
 
 from time import sleep
@@ -61,6 +62,7 @@ questionnaire_per_usecase = {
 questionnaire_names_list = ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdomainIII_1W", "MSdomainIII_2W", "MSdomainIV_Daily", "MSdomainIV_1W", "MSdomainV", "activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
 
 schedule_df = pd.read_csv("pilot_schedule.csv")                       
+endpoints_df = pd.read_csv("alameda_endpoints.csv")                       
 
 class CustomSQLTrackerStore(TrackerStore):
     """Store which can save and retrieve trackers from an SQL database. Based on rasa's original SQLTrackerStore"""
@@ -111,6 +113,8 @@ class CustomSQLTrackerStore(TrackerStore):
         sender_id = sa.Column(sa.String(255), nullable=False, index=True)
         usecase = sa.Column(sa.String(255), nullable=False)
         onboarding_timestamp = sa.Column(sa.Float)
+        language = sa.Column(sa.String(255))
+        timezone = sa.Column(sa.String(255))
 
     # class SQLSchedule(Base):
     #     """Represents an event in the SQL Tracker Store."""
@@ -373,7 +377,7 @@ class CustomSQLTrackerStore(TrackerStore):
         Returns:
             Query to get the conversation events.
         """
-        # Subquery to find the timestamp of the latest `SessionStarted` event
+        # Subquery to find the timestamp of the latest `session_started` event
         session_start_sub_query = (
             session.query(sa.func.max(self.SQLEvent.timestamp).label("session_start"))
             .filter(
@@ -388,7 +392,7 @@ class CustomSQLTrackerStore(TrackerStore):
         )
         if not fetch_events_from_all_sessions:
             event_query = event_query.filter(
-                # Find events after the latest `SessionStarted` event or return all
+                # Find events after the latest `session_started` event or return all
                 # events
                 sa.or_(
                     self.SQLEvent.timestamp >= session_start_sub_query.c.session_start,
@@ -420,8 +424,6 @@ class CustomSQLTrackerStore(TrackerStore):
         #     )
         #     .subquery()
         # )
-
-        # TODO: different time per pilot or save in specific timezone
 
         #not so great approach
         if  questionnaire_name in ["MSdomainIII_2W", "MSdomainII_3M"]:
@@ -486,12 +488,13 @@ class CustomSQLTrackerStore(TrackerStore):
                 self.SQLEvent.sender_id == sender_id,
                 self.SQLEvent.type_name == "slot",
                 self.SQLEvent.timestamp.between(latest_start_time, latest_end_time),
-                #self.SQLEvent.action_name.notlike("utter_"+questionnaire_name),
-                #self.SQLEvent.action_name.notlike(questionnaire_name+"_form"),
+                self.SQLEvent.action_name.notlike(questionnaire_name+"_%_score"),
+                self.SQLEvent.action_name.notlike(questionnaire_name+"_score"),
                 self.SQLEvent.action_name.ilike(questionnaire_name+"_%")
                 ).order_by(self.SQLEvent.timestamp).all()
 
         print(len(question_events))
+        print(len(slot_events))
         print("agree", len(question_events)==len(slot_events))
         return question_events, slot_events
 
@@ -583,6 +586,33 @@ class CustomSQLTrackerStore(TrackerStore):
         else:
             return answers_entry
 
+    def _questionnaire_score_query(
+        self, session: "Session", sender_id: Text, questionnaire_name: Text,
+    ) -> "Query":
+        """Provide the query to retrieve the questionnaire score for a specific sender.
+
+        Args:
+            session: Current database session.
+            sender_id: Sender id whose conversation events should be retrieved.
+            questionnaire_name: The name of the questionnaire.
+
+        Returns:
+            Float with questionnaire score.
+        """
+        latest_questionnaire_score_sub = session.query(sa.func.max(self.SQLEvent.timestamp).label("latest_timestamp")).filter(
+                self.SQLEvent.sender_id == sender_id,
+                self.SQLEvent.action_name.ilike(questionnaire_name+"_score"),
+                self.SQLEvent.type_name == "slot",
+            ).subquery()
+        latest_questionnaire_score = session.query(self.SQLEvent.data).filter(
+                self.SQLEvent.sender_id == sender_id,
+                self.SQLEvent.action_name.ilike(questionnaire_name+"_score"),
+                self.SQLEvent.type_name == "slot",
+                self.SQLEvent.timestamp >= latest_questionnaire_score_sub.c.latest_timestamp,
+            ).first()[0]
+
+        data = json.loads(latest_questionnaire_score)
+        return float(data.get("value", -1))
 
     def _questionnaire_name_query(
         self, session: "Session", sender_id: Text, action_name: Text,
@@ -707,7 +737,7 @@ class CustomSQLTrackerStore(TrackerStore):
         Returns:
             Boolean, True=first time, False=not first time
         """
-        today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+        today = datetime.datetime.now(tz=pytz.utc).replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
         return session.query(sa.func.min(self.SQLEvent.timestamp)).filter(
             self.SQLEvent.sender_id == sender_id,
             self.SQLEvent.type_name == "action",
@@ -762,18 +792,25 @@ class CustomSQLTrackerStore(TrackerStore):
                     )
                 )                 
 
-                if event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_completed_first_part", "action_questionnaire_cancelled"]:
+                if event.type_name == "action" and event.action_name=="action_ontology_store_sentiment":
+                    # commit to store the events in the database so they can be found by the query
+                    session.commit() 
+                    self.saveToOntology(sender_id)
+                elif event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_completed_first_part", "action_questionnaire_cancelled"]:
                     # commit to store the events in the database so they can be found by the query
                     session.commit() 
                     # get questionnaire name because at that stage the questionnaire slot value might have changed
-                    questionnaire_name = self._questionnaire_name_query(session, sender_id, event.action_name)
+                    try:
+                        questionnaire_name = self._questionnaire_name_query(session, sender_id, event.action_name)
+                    except:
+                        questionnaire_name = ""
                     if questionnaire_name in questionnaire_names_list:
                         if event.action_name=="action_questionnaire_cancelled":
                             isSaved = self.saveQuestionnaireAnswers(sender_id, questionnaire_name, False, tracker)
                             if isSaved: self.sendQuestionnareStatus(sender_id, questionnaire_name, "IN_PROGRESS")
                         else:                 
                             isSaved = self.saveQuestionnaireAnswers(sender_id, questionnaire_name, True, tracker)
-                            if isSaved: self.sendQuestionnareStatus(sender_id, questionnaire_name, "COMPLETED")                 
+                            if isSaved: self.sendQuestionnareStatus(sender_id, questionnaire_name, "COMPLETED")             
 
             session.commit()
 
@@ -799,20 +836,17 @@ class CustomSQLTrackerStore(TrackerStore):
     def saveQuestionnaireAnswers(self, sender_id, questionnaire_name, isFinished: bool, tracker: DialogueStateTracker) -> None:
         """Update database with answers from a specific questionnaire."""
 
-        class UniqueDict(dict):
-            def __setitem__(self, key, value):
-                if key not in self:
-                    dict.__setitem__(self, key, value)
-                else:
-                    raise print("Key already exists")
-
         if self.event_broker:
             self.stream_events(tracker)
 
-        # boolean to know when any questionnaire answers have been saved
-        isSaved = True
+        #boolean to know when any questionnaire answers have been saved
+        isSaved = False
+        question_numbers_list =[]
         with self.session_scope() as session:
-            q_events, s_events  = self._questionnaire_query(session, sender_id, questionnaire_name)
+            try:
+                q_events, s_events  = self._questionnaire_query(session, sender_id, questionnaire_name)
+            except:
+                q_events = None
             if q_events:
                 question_events = [json.loads(event.data) for event in q_events]
                 slot_events = [json.loads(event.data) for event in s_events]
@@ -827,25 +861,21 @@ class CustomSQLTrackerStore(TrackerStore):
 
                     try:
                         question_number = slot_data.get("name").split("Q")[1]
+                        #if question_number in question_numbers_list:
+
                         # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
                         answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
                     except:
                         if questionnaire_name in ["activLim", "dizzNbalance"]:
                             question_number = slot_data.get("name").split(questionnaire_name + "_")[1]
                     # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
-                    answers_data.append(
-                        {
-                            "number": question_number, 
-                            "question": question_data.get("text"), 
-                            "answer": slot_data.get("value"), 
-                            "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
-                        }
-                    )
+                    answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
 
+                print(answers_data)
+                #TODO: only have unique question numbers
                 try:
-                    # next line is only necessary for avoiding mistakes when intent /close_questionnaire is sent
-                    _ = self.checkQuestionnaireTimelimit(sender_id, init_timestamp, questionnaire_name)
-                    database_entry = self._questionnaire_state_query(session, sender_id, init_timestamp, questionnaire_name).first()
+                    database_entry, _ = self.checkQuestionnaireTimelimit(session, sender_id, init_timestamp, questionnaire_name)
+                    #database_entry = self._questionnaire_state_query(session, sender_id, init_timestamp, questionnaire_name).first()
                     if database_entry.state=="available":
                         database_entry.timestamp_start=init_timestamp
                         database_entry.answers = json.dumps(answers_data)
@@ -856,15 +886,18 @@ class CustomSQLTrackerStore(TrackerStore):
                     if isFinished:
                         database_entry.timestamp_end=timestamp
                         database_entry.state="finished"
-                        # create new row in database
-                        
-                        #TODO: uncomment for schedule
-                        #doing this everyday for the msdomain_daily might not be so efficient
-                        #new_timestamp = getNextQuestTimestamp(schedule_df, questionnaire_name, datetime.datetime.fromtimestamp(database_entry.available_at))
 
-                        #TODO: uncomment for schedule (1 line)                 
-                        new_timestamp = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
+                        # store score
+                        if questionnaire_name in ["psqi", "muscletone"]:
+                            self.storeNsendQuestionnaireScore(session, sender_id, questionnaire_name, database_entry)
+                                                    
+                        #doing this everyday for the msdomain_daily might not be so efficient
+                        if sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys():
+                            new_timestamp = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
+                        else:
+                            new_timestamp = getNextQuestTimestamp(schedule_df, questionnaire_name, datetime.datetime.fromtimestamp(database_entry.available_at))
                     
+                        # create new row in database
                         session.add(
                             self.SQLQuestState(
                             sender_id=sender_id,
@@ -887,8 +920,8 @@ class CustomSQLTrackerStore(TrackerStore):
                     else:
                         database_entry.state="pending"
                         database_entry.timestamp_end=timestamp
+                    isSaved = True
                 except:
-                    isSaved = False
                     print("Error: no such entry in database table 'questionnaires_state'.")
 
             session.commit()
@@ -897,8 +930,8 @@ class CustomSQLTrackerStore(TrackerStore):
         return isSaved
 
     def getSpecificQuestionnaireAvailability(self, sender_id, current_timestamp, questionnaire_name) -> bool:
-        _ = self.checkQuestionnaireTimelimit(sender_id, current_timestamp, questionnaire_name)
         with self.session_scope() as session:
+            _,_ = self.checkQuestionnaireTimelimit(session, sender_id, current_timestamp, questionnaire_name)
             isAvailable = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first() is not None
         return isAvailable
 
@@ -907,37 +940,49 @@ class CustomSQLTrackerStore(TrackerStore):
             isFirstTime = self._first_time_of_day_query(session, sender_id) 
         return isFirstTime
 
-    def checkQuestionnaireTimelimit(self, sender_id, current_timestamp, questionnaire_name):
+    def checkQuestionnaireTimelimit(self, session, sender_id, current_timestamp, questionnaire_name):
         passedTheLimit = False
-        with self.session_scope() as session:
-            entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first()
-            # this step might need to happen somewhere else, myb automatically
-            # checks whether 1 or 2 days has passed after the questionnaire was first available
+        entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first()
+        # this step might need to happen somewhere else, myb automatically
+        # checks whether 1 or 2 days has passed after the questionnaire was first available
+        usecase = sender_id[:len(sender_id)-2].upper()
+        if usecase in questionnaire_per_usecase.keys():
+            lifespanInDays = 2
+        else:
             df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == entry.questionnaire_name]
-            lifespanInDays = df_row["lifespanInDays"]
-            time_limit = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=lifespanInDays)).timestamp()
+            lifespanInDays = int(df_row["lifespanInDays"].values[0])        
+        
+        time_limit = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=lifespanInDays)).timestamp()
                 
-            if time_limit < current_timestamp:
-                entry.state = "incomplete"
-                passedTheLimit = True
+        if time_limit < current_timestamp:
+            entry.state = "incomplete"
+            passedTheLimit = True
 
-                # create new database entry
-                # doing this everyday for the msdomain_daily might not be so efficient
+            # create new database entry
+            # doing this everyday for the msdomain_daily might not be so efficient
+            now = datetime.datetime.now(pytz.utc).timestamp()
+            if usecase in questionnaire_per_usecase.keys():
+                new_timestamp = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=3)).timestamp()
+                while new_timestamp < now:
+                    new_timestamp = (datetime.datetime.fromtimestamp(new_timestamp)+datetime.timedelta(days=3)).timestamp()
+            else:
                 new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(entry.available_at))
+                while new_timestamp < now:
+                    new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(new_timestamp))
                 
-                session.add(
-                    self.SQLQuestState(
-                    sender_id=sender_id,
-                    questionnaire_name=entry.questionnaire_name,
-                    available_at=new_timestamp,
-                    state="available",
-                    timestamp_start=None,
-                    timestamp_end=None,
-                    answers=None,                          
-                    )
+            session.add(
+                self.SQLQuestState(
+                sender_id=sender_id,
+                questionnaire_name=entry.questionnaire_name,
+                available_at=new_timestamp,
+                state="available",
+                timestamp_start=None,
+                timestamp_end=None,
+                answers=None,                          
                 )
-            session.commit()
-        return passedTheLimit
+            )
+        session.commit()
+        return entry, passedTheLimit
 
     def getAvailableQuestionnaires(self, sender_id, current_timestamp) -> List[str]:
         """ Retrieve current available questionnaires"""
@@ -946,15 +991,30 @@ class CustomSQLTrackerStore(TrackerStore):
             database_entries = self._questionnaire_state_query(session, sender_id, current_timestamp).all()
             for entry in database_entries:
                 # this step might need to happen somewhere else, myb automatically
-                # checks whether 1 day has passed after the questionnaire was first available
-                time_limit = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=1)).timestamp()
-
+                # checks whether 1 or 2 days has passed after the questionnaire was first available
+                usecase = sender_id[:len(sender_id)-2].upper()
+                if usecase in questionnaire_per_usecase.keys():
+                    lifespanInDays = 2
+                else:
+                    df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == entry.questionnaire_name]
+                    lifespanInDays = int(df_row["lifespanInDays"].values[0])
+                time_limit = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=lifespanInDays)).timestamp()
+                
                 if time_limit < current_timestamp:
                     entry.state = "incomplete"
 
                     # create new database entry
-                    new_timestamp = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=3)).timestamp()
-
+                    # doing this everyday for the msdomain_daily might not be so efficient
+                    now = datetime.datetime.now(pytz.utc).timestamp()
+                    if usecase in questionnaire_per_usecase.keys():
+                        new_timestamp = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=3)).timestamp()
+                        while new_timestamp < now:
+                            new_timestamp = (datetime.datetime.fromtimestamp(new_timestamp)+datetime.timedelta(days=3)).timestamp()
+                    else:
+                        new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(entry.available_at))
+                        while new_timestamp < now:
+                            new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(new_timestamp))
+                
                     session.add(
                         self.SQLQuestState(
                         sender_id=sender_id,
@@ -981,57 +1041,39 @@ class CustomSQLTrackerStore(TrackerStore):
                     # when the questionnaire becomes available again, reset its slots 
                     if entry.state == "available":
                         reset_questionnaires.append(entry.questionnaire_name)
-                    available_questionnaires.append(entry.questionnaire_name)
+                    available_questionnaires.append(entry.questionnaire_name)            
             session.commit()
-        return available_questionnaires, reset_questionnaires 
+        return available_questionnaires, reset_questionnaires      
+  
+    def storeNsendQuestionnaireScore(self, session, sender_id, questionnaire_name, database_entry, total_score=None, sub_scores: Dict={}):
+        """ Store the questionnaire score to the local database and send it to the ontology
+            Scoring is available for the questionnares:
+            - psqi
+            - muscle tone
+        """
+        questionnaires = {"psqi": "Pittsburgh Sleep Quality Index", "muscletone": "Muscle Tone"} 
 
-    # new version with scheduling
-    # def getAvailableQuestionnaires(self, sender_id, current_datetime) -> List[str]:
-    #     """ Retrieve current available questionnaires"""
-    #     available_questionnaires, reset_questionnaires = [],[]
-    #     current_timestamp = current_datetime.timestamp()
-    #     with self.session_scope() as session:
-    #         database_entries = self._questionnaire_state_query(session, sender_id, current_timestamp).all()
-    #         for entry in database_entries:
-    #             # this step might need to happen somewhere else, myb automatically
-    #             # checks whether 1 or 2 days has passed after the questionnaire was first available
-    #             df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == entry.questionnaire_name]
-    #             lifespanInDays = df_row["lifespanInDays"]
-    #             time_limit = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=lifespanInDays)).timestamp()
-                
-    #             if time_limit < current_datetime.timestamp():
-    #                 entry.state = "incomplete"
+        score_list = []
+        if not total_score:
+                total_score = self._questionnaire_score_query(session, sender_id, questionnaire_name)
+        score_list.append({"score": total_score, "scoreDescription": "TOTAL"})
+        database_entry.scoring = json.dumps(score_list)
+        
+        ontology_data = {
+            "user_id": sender_id,
+            "source": "CA",
+            "survey_title": questionnaires[questionnaire_name],
+            "partner": "UPB",
+            "disease": "STROKE",
+            "abbreviation": questionnaire_name,
+            "submission_date": datetime.datetime.fromtimestamp(database_entry.timestamp_end).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "survey_score": score_list}
 
-    #                 # create new database entry
-    #                 # doing this everyday for the msdomain_daily might not be so efficient
-    #                 new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(entry.available_at))
-                
-    #                 session.add(
-    #                     self.SQLQuestState(
-    #                     sender_id=sender_id,
-    #                     questionnaire_name=entry.questionnaire_name,
-    #                     available_at=new_timestamp,
-    #                     state="available",
-    #                     timestamp_start=None,
-    #                     timestamp_end=None,
-    #                     answers=None,                          
-    #                     )
-    #                 )
-
-    #                 # previous version where we keep the same database entry and change the available_at timestamp
-    #                 # new_day = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=3)).timestamp()
-    #                 # entry.available_at= new_day
-    #                 # entry.state="available"
-    #                 # entry.timestamp_start=None
-    #                 # entry.timestamp_end=None
-    #                 # entry.answers = None
-
-    #                 # questionnaires that are passed the time limit need to be reset
-    #                 reset_questionnaires.append(entry.questionnaire_name)
-    #             else:
-    #                 available_questionnaires.append(entry.questionnaire_name)
-    #         session.commit()
-    #     return available_questionnaires, reset_questionnaires 
+        print(ontology_data)
+        ontology_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_SEND_SCORE_ENDPOINT"]["endpoint"].values[0]
+        response = requests.post(ontology_endpoint, json=ontology_data)
+        response.close()
+        print(response)        
 
 
     def saveToOntology(self, sender_id):
@@ -1065,31 +1107,44 @@ class CustomSQLTrackerStore(TrackerStore):
                     "explanation": message_text,
                     "in_dashboard": intent_to_bool[intent]}
                 ontology_data["observations"].append(data)
-            
+            session.commit()
             print(ontology_data)
-        #TODO:send to ontology
-        #response = requests.post("ONTOLOGY_CA_ENDPOINT", json=ontology_data)
-        #print(response)
+        ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
+        response = requests.post(ontology_ca_endpoint, json=ontology_data)
+        response.close()
+        print(response)
 
-    def checkUserID(self, sender_id):
+    def checkUserIDdemo(self, sender_id):
         """ Checks if the specific user id is in the database. If not it adds it"""
         with self.session_scope() as session:
-            exists = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first() is not None
-            if not exists:
-                # temp
+            user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
+            if user_entry is None:
+                # assumes user ids are of the form "ms00" or "stroke00"
                 usecase = sender_id[:len(sender_id)-2].upper()
                 if usecase not in questionnaire_per_usecase.keys():
-                    return  #TODO Something needs to be added here
-                now = datetime.datetime.now() 
+                    return
+
+                if usecase == "MS":
+                    language = "Italian"
+                    timezone = "Europe/Brussels"
+                elif usecase =="STROKE":
+                    language = "Romanian"
+                    timezone = "Europe/Bucharest"
+                now = datetime.datetime.now(tz=pytz.utc)
                 session.add(
                     self.SQLUserID(
                         sender_id=sender_id,
                         usecase=usecase,
-                        onboarding_timestamp=now.timestamp()                        
+                        language = language,
+                        onboarding_timestamp=now.timestamp(),
+                        timezone=timezone,                                                
                     )
                 )
 
                 # add the corresponding questionnaires based on the usecase
+                #change time to local time and then back to utc
+                tz_timezone = pytz.timezone(timezone) 
+                now = now.astimezone(tz_timezone)
                 now = now.replace(hour=0, minute=0, second=0, microsecond=0)
                 for questionnaire in questionnaire_per_usecase[usecase]:
                     #timestamp = (now + datetime.timedelta(days=1)).timestamp()
@@ -1105,63 +1160,100 @@ class CustomSQLTrackerStore(TrackerStore):
                             answers=None,                          
                     )
                 )
-
+            else:
+                language = user_entry.language
             session.commit()
+        return language
 
-    # def checkUserIDnew(self, sender_id):
-    #     """ Checks if the specific user id is in the database. 
-    #         If not
-    #         - adds the user id and his/her onboarding date on the information provided by WCS
-    #         - adds the first set of questionnaires"""
-    #     with self.session_scope() as session:
-    #         exists = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first() is not None
-    #         if not exists:
-    #             response = requests.get("WCS_ONBOARDING_ENDPOINT", json={"patient_uuid": sender_id})
-    #             # need to check this
-    #             resp = response.json() 
-    #             if resp["partner"] == "FISM":
-    #               usecase = "MS"
-    #             elif resp["partner"] == "SUUB":
-    #               usecase = "STROKE"
-    #             else:
-    #                usecase = "PD"
-    #             if usecase not in questionnaire_per_usecase.keys():
-    #                 return
-    #             registration_date = resp["registration_date"]
-    #             registration_timestamp = datetime.datetime.strptime(registration_date, "%Y-%m-%d").timestamp()
-    #             # usecase = sender_id[:len(sender_id)-2].upper()
-    #             # if usecase not in questionnaire_per_usecase.keys():
-    #             #     return
-    #             # now = datetime.datetime.today() 
-    #             session.add(
-    #                 self.SQLUserID(
-    #                     sender_id=sender_id,
-    #                     usecase=usecase,
-    #                     onboarding_timestamp=registration_timestamp,
-    #                     #timezone=timezone,                        
-    #                 )
-    #             )
+    def checkUserID(self, sender_id):
+        """ Checks if the specific user id is in the database. 
+            If not
+            - adds the user id and his/her onboarding date on the information provided by WCS
+            - adds the first set of questionnaires"""
+        with self.session_scope() as session:
+            user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
+            if user_entry is None:
+                try:
+                    wcs_endpoint= endpoints_df[endpoints_df["name"]=="WCS_ONBOARDING_ENDPOINT"]["endpoint"].values[0]
+                    response = requests.get(wcs_endpoint, params={"patient_uuid": sender_id})
+                    response.close()
+                    resp = response.json() 
+                    if resp["partner"] == "FISM":
+                        usecase = "MS"
+                        language = "Italian"
+                        timezone = "Europe/Brussels"
+                    elif resp["partner"] == "SUUB":
+                        usecase = "STROKE"
+                        language = "Romanian"
+                        timezone = "Europe/Bucharest"
+                    elif resp["partner"] == "NKUA":
+                        usecase = "PD"
+                        language = "Greek"        
+                        timezone = "Europe/Athens"
+                    else:
+                        language = "English"
+                        timezone = "UTC"
+                    registration_date = datetime.datetime.strptime(resp["registration_date"], "%Y-%m-%d")
+                    registration_timestamp = registration_date.timestamp()
 
-    #             df_questionnaires=schedule_df[schedule_df["usecase"]==usecase]
-    #             #onboarding_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
+                    print(usecase)
+                    if usecase not in questionnaire_per_usecase.keys():
+                        return
+                    # usecase = sender_id[:len(sender_id)-2].upper()
+                    # if usecase not in questionnaire_per_usecase.keys():
+                    #     return
+                    # now = datetime.datetime.today() 
+                    session.add(
+                        self.SQLUserID(
+                            sender_id=sender_id,
+                            usecase=usecase,
+                            language=language,
+                            onboarding_timestamp=registration_timestamp,
+                            timezone=timezone,                        
+                        )
+                    )
+
+                    df_questionnaires=schedule_df[schedule_df["usecase"]==usecase]
+                    #onboarding_date = datetime.datetime.strptime(registration_date, "%Y-%m-%d")
+                    #onboarding_timestamp = onboarding_date.replace(hour=0, minute=0, second=0, microsecond=0)
                 
-    #             for questionnaire in df_questionnaires["questionnaire_abvr"]: 
-    #                 first_monday = registration_date + datetime.timedelta(days=(0-registration_date.weekday())%7)
-    #                 #doing this everyday for the msdomain_dialy might not be so efficient
-    #                 timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday)
-    #                 session.add(
-    #                     self.SQLQuestState(
-    #                     sender_id=sender_id,
-    #                     questionnaire_name=questionnaire,
-    #                     available_at=timestamp,
-    #                     state="available",
-    #                     timestamp_start=None,
-    #                     timestamp_end=None,
-    #                     answers=None,                          
-    #                     )
-    #                 )
+                    now = datetime.datetime.now(pytz.utc).timestamp()
+                    for questionnaire in df_questionnaires["questionnaire_abvr"]: 
+                        first_monday = registration_date + datetime.timedelta(days=(0-registration_date.weekday())%7)
+                        #doing this everyday for the msdomain_dialy might not be so efficient
+                        timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday)
+                        while timestamp < now:
+                            timestamp = getNextQuestTimestamp(schedule_df, questionnaire, datetime.datetime.fromtimestamp(timestamp)) 
+                        session.add(
+                            self.SQLQuestState(
+                            sender_id=sender_id,
+                            questionnaire_name=questionnaire,
+                            available_at=timestamp,
+                            state="available",
+                            timestamp_start=None,
+                            timestamp_end=None,
+                            answers=None,                          
+                            )
+                        )
+                except:
+                    print("fukc")
+                    language = self.checkUserIDdemo(sender_id)
+                session.commit()
+            else:
+                language = user_entry.language
+        return language
 
-    #         session.commit()
+    def getUserTimezone(self, sender_id):
+        """ Retrieves the specific user's timezone from the database."""
+        with self.session_scope() as session:
+            user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
+        return user_entry.timezone
+
+    def getUserUsecase(self, sender_id):
+        """ Retrieves the specific user's timezone from the database."""
+        with self.session_scope() as session:
+            user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
+        return user_entry.usecase
 
     def sendQuestionnareStatus(self, sender_id, questionnare_abvr, status):
         """ Sends the status of the questionnaire to WCS
@@ -1182,7 +1274,7 @@ class CustomSQLTrackerStore(TrackerStore):
         Available Status: COMPLETED, IN_PROGRESS, CANCELED
         """
 
-        submission_date = datetime.date.today()
+        submission_date = datetime.datetime.now(datetime.timezone.utc)
         questionnaire_data = {"patient_uuid": sender_id, 
                         "abbreviation": questionnare_abvr, 
                         "status": status, 
@@ -1205,10 +1297,11 @@ class CustomSQLTrackerStore(TrackerStore):
                     "question": "SYMPTOMS: Select all that apply and press send:",
                     "answer": areNewSymptoms}]
 
-        #TODO:send to wcs
         print(questionnaire_data)
-        #response = requests.post("WCS_STATUS_ENDPOINT", json=questionnaire_data)
-        #print(response)
+        wcs_status_endpoint= endpoints_df[endpoints_df["name"]=="WCS_STATUS_ENDPOINT"]["endpoint"].values[0]
+        response = requests.post(wcs_status_endpoint, json=questionnaire_data)
+        response.close()
+        print(response)
 
     def getDizzinessNbalanceNewSymptoms(self, sender_id):
         """ Gets the symptoms of the latest Dizziness and Balance questionnaire and of the one before that
@@ -1284,7 +1377,7 @@ def getNextKTimestamps(init_date, number_of_days:int=7):
     return q_days                    
 
 if __name__ == "__main__":
-    ts = CustomSQLTrackerStore(db="demo.db")
+    ts = CustomSQLTrackerStore(db="demo2.db")
     #print(ts.getAvailableQuestionnaires("stroke00",datetime.datetime.now()))
     #print(ts.saveQuestionnaireAnswers("stroke03", "activLim", False))
     now = datetime.datetime.today()
@@ -1294,11 +1387,19 @@ if __name__ == "__main__":
 
     #print(1654808400<now)
     with ts.session_scope() as session:
+        print(ts.checkUserID("7acfadf5-671d-44e2-8e6c-914c503c1d2d"))
+        print(ts.checkUserID("3407ad63-ab3c-48af-a294-72a8999b2cf7"))
+        # d = ts.checkQuestionnaireTimelimit(session, "stroke99", datetime.datetime.now().timestamp(), "psqi")
+        # #print(d)
+        # #print(ts._questionnaire_score_query(session, "stroke98", "muscletone"))
+        # question_events = ts._questionnaire_state_query(session, "stroke92", datetime.datetime.now().timestamp(), "psqi").first()
+        # print(question_events)
+        #ts.storeNsendQuestionnaireScore("stroke97", "muscletone")
         #question_events = ts._questionnaire_state_query(session, "stroke05", now, "activLim")
         #print(question_events.first().state)
         #q = [json.loads(event.data) for event in question_events]
         #print(q)
-        question_events, slot = ts._questionnaire_query(session, "ms11", "MSdomainII_3M")
+        #question_events, slot = ts._questionnaire_query(session, "ms11", "MSdomainII_3M")
         # print([json.loads(event.data) for event in question_events])
         # print([json.loads(event.data) for event in slot])
         #print(ts._first_time_of_day_query(session, "stroke23"))
@@ -1307,7 +1408,7 @@ if __name__ == "__main__":
         #print(previous_answers)
 
         #ts.saveToOntology("ms24")
-        ts._sentiment_query(session, "ms28")
+        #ts._sentiment_query(session, "stroke98")
         #ts.sendQuestionnareStatus("stroke01", "dizzNbalance", "COMPLETED")
         #ts.getDizzinessNbalanceNewSymptoms("stroke01")
 

@@ -10,6 +10,10 @@ rules:
   #   steps:
   #     - intent: notification_questionnaire_open
   #     - action: action_utter_notification_greet
+  - rule: Onboard user
+    steps:
+      - intent: onboard_user
+      - action: action_onboard_user
 
   - rule: Get available questionnaires
     steps:
@@ -24,9 +28,8 @@ rules:
 
   - rule: Get health status update
     steps:
-      - intent: health_update
-      - action: utter_not_available
-      - action: action_options_menu_extra
+      - intent: health_update_menu
+      - action: action_health_update_menu
 
   - rule: Ask the user to rephrase in case of low NLU confidence
     steps:

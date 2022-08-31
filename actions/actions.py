@@ -7,6 +7,8 @@ import re
 import os
 import requests
 import json
+import pytz
+import pandas as pd
 
 from typing import Any, Dict, List, Text
 from urllib import response
@@ -24,6 +26,7 @@ sys.path.append(os.getcwd().replace("\\","/"))
 from custom_tracker_store import CustomSQLTrackerStore
 
 customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="demo.db")
+endpoints_df = pd.read_csv("alameda_endpoints.csv")                       
 
 # Define this list as the values for the `language` slot. Arguments of the `get_..._lang` functions should respect this order.
 lang_list = ["English", "Greek", "Italian", "Romanian"]  # Same as slot values
@@ -63,6 +66,19 @@ options_menu_buttons = [
     ["Questionari", "Aggiornamento dello stato di salute", "Tutorial"],
     ["Chestionare", "Actualizare stare de sănătate", "Tutoriale"]
 ]
+
+# The helath status update options the agent offers
+health_update_menu_buttons = { "MS": [["Sleep Quality", "Mobility", "Quality of Life", "Cancel"],
+                                      ["", "", "", ""],
+                                      ["Qualità del Sonno", "Mobilità", "Qualità di Vita", "Annulla"],
+                                      ["", "", "", ""]],
+                               "STROKE": [["Sleep Quality", "Mobility", "Cancel"],
+                                         ["", "", ""],
+                                         ["", "", ""],
+                                         ["Calitatii Somnului ", "Mobilitate", "Anulare"]] }
+
+health_update_menu_payloads = { "MS": ["/sleep_status", "/mobility_status", "/qol_status", "/options_menu"],
+                                "STROKE": ["/sleep_status", "/mobility_status", "/options_menu"]}
 
 
 # PSQI Questionnaire
@@ -342,6 +358,20 @@ class ActionUtterSetLanguage(Action):
         return [SlotSet("language", current_language)]
 
 ####################################################################################################
+# Onboarding                                                                                          #
+####################################################################################################
+
+class ActionOnboardUser(Action):
+    def name(self) -> Text:
+        return "action_onboard_user"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+        language = customTrackerInstance.checkUserID(tracker.current_state()['sender_id'])
+        dispatcher.utter_message(text=language)
+        return [SlotSet("language", language)]
+
+####################################################################################################
 # General                                                                                          #
 ####################################################################################################
 
@@ -351,8 +381,8 @@ class ActionGetAvailableQuestions(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        now = datetime.datetime.now().timestamp()
-        customTrackerInstance.checkUserID(tracker.current_state()['sender_id'])
+        now = datetime.datetime.now(tz=pytz.utc).timestamp()
+        #customTrackerInstance.checkUserIDWCS(tracker.current_state()['sender_id'])
         available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
         print(available_questionnaires)
         if len(available_questionnaires) == 0:
@@ -413,7 +443,7 @@ class ActionContinueLatestQuestionnaire(Action):
             return []
         else:
             q_abbreviation = tracker.get_slot("questionnaire")
-            isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now().timestamp(), q_abbreviation)
+            isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
             if isAvailable:        
                 q_name = get_text_from_lang(tracker, questionnaire_abbreviations[q_abbreviation])
 
@@ -474,7 +504,7 @@ class ActionOptionsMenu(Action):
             tracker,
             options_menu_buttons,
             # TODO: maybe add health_related_report as option
-            ["/available_questionnaires", "/health_update", "/tutorials"]
+            ["/available_questionnaires", "/health_update_menu", "/tutorials"]
         )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
@@ -505,6 +535,199 @@ class ActionOptionsMenuExtra(Action):
             ["/available_questionnaires", "/health_update", "/tutorials"]
         )
         dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+
+#TODO: translate
+class ActionHealthUpdateMenu(Action):
+    def name(self) -> Text:
+        return "action_health_update_menu"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        usecase = customTrackerInstance.getUserUsecase(tracker.current_state()['sender_id'])
+        if usecase in ["MS", "STROKE"]:
+            text = get_text_from_lang(
+                tracker, 
+                [
+                    "Choose domain:",
+                    "",
+                    "Scegli dominio:",
+                    "Alege domeniul:"
+                ]
+            )
+            buttons = get_buttons_from_lang(
+                tracker,
+                health_update_menu_buttons[usecase],
+                health_update_menu_payloads[usecase],
+                )
+            dispatcher.utter_message(text=text, buttons=buttons)
+        else:
+            #TODO: translate
+            text = get_text_from_lang(
+                tracker, 
+                [
+                    "Something went wrong, you were not assigned a valid usecase.",
+                    "",
+                    "Qualcosa è andato storto, non ti è stato assegnato un caso d'uso valido. Per favore, dillo al tuo medico.",
+                    "A apărut o eroare, nu vi s-a atribuit un caz de utilizare valid. Vă rugăm să spuneți acest lucru asistentului medical."
+                ]
+            )
+            dispatcher.utter_message(text=text)
+        return []
+
+
+#TODO: translate
+class ActionSleepStatus(Action):
+    def name(self) -> Text:
+        return "action_get_sleep_status_fitbit"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        try :
+            today = datetime.datetime.now(datetime.timezone.utc)
+            seven_days_ago = (today - datetime.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
+            today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
+            wcs_sleep_endpoint= endpoints_df[endpoints_df["name"]=="WCS_FITBIT_SLEEP_ENDPOINT"]["endpoint"].values[0]
+            response = requests.get(wcs_sleep_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":seven_days_ago, "endDate":today})
+            response.close()
+            sleep_efficiency_score = json.loads(response.text)[0]
+            
+            #High 60-100
+            #Low 0-60 
+
+            if int(sleep_efficiency_score) > 60:
+                average_score_text = get_text_from_lang(
+                    tracker, 
+                    [
+                        "high",
+                        "",
+                        "elevatp",
+                        "ridicat"
+                    ]
+                )
+                average_score_text2 = get_text_from_lang(
+                    tracker, 
+                    [
+                        "not",
+                        "",
+                        "non",
+                        "nu"
+                    ]
+                )
+            else:
+                average_score_text = get_text_from_lang(
+                    tracker, 
+                    [
+                        "low",
+                        "",
+                        "basso",
+                        "scăzut"
+                    ]
+                )
+                average_score_text2 =""
+
+            try :
+                fourteen_days_ago = (today - datetime.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
+                response = requests.get(wcs_sleep_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":fourteen_days_ago, "endDate":seven_days_ago})
+                response.close()
+                previous_sleep_efficiency_score = json.loads(response.text)[0]
+
+                if abs(previous_sleep_efficiency_score - sleep_efficiency_score) < 10:
+                    comparison_text = get_text_from_lang(
+                        tracker, 
+                        [
+                            "slightly",
+                            "",
+                            "leggermente",
+                            "ușor"
+                        ]
+                    )
+                elif abs(previous_sleep_efficiency_score - sleep_efficiency_score) > 21:
+                    comparison_text = get_text_from_lang(
+                        tracker, 
+                        [
+                            "significantly",
+                            "",
+                            "notevolmente",
+                            "semnificativ"
+                        ]
+                    )
+                else:
+                    comparison_text = get_text_from_lang(
+                        tracker, 
+                        [
+                            "moderately",
+                            "",
+                            "moderatamente",
+                            "moderat"
+                        ]
+                    )
+
+                if previous_sleep_efficiency_score > sleep_efficiency_score:
+                    comparison_text2 = get_text_from_lang(
+                        tracker, 
+                        [
+                            "decreased",
+                            "",
+                            "diminuita",
+                            "scăzut"
+                        ]
+                    )
+                elif previous_sleep_efficiency_score < sleep_efficiency_score:
+                    comparison_text2 = get_text_from_lang(
+                        tracker, 
+                        [
+                            "increased",
+                            "",
+                            "aumentata",
+                            "crescut"
+                        ]
+                    )
+                else:
+                    comparison_text = ""
+                    comparison_text2 = get_text_from_lang(
+                        tracker, 
+                        [
+                            "remained the same",
+                            "",
+                            "rimasta la stessa",
+                            "rămas aceeași"
+                        ]
+                    )
+                text = get_text_from_lang(
+                    tracker, 
+                    [
+                        "According to the Fitbit measurements, the last 7 days your average sleep duration score was %s. Meaning you were %s getting enough hours of sleep at night. Compared to the 7 days before that, your average sleep duration has %s %s.".format(average_score_text, average_score_text2, comparison_text, comparison_text2),
+                        "",
+                        "Secondo le misurazioni Fitbit, negli ultimi 7 giorni il punteggio medio della durata del sonno è stato %s. Significa che %s dormivi abbastanza ore di notte. Rispetto ai 7 giorni precedenti, la durata media del sonno è %s %s.".format(average_score_text, average_score_text2, comparison_text, comparison_text2),
+                        "Conform măsurătorilor Fitbit, în ultimele 7 zile, scorul tău mediu al duratei de somn a fost %s. Înseamnă că %s dormi destule ore noaptea. Comparativ cu cele 7 zile de dinainte, durata medie de somn a %s %s.".format(average_score_text, average_score_text2, comparison_text2, comparison_text),
+                    ]
+                )
+            except:
+                text = get_text_from_lang(
+                    tracker, 
+                    [
+                        "According to the Fitbit measurements, the last 7 days your average sleep duration score was %s. Meaning you were %s getting enough hours of sleep at night.".format(average_score_text, average_score_text2),
+                        "",
+                        "Secondo le misurazioni Fitbit, negli ultimi 7 giorni il punteggio medio della durata del sonno è stato %s. Significa che %s dormivi abbastanza ore di notte.".format(average_score_text, average_score_text2),
+                        "Conform măsurătorilor Fitbit, în ultimele 7 zile, scorul tău mediu al duratei de somn a fost %s. Înseamnă că %s dormi destule ore noaptea.".format(average_score_text, average_score_text2),
+                    ]
+                )
+        except:
+            text = get_text_from_lang(
+                tracker, 
+                [
+                    "There no update from the Fitbit sleep data.",
+                    "",
+                    "Non ci sono aggiornamenti dai dati sul sonno di Fitbit.",
+                    "Nu există nicio actualizare de la datele de somn Fitbit."
+                ]
+            )
+
+        dispatcher.utter_message(text=text)
         return []
 
 class ActionUtterGreet(Action):
@@ -549,11 +772,13 @@ class ActionUtterHowAreYou(Action):
         announce(self, tracker)
 
         # query the ontology for meaa results of the previous day
-        today = datetime.datetime.today()
-        yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
-        today = today.strftime("%Y-%m-%dT%H:%M:%S")
+        today = datetime.datetime.now(datetime.timezone.utc)
+        yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
         try :
-            response = requests.get("ONTOLOGY_MEAA_ENDPOINT", params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today})
+            ontology_meaa_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_MEAA_ENDPOINT"]["endpoint"].values[0]
+            response = requests.get(ontology_meaa_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today})
+            response.close()
             average_score_per_mood = json.loads(response.text)[0]
             average_score_per_mood.pop("userId")
             # returned classes ["avgPos","avgNeg","avgNeut","avgOth"]
@@ -603,7 +828,7 @@ class ActionUtterNotificationGreet(Action):
         isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
 
         # check if questionnaire is still pending
-        isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now().timestamp(), q_abbreviation)
+        isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
         if isAvailable:
             text = get_text_from_lang(
                 tracker,
@@ -676,7 +901,7 @@ class ActionOntologyStoreSentiment(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
+        #customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
         return []
 
 class ActionQuestionnaireCancelled(Action):
@@ -891,11 +1116,11 @@ class CalculatePSQIScore(Action):
         psqi_global_score = psqi_comp_1_score + psqi_comp_2_score + psqi_comp_3_score + psqi_comp_4_score + psqi_comp_5_score + psqi_comp_6_score + psqi_comp_7_score
 
         print(f"Global PSQI Score: {psqi_global_score}")
-        return [SlotSet("psqi_global_score", psqi_global_score)]
+        return [SlotSet("psqi_score", psqi_global_score)]
 
         
 
-class ActionAskPSQIQ1(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ1(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q1"
 
@@ -922,7 +1147,7 @@ class ActionAskPSQIQ1(Action):  # PSQI Questionnaire
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskPSQIQ4(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ2(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q4"
 
@@ -976,7 +1201,7 @@ class ActionAskPSQIQ3(Action):
         dispatcher.utter_message(text=text)
         return []
 
-class ActionAskPSQIQ2(Action):  # PSQI Questionnaire
+class ActionAskPSQIQ4(Action):
     def name(self) -> Text:
         return "action_ask_psqi_Q2"
 
@@ -5172,6 +5397,40 @@ class ActionAskMuscleToneQ10(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
+class ActionAskMuscleToneQ10i(Action):
+    def name(self) -> Text:
+        return "action_ask_muscletone_Q10i"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Please specify...",
+                " ",
+                " ",
+                "Vă rugăm să specificați..."
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text)
+        return []        
+
+class ValidateMuscleToneForm(FormValidationAction):
+    def name(self) -> Text:
+        return "validate_muscletone_form"
+
+    async def required_slots(
+        self, slots_mapped_in_domain, dispatcher, tracker, domain,
+    ) -> List[Text]:
+
+        if tracker.get_slot("muscletone_Q10") != "Yes, other (specify)":
+            slots_mapped_in_domain.remove("muscletone_Q10i")
+
+        return slots_mapped_in_domain
+
 class ValidateMuscleToneForm(FormValidationAction):
     def name(self) -> Text:
         return "validate_muscletone_form"
@@ -5991,7 +6250,7 @@ class ActionAskCoastQ20(Action):
 
         buttons = get_buttons_from_lang(
             tracker,
-            coast_buttons_7,
+            coast_buttons_5,
             [
                 '/inform{"given_answer":"The worst possible"}',
                 '/inform{"given_answer":"Quite poor"}',

@@ -1,6 +1,10 @@
 version: "2.0"
 nlu:
-  - intent: health_update
+  - intent: onboard_user
+    examples: |
+      - onboarding
+      - onboarding user
+  - intent: health_update_menu
     examples: |
       # English
       - How am i doing?
@@ -17,6 +21,31 @@ nlu:
       - Cum progresez
       - Cum este starea mea de sănătate
       - Actualizare a stării de sănătate
+  - intent: sleep_status_fitbit
+    examples: |
+      # English
+      - fitbit sleep score
+      # Italian
+      # Romanian
+  - intent: sleep_status
+    examples: |
+      # English
+      - sleep status
+      # Italian
+      # Romanian
+  - intent: mobility_status
+    examples: |
+      # English
+      - mobility status
+      # Italian
+      # Romanian
+  - intent: qol_status
+    examples: |
+      # English
+      - quality of life status
+      - daily living status
+      # Italian
+      # Romanian
   - intent: close_questionnaire
     examples: |
       # English

@@ -33,6 +33,9 @@ slots:
   muscletone_Q10:
     type: any
     influence_conversation: false
+  muscletone_Q10i:
+    type: any
+    influence_conversation: false
 actions:
   - validate_muscletone_form
   - action_ask_muscletone_Q1
@@ -45,6 +48,7 @@ actions:
   - action_ask_muscletone_Q8
   - action_ask_muscletone_Q9
   - action_ask_muscletone_Q10
+  - action_ask_muscletone_Q10i
 forms:
   muscletone_form:
     required_slots:
@@ -78,3 +82,5 @@ forms:
       muscletone_Q10:
         - entity: given_answer
           type: from_entity
+      muscletone_Q10i:
+        - type: from_text
