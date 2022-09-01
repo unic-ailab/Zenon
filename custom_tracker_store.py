@@ -795,7 +795,8 @@ class CustomSQLTrackerStore(TrackerStore):
                 if event.type_name == "action" and event.action_name=="action_ontology_store_sentiment":
                     # commit to store the events in the database so they can be found by the query
                     session.commit() 
-                    self.saveToOntology(sender_id)
+                    if sender_id[:len(sender_id)-2].upper() not in questionnaire_per_usecase.keys():
+                        self.saveToOntology(sender_id)
                 elif event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_completed_first_part", "action_questionnaire_cancelled"]:
                     # commit to store the events in the database so they can be found by the query
                     session.commit() 
@@ -806,11 +807,11 @@ class CustomSQLTrackerStore(TrackerStore):
                         questionnaire_name = ""
                     if questionnaire_name in questionnaire_names_list:
                         if event.action_name=="action_questionnaire_cancelled":
-                            isSaved = self.saveQuestionnaireAnswers(sender_id, questionnaire_name, False, tracker)
-                            if isSaved: self.sendQuestionnareStatus(sender_id, questionnaire_name, "IN_PROGRESS")
+                            isSaved, isDemo = self.saveQuestionnaireAnswers(sender_id, questionnaire_name, False, tracker)
+                            if isSaved and not isDemo: self.sendQuestionnareStatus(sender_id, questionnaire_name, "IN_PROGRESS")
                         else:                 
-                            isSaved = self.saveQuestionnaireAnswers(sender_id, questionnaire_name, True, tracker)
-                            if isSaved: self.sendQuestionnareStatus(sender_id, questionnaire_name, "COMPLETED")             
+                            isSaved, isDemo = self.saveQuestionnaireAnswers(sender_id, questionnaire_name, True, tracker)
+                            if isSaved and not isDemo: self.sendQuestionnareStatus(sender_id, questionnaire_name, "COMPLETED")             
 
             session.commit()
 
@@ -841,6 +842,7 @@ class CustomSQLTrackerStore(TrackerStore):
 
         #boolean to know when any questionnaire answers have been saved
         isSaved = False
+        isDemo = sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys()
         question_numbers_list =[]
         with self.session_scope() as session:
             try:
@@ -888,11 +890,11 @@ class CustomSQLTrackerStore(TrackerStore):
                         database_entry.state="finished"
 
                         # store score
-                        if questionnaire_name in ["psqi", "muscletone"]:
+                        if questionnaire_name in ["psqi", "muscletone"] and not isDemo:
                             self.storeNsendQuestionnaireScore(session, sender_id, questionnaire_name, database_entry)
                                                     
                         #doing this everyday for the msdomain_daily might not be so efficient
-                        if sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys():
+                        if isDemo:
                             new_timestamp = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
                         else:
                             new_timestamp = getNextQuestTimestamp(schedule_df, questionnaire_name, datetime.datetime.fromtimestamp(database_entry.available_at))
@@ -927,7 +929,7 @@ class CustomSQLTrackerStore(TrackerStore):
             session.commit()
 
         logger.debug(f"Questionnaire answers with sender_id '{tracker.sender_id}' stored to database")
-        return isSaved
+        return isSaved, isDemo
 
     def getSpecificQuestionnaireAvailability(self, sender_id, current_timestamp, questionnaire_name) -> bool:
         with self.session_scope() as session:
