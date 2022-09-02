@@ -377,7 +377,7 @@ class CustomSQLTrackerStore(TrackerStore):
         Returns:
             Query to get the conversation events.
         """
-        # Subquery to find the timestamp of the latest `SessionStarted` event
+        # Subquery to find the timestamp of the latest `session_started` event
         session_start_sub_query = (
             session.query(sa.func.max(self.SQLEvent.timestamp).label("session_start"))
             .filter(
@@ -392,7 +392,7 @@ class CustomSQLTrackerStore(TrackerStore):
         )
         if not fetch_events_from_all_sessions:
             event_query = event_query.filter(
-                # Find events after the latest `SessionStarted` event or return all
+                # Find events after the latest `session_started` event or return all
                 # events
                 sa.or_(
                     self.SQLEvent.timestamp >= session_start_sub_query.c.session_start,

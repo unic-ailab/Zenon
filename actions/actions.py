@@ -6250,7 +6250,7 @@ class ActionAskCoastQ20(Action):
 
         buttons = get_buttons_from_lang(
             tracker,
-            coast_buttons_7,
+            coast_buttons_5,
             [
                 '/inform{"given_answer":"The worst possible"}',
                 '/inform{"given_answer":"Quite poor"}',

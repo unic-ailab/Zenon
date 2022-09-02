@@ -18,7 +18,16 @@ pipeline:
     max_ngram: 4
   - name: "DucklingEntityExtractor"
     url: "http://localhost:8000"
+    dimensions: ["time"]
+    locale: "ro_RO"
+  - name: "DucklingEntityExtractor"
+    url: "http://localhost:8000"
     dimensions: ["time", "number"]
+    locale: "en_US"
+  # - name: "DucklingEntityExtractor"
+  #   url: "http://localhost:8000"
+  #   dimensions: ["time", "number"]
+  #   locale: "it_IT"
   - name: DIETClassifier
     epochs: 100
     constrain_similarities: true
