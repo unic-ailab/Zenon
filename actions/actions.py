@@ -384,7 +384,6 @@ class ActionGetAvailableQuestions(Action):
         now = datetime.datetime.now(tz=pytz.utc).timestamp()
         #customTrackerInstance.checkUserIDWCS(tracker.current_state()['sender_id'])
         available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
-        print(available_questionnaires)
         if len(available_questionnaires) == 0:
             text = get_text_from_lang(
                 tracker, 
@@ -587,7 +586,7 @@ class ActionSleepStatus(Action):
         announce(self, tracker)
 
         try :
-            today = datetime.datetime.now(datetime.timezone.utc)
+            today = datetime.datetime.now(tz=pytz.utc)
             seven_days_ago = (today - datetime.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
             today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
             wcs_sleep_endpoint= endpoints_df[endpoints_df["name"]=="WCS_FITBIT_SLEEP_ENDPOINT"]["endpoint"].values[0]
@@ -772,7 +771,7 @@ class ActionUtterHowAreYou(Action):
         announce(self, tracker)
 
         # query the ontology for meaa results of the previous day
-        today = datetime.datetime.now(datetime.timezone.utc)
+        today = datetime.datetime.now(tz=pytz.utc)
         yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
         today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
         try :
@@ -874,6 +873,7 @@ class ActionQuestionnaireCompleted(Action):
             ],
         )
         dispatcher.utter_message(text=text)
+        customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), tracker.get_slot("questionnaire"))
         return []
 
 class ActionQuestionnaireCompletedFirstPart(Action):
@@ -884,6 +884,7 @@ class ActionQuestionnaireCompletedFirstPart(Action):
         announce(self, tracker)
 
         q_abbreviation = tracker.get_slot("questionnaire")
+        customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
 
         #fake_intent={"name": "/"+q_abbreviation+"_start", "confidence": 1.0}
         #UserUttered("/MSdomainIII_2W_start", fake_intent)
@@ -921,6 +922,7 @@ class ActionQuestionnaireCancelled(Action):
             ],
         )
         dispatcher.utter_message(text=text)
+        customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), tracker.get_slot("questionnaire"))
         return[]
 
 class ActionUtterStartingQuestionnaire(Action):
