@@ -6981,11 +6981,11 @@ class ValidateMSDomainIII1WForm(FormValidationAction):
         self, slots_mapped_in_domain, dispatcher, tracker, domain,
     ) -> List[Text]:
 
-        # if tracker.get_slot("MSdomainIII_1W_RQ2") is not None and tracker.get_slot("MSdomainIII_1W_RQ2") < 6:
-        #     slots_mapped_in_domain.remove("MSdomainIII_1W_RQ2a")
+        if tracker.get_slot("MSdomainIII_1W_RQ2") is not None and tracker.get_slot("MSdomainIII_1W_RQ2") < 6:
+            slots_mapped_in_domain.remove("MSdomainIII_1W_RQ2a")
 
-        # if tracker.get_slot("MSdomainIII_1W_RQ5") is not None and tracker.get_slot("MSdomainIII_1W_RQ5") < 6:
-        #     slots_mapped_in_domain.remove("MSdomainIII_1W_RQ5a")  
+        if tracker.get_slot("MSdomainIII_1W_RQ5") is not None and tracker.get_slot("MSdomainIII_1W_RQ5") < 6:
+            slots_mapped_in_domain.remove("MSdomainIII_1W_RQ5a")  
 
         # if not tracker.get_slot("MSdomainIII_both"):
         #     slots_mapped_in_domain.remove("MSdomainIII_2W_RQ6") 
