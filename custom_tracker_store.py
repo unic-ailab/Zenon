@@ -908,10 +908,11 @@ class CustomSQLTrackerStore(TrackerStore):
                             self.storeNsendQuestionnaireScore(session, sender_id, questionnaire_name, database_entry)
                                                     
                         #doing this everyday for the msdomain_daily might not be so efficient
+                        last_availability = datetime.datetime.fromtimestamp(database_entry.available_at, tz=pytz.timezone(database_entry.timezone))
                         if isDemo:
-                            new_timestamp = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
+                            new_timestamp = (last_availability+datetime.timedelta(days=3)).timestamp()
                         else:
-                            new_timestamp = getNextQuestTimestamp(schedule_df, questionnaire_name, datetime.datetime.fromtimestamp(database_entry.available_at))
+                            new_timestamp = getNextQuestTimestamp(schedule_df, questionnaire_name, last_availability)
                     
                         # create new row in database
                         session.add(
@@ -988,14 +989,15 @@ class CustomSQLTrackerStore(TrackerStore):
 
             # create new database entry
             # doing this everyday for the msdomain_daily might not be so efficient
-            now = datetime.datetime.now(pytz.utc).timestamp()
+            now = datetime.datetime.now(pytz.timezone(entry.timezone)).timestamp() #timezone doesnt really matter hear as timestamps are universal
+            last_availability = datetime.datetime.fromtimestamp(entry.available_at, tz=pytz.timezone(entry.timezone))
             if usecase in questionnaire_per_usecase.keys():
-                new_timestamp = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=3)).timestamp()
-                while new_timestamp < now:
+                new_timestamp = (last_availability+datetime.timedelta(days=3)).timestamp()
+                while new_timestamp <= now:
                     new_timestamp = (datetime.datetime.fromtimestamp(new_timestamp)+datetime.timedelta(days=3)).timestamp()
             else:
-                new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(entry.available_at))
-                while new_timestamp < now:
+                new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, last_availability)
+                while new_timestamp <= now:
                     new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(new_timestamp))
                 
             session.add(
@@ -1017,6 +1019,8 @@ class CustomSQLTrackerStore(TrackerStore):
         available_questionnaires, reset_questionnaires = [],[]
         with self.session_scope() as session:
             database_entries = self._questionnaire_state_query(session, sender_id, current_timestamp).all()
+            if len(database_entries) == 0:
+                return available_questionnaires, reset_questionnaires
             for entry in database_entries:
                 if entry.state == "to_be_stored":
                     continue
@@ -1035,14 +1039,15 @@ class CustomSQLTrackerStore(TrackerStore):
 
                     # create new database entry
                     # doing this everyday for the msdomain_daily might not be so efficient
-                    now = datetime.datetime.now(pytz.utc).timestamp()
+                    now = datetime.datetime.now(pytz.timezone(entry.timezone)).timestamp()
+                    last_availability = datetime.datetime.fromtimestamp(entry.available_at, tz=pytz.timezone(entry.timezone))
                     if usecase in questionnaire_per_usecase.keys():
-                        new_timestamp = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=3)).timestamp()
-                        while new_timestamp < now:
+                        new_timestamp = (last_availability+datetime.timedelta(days=3)).timestamp()
+                        while new_timestamp <= now:
                             new_timestamp = (datetime.datetime.fromtimestamp(new_timestamp)+datetime.timedelta(days=3)).timestamp()
                     else:
-                        new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(entry.available_at))
-                        while new_timestamp < now:
+                        new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, last_availability)
+                        while new_timestamp <= now:
                             new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(new_timestamp))
                 
                     session.add(
@@ -1224,9 +1229,11 @@ class CustomSQLTrackerStore(TrackerStore):
                         language = "English"
                         timezone = "UTC"
                     registration_date = datetime.datetime.strptime(resp["registration_date"], "%Y-%m-%d")
+                    tz_timezone = pytz.timezone(timezone) 
+                    tz_registration_date = registration_date.astimezone(tz_timezone)
+                    tz_registration_date = tz_registration_date.replace(hour=0, minute=0, second=0, microsecond=0) 
                     registration_timestamp = registration_date.timestamp()
 
-                    print(usecase)
                     if usecase not in questionnaire_per_usecase.keys():
                         return
                     # usecase = sender_id[:len(sender_id)-2].upper()
@@ -1247,13 +1254,13 @@ class CustomSQLTrackerStore(TrackerStore):
                     #onboarding_date = datetime.datetime.strptime(registration_date, "%Y-%m-%d")
                     #onboarding_timestamp = onboarding_date.replace(hour=0, minute=0, second=0, microsecond=0)
                 
-                    now = datetime.datetime.now(pytz.utc).timestamp()
-                    for questionnaire in df_questionnaires["questionnaire_abvr"]: 
-                        first_monday = registration_date + datetime.timedelta(days=(0-registration_date.weekday())%7)
+                    now = datetime.datetime.now(tz_timezone).timestamp()
+                    for questionnaire in df_questionnaires["questionnaire_abvr"]:
+                        first_monday = tz_registration_date + datetime.timedelta(days=(0-tz_registration_date.weekday())%7)
                         #doing this everyday for the msdomain_dialy might not be so efficient
                         timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday)
-                        while timestamp < now:
-                            timestamp = getNextQuestTimestamp(schedule_df, questionnaire, datetime.datetime.fromtimestamp(timestamp)) 
+                        while timestamp <= now:
+                            timestamp = getNextQuestTimestamp(schedule_df, questionnaire, datetime.datetime.fromtimestamp(timestamp, tz=pytz.timezone(timezone))) 
                         session.add(
                             self.SQLQuestState(
                             sender_id=sender_id,
@@ -1357,7 +1364,10 @@ def getFirstQuestTimestamp(schedule_df, questionnaire_name, init_date):
         questionnaire_name:
         init_date: initial date in datetime format
     Returns:
-        timestamp"""
+        timestamp
+        
+    NOTE: always use timezone aware datetime objects 
+    """
     df_row=schedule_df.loc[schedule_df["questionnaire_abvr"] == questionnaire_name]                    
     dayOfWeek=int(df_row["dayOfWeek"].values[0])
     weekOfMonth=int(df_row["weekOfMonth"].values[0])
@@ -1367,7 +1377,8 @@ def getFirstQuestTimestamp(schedule_df, questionnaire_name, init_date):
         weekOfMonth = frequencyInWeeks-1
 
     if questionnaire_name == "MSdomainIV_Daily":
-        q_day = getNextKTimestamps(init_date,1)[0]
+        q_day = init_date.timestamp()
+        #q_day = getNextKTimestamps(init_date,1)[0]
     else:
         q_day = (init_date + datetime.timedelta(days=dayOfWeek, weeks=max(0,weekOfMonth-1))).timestamp()
     return q_day
@@ -1381,7 +1392,10 @@ def getNextQuestTimestamp(schedule_df, questionnaire_name, init_date):
         questionnaire_name:
         init_date: initial date in datetime format
     Returns:
-        timestamp"""
+        timestamp
+
+    NOTE: always use timezone aware datetime objects     
+    """
     df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == questionnaire_name]                    
     frequencyInWeeks=int(df_row["frequencyInWeeks"].values[0])
 
@@ -1399,15 +1413,19 @@ def getNextKTimestamps(init_date, number_of_days:int=7):
         init_date: initial date in datetime format
         number_of_days: number of next days
     Returns:
-        timestamp"""    
+        timestamp
+
+    NOTE: always use timezone aware datetime objects 
+    """    
     q_days = []
     for i in range(number_of_days):
         q_days.append((init_date + datetime.timedelta(days=i+1)).timestamp())
     return q_days                    
 
 if __name__ == "__main__":
-    ts = CustomSQLTrackerStore(db="demo2.db")
+    ts = CustomSQLTrackerStore(db="demo.db")
     print(ts.getAvailableQuestionnaires("stroke15", 1662449573.249213))
+    print(ts.checkUserID("7acfadf5-671d-44e2-8e6c-914c503c1d2d"))
     #print(ts.saveQuestionnaireAnswers("stroke03", "activLim", False))
     now = datetime.datetime.today()
     first_monday = now + datetime.timedelta(days=(0-now.weekday())%7)
