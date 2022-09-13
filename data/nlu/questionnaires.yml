@@ -19,26 +19,26 @@ nlu:
       - [MSdomainIV_1W]{"entity": "questionnaire", "value": "MSdomainIV_1W"}
       - [MSdomainIV_Daily]{"entity": "questionnaire", "value": "MSdomainIV_Daily"}
       - [MSdomainV]{"entity": "questionnaire", "value": "MSdomainV"}
-  - intent: questionnaire_open
-    examples: |
-      - [activlim]{"entity": "questionnaire", "value": "ACTIVLIM"} questionnare is open
-      - [MuscleTone]{"entity":"questionnaire", "value":"MuscleTone"} questionnare is open
-      - [muscle tone]{"entity":"questionnaire", "value":"MuscleTone"} questionnare is open
-      - [muscle tone]{"entity":"questionnaire", "value":"MuscleTone"} open
-      - [Muscle Tone]{"entity":"questionnaire", "value":"MuscleTone"} questionnare is open
-      - [dizziness]{"entity": "questionnaire", "value": "DizzinessAndBalance"} questionnare is open
-      - [activlim]{"entity": "questionnaire", "value": "ACTIVLIM"} open
-      - [PSQI]{"entity":"questionnaire", "value": "PSQI"} open
-      - [psqi]{"entity":"questionnaire", "value": "PSQI"} is open
-      - [dizziness]{"entity":"questionnaire", "value": "DizzinessAndBalance"} open
-      - [balance]{"entity":"questionnaire", "value": "DizzinessAndBalance"} is open
-      - [dizziness and balance]{"entity":"questionnaire", "value": "DizzinessAndBalance"} open
-      - [dizz'nbalance]{"entity":"questionnaire", "value": "DizzinessAndBalance"} is open
-      - [diet]{"entity":"questionnaire", "value":"EatingHabits"} is open
-      - [eating habits]{"entity":"questionnaire", "value":"EatingHabits"} questionnaire open
-      - [coast]{"entity":"questionnaire", "value":"coast"} is open
-      - [Coast]{"entity":"questionnaire", "value":"coast"} questionnaire open
-      - [COAST]{"entity":"questionnaire", "value":"coast"} questionnaire open
+  # - intent: questionnaire_open
+  #   examples: |
+  #     - [activlim]{"entity": "questionnaire", "value": "ACTIVLIM"} questionnare is open
+  #     - [MuscleTone]{"entity":"questionnaire", "value":"MuscleTone"} questionnare is open
+  #     - [muscle tone]{"entity":"questionnaire", "value":"MuscleTone"} questionnare is open
+  #     - [muscle tone]{"entity":"questionnaire", "value":"MuscleTone"} open
+  #     - [Muscle Tone]{"entity":"questionnaire", "value":"MuscleTone"} questionnare is open
+  #     - [dizziness]{"entity": "questionnaire", "value": "DizzinessAndBalance"} questionnare is open
+  #     - [activlim]{"entity": "questionnaire", "value": "ACTIVLIM"} open
+  #     - [PSQI]{"entity":"questionnaire", "value": "PSQI"} open
+  #     - [psqi]{"entity":"questionnaire", "value": "PSQI"} is open
+  #     - [dizziness]{"entity":"questionnaire", "value": "DizzinessAndBalance"} open
+  #     - [balance]{"entity":"questionnaire", "value": "DizzinessAndBalance"} is open
+  #     - [dizziness and balance]{"entity":"questionnaire", "value": "DizzinessAndBalance"} open
+  #     - [dizz'nbalance]{"entity":"questionnaire", "value": "DizzinessAndBalance"} is open
+  #     - [diet]{"entity":"questionnaire", "value":"EatingHabits"} is open
+  #     - [eating habits]{"entity":"questionnaire", "value":"EatingHabits"} questionnaire open
+  #     - [coast]{"entity":"questionnaire", "value":"coast"} is open
+  #     - [Coast]{"entity":"questionnaire", "value":"coast"} questionnaire open
+  #     - [COAST]{"entity":"questionnaire", "value":"coast"} questionnaire open
   - intent: activLim_start
     examples: |
       - start activLim questionnaire

@@ -1,10 +1,10 @@
 version: "2.0"
 
 rules:
-  - rule: Questionnaire opened
-    steps:
-      - intent: questionnaire_open
-      - action: action_utter_set_questionnaire
+  # - rule: Questionnaire opened
+  #   steps:
+  #     - intent: questionnaire_open
+  #     - action: action_utter_set_questionnaire
 
   # - rule: Questionnaire opened from notification
   #   steps:

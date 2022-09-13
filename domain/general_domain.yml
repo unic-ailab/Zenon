@@ -30,7 +30,7 @@ intents:
   - greet
   - deny
   - notification_questionnaire_open
-  - questionnaire_open
+  #- questionnaire_open
   - dizzNbalance_start
   - affirm
   - activLim_start

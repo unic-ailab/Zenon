@@ -4,7 +4,7 @@ MS,Sleep Disorders,MSdomainII_1M,3,3,4,2,12
 MS,Sleep Disorders,MSdomainII_3M,3,3,12,2,12
 MS,Mental and Cognitive Ability,MSdomainIII_1W,1,0,1,1,12
 MS,Mental and Cognitive Ability,MSdomainIII_2W,1,2,2,1,12
-MS,Emotional Status,MSdomainIV_Daily,-1,0,1,0,12
+MS,Emotional Status,MSdomainIV_Daily,-1,0,1,1,12
 MS,Emotional Status,MSdomainIV,6,0,1,1,12
 MS,Quality of Life,MSdomainV,3,1,4,2,12
 STROKE,Activlim,activLim,4,1,4,2,12
