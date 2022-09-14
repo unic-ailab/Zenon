@@ -50,6 +50,12 @@ questionnaire_abbreviations = {"activLim": ["ACTIVLIM", "", "", "ACTIVLIM"],
                                 "MSdomainIV_Daily": ["Emotional Status", "", "Stato emotivo", ""],
                                 "MSdomainV": ["Quality of Life", "", "Qualità di vita", ""],}
 
+questionnaire_per_usecase = {
+    "MS": ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdomainIII_1W", "MSdomainIII_2W", "MSdomainIV_Daily", "MSdomainIV_1W", "MSdomainV"],
+    "STROKE": ["activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
+}
+
+
 # cancel button
 cancel_button = [
     "Cancel",
@@ -531,7 +537,7 @@ class ActionOptionsMenuExtra(Action):
         buttons = get_buttons_from_lang(
             tracker,
             options_menu_buttons,
-            ["/available_questionnaires", "/health_update", "/tutorials"]
+            ["/available_questionnaires", "/health_update_menu", "/tutorials"]
         )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
@@ -963,7 +969,7 @@ class ActionUtterStartingQuestionnaire(Action):
                 ],
             )
             dispatcher.utter_message(text=text)
-            return [SlotSet("questionnaire", None)]
+            return [SlotSet("questionnaire", None), FollowupAction("action_options_menu_extra")]
 
 class ActionSetQuestionnaireSlot(Action):
     def name(self):
@@ -973,8 +979,12 @@ class ActionSetQuestionnaireSlot(Action):
         announce(self, tracker)
         
         q_abbreviation = tracker.latest_message["intent"].get("name").replace("_start", "")
-        if q_abbreviation in questionnaire_abbreviations.keys():
-            return [SlotSet("questionnaire", q_abbreviation)]
+        usecase = customTrackerInstance.getUserUsecase(tracker.current_state()['sender_id'])
+        if usecase is not None and usecase in questionnaire_per_usecase:
+            if q_abbreviation in questionnaire_per_usecase[usecase]:
+                return [SlotSet("questionnaire", q_abbreviation)]
+            else:
+                return [SlotSet("questionnaire", None)]
         else:
             return [SlotSet("questionnaire", None)]
 
