@@ -388,7 +388,9 @@ class ActionGetAvailableQuestions(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
         now = datetime.datetime.now(tz=pytz.utc).timestamp()
-        #customTrackerInstance.checkUserIDWCS(tracker.current_state()['sender_id'])
+        # its better to not check the user id here as here it won't update the app languge
+        # keep it here for now to avoid not onboarding users between database updates
+        _ = customTrackerInstance.checkUserID(tracker.current_state()['sender_id'])
         available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
         if len(available_questionnaires) == 0:
             text = get_text_from_lang(
