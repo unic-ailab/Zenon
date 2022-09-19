@@ -429,6 +429,12 @@ class ActionGetAvailableQuestions(Action):
             else:
                 slots_to_set.append(SlotSet("MSdomainIII_both", False))
 
+            if all(x in available_questionnaires for x in ["MSdomainIV_1W", "MSdomainIV_Daily"]):
+                available_questionnaires.remove("MSdomainIV_1W")
+                slots_to_set.append(SlotSet("MSdomainIV_both", True))
+            else:
+                slots_to_set.append(SlotSet("MSdomainIV_both", False))
+
             buttons = []
             for questionnaire in available_questionnaires:
                 button_title = get_text_from_lang(tracker, questionnaire_abbreviations[questionnaire])

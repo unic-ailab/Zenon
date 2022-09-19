@@ -136,12 +136,13 @@ rules:
       - action: MSdomainIII_1W_form
       - active_loop: MSdomainIII_1W_form
 
-  - rule: Start MS Domain III biweekly – Mental and Cognitive Ability relevant questions
+  - rule: Start MS Domain III biweekly - Mental and Cognitive Ability relevant questions
     steps:
       - intent: MSdomainIII_2W_start
       - action: action_set_questionnaire_slot
       - slot_was_set:
           - questionnaire: MSdomainIII_2W
+      - action: action_utter_starting_questionnaire
       - action: MSdomainIII_2W_form
       - active_loop: MSdomainIII_2W_form
 
@@ -287,6 +288,8 @@ rules:
   - rule: Submit Domain IV daily relevant questions
     condition:
       - active_loop: MSdomainIV_Daily_form
+      - slot_was_set:
+          - MSdomainIV_both: False
     steps:
       - action: MSdomainIV_Daily_form
       - active_loop: null
@@ -294,6 +297,21 @@ rules:
           - requested_slot: null
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
+
+  - rule: Submit Domain IV daily relevant questions and start of Domain IV weekly
+    condition:
+      - active_loop: MSdomainIV_Daily_form
+      - slot_was_set:
+          - MSdomainIV_both: True
+    steps:
+      - action: MSdomainIV_Daily_form
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null
+      - action: action_questionnaire_completed_first_part
+      - action: MSdomainIV_1W_form
+      - active_loop: MSdomainIV_1W_form
+
 
   - rule: Interruption MS Domain IV daily relevant questions
     condition:

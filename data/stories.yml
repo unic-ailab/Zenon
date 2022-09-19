@@ -690,6 +690,33 @@ stories:
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
+                  - slot_was_set:
+                            - MSdomainIII_both: False
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
+
+        - story: MS Domain IV daily and weekly relevant questions - fully completed
+          steps:
+                  - intent: MSdomainIV_Daily_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: MSdomainIV_Daily
+                  - action: action_utter_starting_questionnaire
+                  - action: MSdomainIV_Daily_form
+                  - active_loop: MSdomainIV_Daily_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - slot_was_set:
+                            - MSdomainIV_both: True
+                  - action: action_questionnaire_completed_first_part
+                  - slot_was_set:
+                            - questionnaire: MSdomainIV_1W
+                  - action: MSdomainIV_1W_form
+                  - active_loop: MSdomainIV_1W_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
@@ -735,6 +762,21 @@ stories:
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
+        - story: MS Domain III biweekly relevant questions - fully completed
+          steps:
+                  - intent: MSdomainIII_2W_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: MSdomainIII_2W
+                  - action: action_utter_starting_questionnaire
+                  - action: MSdomainIII_2W_form
+                  - active_loop: MSdomainIII_2W_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
+
         - story: MS Domain II monthly relevant questions - fully completed
           steps:
                   - intent: MSdomainII_1M_start
@@ -748,7 +790,7 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - slot_was_set:
-                            - MSdomainIII_both: False
+                            - MSdomainII_both: False
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
@@ -769,6 +811,21 @@ stories:
                   - action: action_questionnaire_completed_first_part
                   - slot_was_set:
                             - questionnaire: MSdomainII_3M
+                  - action: MSdomainII_3M_form
+                  - active_loop: MSdomainII_3M_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
+
+        - story: MS Domain II every 3 month relevant questions - fully completed
+          steps:
+                  - intent: MSdomainII_3M_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: MSdomainII_3M
+                  - action: action_utter_starting_questionnaire
                   - action: MSdomainII_3M_form
                   - active_loop: MSdomainII_3M_form
                   - active_loop: null
