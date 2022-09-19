@@ -1254,13 +1254,16 @@ class CustomSQLTrackerStore(TrackerStore):
                     #onboarding_date = datetime.datetime.strptime(registration_date, "%Y-%m-%d")
                     #onboarding_timestamp = onboarding_date.replace(hour=0, minute=0, second=0, microsecond=0)
                 
-                    now = datetime.datetime.now(tz_timezone).timestamp()
+                    now = datetime.datetime.now(tz_timezone)
                     for questionnaire in df_questionnaires["questionnaire_abvr"]:
                         first_monday = tz_registration_date + datetime.timedelta(days=(0-tz_registration_date.weekday())%7)
                         #doing this everyday for the msdomain_dialy might not be so efficient
-                        timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday)
-                        while timestamp <= now:
-                            timestamp = getNextQuestTimestamp(schedule_df, questionnaire, datetime.datetime.fromtimestamp(timestamp, tz=pytz.timezone(timezone))) 
+                        if (questionnaire == "MSdomainIV_Daily"):
+                            timestamp = now.replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+                        else: 
+                            timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday)
+                            while timestamp <= now:
+                                timestamp = getNextQuestTimestamp(schedule_df, questionnaire, datetime.datetime.fromtimestamp(timestamp, tz=pytz.timezone(timezone))) 
                         session.add(
                             self.SQLQuestState(
                             sender_id=sender_id,
@@ -1424,8 +1427,8 @@ def getNextKTimestamps(init_date, number_of_days:int=7):
 
 if __name__ == "__main__":
     ts = CustomSQLTrackerStore(db="demo.db")
-    print(ts.getAvailableQuestionnaires("stroke15", 1662449573.249213))
-    print(ts.checkUserID("7acfadf5-671d-44e2-8e6c-914c503c1d2d"))
+    #print(ts.getAvailableQuestionnaires("stroke15", 1662449573.249213))
+    print(datetime.datetime.now().timestamp())
     #print(ts.saveQuestionnaireAnswers("stroke03", "activLim", False))
     now = datetime.datetime.today()
     first_monday = now + datetime.timedelta(days=(0-now.weekday())%7)
@@ -1434,8 +1437,6 @@ if __name__ == "__main__":
 
     #print(1654808400<now)
     # with ts.session_scope() as session:
-    #     print(ts.checkUserID("7acfadf5-671d-44e2-8e6c-914c503c1d2d"))
-    #     print(ts.checkUserID("3407ad63-ab3c-48af-a294-72a8999b2cf7"))
         # d = ts.checkQuestionnaireTimelimit(session, "stroke99", datetime.datetime.now().timestamp(), "psqi")
         # #print(d)
         # #print(ts._questionnaire_score_query(session, "stroke98", "muscletone"))
