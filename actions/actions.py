@@ -2673,18 +2673,8 @@ class ActionAskDnBSymptoms(Action):
                 "Simptome: Te rog bifează tot ce se aplică și apasă 'Trimite':"
             ]
         )
-
-        if tracker.get_slot("language") == "English":
-            data = {
-                    "choices": [
-                        "Dizziness", "Spinning/Vertigo", "Lightheadedness", "Rocking/tilting",
-                        "Visual changes", "Headache", "Fatigue", "Unsteadiness", "Falling",
-                        "Ringing/noise in ears", "Fullness in ears", "Motion sensitive",
-                        "Hearing loss", "Double vision", "Brain fog", "Imbalance/Disequilibrium"
-                    ]
-                }
-
-        elif tracker.get_slot("language") == "Romanian":
+        
+        if tracker.get_slot("language") == "Romanian":
             data = {
                 "choices": [
                     "Ameteala", "Senzatie de urechi infundate", "Tulburare de vedere", "Senzatie de ‘cap tulbure’",
@@ -2693,6 +2683,20 @@ class ActionAskDnBSymptoms(Action):
                     "Imbalance/Disequilibrium"
                 ]
             }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
+            data = {
+                    "choices": [
+                        "Dizziness", "Spinning/Vertigo", "Lightheadedness", "Rocking/tilting",
+                        "Visual changes", "Headache", "Fatigue", "Unsteadiness", "Falling",
+                        "Ringing/noise in ears", "Fullness in ears", "Motion sensitive",
+                        "Hearing loss", "Double vision", "Brain fog", "Imbalance/Disequilibrium"
+                    ]
+                }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -2746,7 +2750,20 @@ class ActionAskDnBQ5i(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Senzatia de rotire a corpului catre stanga", "Senzatia de rotire a corpului catre dreapta", 
+                    "La trecerea din pozitia culcat in sezut", "La privirea in sus, cu capul pe spate",
+                    "La intoarcerea capului", "La privirea in jos, cu capul in fata"
+                ]
+            }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else :
             data = {
                     "choices": [
                         "Rolling your body to the left", "Rolling your body to the right", 
@@ -2755,14 +2772,6 @@ class ActionAskDnBQ5i(Action):
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": [
-                    "Senzatia de rotire a corpului catre stanga", "Senzatia de rotire a corpului catre dreapta", 
-                    "La trecerea din pozitia culcat in sezut", "La privirea in sus, cu capul pe spate",
-                    "La intoarcerea capului", "La privirea in jos, cu capul in fata"
-                ]
-            }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -2816,7 +2825,20 @@ class ActionAskDnBQ6i(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Miscarea capului", "Activitatea fizica", "Condus masina", "Zone aglomerate",
+                    "Zgomote puternice", "Tusea, suflatul nasului", "Stat in picioare", "Mancatul anumitor alimente", 
+                    "Perioada din zi", "Perioada menstruala", "Altele (vă rugăm să introduceți răspunsul dvs.)"
+                ]
+            }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
             data = {
                     "choices": [
                         "Moving my head", "Physical activity or exercise", "Riding or driving in the car", "Large crowds or a busy environment",
@@ -2825,14 +2847,6 @@ class ActionAskDnBQ6i(Action):
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": [
-                    "Miscarea capului", "Activitatea fizica", "Condus masina", "Zone aglomerate",
-                    "Zgomote puternice", "Tusea, suflatul nasului", "Stat in picioare", "Mancatul anumitor alimente", 
-                    "Perioada din zi", "Perioada menstruala", "Altele (vă rugăm să introduceți răspunsul dvs.)"
-                ]
-            }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -3130,7 +3144,25 @@ class ActionAskDnBPastMedicalHistory(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Contuzie", "Hipertensiune/ Hipotensiune arteriala", "Ataxie", 
+                    "Crize epileptice", "Diabet zaharat/Neuropatie", "Migrena", 
+                    "Accident rutier", "Insuficienta cardiaca/Infarct", "Astm",
+                    "AVC/AIT", "Cancer", "Istoric de infectie sau tromboze", 
+                    "Scleroza multipla", "Boala vasculara periferica", "Interventie chirurgicala la nivelul coloanei vertebrale",
+                    "Boala Parkinson", "Depresie/atac de panica", "Traumatism la nivelul coapsei, genunchiului/umarului/spatelui",
+                    "Glaucom/degenerescenta maculara", "Afectare articulara la nivel cervical", "Nivel crescut colesterol",
+                    "Fibromialgie", "Sindromul oboselii cronice", "Boala autoimuna"
+                ]
+            }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
             data = {
                     "choices": [
                         "Concussion", "Hypertension/Hypotension", "Ataxia", 
@@ -3144,19 +3176,6 @@ class ActionAskDnBPastMedicalHistory(Action):
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": [
-                    "Contuzie", "Hipertensiune/ Hipotensiune arteriala", "Ataxie", 
-                    "Crize epileptice", "Diabet zaharat/Neuropatie", "Migrena", 
-                    "Accident rutier", "Insuficienta cardiaca/Infarct", "Astm",
-                    "AVC/AIT", "Cancer", "Istoric de infectie sau tromboze", 
-                    "Scleroza multipla", "Boala vasculara periferica", "Interventie chirurgicala la nivelul coloanei vertebrale",
-                    "Boala Parkinson", "Depresie/atac de panica", "Traumatism la nivelul coapsei, genunchiului/umarului/spatelui",
-                    "Glaucom/degenerescenta maculara", "Afectare articulara la nivel cervical", "Nivel crescut colesterol",
-                    "Fibromialgie", "Sindromul oboselii cronice", "Boala autoimuna"
-                ]
-            }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -3199,19 +3218,24 @@ class ActionAskDnBMedicalTests(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "MRI", "MRA", "CT", "X-Ray", "Blood"    # TODO To be changed to romanian version
+                ]
+            }
+         # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
             data = {
                     "choices": [
                         "MRI", "MRA", "CT", "X-Ray", "Blood"
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": [
-                    "MRI", "MRA", "CT", "X-Ray", "Blood"    # TODO To be changed to romanian version
-                ]
-            }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -3255,19 +3279,24 @@ class ActionAskDnBOnSetType(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "dupa interventie chirurgicala", "dupa un traumatism", "fara sa poata fi asociate cu un anumit eveniment"
+                ]
+            }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
             data = {
                     "choices": [
                         "SURGICAL", "INJURY", "INSIDIOUS"
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": [
-                    "dupa interventie chirurgicala", "dupa un traumatism", "fara sa poata fi asociate cu un anumit eveniment"
-                ]
-            }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -4065,19 +4094,24 @@ class ActionAskDnBSocial_c(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Amețeala", "Dezechilibru", "Teamă de cădere", "Lipsă de energie"
+                ]
+            }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
             data = {
                     "choices": [
                         "Dizziness", "Imbalance", "Fear of falling", "Lack of energy"
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": [
-                    "Amețeala", "Dezechilibru", "Teamă de cădere", "Lipsă de energie"
-                ]
-            }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -6348,7 +6382,21 @@ class ActionAskStrokeDomainIVRQ1(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Furie", "Frica", "Tristete", "Bucurie",
+                    "Multumire", "Incantare", "Rusine", "Anxietate",
+                    "Dezamagire", "Iritare", "Liniste", "Gratitudine",
+                    "Nemultumire", "Resemnare", "Speranta", "Nostalgie"
+                ]
+            }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
             data = {
                     "choices": [
                         "Anger", "Fear", "Sadness", "Joy", "Contempt",
@@ -6358,15 +6406,6 @@ class ActionAskStrokeDomainIVRQ1(Action):
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": [
-                    "Furie", "Frica", "Tristete", "Bucurie",
-                    "Multumire", "Incantare", "Rusine", "Anxietate",
-                    "Dezamagire", "Iritare", "Liniste", "Gratitudine",
-                    "Nemultumire", "Resemnare", "Speranta", "Nostalgie"
-                ]
-            }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -7135,17 +7174,7 @@ class ActionAskMSDomainIV1WRQ1(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
-            data = {
-                    "choices": [
-                        "Anger", "Fear", "Sadness", "Joy", "Contempt",
-                        "Cheer", "Shame", "Anxiety", "Disappointment", "Irritation",
-                        "Serenity", "Gratitude", "Grudge", "Resignation", "Hope",
-                        "Nostalgia"
-                    ]
-                }
-
-        elif tracker.get_slot("language") == "Italian":
+        if tracker.get_slot("language") == "Italian":
             data = {
                 "choices": [
                     "Rabbia", "Paura", "Tristezza", "Gioia",
@@ -7154,6 +7183,20 @@ class ActionAskMSDomainIV1WRQ1(Action):
                     "Rancore", "Rassegnazione", "Speranza", "Nostalgia"
                 ]
             }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
+            data = {
+                    "choices": [
+                        "Anger", "Fear", "Sadness", "Joy", "Contempt",
+                        "Cheer", "Shame", "Anxiety", "Disappointment", "Irritation",
+                        "Serenity", "Gratitude", "Grudge", "Resignation", "Hope",
+                        "Nostalgia"
+                    ]
+                }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -7176,17 +7219,7 @@ class ActionAskMSDomainIV1WRQ1(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
-            data = {
-                    "choices": [
-                        "Anger", "Fear", "Sadness", "Joy", "Contempt",
-                        "Cheer", "Shame", "Anxiety", "Disappointment", "Irritation",
-                        "Serenity", "Gratitude", "Grudge", "Resignation", "Hope",
-                        "Nostalgia"
-                    ]
-                }
-
-        elif tracker.get_slot("language") == "Italian":
+        if tracker.get_slot("language") == "Italian":
             data = {
                 "choices": [
                     "Rabbia", "Paura", "Tristezza", "Gioia",
@@ -7195,6 +7228,20 @@ class ActionAskMSDomainIV1WRQ1(Action):
                     "Rancore", "Rassegnazione", "Speranza", "Nostalgia"
                 ]
             }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
+            data = {
+                    "choices": [
+                        "Anger", "Fear", "Sadness", "Joy", "Contempt",
+                        "Cheer", "Shame", "Anxiety", "Disappointment", "Irritation",
+                        "Serenity", "Gratitude", "Grudge", "Resignation", "Hope",
+                        "Nostalgia"
+                    ]
+                }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
