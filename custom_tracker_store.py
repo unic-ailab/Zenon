@@ -706,26 +706,27 @@ class CustomSQLTrackerStore(TrackerStore):
             include_in_report_intent = "deny"
 
         # get second message, question: Is there anything else you would like ot report..?
-        message_entry2 = session.query(self.SQLEvent).filter(
-            self.SQLEvent.sender_id == sender_id,
-            self.SQLEvent.type_name == "slot",
-            self.SQLEvent.action_name == "report_extra_Q1",
-            self.SQLEvent.timestamp >= message_entry.timestamp,
-        ).order_by(self.SQLEvent.timestamp).first()
-
-
-        if message_entry2:
-            # get the sentiment of the second message seperatly because the message is stored in a slot and does not included it
-            # sort in descending order to get the correct sentiment_classes slot
-            sentiment2 = session.query(self.SQLEvent).filter(
+        if message_entry:
+            message_entry2 = session.query(self.SQLEvent).filter(
                 self.SQLEvent.sender_id == sender_id,
                 self.SQLEvent.type_name == "slot",
-                self.SQLEvent.action_name == "sentiment_classes",
-                self.SQLEvent.timestamp.between(message_entry.timestamp, message_entry2.timestamp),
-                ).order_by(self.SQLEvent.timestamp.desc()).first()
+                self.SQLEvent.action_name == "report_extra_Q1",
+                self.SQLEvent.timestamp >= message_entry.timestamp,
+            ).order_by(self.SQLEvent.timestamp).first()
 
-            message_entries = {"message": message_entry, "slot": [message_entry2, sentiment2]}
-            report = [include_in_report_intent, "affirm"]
+
+            if message_entry2:
+                # get the sentiment of the second message seperatly because the message is stored in a slot and does not included it
+                # sort in descending order to get the correct sentiment_classes slot
+                sentiment2 = session.query(self.SQLEvent).filter(
+                    self.SQLEvent.sender_id == sender_id,
+                    self.SQLEvent.type_name == "slot",
+                    self.SQLEvent.action_name == "sentiment_classes",
+                    self.SQLEvent.timestamp.between(message_entry.timestamp, message_entry2.timestamp),
+                    ).order_by(self.SQLEvent.timestamp.desc()).first()
+
+                message_entries = {"message": message_entry, "slot": [message_entry2, sentiment2]}
+                report = [include_in_report_intent, "affirm"]
         else:
             message_entries = {"message": message_entry}
             report = [include_in_report_intent]
@@ -743,7 +744,11 @@ class CustomSQLTrackerStore(TrackerStore):
         Returns:
             Boolean, True=first time, False=not first time
         """
-        today = datetime.datetime.now(tz=pytz.utc).replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+        try:
+            timezone = pytz.timezone(self.getUserTimezone(sender_id))
+        except:
+            timezone = pytz.utc
+        today = datetime.datetime.now(tz=timezone).replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
         return session.query(sa.func.min(self.SQLEvent.timestamp)).filter(
             self.SQLEvent.sender_id == sender_id,
             self.SQLEvent.type_name == "action",
