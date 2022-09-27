@@ -774,8 +774,9 @@ class ActionUtterGreet(Action):
         isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
         if isFirstTime:
             print("This is the first time for today.")
-
-        return [SlotSet("is_first_time", isFirstTime)]
+            return [SlotSet("is_first_time", isFirstTime), FollowupAction("action_utter_how_are_you")]
+        else:
+            return [SlotSet("is_first_time", isFirstTime), FollowupAction("action_options_menu")]
 
 class ActionUtterHowAreYou(Action):
     def name(self):
