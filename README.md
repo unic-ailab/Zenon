@@ -12,7 +12,7 @@ Make sure you have installed Python 3.8 to your system.
         pip install rasa==2.8.3 rasa-sdk==2.8.1 sanic==20.12.3
         ```
 ## Train a new model on server:
-1. Open a terminal and activate the conda environment then run the command `rasa train -d .\domain\
+1. Open a terminal, activate the new virtual environment, and run the command `rasa train -d .\domain\
 
 ## Run Alameda chatbot on server:
 1. Open a terminal activate the conda environment then run the command `rasa run actions`

@@ -16,6 +16,8 @@ sentiment_old.py
 sentimentClasses.py
 test.py
 alameda_endpoints.csv
+requirements_pip.txt
+requirements.txt
 
 # Folders
 __pycache__/
