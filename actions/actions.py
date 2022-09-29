@@ -391,7 +391,7 @@ class ActionGetAvailableQuestions(Action):
         # its better to not check the user id here as here it won't update the app languge
         # keep it here for now to avoid not onboarding users between database updates
         _ = customTrackerInstance.checkUserID(tracker.current_state()['sender_id'])
-        available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
+        available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now, tracker) 
         if len(available_questionnaires) == 0:
             text = get_text_from_lang(
                 tracker, 
