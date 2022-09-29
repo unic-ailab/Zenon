@@ -234,7 +234,7 @@ stories:
                   - intent: close_questionnaire
                   - action: action_deactivate_loop
                   - active_loop: null
-                  - action: action_questionnaire_cancelled
+                  - action: action_questionnaire_cancelled_app
 
         - story: User wants to continue the latest available questionnaire # this shouldn't in theory happen
           steps:
@@ -249,17 +249,6 @@ stories:
                             - intent: deny
                             - intent: cancel
                   - action: action_options_menu_extra
-
-        #This should probably be deleted
-        - story: Problems with setting questionnaire slot
-          steps:
-                  - action: action_set_questionnaire_slot
-                  - slot_was_set:
-                            - questionnaire: null
-                  - action: action_utter_starting_questionnaire
-                  - slot_was_set:
-                            - questionnaire: null
-                  - action: action_options_menu_extra 
 
         - story: ACTIVLIM Questionnaire - fully completed
           steps:

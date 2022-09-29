@@ -47,4 +47,14 @@ rules:
       - intent: close_questionnaire
       - action: action_deactivate_loop
       - active_loop: null
-      - action: action_questionnaire_cancelled
+      - action: action_questionnaire_cancelled_app
+
+  - rule: Problems with setting questionnaire slot
+    condition:
+      - slot_was_set:
+          - questionnaire: null
+    steps:
+      - action: action_utter_starting_questionnaire
+      - slot_was_set:
+            - questionnaire: null
+      - action: action_options_menu_extra 

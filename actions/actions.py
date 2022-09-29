@@ -908,8 +908,20 @@ class ActionQuestionnaireCompletedFirstPart(Action):
             return [SlotSet("questionnaire", "MSdomainIII_2W"), FollowupAction("MSdomainIII_2W_form")] #UserUttered("/MSdomainIII_2W_start", fake_intent)]
         elif q_abbreviation == "MSdomainII_1M":
             return [SlotSet("questionnaire", "MSdomainII_3M"), FollowupAction("MSdomainII_3M_form")] #UserUttered("/MSdomainII_3M_start")]
+        elif q_abbreviation == "MSdomainIV_Daily":
+            return [SlotSet("questionnaire", "MSdomainIV_1W"), FollowupAction("MSdomainIV_1W_form")] #UserUttered("/MSdomainII_3M_start")]
         else:
-            return [FollowupAction("action_options_menu")]
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "We are good. Thank you for your time.",
+                    "Το ερωτηματολόγιο ολοκληρώθηκε. Ευχαριστώ.",
+                    "A posto! Grazie per il tuo tempo.",
+                    "Suntem buni! Mulțumesc pentru timpul acordat.",
+                ],
+            )  
+            dispatcher.utter_message(text=text)
+            return [SlotSet("questionnaire", None), FollowupAction("action_options_menu")]
 
 class ActionOntologyStoreSentiment(Action):
     def name(self):
@@ -937,10 +949,15 @@ class ActionQuestionnaireCancelled(Action):
             ],
         )
         dispatcher.utter_message(text=text)
-        try:
-            customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), tracker.get_slot("questionnaire"))
-        except:
-            pass
+        customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), tracker.get_slot("questionnaire"))
+        return[]
+
+class ActionQuestionnaireCancelledApp(Action):
+    def name(self):
+        return "action_questionnaire_cancelled_app"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
         return[]
 
 class ActionUtterStartingQuestionnaire(Action):
@@ -968,13 +985,14 @@ class ActionUtterStartingQuestionnaire(Action):
             dispatcher.utter_message(text=text)
             return [FollowupAction("{}_form".format(q_abbreviation))]
         else:
+            #TODO: probably change this text
             text = get_text_from_lang(
                 tracker,
                 [
-                    "Something is wrong and I am not sure how to deal with it. Can you please type 'main menu' to return the conversation to a level I am more familiar with?",
+                    "Something is wrong and I am not sure how to deal with it.",
                     " ",
-                    "Qualcosa non va e non so come affrontarlo. Puoi digitare 'menu principale' per riportare la conversazione a un livello che mi è più familiare?",
-                    "Ceva nu este în regulă și nu sunt sigur cum să mă descurc. Poți, te rog, tasta 'meniu principal' pentru a readuce conversația la un nivel cu care sunt mai familiarizat?",
+                    "Qualcosa non va e non so come affrontarlo." #, Puoi digitare 'menu principale' per riportare la conversazione a un livello che mi è più familiare?",
+                    "Ceva nu este în regulă și nu sunt sigur cum să mă descurc.",# Poți, te rog, tasta 'meniu principal' pentru a readuce conversația la un nivel cu care sunt mai familiarizat?",
                 ],
             )
             dispatcher.utter_message(text=text)
@@ -7203,54 +7221,54 @@ class ActionAskMSDomainIV1WRQ1(Action):
         dispatcher.utter_message(text=text, json_message=data)
         return []  
 
+# class ActionAskMSDomainIV1WRQ1(Action):
+#     def name(self) -> Text:
+#         return "action_ask_MSdomainIV_1W_RQ1"
+
+#     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+#         announce(self, tracker)
+
+#         text = get_text_from_lang(
+#             tracker,
+#             [
+#                 "How are you feeling today?",
+#                 " ",
+#                 "Cosa provi oggi? È possibile selezionare più di una parola",                 
+#                 " "
+#             ]
+#         )
+
+#         if tracker.get_slot("language") == "Italian":
+#             data = {
+#                 "choices": [
+#                     "Rabbia", "Paura", "Tristezza", "Gioia",
+#                     "Disprezzo", "Allegria", "Vergogna", "Ansia",
+#                     "Delusione", "Irritazione", "Serenità", "Gratitudine",
+#                     "Rancore", "Rassegnazione", "Speranza", "Nostalgia"
+#                 ]
+#             }
+#         # this shouldn't happen but just in case
+#         elif tracker.get_slot("language") == "Romanian":
+#             data = {
+#                 "choices": ["", ""]
+#             }
+#         else:
+#             data = {
+#                     "choices": [
+#                         "Anger", "Fear", "Sadness", "Joy", "Contempt",
+#                         "Cheer", "Shame", "Anxiety", "Disappointment", "Irritation",
+#                         "Serenity", "Gratitude", "Grudge", "Resignation", "Hope",
+#                         "Nostalgia"
+#                     ]
+#                 }
+
+#         print("\nBOT:", text + "\n" + str(data))
+#         dispatcher.utter_message(text=text, json_message=data)
+#         return []   
+
 class ActionAskMSDomainIV1WRQ1(Action):
     def name(self) -> Text:
         return "action_ask_MSdomainIV_1W_RQ1"
-
-    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
-
-        text = get_text_from_lang(
-            tracker,
-            [
-                "How are you feeling today?",
-                " ",
-                "Cosa provi oggi? È possibile selezionare più di una parola",                 
-                " "
-            ]
-        )
-
-        if tracker.get_slot("language") == "Italian":
-            data = {
-                "choices": [
-                    "Rabbia", "Paura", "Tristezza", "Gioia",
-                    "Disprezzo", "Allegria", "Vergogna", "Ansia",
-                    "Delusione", "Irritazione", "Serenità", "Gratitudine",
-                    "Rancore", "Rassegnazione", "Speranza", "Nostalgia"
-                ]
-            }
-        # this shouldn't happen but just in case
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": ["", ""]
-            }
-        else:
-            data = {
-                    "choices": [
-                        "Anger", "Fear", "Sadness", "Joy", "Contempt",
-                        "Cheer", "Shame", "Anxiety", "Disappointment", "Irritation",
-                        "Serenity", "Gratitude", "Grudge", "Resignation", "Hope",
-                        "Nostalgia"
-                    ]
-                }
-
-        print("\nBOT:", text + "\n" + str(data))
-        dispatcher.utter_message(text=text, json_message=data)
-        return []   
-
-class ActionAskMSDomainIV1WRQ2(Action):
-    def name(self) -> Text:
-        return "action_ask_MSdomainIV_1W_RQ2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -7283,9 +7301,9 @@ class ActionAskMSDomainIV1WRQ2(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []   
 
-class ActionAskMSDomainIV1WRQ2a(Action):
+class ActionAskMSDomainIV1WRQ1a(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIV_1W_RQ2a"
+        return "action_ask_MSdomainIV_1W_RQ1a"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -7326,9 +7344,9 @@ class ActionAskMSDomainIV1WRQ2a(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []   
 
-class ActionAskMSDomainIV_1WRQ3(Action):
+class ActionAskMSDomainIV_1WRQ2(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIV_1W_RQ3"
+        return "action_ask_MSdomainIV_1W_RQ2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
