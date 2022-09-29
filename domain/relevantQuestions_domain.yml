@@ -114,13 +114,10 @@ slots:
   MSdomainIV_1W_RQ1:
     type: any
     influence_conversation: false
+  MSdomainIV_1W_RQ1a:
+    type: any
+    influence_conversation: false
   MSdomainIV_1W_RQ2:
-    type: any
-    influence_conversation: false
-  MSdomainIV_1W_RQ2a:
-    type: any
-    influence_conversation: false
-  MSdomainIV_1W_RQ3:
     type: any
     influence_conversation: false
   MSdomainIV_Daily_RQ1:
@@ -556,9 +553,8 @@ actions:
   - validate_MSdomainIII_1W_form
   - action_ask_MSdomainIV_Daily_RQ1
   - action_ask_MSdomainIV_1W_RQ1
+  - action_ask_MSdomainIV_1W_RQ1a
   - action_ask_MSdomainIV_1W_RQ2
-  - action_ask_MSdomainIV_1W_RQ2a
-  - action_ask_MSdomainIV_1W_RQ3
   - validate_MSdomainIV_1W_form
   - validate_MSdomainIII_2W_form
 forms:
@@ -677,18 +673,16 @@ forms:
   MSdomainIV_1W_form:
     required_slots:
       MSdomainIV_1W_RQ1:
-        - type: from_text
-      MSdomainIV_1W_RQ2:
         - type: from_intent
           intent: affirm
           value: true
         - type: from_intent
           intent: deny
           value: false
-      MSdomainIV_1W_RQ2a:
+      MSdomainIV_1W_RQ1a:
         - entity: given_answer
           type: from_entity
-      MSdomainIV_1W_RQ3:
+      MSdomainIV_1W_RQ2:
         - entity: given_answer
           type: from_entity
   MSdomainIV_Daily_form:

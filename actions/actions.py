@@ -391,7 +391,7 @@ class ActionGetAvailableQuestions(Action):
         # its better to not check the user id here as here it won't update the app languge
         # keep it here for now to avoid not onboarding users between database updates
         _ = customTrackerInstance.checkUserID(tracker.current_state()['sender_id'])
-        available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
+        available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now, tracker) 
         if len(available_questionnaires) == 0:
             text = get_text_from_lang(
                 tracker, 
@@ -774,8 +774,9 @@ class ActionUtterGreet(Action):
         isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
         if isFirstTime:
             print("This is the first time for today.")
-
-        return [SlotSet("is_first_time", isFirstTime)]
+            return [SlotSet("is_first_time", isFirstTime), FollowupAction("action_utter_how_are_you")]
+        else:
+            return [SlotSet("is_first_time", isFirstTime), FollowupAction("action_options_menu")]
 
 class ActionUtterHowAreYou(Action):
     def name(self):
@@ -907,8 +908,20 @@ class ActionQuestionnaireCompletedFirstPart(Action):
             return [SlotSet("questionnaire", "MSdomainIII_2W"), FollowupAction("MSdomainIII_2W_form")] #UserUttered("/MSdomainIII_2W_start", fake_intent)]
         elif q_abbreviation == "MSdomainII_1M":
             return [SlotSet("questionnaire", "MSdomainII_3M"), FollowupAction("MSdomainII_3M_form")] #UserUttered("/MSdomainII_3M_start")]
+        elif q_abbreviation == "MSdomainIV_Daily":
+            return [SlotSet("questionnaire", "MSdomainIV_1W"), FollowupAction("MSdomainIV_1W_form")] #UserUttered("/MSdomainII_3M_start")]
         else:
-            return [FollowupAction("action_options_menu")]
+            text = get_text_from_lang(
+                tracker,
+                [
+                    "We are good. Thank you for your time.",
+                    "Το ερωτηματολόγιο ολοκληρώθηκε. Ευχαριστώ.",
+                    "A posto! Grazie per il tuo tempo.",
+                    "Suntem buni! Mulțumesc pentru timpul acordat.",
+                ],
+            )  
+            dispatcher.utter_message(text=text)
+            return [SlotSet("questionnaire", None), FollowupAction("action_options_menu")]
 
 class ActionOntologyStoreSentiment(Action):
     def name(self):
@@ -936,10 +949,15 @@ class ActionQuestionnaireCancelled(Action):
             ],
         )
         dispatcher.utter_message(text=text)
-        try:
-            customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), tracker.get_slot("questionnaire"))
-        except:
-            pass
+        customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), tracker.get_slot("questionnaire"))
+        return[]
+
+class ActionQuestionnaireCancelledApp(Action):
+    def name(self):
+        return "action_questionnaire_cancelled_app"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
         return[]
 
 class ActionUtterStartingQuestionnaire(Action):
@@ -967,13 +985,14 @@ class ActionUtterStartingQuestionnaire(Action):
             dispatcher.utter_message(text=text)
             return [FollowupAction("{}_form".format(q_abbreviation))]
         else:
+            #TODO: probably change this text
             text = get_text_from_lang(
                 tracker,
                 [
-                    "Something is wrong and I am not sure how to deal with it. Can you please type 'main menu' to return the conversation to a level I am more familiar with?",
+                    "Something is wrong and I am not sure how to deal with it.",
                     " ",
-                    "Qualcosa non va e non so come affrontarlo. Puoi digitare 'menu principale' per riportare la conversazione a un livello che mi è più familiare?",
-                    "Ceva nu este în regulă și nu sunt sigur cum să mă descurc. Poți, te rog, tasta 'meniu principal' pentru a readuce conversația la un nivel cu care sunt mai familiarizat?",
+                    "Qualcosa non va e non so come affrontarlo." #, Puoi digitare 'menu principale' per riportare la conversazione a un livello che mi è più familiare?",
+                    "Ceva nu este în regulă și nu sunt sigur cum să mă descurc.",# Poți, te rog, tasta 'meniu principal' pentru a readuce conversația la un nivel cu care sunt mai familiarizat?",
                 ],
             )
             dispatcher.utter_message(text=text)
@@ -2673,18 +2692,8 @@ class ActionAskDnBSymptoms(Action):
                 "Simptome: Te rog bifează tot ce se aplică și apasă 'Trimite':"
             ]
         )
-
-        if tracker.get_slot("language") == "English":
-            data = {
-                    "choices": [
-                        "Dizziness", "Spinning/Vertigo", "Lightheadedness", "Rocking/tilting",
-                        "Visual changes", "Headache", "Fatigue", "Unsteadiness", "Falling",
-                        "Ringing/noise in ears", "Fullness in ears", "Motion sensitive",
-                        "Hearing loss", "Double vision", "Brain fog", "Imbalance/Disequilibrium"
-                    ]
-                }
-
-        elif tracker.get_slot("language") == "Romanian":
+        
+        if tracker.get_slot("language") == "Romanian":
             data = {
                 "choices": [
                     "Ameteala", "Senzatie de urechi infundate", "Tulburare de vedere", "Senzatie de ‘cap tulbure’",
@@ -2693,6 +2702,20 @@ class ActionAskDnBSymptoms(Action):
                     "Imbalance/Disequilibrium"
                 ]
             }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
+            data = {
+                    "choices": [
+                        "Dizziness", "Spinning/Vertigo", "Lightheadedness", "Rocking/tilting",
+                        "Visual changes", "Headache", "Fatigue", "Unsteadiness", "Falling",
+                        "Ringing/noise in ears", "Fullness in ears", "Motion sensitive",
+                        "Hearing loss", "Double vision", "Brain fog", "Imbalance/Disequilibrium"
+                    ]
+                }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -2746,7 +2769,20 @@ class ActionAskDnBQ5i(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Senzatia de rotire a corpului catre stanga", "Senzatia de rotire a corpului catre dreapta", 
+                    "La trecerea din pozitia culcat in sezut", "La privirea in sus, cu capul pe spate",
+                    "La intoarcerea capului", "La privirea in jos, cu capul in fata"
+                ]
+            }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else :
             data = {
                     "choices": [
                         "Rolling your body to the left", "Rolling your body to the right", 
@@ -2755,14 +2791,6 @@ class ActionAskDnBQ5i(Action):
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": [
-                    "Senzatia de rotire a corpului catre stanga", "Senzatia de rotire a corpului catre dreapta", 
-                    "La trecerea din pozitia culcat in sezut", "La privirea in sus, cu capul pe spate",
-                    "La intoarcerea capului", "La privirea in jos, cu capul in fata"
-                ]
-            }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -2816,7 +2844,20 @@ class ActionAskDnBQ6i(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Miscarea capului", "Activitatea fizica", "Condus masina", "Zone aglomerate",
+                    "Zgomote puternice", "Tusea, suflatul nasului", "Stat in picioare", "Mancatul anumitor alimente", 
+                    "Perioada din zi", "Perioada menstruala", "Altele (vă rugăm să introduceți răspunsul dvs.)"
+                ]
+            }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
             data = {
                     "choices": [
                         "Moving my head", "Physical activity or exercise", "Riding or driving in the car", "Large crowds or a busy environment",
@@ -2825,14 +2866,6 @@ class ActionAskDnBQ6i(Action):
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": [
-                    "Miscarea capului", "Activitatea fizica", "Condus masina", "Zone aglomerate",
-                    "Zgomote puternice", "Tusea, suflatul nasului", "Stat in picioare", "Mancatul anumitor alimente", 
-                    "Perioada din zi", "Perioada menstruala", "Altele (vă rugăm să introduceți răspunsul dvs.)"
-                ]
-            }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -3130,7 +3163,25 @@ class ActionAskDnBPastMedicalHistory(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Contuzie", "Hipertensiune/ Hipotensiune arteriala", "Ataxie", 
+                    "Crize epileptice", "Diabet zaharat/Neuropatie", "Migrena", 
+                    "Accident rutier", "Insuficienta cardiaca/Infarct", "Astm",
+                    "AVC/AIT", "Cancer", "Istoric de infectie sau tromboze", 
+                    "Scleroza multipla", "Boala vasculara periferica", "Interventie chirurgicala la nivelul coloanei vertebrale",
+                    "Boala Parkinson", "Depresie/atac de panica", "Traumatism la nivelul coapsei, genunchiului/umarului/spatelui",
+                    "Glaucom/degenerescenta maculara", "Afectare articulara la nivel cervical", "Nivel crescut colesterol",
+                    "Fibromialgie", "Sindromul oboselii cronice", "Boala autoimuna"
+                ]
+            }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
             data = {
                     "choices": [
                         "Concussion", "Hypertension/Hypotension", "Ataxia", 
@@ -3144,19 +3195,6 @@ class ActionAskDnBPastMedicalHistory(Action):
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": [
-                    "Contuzie", "Hipertensiune/ Hipotensiune arteriala", "Ataxie", 
-                    "Crize epileptice", "Diabet zaharat/Neuropatie", "Migrena", 
-                    "Accident rutier", "Insuficienta cardiaca/Infarct", "Astm",
-                    "AVC/AIT", "Cancer", "Istoric de infectie sau tromboze", 
-                    "Scleroza multipla", "Boala vasculara periferica", "Interventie chirurgicala la nivelul coloanei vertebrale",
-                    "Boala Parkinson", "Depresie/atac de panica", "Traumatism la nivelul coapsei, genunchiului/umarului/spatelui",
-                    "Glaucom/degenerescenta maculara", "Afectare articulara la nivel cervical", "Nivel crescut colesterol",
-                    "Fibromialgie", "Sindromul oboselii cronice", "Boala autoimuna"
-                ]
-            }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -3199,19 +3237,24 @@ class ActionAskDnBMedicalTests(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "MRI", "MRA", "CT", "X-Ray", "Blood"    # TODO To be changed to romanian version
+                ]
+            }
+         # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
             data = {
                     "choices": [
                         "MRI", "MRA", "CT", "X-Ray", "Blood"
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": [
-                    "MRI", "MRA", "CT", "X-Ray", "Blood"    # TODO To be changed to romanian version
-                ]
-            }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -3255,19 +3298,24 @@ class ActionAskDnBOnSetType(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "dupa interventie chirurgicala", "dupa un traumatism", "fara sa poata fi asociate cu un anumit eveniment"
+                ]
+            }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
             data = {
                     "choices": [
                         "SURGICAL", "INJURY", "INSIDIOUS"
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": [
-                    "dupa interventie chirurgicala", "dupa un traumatism", "fara sa poata fi asociate cu un anumit eveniment"
-                ]
-            }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -4065,19 +4113,24 @@ class ActionAskDnBSocial_c(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Amețeala", "Dezechilibru", "Teamă de cădere", "Lipsă de energie"
+                ]
+            }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
             data = {
                     "choices": [
                         "Dizziness", "Imbalance", "Fear of falling", "Lack of energy"
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": [
-                    "Amețeala", "Dezechilibru", "Teamă de cădere", "Lipsă de energie"
-                ]
-            }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -6348,7 +6401,21 @@ class ActionAskStrokeDomainIVRQ1(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "Furie", "Frica", "Tristete", "Bucurie",
+                    "Multumire", "Incantare", "Rusine", "Anxietate",
+                    "Dezamagire", "Iritare", "Liniste", "Gratitudine",
+                    "Nemultumire", "Resemnare", "Speranta", "Nostalgie"
+                ]
+            }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
             data = {
                     "choices": [
                         "Anger", "Fear", "Sadness", "Joy", "Contempt",
@@ -6358,15 +6425,6 @@ class ActionAskStrokeDomainIVRQ1(Action):
                     ]
                 }
 
-        elif tracker.get_slot("language") == "Romanian":
-            data = {
-                "choices": [
-                    "Furie", "Frica", "Tristete", "Bucurie",
-                    "Multumire", "Incantare", "Rusine", "Anxietate",
-                    "Dezamagire", "Iritare", "Liniste", "Gratitudine",
-                    "Nemultumire", "Resemnare", "Speranta", "Nostalgie"
-                ]
-            }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
@@ -7135,17 +7193,7 @@ class ActionAskMSDomainIV1WRQ1(Action):
             ]
         )
 
-        if tracker.get_slot("language") == "English":
-            data = {
-                    "choices": [
-                        "Anger", "Fear", "Sadness", "Joy", "Contempt",
-                        "Cheer", "Shame", "Anxiety", "Disappointment", "Irritation",
-                        "Serenity", "Gratitude", "Grudge", "Resignation", "Hope",
-                        "Nostalgia"
-                    ]
-                }
-
-        elif tracker.get_slot("language") == "Italian":
+        if tracker.get_slot("language") == "Italian":
             data = {
                 "choices": [
                     "Rabbia", "Paura", "Tristezza", "Gioia",
@@ -7154,55 +7202,73 @@ class ActionAskMSDomainIV1WRQ1(Action):
                     "Rancore", "Rassegnazione", "Speranza", "Nostalgia"
                 ]
             }
+        # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
+            data = {
+                    "choices": [
+                        "Anger", "Fear", "Sadness", "Joy", "Contempt",
+                        "Cheer", "Shame", "Anxiety", "Disappointment", "Irritation",
+                        "Serenity", "Gratitude", "Grudge", "Resignation", "Hope",
+                        "Nostalgia"
+                    ]
+                }
 
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
         return []  
 
+# class ActionAskMSDomainIV1WRQ1(Action):
+#     def name(self) -> Text:
+#         return "action_ask_MSdomainIV_1W_RQ1"
+
+#     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+#         announce(self, tracker)
+
+#         text = get_text_from_lang(
+#             tracker,
+#             [
+#                 "How are you feeling today?",
+#                 " ",
+#                 "Cosa provi oggi? È possibile selezionare più di una parola",                 
+#                 " "
+#             ]
+#         )
+
+#         if tracker.get_slot("language") == "Italian":
+#             data = {
+#                 "choices": [
+#                     "Rabbia", "Paura", "Tristezza", "Gioia",
+#                     "Disprezzo", "Allegria", "Vergogna", "Ansia",
+#                     "Delusione", "Irritazione", "Serenità", "Gratitudine",
+#                     "Rancore", "Rassegnazione", "Speranza", "Nostalgia"
+#                 ]
+#             }
+#         # this shouldn't happen but just in case
+#         elif tracker.get_slot("language") == "Romanian":
+#             data = {
+#                 "choices": ["", ""]
+#             }
+#         else:
+#             data = {
+#                     "choices": [
+#                         "Anger", "Fear", "Sadness", "Joy", "Contempt",
+#                         "Cheer", "Shame", "Anxiety", "Disappointment", "Irritation",
+#                         "Serenity", "Gratitude", "Grudge", "Resignation", "Hope",
+#                         "Nostalgia"
+#                     ]
+#                 }
+
+#         print("\nBOT:", text + "\n" + str(data))
+#         dispatcher.utter_message(text=text, json_message=data)
+#         return []   
+
 class ActionAskMSDomainIV1WRQ1(Action):
     def name(self) -> Text:
         return "action_ask_MSdomainIV_1W_RQ1"
-
-    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
-
-        text = get_text_from_lang(
-            tracker,
-            [
-                "How are you feeling today?",
-                " ",
-                "Cosa provi oggi? È possibile selezionare più di una parola",                 
-                " "
-            ]
-        )
-
-        if tracker.get_slot("language") == "English":
-            data = {
-                    "choices": [
-                        "Anger", "Fear", "Sadness", "Joy", "Contempt",
-                        "Cheer", "Shame", "Anxiety", "Disappointment", "Irritation",
-                        "Serenity", "Gratitude", "Grudge", "Resignation", "Hope",
-                        "Nostalgia"
-                    ]
-                }
-
-        elif tracker.get_slot("language") == "Italian":
-            data = {
-                "choices": [
-                    "Rabbia", "Paura", "Tristezza", "Gioia",
-                    "Disprezzo", "Allegria", "Vergogna", "Ansia",
-                    "Delusione", "Irritazione", "Serenità", "Gratitudine",
-                    "Rancore", "Rassegnazione", "Speranza", "Nostalgia"
-                ]
-            }
-
-        print("\nBOT:", text + "\n" + str(data))
-        dispatcher.utter_message(text=text, json_message=data)
-        return []   
-
-class ActionAskMSDomainIV1WRQ2(Action):
-    def name(self) -> Text:
-        return "action_ask_MSdomainIV_1W_RQ2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -7235,9 +7301,9 @@ class ActionAskMSDomainIV1WRQ2(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []   
 
-class ActionAskMSDomainIV1WRQ2a(Action):
+class ActionAskMSDomainIV1WRQ1a(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIV_1W_RQ2a"
+        return "action_ask_MSdomainIV_1W_RQ1a"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -7278,9 +7344,9 @@ class ActionAskMSDomainIV1WRQ2a(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []   
 
-class ActionAskMSDomainIV_1WRQ3(Action):
+class ActionAskMSDomainIV_1WRQ2(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIV_1W_RQ3"
+        return "action_ask_MSdomainIV_1W_RQ2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
