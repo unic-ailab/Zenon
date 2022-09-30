@@ -29,7 +29,7 @@ pipeline:
   #   dimensions: ["time", "number"]
   #   locale: "it_IT"
   - name: DIETClassifier
-    epochs: 100
+    epochs: 350
     constrain_similarities: true
   - name: EntitySynonymMapper
   - name: FallbackClassifier
@@ -45,11 +45,11 @@ policies:
     max_history: 8
   - name: "TEDPolicy"
     max_history: 8
-    epochs: 200
+    epochs: 250
     constrain_similarities: true
   - name: "UnexpecTEDIntentPolicy"
     max_history: 6
-    epochs: 100
+    epochs: 150
   - name: "RulePolicy"
     # Confidence threshold for the `core_fallback_action_name` to apply.
     # The action will apply if no other action was predicted with
