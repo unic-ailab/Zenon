@@ -7176,7 +7176,7 @@ class ValidateMSDomainIII2WForm(FormValidationAction):
 # MS Case Domain IV                                                                                #
 ####################################################################################################   
 
-class ActionAskMSDomainIV1WRQ1(Action):
+class ActionAskMSDomainIVDailyRQ1(Action):
     def name(self) -> Text:
         return "action_ask_MSdomainIV_Daily_RQ1"
 
@@ -7266,9 +7266,9 @@ class ActionAskMSDomainIV1WRQ1(Action):
 #         dispatcher.utter_message(text=text, json_message=data)
 #         return []   
 
-class ActionAskMSDomainIV1WRQ1(Action):
+class ActionAskMSDomainIV1WRQ2(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIV_1W_RQ1"
+        return "action_ask_MSdomainIV_1W_RQ2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -7299,11 +7299,11 @@ class ActionAskMSDomainIV1WRQ1(Action):
 
         print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
-        return []   
+        return []          
 
-class ActionAskMSDomainIV1WRQ1a(Action):
+class ActionAskMSDomainIV1WRQ2a(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIV_1W_RQ1a"
+        return "action_ask_MSdomainIV_1W_RQ2a"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -7342,11 +7342,11 @@ class ActionAskMSDomainIV1WRQ1a(Action):
 
         print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
-        return []   
+        return []      
 
-class ActionAskMSDomainIV_1WRQ2(Action):
+class ActionAskMSDomainIV_1WRQ3(Action):
     def name(self) -> Text:
-        return "action_ask_MSdomainIV_1W_RQ2"
+        return "action_ask_MSdomainIV_1W_RQ3"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -7377,7 +7377,7 @@ class ActionAskMSDomainIV_1WRQ2(Action):
 
         print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
-        return []               
+        return []                    
 
 class ValidateMSDomainIV_1WForm(FormValidationAction):
     def name(self) -> Text:

@@ -552,9 +552,9 @@ actions:
   - action_ask_MSdomainIII_2W_RQ7
   - validate_MSdomainIII_1W_form
   - action_ask_MSdomainIV_Daily_RQ1
-  - action_ask_MSdomainIV_1W_RQ1
-  - action_ask_MSdomainIV_1W_RQ1a
   - action_ask_MSdomainIV_1W_RQ2
+  - action_ask_MSdomainIV_1W_RQ2a
+  - action_ask_MSdomainIV_1W_RQ3
   - validate_MSdomainIV_1W_form
   - validate_MSdomainIII_2W_form
 forms:
@@ -672,17 +672,27 @@ forms:
           type: from_entity
   MSdomainIV_1W_form:
     required_slots:
-      MSdomainIV_1W_RQ1:
+      # MSdomainIV_1W_RQ1:
+      #   - type: from_intent
+      #     intent: affirm
+      #     value: true
+      #   - type: from_intent
+      #     intent: deny
+      #     value: false
+      #   - type: from_text
+      MSdomainIV_1W_RQ2:
+        # - entity: given_answer
+        #   type: from_entity
         - type: from_intent
           intent: affirm
           value: true
         - type: from_intent
           intent: deny
           value: false
-      MSdomainIV_1W_RQ1a:
+      MSdomainIV_1W_RQ2a:
         - entity: given_answer
           type: from_entity
-      MSdomainIV_1W_RQ2:
+      MSdomainIV_1W_RQ3:
         - entity: given_answer
           type: from_entity
   MSdomainIV_Daily_form:
