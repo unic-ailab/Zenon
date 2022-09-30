@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ast import Continue
 import contextlib
 from http.client import ImproperConnectionState
 import itertools
@@ -913,10 +914,10 @@ class CustomSQLTrackerStore(TrackerStore):
                             self.storeNsendQuestionnaireScore(session, sender_id, questionnaire_name, database_entry)
                                                     
                         #doing this everyday for the msdomain_daily might not be so efficient
-                        last_availability = datetime.datetime.fromtimestamp(database_entry.available_at, tz=pytz.timezone(database_entry.timezone))
                         if isDemo:
                             new_timestamp = timestamp
                         else:
+                            last_availability = datetime.datetime.fromtimestamp(database_entry.available_at, tz=pytz.timezone(self.getUserTimezone(sender_id)))
                             new_timestamp = getNextQuestTimestamp(schedule_df, questionnaire_name, last_availability)
                     
                         # create new row in database
@@ -985,7 +986,7 @@ class CustomSQLTrackerStore(TrackerStore):
         # this step might need to happen somewhere else, myb automatically
         # checks whether 1 or 2 days has passed after the questionnaire was first available
         usecase = sender_id[:len(sender_id)-2].upper()
-        now = datetime.datetime.now(pytz.timezone(entry.timezone)).timestamp() #timezone doesnt really matter hear as timestamps are universal
+        now = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).timestamp() #timezone doesnt really matter hear as timestamps are universal
         # questionnaire are always available for the demo ids
         if usecase not in questionnaire_per_usecase.keys():
             df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == entry.questionnaire_name]
@@ -999,7 +1000,7 @@ class CustomSQLTrackerStore(TrackerStore):
 
                 # create new database entry
                 # doing this everyday for the msdomain_daily might not be so efficient
-                last_availability = datetime.datetime.fromtimestamp(entry.available_at, tz=pytz.timezone(entry.timezone))
+                last_availability = datetime.datetime.fromtimestamp(entry.available_at, tz=pytz.timezone(self.getUserTimezone(sender_id)))
                 new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, last_availability)
                 while new_timestamp <= now:
                     new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(new_timestamp))
@@ -1018,7 +1019,7 @@ class CustomSQLTrackerStore(TrackerStore):
         session.commit()
         return entry, passedTheLimit
 
-    def getAvailableQuestionnaires(self, sender_id, current_timestamp, tracker) -> List[str]:
+    def getAvailableQuestionnaires(self, sender_id, current_timestamp) -> List[str]:
         """ Retrieve current available questionnaires"""
         available_questionnaires, reset_questionnaires = [],[]
         with self.session_scope() as session:
@@ -1041,8 +1042,8 @@ class CustomSQLTrackerStore(TrackerStore):
 
                         # create new database entry
                         # doing this everyday for the msdomain_daily might not be so efficient
-                        now = datetime.datetime.now(pytz.timezone(entry.timezone)).timestamp()
-                        last_availability = datetime.datetime.fromtimestamp(entry.available_at, tz=pytz.timezone(entry.timezone))
+                        now = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).timestamp()
+                        last_availability = datetime.datetime.fromtimestamp(entry.available_at, tz=pytz.timezone(self.getUserTimezone(sender_id)))
                         new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, last_availability)
                         while new_timestamp <= now:
                             new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(new_timestamp))
@@ -1075,22 +1076,9 @@ class CustomSQLTrackerStore(TrackerStore):
                             reset_questionnaires.append(entry.questionnaire_name)
                         available_questionnaires.append(entry.questionnaire_name) 
                 else:
-                    if entry.state == "to_be_stored":
-                        self.saveQuestionnaireAnswers(sender_id, entry.questionnaire_name, False, tracker)
-                    
-                    session.add(
-                            self.SQLQuestState(
-                            sender_id=sender_id,
-                            questionnaire_name=entry.questionnaire_name,
-                            available_at=entry.timestamp_end,
-                            state="available",
-                            timestamp_start=None,
-                            timestamp_end=None,
-                            answers=None,                          
-                            )
-                        )
-                    reset_questionnaires.append(entry.questionnaire_name)
-                    available_questionnaires.append(entry.questionnaire_name)              
+                    if entry.state == "available":
+                        reset_questionnaires.append(entry.questionnaire_name)
+                    available_questionnaires.append(entry.questionnaire_name)               
             session.commit()
         return available_questionnaires, reset_questionnaires      
   
