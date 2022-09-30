@@ -111,13 +111,13 @@ slots:
   MSdomainV_RQ2:
     type: any
     influence_conversation: false
-  MSdomainIV_1W_RQ1:
-    type: any
-    influence_conversation: false
-  MSdomainIV_1W_RQ1a:
-    type: any
-    influence_conversation: false
   MSdomainIV_1W_RQ2:
+    type: any
+    influence_conversation: false
+  MSdomainIV_1W_RQ2a:
+    type: any
+    influence_conversation: false
+  MSdomainIV_1W_RQ3:
     type: any
     influence_conversation: false
   MSdomainIV_Daily_RQ1:
