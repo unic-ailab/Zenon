@@ -1215,19 +1215,21 @@ class CustomSQLTrackerStore(TrackerStore):
                     response = requests.get(wcs_endpoint, params={"patient_uuid": sender_id})
                     response.close()
                     resp = response.json() 
-                    if resp["partner"] == "FISM":
+                    partner = resp["partner"]
+                    if partner == "FISM":
                         usecase = "MS"
                         language = "Italian"
                         timezone = "Europe/Brussels"
-                    elif resp["partner"] == "SUUB":
+                    elif partner == "SUUB":
                         usecase = "STROKE"
                         language = "Romanian"
                         timezone = "Europe/Bucharest"
-                    elif resp["partner"] == "NKUA":
+                    elif partner == "NKUA":
                         usecase = "PD"
                         language = "Greek"        
                         timezone = "Europe/Athens"
                     else:
+                        usecase = "None"
                         language = "English"
                         timezone = "UTC"
                     registration_date = datetime.datetime.strptime(resp["registration_date"], "%Y-%m-%d")
@@ -1237,7 +1239,7 @@ class CustomSQLTrackerStore(TrackerStore):
                     registration_timestamp = registration_date.timestamp()
 
                     if usecase not in questionnaire_per_usecase.keys():
-                        return
+                        return language
                     # usecase = sender_id[:len(sender_id)-2].upper()
                     # if usecase not in questionnaire_per_usecase.keys():
                     #     return
@@ -1256,7 +1258,7 @@ class CustomSQLTrackerStore(TrackerStore):
                     #onboarding_date = datetime.datetime.strptime(registration_date, "%Y-%m-%d")
                     #onboarding_timestamp = onboarding_date.replace(hour=0, minute=0, second=0, microsecond=0)
                 
-                    now = datetime.datetime.now(tz_timezone)
+                    now = datetime.datetime.now(tz=tz_timezone)
                     for questionnaire in df_questionnaires["questionnaire_abvr"]:
                         first_monday = tz_registration_date + datetime.timedelta(days=(0-tz_registration_date.weekday())%7)
                         #doing this everyday for the msdomain_dialy might not be so efficient
@@ -1264,8 +1266,9 @@ class CustomSQLTrackerStore(TrackerStore):
                             timestamp = now.replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
                         else: 
                             timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday)
-                            while timestamp <= now:
-                                timestamp = getNextQuestTimestamp(schedule_df, questionnaire, datetime.datetime.fromtimestamp(timestamp, tz=pytz.timezone(timezone))) 
+                            while timestamp <= now.timestamp():
+                                timestamp = getNextQuestTimestamp(schedule_df, questionnaire, datetime.datetime.fromtimestamp(timestamp, tz=tz_timezone)) 
+
                         session.add(
                             self.SQLQuestState(
                             sender_id=sender_id,
