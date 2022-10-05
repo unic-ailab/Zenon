@@ -456,7 +456,7 @@ class ActionContinueLatestQuestionnaire(Action):
             return []
         else:
             q_abbreviation = tracker.get_slot("questionnaire")
-            isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
+            isAvailable, _ = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
             if isAvailable:        
                 q_name = get_text_from_lang(tracker, questionnaire_abbreviations[q_abbreviation])
 
@@ -840,9 +840,9 @@ class ActionUtterNotificationGreet(Action):
         )
 
         isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
-
+        questionnaire_to_reset = []
         # check if questionnaire is still pending
-        isAvailable = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
+        isAvailable, state = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
         if isAvailable:
             text = get_text_from_lang(
                 tracker,
@@ -855,7 +855,9 @@ class ActionUtterNotificationGreet(Action):
             )
             print("\nBOT:", text)
             dispatcher.utter_message(text=text)
-            return [FollowupAction("action_utter_ask_questionnaire_start")]
+            # might need to reset questionnaire slots here in case the user didn't go through getAvailableQuestionnaires after the questionnaire became available
+            if state == "available": questionnaire_to_reset.append(q_abbreviation)
+            return reset_form_slots(tracker, domain, questionnaire_to_reset) + [FollowupAction("action_utter_ask_questionnaire_start")]
         else:
             # normally it shouldn't get to this point
             text = get_text_from_lang(
