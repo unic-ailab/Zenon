@@ -807,8 +807,8 @@ class CustomSQLTrackerStore(TrackerStore):
                 if event.type_name == "action" and event.action_name=="action_ontology_store_sentiment":
                     # commit to store the events in the database so they can be found by the query
                     session.commit() 
-                    if sender_id[:len(sender_id)-2].upper() not in questionnaire_per_usecase.keys():
-                        self.saveToOntology(sender_id)
+                    #if sender_id[:len(sender_id)-2].upper() not in questionnaire_per_usecase.keys():
+                    self.saveToOntology(sender_id)
                 elif event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_completed_first_part", "action_questionnaire_cancelled", "action_questionnaire_cancelled_app"]:
                     # commit to store the events in the database so they can be found by the query
                     session.commit() 
@@ -910,11 +910,11 @@ class CustomSQLTrackerStore(TrackerStore):
                         database_entry.state="finished"
 
                         # store score
-                        if questionnaire_name in ["psqi", "muscletone"] and not isDemo:
+                        if questionnaire_name in ["psqi", "muscletone"]:# and not isDemo:
                             self.storeNsendQuestionnaireScore(session, sender_id, questionnaire_name, database_entry)
                                                     
                         #doing this everyday for the msdomain_daily might not be so efficient
-                        if isDemo:
+                        if isDemo or self.getUserUsecase(sender_id).upper() == "STROKE":
                             new_timestamp = timestamp
                         else:
                             last_availability = datetime.datetime.fromtimestamp(database_entry.available_at, tz=pytz.timezone(self.getUserTimezone(sender_id)))
@@ -960,7 +960,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 isAvailable=True
             else:
                 isAvailable=False
-        return isAvailable
+        return isAvailable, entry.state
 
     def setQuestionnaireTempState(self, sender_id, current_timestamp, questionnaire_name):
         with self.session_scope() as session:
@@ -988,7 +988,7 @@ class CustomSQLTrackerStore(TrackerStore):
         usecase = sender_id[:len(sender_id)-2].upper()
         now = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).timestamp() #timezone doesnt really matter hear as timestamps are universal
         # questionnaire are always available for the demo ids
-        if usecase not in questionnaire_per_usecase.keys():
+        if usecase not in questionnaire_per_usecase.keys() and self.getUserUsecase(sender_id).upper() != "STROKE":
             df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == entry.questionnaire_name]
             lifespanInDays = int(df_row["lifespanInDays"].values[0])        
         
@@ -1032,7 +1032,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 # this step might need to happen somewhere else, myb automatically
                 # checks whether 1 or 2 days has passed after the questionnaire was first available
                 usecase = sender_id[:len(sender_id)-2].upper()
-                if usecase not in questionnaire_per_usecase.keys():
+                if usecase not in questionnaire_per_usecase.keys() and self.getUserUsecase(sender_id).upper() != "STROKE":
                     df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == entry.questionnaire_name]
                     lifespanInDays = int(df_row["lifespanInDays"].values[0])
                     time_limit = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=lifespanInDays)).timestamp()
