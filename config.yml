@@ -16,20 +16,20 @@ pipeline:
     analyzer: char_wb
     min_ngram: 1
     max_ngram: 4
-  - name: "DucklingEntityExtractor"
-    url: "http://localhost:8000"
-    dimensions: ["time"]
-    locale: "ro_RO"
+  # - name: "DucklingEntityExtractor"
+  #   url: "http://localhost:8000"
+  #   dimensions: ["time", "number"]
+  #   locale: "ro_RO"
   - name: "DucklingEntityExtractor"
     url: "http://localhost:8000"
     dimensions: ["time", "number"]
     locale: "en_US"
   # - name: "DucklingEntityExtractor"
   #   url: "http://localhost:8000"
-  #   dimensions: ["time", "number"]
+  #   dimensions: ["number"]
   #   locale: "it_IT"
   - name: DIETClassifier
-    epochs: 350
+    epochs: 400
     constrain_similarities: true
   - name: EntitySynonymMapper
   - name: FallbackClassifier
@@ -45,11 +45,11 @@ policies:
     max_history: 8
   - name: "TEDPolicy"
     max_history: 8
-    epochs: 250
+    epochs: 300
     constrain_similarities: true
   - name: "UnexpecTEDIntentPolicy"
     max_history: 6
-    epochs: 150
+    epochs: 200
   - name: "RulePolicy"
     # Confidence threshold for the `core_fallback_action_name` to apply.
     # The action will apply if no other action was predicted with

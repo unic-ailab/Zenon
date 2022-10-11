@@ -728,9 +728,13 @@ class CustomSQLTrackerStore(TrackerStore):
 
                 message_entries = {"message": message_entry, "slot": [message_entry2, sentiment2]}
                 report = [include_in_report_intent, "affirm"]
+            else:
+                message_entries = {"message": message_entry}
+                report = [include_in_report_intent]
         else:
             message_entries = {"message": message_entry}
             report = [include_in_report_intent]
+        
 
         return message_entries, report
 

@@ -4402,8 +4402,8 @@ class ValidateDnBForm(FormValidationAction):
         """Validate question 'When did your problem start (date)?' """
 
         today = datetime.datetime.today()
-        date_format = "%Y-%m-%d"    # This is the correct date format for Duckling to extract correct the date.
-        slot_value = next(tracker.get_latest_entity_values("time"), None)
+        # date_format = "%Y-%m-%d"    # This is the correct date format for Duckling to extract correct the date.
+        # user_date = next(tracker.get_latest_entity_values("time"), None)
 
         user_input = datetime.datetime.fromisoformat(slot_value)
         user_input = user_input.strftime("%Y-%m-%d %H:%M:%S")
