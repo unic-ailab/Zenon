@@ -1026,7 +1026,7 @@ class ActionUtterStartQuestionnaire(Action):
         announce(self, tracker)
 
         q_abbreviation = tracker.get_slot("questionnaire")
-        if q_abbreviation == None:
+        if q_abbreviation == None or q_abbreviation not in questionnaire_abbreviations:
             text = get_text_from_lang(
                 tracker,
                 [
