@@ -63,8 +63,9 @@ questionnaire_per_usecase = {
 questionnaire_names_list = ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdomainIII_1W", "MSdomainIII_2W", "MSdomainIV_Daily", "MSdomainIV_1W", "MSdomainV", "activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
 
 schedule_df = pd.read_csv("pilot_schedule.csv")                       
-endpoints_df = pd.read_csv("alameda_endpoints.csv")                       
-
+endpoints_df = pd.read_csv("alameda_endpoints.csv") 
+c = endpoints_df[endpoints_df["name"]=="ONTOLOGY_SEND_SCORE_ENDPOINT"]["endpoint"].values[0]
+print(c)
 class CustomSQLTrackerStore(TrackerStore):
     """Store which can save and retrieve trackers from an SQL database. Based on rasa's original SQLTrackerStore"""
 
@@ -1163,7 +1164,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 # assumes user ids are of the form "ms00" or "stroke00"
                 usecase = sender_id[:len(sender_id)-2].upper()
                 if usecase not in questionnaire_per_usecase.keys():
-                    return
+                    return "English"
 
                 if usecase == "MS":
                     language = "Italian"
@@ -1220,6 +1221,7 @@ class CustomSQLTrackerStore(TrackerStore):
                     response.close()
                     resp = response.json() 
                     partner = resp["partner"]
+                    wcs_registration_date = resp["registration_date"]
                     if partner == "FISM":
                         usecase = "MS"
                         language = "Italian"
@@ -1236,7 +1238,7 @@ class CustomSQLTrackerStore(TrackerStore):
                         usecase = "None"
                         language = "English"
                         timezone = "UTC"
-                    registration_date = datetime.datetime.strptime(resp["registration_date"], "%Y-%m-%d")
+                    registration_date = datetime.datetime.strptime(wcs_registration_date, "%Y-%m-%d")
                     tz_timezone = pytz.timezone(timezone) 
                     tz_registration_date = registration_date.astimezone(tz_timezone)
                     tz_registration_date = tz_registration_date.replace(hour=0, minute=0, second=0, microsecond=0) 

@@ -833,6 +833,9 @@ class ActionUtterNotificationGreet(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
+        # onboard the user here in case the first time users open the app from a notification
+        _ = customTrackerInstance.checkUserID(tracker.current_state()['sender_id'])
+
         q_abbreviation = tracker.get_slot("questionnaire")
         q_name = get_text_from_lang(
             tracker,
