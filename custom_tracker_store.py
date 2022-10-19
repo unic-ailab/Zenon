@@ -1259,33 +1259,49 @@ class CustomSQLTrackerStore(TrackerStore):
                             timezone=timezone,                        
                         )
                     )
-
+                    
                     df_questionnaires=schedule_df[schedule_df["usecase"]==usecase]
                     #onboarding_date = datetime.datetime.strptime(registration_date, "%Y-%m-%d")
                     #onboarding_timestamp = onboarding_date.replace(hour=0, minute=0, second=0, microsecond=0)
                 
                     now = datetime.datetime.now(tz=tz_timezone)
-                    for questionnaire in df_questionnaires["questionnaire_abvr"]:
-                        first_monday = tz_registration_date + datetime.timedelta(days=(0-tz_registration_date.weekday())%7)
-                        #doing this everyday for the msdomain_dialy might not be so efficient
-                        if (questionnaire == "MSdomainIV_Daily"):
-                            timestamp = now.replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
-                        else: 
-                            timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday)
-                            while timestamp <= now.timestamp():
-                                timestamp = getNextQuestTimestamp(schedule_df, questionnaire, datetime.datetime.fromtimestamp(timestamp, tz=tz_timezone)) 
+                    if usecase == "MS":
+                        for questionnaire in df_questionnaires["questionnaire_abvr"]:
+                            first_monday = tz_registration_date + datetime.timedelta(days=(0-tz_registration_date.weekday())%7)
+                            #doing this everyday for the msdomain_dialy might not be so efficient
+                            if (questionnaire == "MSdomainIV_Daily"):
+                                timestamp = now.replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+                            else: 
+                                timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday)
+                                while timestamp <= now.timestamp():
+                                    timestamp = getNextQuestTimestamp(schedule_df, questionnaire, datetime.datetime.fromtimestamp(timestamp, tz=tz_timezone)) 
 
-                        session.add(
-                            self.SQLQuestState(
-                            sender_id=sender_id,
-                            questionnaire_name=questionnaire,
-                            available_at=timestamp,
-                            state="available",
-                            timestamp_start=None,
-                            timestamp_end=None,
-                            answers=None,                          
+                            session.add(
+                                self.SQLQuestState(
+                                sender_id=sender_id,
+                                questionnaire_name=questionnaire,
+                                available_at=timestamp,
+                                state="available",
+                                timestamp_start=None,
+                                timestamp_end=None,
+                                answers=None,                          
+                                )
                             )
-                        )
+                    elif usecase == "STROKE":
+                        now = now.replace(hour=0, minute=0, second=0, microsecond=0)
+                        today = now.timestamp()
+                        for questionnaire in df_questionnaires["questionnaire_abvr"]:
+                            session.add(
+                                self.SQLQuestState(
+                                sender_id=sender_id,
+                                questionnaire_name=questionnaire,
+                                available_at=today,
+                                state="available",
+                                timestamp_start=None,
+                                timestamp_end=None,
+                                answers=None,                          
+                                )
+                            )
                 except:
                     language = self.checkUserIDdemo(sender_id)
                 session.commit()
