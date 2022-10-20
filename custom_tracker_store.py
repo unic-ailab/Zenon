@@ -1474,7 +1474,7 @@ if __name__ == "__main__":
     #print(q_day)
 
     #print(1654808400<now)
-    with ts.session_scope() as session:
+    #with ts.session_scope() as session:
         # d = ts.checkQuestionnaireTimelimit(session, "stroke99", datetime.datetime.now().timestamp(), "psqi")
         # #print(d)
         # #print(ts._questionnaire_score_query(session, "stroke98", "muscletone"))
