@@ -1219,9 +1219,11 @@ class CustomSQLTrackerStore(TrackerStore):
                     wcs_endpoint= endpoints_df[endpoints_df["name"]=="WCS_ONBOARDING_ENDPOINT"]["endpoint"].values[0]
                     response = requests.get(wcs_endpoint, params={"patient_uuid": sender_id})
                     response.close()
-                    resp = response.json() 
-                    partner = resp["partner"]
-                    wcs_registration_date = resp["registration_date"]
+                    resp = response.json()
+                    try:
+                        partner = resp["partner"]
+                    except:
+                        partner = None
                     if partner == "FISM":
                         usecase = "MS"
                         language = "Italian"
@@ -1238,14 +1240,18 @@ class CustomSQLTrackerStore(TrackerStore):
                         usecase = "None"
                         language = "English"
                         timezone = "UTC"
-                    registration_date = datetime.datetime.strptime(wcs_registration_date, "%Y-%m-%d")
-                    tz_timezone = pytz.timezone(timezone) 
-                    tz_registration_date = registration_date.astimezone(tz_timezone)
-                    tz_registration_date = tz_registration_date.replace(hour=0, minute=0, second=0, microsecond=0) 
-                    registration_timestamp = registration_date.timestamp()
 
-                    if usecase not in questionnaire_per_usecase.keys():
-                        return language
+                    tz_timezone = pytz.timezone(timezone) 
+                    try:
+                        wcs_registration_date = resp["registration_date"]
+                        registration_date = datetime.datetime.strptime(wcs_registration_date, "%Y-%m-%d")
+                        tz_registration_date = registration_date.astimezone(tz_timezone)
+                        tz_registration_date = tz_registration_date.replace(hour=0, minute=0, second=0, microsecond=0) 
+                        registration_timestamp = registration_date.timestamp()
+                    except:
+                        tz_registration_date = datetime.datetime.now()
+                        registration_timestamp = tz_registration_date.timestamp()
+
                     # usecase = sender_id[:len(sender_id)-2].upper()
                     # if usecase not in questionnaire_per_usecase.keys():
                     #     return
@@ -1259,6 +1265,9 @@ class CustomSQLTrackerStore(TrackerStore):
                             timezone=timezone,                        
                         )
                     )
+                    session.commit()
+                    if usecase not in questionnaire_per_usecase.keys():
+                        return language
                     
                     df_questionnaires=schedule_df[schedule_df["usecase"]==usecase]
                     #onboarding_date = datetime.datetime.strptime(registration_date, "%Y-%m-%d")
@@ -1287,6 +1296,7 @@ class CustomSQLTrackerStore(TrackerStore):
                                 answers=None,                          
                                 )
                             )
+                        session.commit()
                     elif usecase == "STROKE":
                         now = now.replace(hour=0, minute=0, second=0, microsecond=0)
                         today = now.timestamp()
@@ -1302,6 +1312,7 @@ class CustomSQLTrackerStore(TrackerStore):
                                 answers=None,                          
                                 )
                             )
+                        session.commit()
                 except:
                     language = self.checkUserIDdemo(sender_id)
                 session.commit()
@@ -1463,7 +1474,7 @@ if __name__ == "__main__":
     #print(q_day)
 
     #print(1654808400<now)
-    # with ts.session_scope() as session:
+    with ts.session_scope() as session:
         # d = ts.checkQuestionnaireTimelimit(session, "stroke99", datetime.datetime.now().timestamp(), "psqi")
         # #print(d)
         # #print(ts._questionnaire_score_query(session, "stroke98", "muscletone"))
