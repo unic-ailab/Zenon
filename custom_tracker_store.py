@@ -794,7 +794,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 #     sentiment = None
                 # temp_data = json.dumps(data)
                 # if "sentiment_classes" in temp_data:
-                #     data["in_dashboard"] = "true" 
+                #     data["on_dashboard"] = "true" 
                 # noinspection PyArgumentList
                 session.add(
                     self.SQLEvent(
@@ -1147,7 +1147,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 data = {"sentiment_scores": json.loads(temp_sentiment),
                     "timestamp": timestamp,
                     "explanation": message_text,
-                    "in_dashboard": intent_to_bool[intent]}
+                    "on_dashboard": intent_to_bool[intent]}
                 ontology_data["observations"].append(data)
             session.commit()
             print(ontology_data)
