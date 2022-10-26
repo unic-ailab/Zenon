@@ -651,6 +651,8 @@ responses:
         - payload: /inform{{"given_answer":"?"}}
           title: "?"
       text: Introducerea unei chei in broasca.
+actions:
+  - action_utter_ACTIVLIM_intro_question
 forms:
   activLim_form:
     required_slots:

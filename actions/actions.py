@@ -1000,7 +1000,10 @@ class ActionUtterStartingQuestionnaire(Action):
                 ],
             )
             dispatcher.utter_message(text=text)
-            return [FollowupAction("{}_form".format(q_abbreviation))]
+            if q_abbreviation == "activLim":
+                return [FollowupAction("action_utter_ACTIVLIM_intro_question")]
+            else:
+                return [FollowupAction("{}_form".format(q_abbreviation))]
         else:
             #TODO: probably change this text
             text = get_text_from_lang(
@@ -1088,6 +1091,29 @@ class ActionUtterStartQuestionnaire(Action):
         print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
+
+####################################################################################################
+# ACTIVLIM Questionnaire                                                                               #
+####################################################################################################
+
+class ActionUtterACTIVLIMintro(Action):
+    def name(self):
+        return "action_utter_ACTIVLIM_intro_question"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Could you, please, indicate how difficult you perceive each of the following activities?",
+                " ",
+                "",
+                "Ați putea, vă rog, să indicați cât de dificil percepeți fiecare dintre următoarele activități?"
+            ],
+        )
+        dispatcher.utter_message(text=text)
+        return [FollowupAction("activLim_form")]    
 
 ####################################################################################################
 # PSQI Questionnaire                                                                               #
