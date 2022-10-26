@@ -44,7 +44,6 @@ stories:
                             - sentiment: pos
                   - action: utter_glad_to_hear
                   - action: action_ontology_store_sentiment
-                  - action: action_options_menu
 
         - story: Greeting, first time of the day using the agent, Agent receives neutral sentiment
           steps:
@@ -57,7 +56,6 @@ stories:
                   - slot_was_set:
                             - sentiment: neu
                   - action: action_ontology_store_sentiment
-                  - action: action_options_menu
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user agrees to put the information in their report.
           steps:
@@ -75,7 +73,6 @@ stories:
                   - intent: affirm
                   - action: utter_confirm_doctor
                   - action: action_ontology_store_sentiment
-                  - action: action_options_menu
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report.
           steps:
@@ -99,7 +96,6 @@ stories:
                             - intent: cancel
                   - action: utter_no_problem
                   - action: action_ontology_store_sentiment
-                  - action: action_options_menu
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report but want to report smothing extra.
           steps:
@@ -127,7 +123,6 @@ stories:
                             - requested_slot: null
                   - action: utter_confirm_doctor
                   - action: action_ontology_store_sentiment
-                  - action: action_options_menu
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment from the ontoloy, user agrees to put the information in their report.
           steps:
@@ -143,7 +138,7 @@ stories:
                   - intent: affirm
                   - action: utter_confirm_doctor
                   - action: action_ontology_store_sentiment
-                  - action: action_options_menu
+
         # all above in test_stories
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment from the ontoloy, user doesn't agree to put the information in their report.
           steps:
@@ -161,7 +156,6 @@ stories:
                             - intent: cancel
                   - action: utter_no_problem
                   - action: action_ontology_store_sentiment
-                  - action: action_options_menu
 
         - story: Greeting, not first time of the day using the agent - agent doesn't ask again for how the user is feeling
           steps:
@@ -679,9 +673,9 @@ stories:
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
+                  - action: action_questionnaire_completed
                   - slot_was_set:
                             - MSdomainIII_both: False
-                  - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
         - story: MS Domain IV daily and weekly relevant questions - fully completed
@@ -696,9 +690,9 @@ stories:
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
+                  - action: action_questionnaire_completed
                   - slot_was_set:
                             - MSdomainIV_both: True
-                  - action: action_questionnaire_completed_first_part
                   - slot_was_set:
                             - questionnaire: MSdomainIV_1W
                   - action: MSdomainIV_1W_form
@@ -721,9 +715,9 @@ stories:
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
+                  - action: action_questionnaire_completed
                   - slot_was_set:
                             - MSdomainIII_both: False
-                  - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
         - story: MS Domain III weekly and biweekly relevant questions - fully completed
@@ -738,9 +732,9 @@ stories:
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
+                  - action: action_questionnaire_completed
                   - slot_was_set:
                             - MSdomainIII_both: True
-                  - action: action_questionnaire_completed_first_part
                   - slot_was_set:
                             - questionnaire: MSdomainIII_2W
                   - action: MSdomainIII_2W_form
@@ -778,9 +772,9 @@ stories:
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
+                  - action: action_questionnaire_completed
                   - slot_was_set:
                             - MSdomainII_both: False
-                  - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
 
         - story: MS Domain II monthly and every 3 months relevant questions - fully completed
@@ -795,9 +789,9 @@ stories:
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
+                  - action: action_questionnaire_completed
                   - slot_was_set:
                             - MSdomainII_both: True
-                  - action: action_questionnaire_completed_first_part
                   - slot_was_set:
                             - questionnaire: MSdomainII_3M
                   - action: MSdomainII_3M_form
@@ -873,5 +867,5 @@ stories:
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
-                  - action: action_questionnaire_completed
+                  - action: action_questionnaire_completed 
                   - action: action_get_available_questionnaires
