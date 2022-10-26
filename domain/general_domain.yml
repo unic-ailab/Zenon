@@ -541,7 +541,6 @@ actions:
   - action_questionnaire_cancelled
   - action_questionnaire_cancelled_app
   - action_questionnaire_completed
-  - action_questionnaire_completed_first_part
   - action_utter_ask_questionnaire_start
   - action_utter_ask_language
   - action_utter_notification_greet

@@ -457,9 +457,9 @@ class ActionContinueLatestQuestionnaire(Action):
         else:
             q_abbreviation = tracker.get_slot("questionnaire")
             isAvailable, _ = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
-            if isAvailable:        
-                q_name = get_text_from_lang(tracker, questionnaire_abbreviations[q_abbreviation])
 
+            if isAvailable: 
+                q_name = get_text_from_lang(tracker, questionnaire_abbreviations[q_abbreviation])
                 #TODO: fix translation
                 text = get_text_from_lang(
                     tracker,
@@ -489,10 +489,10 @@ class ActionContinueLatestQuestionnaire(Action):
                 text = get_text_from_lang(
                     tracker,
                     [
-                        "The {} questionnaire is not available".format(q_name),
+                        "The latest questionnaire you were completing is not currently available",
                         " ",
-                        "The {} questionnaire is not available".format(q_name),
-                        "The {} questionnaire is not available".format(q_name),
+                        "The latest questionnaire you were completing is not currently available",
+                        "The latest questionnaire you were completing is not currently available",
                     ]
                 )
                 dispatcher.utter_message(text=text)
@@ -521,7 +521,6 @@ class ActionOptionsMenu(Action):
         )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
-        #return [FollowupAction("action_ontology_store_sentiment")]
 
 # used when user ends up in the options menu more than once after greeting
 class ActionOptionsMenuExtra(Action):
@@ -774,9 +773,9 @@ class ActionUtterGreet(Action):
         isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
         if isFirstTime:
             print("This is the first time for today.")
-            return [SlotSet("is_first_time", isFirstTime), FollowupAction("action_utter_how_are_you")]
+            return [SlotSet("is_first_time", isFirstTime)]#, FollowupAction("action_utter_how_are_you")]
         else:
-            return [SlotSet("is_first_time", isFirstTime), FollowupAction("action_options_menu")]
+            return [SlotSet("is_first_time", isFirstTime)]#, FollowupAction("action_options_menu")]
 
 class ActionUtterHowAreYou(Action):
     def name(self):
@@ -860,7 +859,7 @@ class ActionUtterNotificationGreet(Action):
             dispatcher.utter_message(text=text)
             # might need to reset questionnaire slots here in case the user didn't go through getAvailableQuestionnaires after the questionnaire became available
             if state == "available": questionnaire_to_reset.append(q_abbreviation)
-            return reset_form_slots(tracker, domain, questionnaire_to_reset) + [FollowupAction("action_utter_ask_questionnaire_start")]
+            return reset_form_slots(tracker, domain, questionnaire_to_reset) #+ [FollowupAction("action_utter_ask_questionnaire_start")]
         else:
             # normally it shouldn't get to this point
             text = get_text_from_lang(
@@ -883,38 +882,19 @@ class ActionQuestionnaireCompleted(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
-        text = get_text_from_lang(
-            tracker,
-            [
-                "We are good. Thank you for your time.",
-                "Το ερωτηματολόγιο ολοκληρώθηκε. Ευχαριστώ.",
-                "A posto! Grazie per il tuo tempo.",
-                "Suntem buni! Mulțumesc pentru timpul acordat.",
-            ],
-        )
-        dispatcher.utter_message(text=text)
-        customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), tracker.get_slot("questionnaire"))
-        return []
-
-class ActionQuestionnaireCompletedFirstPart(Action):
-    def name(self):
-        return "action_questionnaire_completed_first_part"
-
-    def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
-
         q_abbreviation = tracker.get_slot("questionnaire")
+        MSdomainIII_both = tracker.get_slot("MSdomainIII_both")
+        MSdomainII_both = tracker.get_slot("MSdomainII_both")
+        MSdomainIV_both = tracker.get_slot("MSdomainIV_both")
+
         customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
 
-        #fake_intent={"name": "/"+q_abbreviation+"_start", "confidence": 1.0}
-        #UserUttered("/MSdomainIII_2W_start", fake_intent)
-
-        if q_abbreviation == "MSdomainIII_1W":
-            return [SlotSet("questionnaire", "MSdomainIII_2W"), FollowupAction("MSdomainIII_2W_form")] #UserUttered("/MSdomainIII_2W_start", fake_intent)]
-        elif q_abbreviation == "MSdomainII_1M":
-            return [SlotSet("questionnaire", "MSdomainII_3M"), FollowupAction("MSdomainII_3M_form")] #UserUttered("/MSdomainII_3M_start")]
-        elif q_abbreviation == "MSdomainIV_Daily":
-            return [SlotSet("questionnaire", "MSdomainIV_1W"), FollowupAction("MSdomainIV_1W_form")] #UserUttered("/MSdomainII_3M_start")]
+        if q_abbreviation == "MSdomainIII_1W" and MSdomainIII_both:
+            return [SlotSet("questionnaire", "MSdomainIII_2W"), FollowupAction("MSdomainIII_2W_form")] 
+        elif q_abbreviation == "MSdomainII_1M" and MSdomainII_both:
+            return [SlotSet("questionnaire", "MSdomainII_3M"), FollowupAction("MSdomainII_3M_form")] 
+        elif q_abbreviation == "MSdomainIV_Daily" and MSdomainIV_both:
+            return [SlotSet("questionnaire", "MSdomainIV_1W"), FollowupAction("MSdomainIV_1W_form")] 
         else:
             text = get_text_from_lang(
                 tracker,
@@ -926,7 +906,39 @@ class ActionQuestionnaireCompletedFirstPart(Action):
                 ],
             )  
             dispatcher.utter_message(text=text)
-            return [SlotSet("questionnaire", None), FollowupAction("action_options_menu")]
+            return [SlotSet("questionnaire", None)]#, FollowupAction("action_options_menu")]
+
+# class ActionQuestionnaireCompletedFirstPart(Action):
+#     def name(self):
+#         return "action_questionnaire_completed_first_part"
+
+#     def run(self, dispatcher, tracker, domain):
+#         announce(self, tracker)
+
+#         q_abbreviation = tracker.get_slot("questionnaire")
+#         customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
+
+#         #fake_intent={"name": "/"+q_abbreviation+"_start", "confidence": 1.0}
+#         #UserUttered("/MSdomainIII_2W_start", fake_intent)
+
+#         if q_abbreviation == "MSdomainIII_1W":
+#             return [SlotSet("questionnaire", "MSdomainIII_2W"), FollowupAction("MSdomainIII_2W_form")] #UserUttered("/MSdomainIII_2W_start", fake_intent)]
+#         elif q_abbreviation == "MSdomainII_1M":
+#             return [SlotSet("questionnaire", "MSdomainII_3M"), FollowupAction("MSdomainII_3M_form")] #UserUttered("/MSdomainII_3M_start")]
+#         elif q_abbreviation == "MSdomainIV_Daily":
+#             return [SlotSet("questionnaire", "MSdomainIV_1W"), FollowupAction("MSdomainIV_1W_form")] #UserUttered("/MSdomainII_3M_start")]
+#         else:
+#             text = get_text_from_lang(
+#                 tracker,
+#                 [
+#                     "We are good. Thank you for your time.",
+#                     "Το ερωτηματολόγιο ολοκληρώθηκε. Ευχαριστώ.",
+#                     "A posto! Grazie per il tuo tempo.",
+#                     "Suntem buni! Mulțumesc pentru timpul acordat.",
+#                 ],
+#             )  
+#             dispatcher.utter_message(text=text)
+#             return [SlotSet("questionnaire", None), FollowupAction("action_options_menu")]
 
 class ActionOntologyStoreSentiment(Action):
     def name(self):
@@ -935,7 +947,7 @@ class ActionOntologyStoreSentiment(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
         #customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
-        return []
+        return [FollowupAction("action_options_menu")]
 
 class ActionQuestionnaireCancelled(Action):
     def name(self):
