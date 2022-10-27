@@ -785,7 +785,7 @@ class ActionUtterHowAreYou(Action):
         announce(self, tracker)
 
         # query the ontology for meaa results of the previous day
-        today = datetime.datetime.now(tz=pytz.utc)
+        today = datetime.datetime.combine(datetime.datetime.now(tz=pytz.utc), datetime.datetime.min.time())
         yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
         today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
         try :
