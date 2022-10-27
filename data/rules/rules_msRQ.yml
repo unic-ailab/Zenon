@@ -41,33 +41,6 @@ rules:
       - action: MSdomainII_3M_form
       - active_loop: MSdomainII_3M_form
 
-  #  - rule: Start MS Domain II 3 month – Sleep Disorders relevant questions
-  #    steps:
-  #     - action: action_questionnaire_completed_first_part
-  #     - slot_was_set:
-  #           - MSdomainII_both: False
-  #     - slot_was_set:
-  #           - questionnaire: MSdomainII_3M 
-  #     - action: MSdomainII_3M_form
-  #     - active_loop: MSdomainII_3M_form
-
-  #  - rule: Start MS Domain III biweekly – Sleep Disorders relevant questions
-  #    steps:
-  #     - action: action_questionnaire_completed_first_part
-  #     - slot_was_set:
-  #           - MSdomainIII_both: False
-  #     - slot_was_set:
-  #           - questionnaire: MSdomainIII_2W 
-  #     - action: MSdomainIII_2W_form
-  #     - active_loop: MSdomainIII_2W_form
-
-  #  - rule: Start MS Domain II 3 month – Sleep Disorders relevant questions
-  #    steps:
-  #     - action: action_questionnaire_completed_first_part
-  #     - action: MSdomainII_3M_form
-  #     - active_loop: MSdomainII_3M_form
-
-
   - rule: Submit MS Domain II monthly relevant questions 
     condition:
       - active_loop: MSdomainII_1M_form
@@ -92,10 +65,9 @@ rules:
       - active_loop: null
       - slot_was_set:
           - requested_slot: null
-      - action: action_questionnaire_completed_first_part
+      - action: action_questionnaire_completed
       - action: MSdomainII_3M_form
       - active_loop: MSdomainII_3M_form
-
 
   - rule: Interruption MS Domain II relevant questions
     condition:
@@ -170,7 +142,7 @@ rules:
       - active_loop: null
       - slot_was_set:
           - requested_slot: null
-      - action: action_questionnaire_completed_first_part
+      - action: action_questionnaire_completed
       - action: MSdomainIII_2W_form
       - active_loop: MSdomainIII_2W_form
 
@@ -193,18 +165,6 @@ rules:
           - requested_slot: null
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
-
-  # - rule: Submit MS Domain III biweekly relevant questions
-  #   condition:
-  #     - active_loop: MSdomainIII_1W_form
-  #   steps:
-  #     - action: MSdomainIII_1W_form
-  #     - active_loop: null
-  #     - slot_was_set:
-  #         - requested_slot: null
-  #     - slot_was_set:
-  #         - MSdomainIII_both: True 
-  #     - action: action_questionnaire_completed_first_part
 
   - rule: Interruption MS Domain III biweekly relevant questions
     condition:
@@ -308,10 +268,9 @@ rules:
       - active_loop: null
       - slot_was_set:
           - requested_slot: null
-      - action: action_questionnaire_completed_first_part
+      - action: action_questionnaire_completed
       - action: MSdomainIV_1W_form
       - active_loop: MSdomainIV_1W_form
-
 
   - rule: Interruption MS Domain IV daily relevant questions
     condition:
