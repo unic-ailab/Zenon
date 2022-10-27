@@ -432,13 +432,14 @@ class CustomSQLTrackerStore(TrackerStore):
         # )
 
         #not so great approach
+        # TODO: this might not always be true, might need start as well as completed
         if  questionnaire_name in ["MSdomainIII_2W", "MSdomainII_3M"]:
             # Subquery to find the timestamp of the latest `Questionnaire_Start` event
             latest_questionnaire_sub_query = (
                 session.query(sa.func.max(self.SQLEvent.timestamp).label("questionnaire_start"))
                 .filter(
                     self.SQLEvent.sender_id == sender_id,
-                    self.SQLEvent.action_name == "action_questionnaire_completed_first_part",
+                    self.SQLEvent.action_name == "action_questionnaire_completed",
                     self.SQLEvent.type_name == "action",
                     #self.SQLEvent.timestamp >= timestamp,
                 )
@@ -812,7 +813,7 @@ class CustomSQLTrackerStore(TrackerStore):
                     session.commit() 
                     #if sender_id[:len(sender_id)-2].upper() not in questionnaire_per_usecase.keys():
                     self.saveToOntology(sender_id)
-                elif event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_completed_first_part", "action_questionnaire_cancelled", "action_questionnaire_cancelled_app"]:
+                elif event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_cancelled", "action_questionnaire_cancelled_app"]:
                     # commit to store the events in the database so they can be found by the query
                     session.commit() 
                     # get questionnaire name because at that stage the questionnaire slot value might have changed
@@ -957,13 +958,15 @@ class CustomSQLTrackerStore(TrackerStore):
 
     def getSpecificQuestionnaireAvailability(self, sender_id, current_timestamp, questionnaire_name) -> bool:
         with self.session_scope() as session:
-            _,_ = self.checkQuestionnaireTimelimit(session, sender_id, current_timestamp, questionnaire_name)
-            entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first() 
-            if entry is not None and entry.state != "to_be_stored":
-                isAvailable=True
-            else:
-                isAvailable=False
-        return isAvailable, entry.state
+            try: 
+                _,_ = self.checkQuestionnaireTimelimit(session, sender_id, current_timestamp, questionnaire_name)
+                entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first() 
+                if entry is not None & entry.state != "to_be_stored":
+                    return True, entry.state
+                else:
+                    return False, None
+            except:
+                    return False, None
 
     def setQuestionnaireTempState(self, sender_id, current_timestamp, questionnaire_name):
         with self.session_scope() as session:

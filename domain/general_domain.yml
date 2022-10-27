@@ -81,6 +81,9 @@ slots:
   is_completed:
     type: bool
     influence_conversation: true
+  notification_questionnaire_start:
+    type: bool
+    influence_conversation: true
   sentiment:
     type: categorical
     influence_conversation: true

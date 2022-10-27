@@ -11,7 +11,11 @@ stories:
                   - intent: notification_questionnaire_open
                   - action: action_utter_notification_greet
                   - slot_was_set:
-                            - is_first_time: true
+                            - notification_questionnaire_start: false
+                  - slot_was_set:
+                            - questionnaire: None
+                  - slot_was_set:
+                            - is_first_time: true                            
                   - action: action_utter_how_are_you
 
         - story: User click on a notification for questionnaire but the questionnaire is not available and is not the first time of the day using the agent #this shouldn't happen
@@ -19,13 +23,19 @@ stories:
                   - intent: notification_questionnaire_open
                   - action: action_utter_notification_greet
                   - slot_was_set:
+                            - notification_questionnaire_start: false
+                  - slot_was_set:
+                            - questionnaire: None
+                  - slot_was_set:
                             - is_first_time: false
                   - action: action_get_available_questionnaires
-        # the above 2 stories are a bad idea but it seems to work
+
         - story: User click on a notification for questionnaire but doesn't want to start questionnaire #does this work for all cases?
           steps:
                   - intent: notification_questionnaire_open
                   - action: action_utter_notification_greet
+                  - slot_was_set:
+                            - notification_questionnaire_start: true
                   - action: action_utter_ask_questionnaire_start
                   - or:
                             - intent: deny

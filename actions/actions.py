@@ -836,10 +836,13 @@ class ActionUtterNotificationGreet(Action):
         _ = customTrackerInstance.checkUserID(tracker.current_state()['sender_id'])
 
         q_abbreviation = tracker.get_slot("questionnaire")
-        q_name = get_text_from_lang(
-            tracker,
-            questionnaire_abbreviations[q_abbreviation],
-        )
+        try: 
+            q_name = get_text_from_lang(
+                tracker,
+                questionnaire_abbreviations[q_abbreviation],
+            )
+        except:
+            q_name = "None"
 
         isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
         questionnaire_to_reset = []
@@ -859,7 +862,7 @@ class ActionUtterNotificationGreet(Action):
             dispatcher.utter_message(text=text)
             # might need to reset questionnaire slots here in case the user didn't go through getAvailableQuestionnaires after the questionnaire became available
             if state == "available": questionnaire_to_reset.append(q_abbreviation)
-            return reset_form_slots(tracker, domain, questionnaire_to_reset) #+ [FollowupAction("action_utter_ask_questionnaire_start")]
+            return reset_form_slots(tracker, domain, questionnaire_to_reset) + [SlotSet("notification_questionnaire_start", True)]#+ [FollowupAction("action_utter_ask_questionnaire_start")]
         else:
             # normally it shouldn't get to this point
             text = get_text_from_lang(
@@ -867,12 +870,12 @@ class ActionUtterNotificationGreet(Action):
                 [
                     "Hey there! Apologies, this questionnaire is no longer available.",
                     "Χαίρεται!",
-                    "Ehilà!",
-                    "Hei acolo!",
+                    "Ciao! Mi scuso, questo questionario non è più disponibile.",
+                    "Salut! Scuze, acest chestionar nu mai este disponibil.",
                 ],
             )
             dispatcher.utter_message(text=text)
-            return [SlotSet("questionnaire", None), SlotSet("is_first_time", isFirstTime)]
+            return [SlotSet("questionnaire", None), SlotSet("is_first_time", isFirstTime), SlotSet("notification_questionnaire_start", False)]
 
 
 class ActionQuestionnaireCompleted(Action):
@@ -985,7 +988,7 @@ class ActionUtterStartingQuestionnaire(Action):
         announce(self, tracker)
         
         q_abbreviation = tracker.latest_message["intent"].get("name").replace("_start", "")
-        if (q_abbreviation !=None and q_abbreviation in questionnaire_abbreviations.keys()):
+        if (q_abbreviation !=None & q_abbreviation in questionnaire_abbreviations.keys()):
             q_name = get_text_from_lang(
                 tracker,
                 questionnaire_abbreviations[q_abbreviation],
@@ -1027,7 +1030,7 @@ class ActionSetQuestionnaireSlot(Action):
         
         q_abbreviation = tracker.latest_message["intent"].get("name").replace("_start", "")
         usecase = customTrackerInstance.getUserUsecase(tracker.current_state()['sender_id'])
-        if usecase is not None and usecase in questionnaire_per_usecase:
+        if usecase is not None & usecase in questionnaire_per_usecase:
             if q_abbreviation in questionnaire_per_usecase[usecase]:
                 return [SlotSet("questionnaire", q_abbreviation)]
             else:
@@ -6877,7 +6880,7 @@ class ValidateMSDomainIForm(FormValidationAction):
 
         slot_value = next(tracker.get_latest_entity_values("number"), None)
         
-        if (slot_value is not None) and (int(slot_value) >= 0):
+        if (slot_value is not None) & (int(slot_value) >= 0):
             return {"MSdomainI_RQ4": slot_value}
         else:
             text = get_text_from_lang(
@@ -6901,7 +6904,7 @@ class ValidateMSDomainIForm(FormValidationAction):
 
         slot_value = next(tracker.get_latest_entity_values("number"), None)
         
-        if (slot_value is not None) and (int(slot_value) >= 0):
+        if (slot_value is not None) & (int(slot_value) >= 0):
             return {"MSdomainI_RQ5": slot_value}
         else:
             text = get_text_from_lang(
@@ -7105,10 +7108,10 @@ class ValidateMSDomainIII1WForm(FormValidationAction):
         self, slots_mapped_in_domain, dispatcher, tracker, domain,
     ) -> List[Text]:
 
-        if tracker.get_slot("MSdomainIII_1W_RQ2") is not None and tracker.get_slot("MSdomainIII_1W_RQ2") < 6:
+        if tracker.get_slot("MSdomainIII_1W_RQ2") is not None & tracker.get_slot("MSdomainIII_1W_RQ2") < 6:
             slots_mapped_in_domain.remove("MSdomainIII_1W_RQ2a")
 
-        if tracker.get_slot("MSdomainIII_1W_RQ5") is not None and tracker.get_slot("MSdomainIII_1W_RQ5") < 6:
+        if tracker.get_slot("MSdomainIII_1W_RQ5") is not None & tracker.get_slot("MSdomainIII_1W_RQ5") < 6:
             slots_mapped_in_domain.remove("MSdomainIII_1W_RQ5a")  
 
         # if not tracker.get_slot("MSdomainIII_both"):
@@ -7127,9 +7130,9 @@ class ValidateMSDomainIII1WForm(FormValidationAction):
 
         slot_value = next(tracker.get_latest_entity_values("number"), None)
         
-        if (slot_value is not None) and (slot_value in list(range(1, 11))):
+        if (slot_value is not None) & (slot_value in list(range(1, 11))):
             return {"MSdomainIII_1W_RQ2": slot_value}
-        elif (slot_value is not None) and (slot_value not in list(range(1, 11))):
+        elif (slot_value is not None) & (slot_value not in list(range(1, 11))):
             text = get_text_from_lang(
                 tracker,
                 ["Your answer must be between 1 and 10.",
@@ -7162,9 +7165,9 @@ class ValidateMSDomainIII1WForm(FormValidationAction):
 
         slot_value = next(tracker.get_latest_entity_values("number"), None)
         
-        if (slot_value is not None) and (slot_value in list(range(1, 11))):
+        if (slot_value is not None) & (slot_value in list(range(1, 11))):
             return {"MSdomainIII_1W_RQ5": slot_value}
-        elif (slot_value is not None) and (slot_value not in list(range(1, 11))):
+        elif (slot_value is not None) & (slot_value not in list(range(1, 11))):
             text = get_text_from_lang(
                 tracker,
                 ["Your answer must be between 1 and 10.",
