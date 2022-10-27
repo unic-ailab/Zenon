@@ -9,7 +9,7 @@ rules:
       - slot_was_set:
           - questionnaire: activLim
       - action: action_utter_starting_questionnaire
-      - action: utter_ACTIVLIM_intro_question
+      - action: action_utter_ACTIVLIM_intro_question
       - action: activLim_form
       - active_loop: activLim_form
 
