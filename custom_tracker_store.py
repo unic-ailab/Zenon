@@ -961,7 +961,7 @@ class CustomSQLTrackerStore(TrackerStore):
             try: 
                 _,_ = self.checkQuestionnaireTimelimit(session, sender_id, current_timestamp, questionnaire_name)
                 entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first() 
-                if entry is not None & entry.state != "to_be_stored":
+                if entry is not None and entry.state != "to_be_stored":
                     return True, entry.state
                 else:
                     return False, None
