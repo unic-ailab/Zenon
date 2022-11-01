@@ -13,6 +13,7 @@ intents:
   - tutorials
   - continue
   - options_menu
+  - options_menu_extra
   - MSdomainI_start
   - MSdomainII_1M_start
   - MSdomainII_3M_start
@@ -107,6 +108,9 @@ slots:
       - italian
       - romanian
   sentiment_classes:
+    type: any
+    influence_conversation: false
+  report_Q1:
     type: any
     influence_conversation: false
   report_extra_Q1:
@@ -551,7 +555,12 @@ actions:
   - action_utter_set_language
   - action_utter_set_questionnaire
   - action_onboard_user
+  #- action_ask_how_are_you_Q1
 forms:
+  report_form:
+    required_slots:
+      report_Q1:
+        - type: from_text
   report_extra_form:
     required_slots:
       report_extra_Q1:

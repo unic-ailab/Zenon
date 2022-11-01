@@ -482,7 +482,7 @@ class ActionContinueLatestQuestionnaire(Action):
                 )
                 buttons.append({"title": start_button_title, "payload": "/"+ q_abbreviation+"_start"})
                 # add button for cancel that takes the user back to the general questions
-                buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
+                buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu_extra"})
                 dispatcher.utter_message(text=text, buttons=buttons)
                 return []
             else:
