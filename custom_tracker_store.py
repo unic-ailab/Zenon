@@ -992,7 +992,7 @@ class CustomSQLTrackerStore(TrackerStore):
         # this step might need to happen somewhere else, myb automatically
         # checks whether 1 or 2 days has passed after the questionnaire was first available
         usecase = sender_id[:len(sender_id)-2].upper()
-        now = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).timestamp() #timezone doesnt really matter hear as timestamps are universal
+        today = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).replace(hour=0, minute=0, second=0, microsecond=0).timestamp() #timezone doesnt really matter hear as timestamps are universal
         # questionnaire are always available for the demo ids
         if usecase not in questionnaire_per_usecase.keys() and self.getUserUsecase(sender_id).upper() != "STROKE":
             df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == entry.questionnaire_name]
@@ -1008,7 +1008,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 # doing this everyday for the msdomain_daily might not be so efficient
                 last_availability = datetime.datetime.fromtimestamp(entry.available_at, tz=pytz.timezone(self.getUserTimezone(sender_id)))
                 new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, last_availability)
-                while new_timestamp <= now:
+                while new_timestamp < today:
                     new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(new_timestamp))
                 
                 session.add(
@@ -1048,10 +1048,10 @@ class CustomSQLTrackerStore(TrackerStore):
 
                         # create new database entry
                         # doing this everyday for the msdomain_daily might not be so efficient
-                        now = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).timestamp()
+                        today = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).replace(hour=0, minute=0, second=0, microsecond=0).timestamp() #timezone doesnt really matter hear as timestamps are universal
                         last_availability = datetime.datetime.fromtimestamp(entry.available_at, tz=pytz.timezone(self.getUserTimezone(sender_id)))
                         new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, last_availability)
-                        while new_timestamp <= now:
+                        while new_timestamp < today:
                             new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(new_timestamp))
                 
                         session.add(
@@ -1264,17 +1264,21 @@ class CustomSQLTrackerStore(TrackerStore):
                         #onboarding_timestamp = onboarding_date.replace(hour=0, minute=0, second=0, microsecond=0)
                 
                         now = datetime.datetime.now(tz=tz_timezone)
+                        today= now.replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
                         if usecase == "MS":
                             for questionnaire in df_questionnaires["questionnaire_abvr"]:
                                 first_monday = tz_registration_date + datetime.timedelta(days=(0-tz_registration_date.weekday())%7)
                                 #doing this everyday for the msdomain_dialy might not be so efficient
                                 if (questionnaire == "MSdomainIV_Daily"):
-                                    timestamp = now.replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+                                    timestamp = today
                                 else: 
                                     timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday)
-                                    while timestamp <= now.timestamp():
+                                    while timestamp < today:
+                                        # print(questionnaire, datetime.datetime.fromtimestamp(timestamp, tz=tz_timezone))
+                                        # print(datetime.datetime.fromtimestamp(timestamp, tz=tz_timezone))
                                         timestamp = getNextQuestTimestamp(schedule_df, questionnaire, datetime.datetime.fromtimestamp(timestamp, tz=tz_timezone)) 
-
+                                        # print(timestamp)
+                                        # print(datetime.datetime.fromtimestamp(timestamp, tz=tz_timezone))
                                 session.add(
                                     self.SQLQuestState(
                                     sender_id=sender_id,
@@ -1288,8 +1292,6 @@ class CustomSQLTrackerStore(TrackerStore):
                                 )
                             session.commit()
                         elif usecase == "STROKE":
-                            now = now.replace(hour=0, minute=0, second=0, microsecond=0)
-                            today = now.timestamp()
                             for questionnaire in df_questionnaires["questionnaire_abvr"]:
                                 session.add(
                                     self.SQLQuestState(
