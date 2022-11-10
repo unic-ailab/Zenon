@@ -1,11 +1,6 @@
-# Configuration for Rasa NLU.
-# https://rasa.com/docs/rasa/nlu/components/
 language: en
 
 pipeline:
-  # No configuration for the NLU pipeline was provided. The following default pipeline was used to train your model.
-  # If you'd like to customize it, uncomment and adjust the pipeline.
-  # See https://rasa.com/docs/rasa/tuning-your-model for more information.
   - name: sentiment.SentimentAnalyzer
     url: "http://91.184.203.22:5050"
   - name: WhitespaceTokenizer
@@ -16,18 +11,10 @@ pipeline:
     analyzer: char_wb
     min_ngram: 1
     max_ngram: 4
-  # - name: "DucklingEntityExtractor"
-  #   url: "http://localhost:8000"
-  #   dimensions: ["time", "number"]
-  #   locale: "ro_RO"
   - name: "DucklingEntityExtractor"
     url: "http://localhost:8000"
     dimensions: ["time", "number"]
     locale: "en_US"
-  # - name: "DucklingEntityExtractor"
-  #   url: "http://localhost:8000"
-  #   dimensions: ["number"]
-  #   locale: "it_IT"
   - name: DIETClassifier
     epochs: 400
     constrain_similarities: true
@@ -35,25 +22,17 @@ pipeline:
   - name: FallbackClassifier
     threshold: 0.25
 
-# Configuration for Rasa Core.
-# https://rasa.com/docs/rasa/core/policies/
 policies:
-  # No configuration for policies was provided. The following default policies were used to train your model.
-  # If you'd like to customize them, uncomment and adjust the policies.
-  # See https://rasa.com/docs/rasa/policies for more information.
   - name: "MemoizationPolicy"
-    max_history: 8
+  # max_history: 8
   - name: "TEDPolicy"
-    max_history: 8
+    # max_history: 8
     epochs: 300
     constrain_similarities: true
   - name: "UnexpecTEDIntentPolicy"
-    max_history: 6
+    #   max_history: 6
     epochs: 200
   - name: "RulePolicy"
-    # Confidence threshold for the `core_fallback_action_name` to apply.
-    # The action will apply if no other action was predicted with
-    # a confidence >= core_fallback_threshold
-    # core_fallback_threshold: 0.2
+    # core_fallback_threshold: 0.3
     # core_fallback_action_name: "action_default_fallback"
     # enable_fallback_prediction: True

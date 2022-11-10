@@ -1,7 +1,7 @@
 version: "2.0"
 
 rules:
-  - rule: Start Domain III – Mental and Cognitive Ability relevant questions # Works Fine - It should be called like "start STROKE domainIII relevant questions"
+  - rule: Start Stroke Domain III – Mental and Cognitive Ability relevant questions # It should be called by tapping a button
     steps:
       - intent: STROKEdomainIII_start
       - action: action_set_questionnaire_slot
@@ -11,7 +11,7 @@ rules:
       - action: STROKEdomainIII_form
       - active_loop: STROKEdomainIII_form
 
-  - rule: Interruption Domain III relevant questions
+  - rule: Interruption Stroke Domain III relevant questions
     condition:
       - active_loop: STROKEdomainIII_form
     steps:
@@ -20,18 +20,27 @@ rules:
       - action: STROKEdomainIII_form
       - active_loop: STROKEdomainIII_form
 
-  - rule: Submit Domain III relevant questions
+  - rule: Out of scope while completing Stroke Domain III relevant questions
+    condition:
+      - active_loop: STROKEdomainIII_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_handle_out_of_scope
+      - action: STROKEdomainIII_form
+      - active_loop: STROKEdomainIII_form
+
+  - rule: Submit Stroke Domain III relevant questions
     condition:
       - active_loop: STROKEdomainIII_form
     steps:
       - action: STROKEdomainIII_form
       - active_loop: null
       - slot_was_set:
-          - requested_slot: null     
+          - requested_slot: null
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
 
-  - rule: Start Domain V - Quality of Life and daily living relevant questions # Works Fine - It should be called like "start STROKE domainV relevant questions"
+  - rule: Start Stroke Domain V - Quality of Life and daily living relevant questions # It should be called by tapping a button
     steps:
       - intent: STROKEdomainV_start
       - action: action_set_questionnaire_slot
@@ -41,7 +50,16 @@ rules:
       - action: STROKEdomainV_form
       - active_loop: STROKEdomainV_form
 
-  - rule: Interruption Domain V relevant questions
+  - rule: Out of scope while completing Stroke Domain V relevant questions
+    condition:
+      - active_loop: STROKEdomainV_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_handle_out_of_scope
+      - action: STROKEdomainV_form
+      - active_loop: STROKEdomainV_form
+
+  - rule: Interruption Stroke Domain V relevant questions
     condition:
       - active_loop: STROKEdomainV_form
     steps:
@@ -50,18 +68,18 @@ rules:
       - action: STROKEdomainV_form
       - active_loop: STROKEdomainV_form
 
-  - rule: Submit Domain V relevant questions
+  - rule: Submit Stroke Domain V relevant questions
     condition:
       - active_loop: STROKEdomainV_form
     steps:
       - action: STROKEdomainV_form
       - active_loop: null
       - slot_was_set:
-          - requested_slot: null     
+          - requested_slot: null
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
 
-  - rule: Start Domain IV - Emotional Status relevant questions
+  - rule: Start Stroke Domain IV - Emotional Status relevant questions # It should be called by tapping a button
     steps:
       - intent: STROKEdomainIV_start
       - action: action_set_questionnaire_slot
@@ -71,7 +89,16 @@ rules:
       - action: STROKEdomainIV_form
       - active_loop: STROKEdomainIV_form
 
-  - rule: Interruption Domain IV relevant questions
+  - rule: Out of scope while completing Stroke Domain IV relevant questions
+    condition:
+      - active_loop: STROKEdomainIV_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_handle_out_of_scope
+      - action: STROKEdomainIV_form
+      - active_loop: STROKEdomainIV_form
+
+  - rule: Interruption Stroke Domain IV relevant questions
     condition:
       - active_loop: STROKEdomainIV_form
     steps:
@@ -80,13 +107,13 @@ rules:
       - action: STROKEdomainIV_form
       - active_loop: STROKEdomainIV_form
 
-  - rule: Submit Domain IV relevant questions
+  - rule: Submit Stroke Domain IV relevant questions
     condition:
       - active_loop: STROKEdomainIV_form
     steps:
       - action: STROKEdomainIV_form
       - active_loop: null
       - slot_was_set:
-          - requested_slot: null     
+          - requested_slot: null
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires

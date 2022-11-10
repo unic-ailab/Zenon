@@ -341,7 +341,7 @@ responses:
           title: Sometimes
         - payload: /inform{{"given_answer":"often"}}
           title: Often
-      text: In the last month, have you had to give up social activities (eg. going out with friends, dinners with relatives, attending events, etc.) due to MS?
+      text: In the last month, have you had a greater need for assistance in carrying out your daily activities?
     - condition:
         - type: slot
           name: language
@@ -711,6 +711,7 @@ forms:
     required_slots:
       STROKEdomainIV_RQ1:
         - type: from_text
+          not_intent: cancel
       STROKEdomainIV_RQ2:
         - entity: given_answer
           type: from_entity

@@ -56,5 +56,5 @@ rules:
     steps:
       - action: action_utter_starting_questionnaire
       - slot_was_set:
-            - questionnaire: null
-      - action: action_options_menu_extra 
+          - questionnaire: null
+      - action: action_options_menu_extra

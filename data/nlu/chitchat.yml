@@ -71,6 +71,7 @@ nlu:
       - I want to see the questionnaires
       - other questionnaires
       # Italian
+      - hai domande per me?
       - Questionari disponibili
       - Rispondi al questionario
       - Vai ai questionari
@@ -216,6 +217,7 @@ nlu:
   - intent: goodbye
     examples: |
       # English
+      - au revoir
       - cu
       - good by
       - cee you later
@@ -261,6 +263,7 @@ nlu:
   - intent: affirm
     examples: |
       # English
+      - fire away
       - yes
       - y
       - indeed
@@ -426,6 +429,15 @@ nlu:
   - intent: inform
     examples: |
       # English
+      - thirty
+      - six
+      - sudden
+      - not bad
+      - every day
+      - Monday
+      - hungry
+      - 😑
+      - 😒
       - Today, I went to the park and my legs suddenly gave out, I felt embarrassed.
       - Yesterday while I was playing with my kids my hands started shake too much. I felt terrible and my kids were very sad.
       - I went for a walk and adter a while I didn't remember how I put my self there. It was terrible. I was frustrated and I couldn't understand what happened. Really bad situation.
@@ -492,6 +504,8 @@ nlu:
       - so sad
       - I'm sad
       # Italian
+      - quando sono in ritardo
+      - male
       - Oggi sono andato al parco e improvvisamente mi hanno ceduto le gambe, mi sono sentito imbarazzato.
       - Ieri mentre giocavo con i miei figli, le mie mani hanno iniziato a tremare moltissimo. È stato terribile e i miei figli erano molto tristi.
       - Sono andato a fare una passeggiata e dopo un po' non ricordavo di come fossi finito lì. È stato terribile! Ero frustrato e non riuscivo a capire cosa fosse successo. Situazione davvero brutta.
@@ -617,7 +631,10 @@ nlu:
       - Ah nu este bine
       - Am căzut pe scări și mi -am lovit capul
       - acum o lună      
-      # General        
+      # General
+      - early   
+      - at sunday    
+      - surgical, injury 
       - 12
       - 5
       - 12 a.m
@@ -790,6 +807,18 @@ nlu:
   - intent: out_of_scope
     examples: |
       # English
+      - fkkh
+      - asgkjin
+      - wen
+      - 02029929²9³⁴
+      - draw
+      - cane
+      - g
+      - mmm
+      - o
+      - oo
+      - hshs
+      - uffa
       - What's the weather today?
       - What about football?
       - what is the square root of 5

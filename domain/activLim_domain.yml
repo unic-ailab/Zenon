@@ -201,6 +201,8 @@ responses:
           title: Difficult
         - payload: /inform{{"given_answer":"easy"}}
           title: Easy
+        - payload: /inform{{"given_answer":"?"}}
+          title: "?"
       text: Using the toilet
     - condition:
         - type: slot

@@ -988,7 +988,8 @@ class ActionUtterStartingQuestionnaire(Action):
         announce(self, tracker)
         
         q_abbreviation = tracker.latest_message["intent"].get("name").replace("_start", "")
-        if (q_abbreviation !=None & q_abbreviation in questionnaire_abbreviations.keys()):
+        print("Q-abbrev:", q_abbreviation)
+        if (q_abbreviation != None) & (q_abbreviation in questionnaire_abbreviations.keys()):
             q_name = get_text_from_lang(
                 tracker,
                 questionnaire_abbreviations[q_abbreviation],
@@ -1030,7 +1031,8 @@ class ActionSetQuestionnaireSlot(Action):
         
         q_abbreviation = tracker.latest_message["intent"].get("name").replace("_start", "")
         usecase = customTrackerInstance.getUserUsecase(tracker.current_state()['sender_id'])
-        if usecase is not None & usecase in questionnaire_per_usecase:
+        print("usecase:", usecase)
+        if (usecase != None) & (usecase in questionnaire_per_usecase.keys()):
             if q_abbreviation in questionnaire_per_usecase[usecase]:
                 return [SlotSet("questionnaire", q_abbreviation)]
             else:
@@ -2079,13 +2081,16 @@ class ValidatePSQIForm(FormValidationAction):
         """Validation for the question 'when have you usually go to bed at night?' """
 
         try:
-            slot_value = datetime.datetime.fromisoformat(slot_value)
-            slot_value = slot_value.strftime("%Y-%m-%d %H:%M:%S")
-            slot_value = datetime.datetime.strptime(slot_value, "%Y-%m-%d %H:%M:%S")
-            slot_value = slot_value.time()  
-            slot_value = slot_value.strftime("%H:%M:%S")                                  
+            if len(slot_value) > 8:
+                slot_value = datetime.datetime.fromisoformat(slot_value)
+                slot_value = slot_value.strftime("%Y-%m-%d %H:%M:%S")
+                slot_value = datetime.datetime.strptime(slot_value, "%Y-%m-%d %H:%M:%S")
+                slot_value = slot_value.time()  
+                slot_value = slot_value.strftime("%H:%M:%S")                                  
 
-            return {"psqi_Q1": slot_value}
+                return {"psqi_Q1": slot_value}
+            else:
+                return {"psqi_Q1": slot_value}
 
         except:
             dispatcher.utter_message(text="Please give a valid answer")
@@ -2103,13 +2108,15 @@ class ValidatePSQIForm(FormValidationAction):
         """ 
 
         try:
-            slot_value = next(tracker.get_latest_entity_values("number"), None)
-            
-            if int(slot_value) <= 15:
+            # slot_value = next(tracker.get_latest_entity_values("number"), None)
+            if isinstance(slot_value, str):
+                slot_value = int(slot_value)
+
+            if slot_value <= 15:
                 return {"psqi_Q2": slot_value, "psqi_Q2_score": "0"}
-            elif int(slot_value) <= 30:
+            elif slot_value <= 30:
                 return {"psqi_Q2": slot_value, "psqi_Q2_score": "1"}
-            elif int(slot_value) <= 60:
+            elif slot_value <= 60:
                 return {"psqi_Q2": slot_value, "psqi_Q2_score": "2"}
             else:
                 return {"psqi_Q2": slot_value, "psqi_Q2_score": "3"}
@@ -2128,16 +2135,19 @@ class ValidatePSQIForm(FormValidationAction):
         """Validation for the question 'when have you usually gotten up in the morning?' """
 
         try:
-            slot_value = datetime.datetime.fromisoformat(slot_value)
-            slot_value = slot_value.strftime("%Y-%m-%d %H:%M:%S")
-            slot_value = datetime.datetime.strptime(slot_value, "%Y-%m-%d %H:%M:%S")
-            slot_value = slot_value.time()
-            if slot_value < datetime.datetime.strptime("12:00:00", "%H:%M:%S").time():
-                slot_value = slot_value.strftime("%H:%M:%S")      
-                return {"psqi_Q3": slot_value}
+            if len(slot_value) > 8:
+                slot_value = datetime.datetime.fromisoformat(slot_value)
+                slot_value = slot_value.strftime("%Y-%m-%d %H:%M:%S")
+                slot_value = datetime.datetime.strptime(slot_value, "%Y-%m-%d %H:%M:%S")
+                slot_value = slot_value.time()
+                if slot_value < datetime.datetime.strptime("12:00:00", "%H:%M:%S").time():
+                    slot_value = slot_value.strftime("%H:%M:%S")      
+                    return {"psqi_Q3": slot_value}
+                else:
+                    dispatcher.utter_message(text="You can't give a time after noon.")
+                    return {"psqi_Q3": None}
             else:
-                dispatcher.utter_message(text="Please give a valid answer")
-                return {"psqi_Q3": None}   
+                return {"psqi_Q3": slot_value}
 
         except:
             dispatcher.utter_message(text="Please give a valid answer")
@@ -2155,13 +2165,15 @@ class ValidatePSQIForm(FormValidationAction):
         (This may be different than the number of hours you spend in bed.)' """
 
         try:
-            slot_value = next(tracker.get_latest_entity_values("number"), None)
+            # slot_value = next(tracker.get_latest_entity_values("number"), None)
+            if isinstance(slot_value, str):
+                slot_value = int(slot_value)
 
-            if int(slot_value) > 7:
+            if slot_value > 7:
                 return {"psqi_Q4": slot_value, "psqi_Q4_score": "0"}
-            elif 6 <= int(slot_value) <= 7:
+            elif 6 <= slot_value <= 7:
                 return {"psqi_Q4": slot_value, "psqi_Q4_score": "1"}
-            elif 5 <= int(slot_value) < 6:
+            elif 5 <= slot_value < 6:
                 return {"psqi_Q4": slot_value, "psqi_Q4_score": "2"}
             else:
                 return {"psqi_Q4": slot_value, "psqi_Q4_score": "3"}
@@ -6878,9 +6890,11 @@ class ValidateMSDomainIForm(FormValidationAction):
         domain
     ) -> Dict[Text, Any]:
 
-        slot_value = next(tracker.get_latest_entity_values("number"), None)
+        # slot_value = next(tracker.get_latest_entity_values("number"), None)
+        if isinstance(slot_value, str):
+            slot_value = int(slot_value)
         
-        if (slot_value is not None) & (int(slot_value) >= 0):
+        if (slot_value is not None) & (slot_value >= 0):
             return {"MSdomainI_RQ4": slot_value}
         else:
             text = get_text_from_lang(
@@ -6902,9 +6916,11 @@ class ValidateMSDomainIForm(FormValidationAction):
         domain
     ) -> Dict[Text, Any]:
 
-        slot_value = next(tracker.get_latest_entity_values("number"), None)
+        # slot_value = next(tracker.get_latest_entity_values("number"), None)
+        if isinstance(slot_value, str):
+            slot_value = int(slot_value)
         
-        if (slot_value is not None) & (int(slot_value) >= 0):
+        if (slot_value is not None) & (slot_value >= 0):
             return {"MSdomainI_RQ5": slot_value}
         else:
             text = get_text_from_lang(
@@ -7108,11 +7124,13 @@ class ValidateMSDomainIII1WForm(FormValidationAction):
         self, slots_mapped_in_domain, dispatcher, tracker, domain,
     ) -> List[Text]:
 
-        if tracker.get_slot("MSdomainIII_1W_RQ2") is not None & tracker.get_slot("MSdomainIII_1W_RQ2") < 6:
-            slots_mapped_in_domain.remove("MSdomainIII_1W_RQ2a")
+        if (tracker.get_slot("MSdomainIII_1W_RQ2") is not None):
+            if (tracker.get_slot("MSdomainIII_1W_RQ2") < 6):
+                slots_mapped_in_domain.remove("MSdomainIII_1W_RQ2a")
 
-        if tracker.get_slot("MSdomainIII_1W_RQ5") is not None & tracker.get_slot("MSdomainIII_1W_RQ5") < 6:
-            slots_mapped_in_domain.remove("MSdomainIII_1W_RQ5a")  
+        if tracker.get_slot("MSdomainIII_1W_RQ5") is not None:
+            if tracker.get_slot("MSdomainIII_1W_RQ5") < 6:
+                slots_mapped_in_domain.remove("MSdomainIII_1W_RQ5a")  
 
         # if not tracker.get_slot("MSdomainIII_both"):
         #     slots_mapped_in_domain.remove("MSdomainIII_2W_RQ6") 
@@ -7128,7 +7146,9 @@ class ValidateMSDomainIII1WForm(FormValidationAction):
         domain
     ) -> Dict[Text, Any]:
 
-        slot_value = next(tracker.get_latest_entity_values("number"), None)
+        # slot_value = next(tracker.get_latest_entity_values("number"), None)
+        if isinstance(slot_value, str):
+            slot_value = int(slot_value)
         
         if (slot_value is not None) & (slot_value in list(range(1, 11))):
             return {"MSdomainIII_1W_RQ2": slot_value}
@@ -7163,7 +7183,9 @@ class ValidateMSDomainIII1WForm(FormValidationAction):
         domain
     ) -> Dict[Text, Any]:
 
-        slot_value = next(tracker.get_latest_entity_values("number"), None)
+        # slot_value = next(tracker.get_latest_entity_values("number"), None)
+        if isinstance(slot_value, str):
+            slot_value = int(slot_value)
         
         if (slot_value is not None) & (slot_value in list(range(1, 11))):
             return {"MSdomainIII_1W_RQ5": slot_value}
@@ -7202,7 +7224,9 @@ class ValidateMSDomainIII2WForm(FormValidationAction):
         domain
     ) -> Dict[Text, Any]:
 
-        slot_value = next(tracker.get_latest_entity_values("number"), None)
+        # slot_value = next(tracker.get_latest_entity_values("number"), None)
+        if isinstance(slot_value, str):
+            slot_value = int(slot_value)
         
         if slot_value is not None:
             return {"MSdomainIII_2W_RQ6": slot_value}
@@ -7436,10 +7460,4 @@ class ValidateMSDomainIV_1WForm(FormValidationAction):
         if not tracker.get_slot("MSdomainIV_1W_RQ2"):
             slots_mapped_in_domain.remove("MSdomainIV_1W_RQ2a")           
 
-        return slots_mapped_in_domain                           
-
-
-
-####################################################################################################
-# Other methods                                                                                    #
-#################################################################################################### 
+        return slots_mapped_in_domain
