@@ -21,6 +21,14 @@ rules:
       - intent: need_help
       - action: utter_help
 
+  - rule: User asks for help while filling the ACTIVLIM questionnaire
+    condition:
+      - slot_was_set:
+          - questionnaire: activLim
+    steps:
+      - intent: need_help
+      - action: utter_help
+
   - rule: Return options menu
     steps:
       - intent: options_menu

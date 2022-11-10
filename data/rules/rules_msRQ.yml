@@ -21,6 +21,15 @@ rules:
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
 
+  - rule: Out of scope while completing MS Domain I
+    condition:
+      - active_loop: MSdomainI_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_handle_out_of_scope
+      - action: MSdomainI_form
+      - active_loop: MSdomainI_form
+
   - rule: Start MS Domain II monthly - Sleep Disorders relevant questions
     steps:
       - intent: MSdomainII_1M_start
@@ -28,6 +37,37 @@ rules:
       - slot_was_set:
           - questionnaire: MSdomainII_1M
       - action: action_utter_starting_questionnaire
+      - action: MSdomainII_1M_form
+      - active_loop: MSdomainII_1M_form
+
+  - rule: Submit MS Domain II monthly relevant questions
+    condition:
+      - active_loop: MSdomainII_1M_form
+      - slot_was_set:
+          - MSdomainII_both: False
+    steps:
+      - action: MSdomainII_1M_form
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null
+      - action: action_questionnaire_completed
+      - action: action_get_available_questionnaires
+
+  - rule: Out of scope while completing MS Domain II monthly
+    condition:
+      - active_loop: MSdomainII_1M_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_handle_out_of_scope
+      - action: MSdomainII_1M_form
+      - active_loop: MSdomainII_1M_form
+
+  - rule: Interruption MS Domain II monthly relevant questions
+    condition:
+      - active_loop: MSdomainII_1M_form
+    steps:
+      - intent: cancel
+      - action: utter_process_not_cancellable
       - action: MSdomainII_1M_form
       - active_loop: MSdomainII_1M_form
 
@@ -41,18 +81,34 @@ rules:
       - action: MSdomainII_3M_form
       - active_loop: MSdomainII_3M_form
 
-  - rule: Submit MS Domain II monthly relevant questions 
+  - rule: Submit MS Domain II 3M relevant questions
     condition:
-      - active_loop: MSdomainII_1M_form
-      - slot_was_set:
-          - MSdomainII_both: False
+      - active_loop: MSdomainII_3M_form
     steps:
-      - action: MSdomainII_1M_form
+      - action: MSdomainII_3M_form
       - active_loop: null
       - slot_was_set:
           - requested_slot: null
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
+
+  - rule: Out of scope while completing MS Domain II 3-monthly
+    condition:
+      - active_loop: MSdomainII_3M_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_handle_out_of_scope
+      - action: MSdomainII_3M_form
+      - active_loop: MSdomainII_3M_form
+
+  - rule: Interruption MS Domain II 3M relevant questions
+    condition:
+      - active_loop: MSdomainII_3M_form
+    steps:
+      - intent: cancel
+      - action: utter_process_not_cancellable
+      - action: MSdomainII_3M_form
+      - active_loop: MSdomainII_3M_form
 
   - rule: Submit MS Domain II monthly relevant questions and start MS Domain II-3 months
     condition:
@@ -69,35 +125,6 @@ rules:
       - action: MSdomainII_3M_form
       - active_loop: MSdomainII_3M_form
 
-  - rule: Interruption MS Domain II relevant questions
-    condition:
-      - active_loop: MSdomainII_1M_form
-    steps:
-      - intent: cancel
-      - action: utter_process_not_cancellable
-      - action: MSdomainII_1M_form
-      - active_loop: MSdomainII_1M_form
-
-  - rule: Submit MS Domain II 3M relevant questions
-    condition:
-      - active_loop: MSdomainII_3M_form
-    steps:
-      - action: MSdomainII_3M_form
-      - active_loop: null
-      - slot_was_set:
-          - requested_slot: null
-      - action: action_questionnaire_completed
-      - action: action_get_available_questionnaires
-
-  - rule: Interruption MS Domain II 3M relevant questions
-    condition:
-      - active_loop: MSdomainII_3M_form
-    steps:
-      - intent: cancel
-      - action: utter_process_not_cancellable
-      - action: MSdomainII_3M_form
-      - active_loop: MSdomainII_3M_form
-
   - rule: Start MS Domain III weekly - Mental and Cognitive Ability relevant questions
     steps:
       - intent: MSdomainIII_1W_start
@@ -107,16 +134,6 @@ rules:
       - action: action_utter_starting_questionnaire
       - action: MSdomainIII_1W_form
       - active_loop: MSdomainIII_1W_form
-
-  - rule: Start MS Domain III biweekly - Mental and Cognitive Ability relevant questions
-    steps:
-      - intent: MSdomainIII_2W_start
-      - action: action_set_questionnaire_slot
-      - slot_was_set:
-          - questionnaire: MSdomainIII_2W
-      - action: action_utter_starting_questionnaire
-      - action: MSdomainIII_2W_form
-      - active_loop: MSdomainIII_2W_form
 
   - rule: Submit MS Domain III weekly relevant questions
     condition:
@@ -131,21 +148,6 @@ rules:
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
 
-  - rule: Submit MS Domain III weekly relevant questions and start MS Domain III biweekly
-    condition:
-      - slot_was_set:
-          - questionnaire: MSdomainIII_1W
-      - slot_was_set:
-          - MSdomainIII_both: True
-    steps:
-      - action: MSdomainIII_1W_form
-      - active_loop: null
-      - slot_was_set:
-          - requested_slot: null
-      - action: action_questionnaire_completed
-      - action: MSdomainIII_2W_form
-      - active_loop: MSdomainIII_2W_form
-
   - rule: Interruption MS Domain III weekly relevant questions
     condition:
       - active_loop: MSdomainIII_1W_form
@@ -154,6 +156,25 @@ rules:
       - action: utter_process_not_cancellable
       - action: MSdomainIII_1W_form
       - active_loop: MSdomainIII_1W_form
+
+  - rule: Out of scope while completing MS Domain III weekly
+    condition:
+      - active_loop: MSdomainIII_1W_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_handle_out_of_scope
+      - action: MSdomainIII_1W_form
+      - active_loop: MSdomainIII_1W_form
+
+  - rule: Start MS Domain III biweekly - Mental and Cognitive Ability relevant questions
+    steps:
+      - intent: MSdomainIII_2W_start
+      - action: action_set_questionnaire_slot
+      - slot_was_set:
+          - questionnaire: MSdomainIII_2W
+      - action: action_utter_starting_questionnaire
+      - action: MSdomainIII_2W_form
+      - active_loop: MSdomainIII_2W_form
 
   - rule: Submit MS Domain III biweekly relevant questions
     condition:
@@ -166,12 +187,36 @@ rules:
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
 
+  - rule: Out of scope while completing MS Domain III bi-weekly
+    condition:
+      - active_loop: MSdomainIII_2W_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_handle_out_of_scope
+      - action: MSdomainIII_2W_form
+      - active_loop: MSdomainIII_2W_form
+
   - rule: Interruption MS Domain III biweekly relevant questions
     condition:
       - active_loop: MSdomainIII_2W_form
     steps:
       - intent: cancel
       - action: utter_process_not_cancellable
+      - action: MSdomainIII_2W_form
+      - active_loop: MSdomainIII_2W_form
+
+  - rule: Submit MS Domain III weekly relevant questions and start MS Domain III biweekly
+    condition:
+      - slot_was_set:
+          - questionnaire: MSdomainIII_1W
+      - slot_was_set:
+          - MSdomainIII_both: True
+    steps:
+      - action: MSdomainIII_1W_form
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null
+      - action: action_questionnaire_completed
       - action: MSdomainIII_2W_form
       - active_loop: MSdomainIII_2W_form
 
@@ -195,6 +240,15 @@ rules:
           - requested_slot: null
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
+
+  - rule: Out of scope while completing MS Domain V
+    condition:
+      - active_loop: MSdomainV_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_handle_out_of_scope
+      - action: MSdomainV_form
+      - active_loop: MSdomainV_form
 
   - rule: Interruption MS Domain V relevant questions
     condition:
@@ -225,6 +279,15 @@ rules:
           - requested_slot: null
       - action: action_questionnaire_completed
       - action: action_get_available_questionnaires
+
+  - rule: Out of scope while completing MS Domain IV bi-weekly
+    condition:
+      - active_loop: MSdomainIV_1W_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_handle_out_of_scope
+      - action: MSdomainIV_1W_form
+      - active_loop: MSdomainIV_1W_form
 
   - rule: Interruption MS Domain IV weekly relevant questions
     condition:
