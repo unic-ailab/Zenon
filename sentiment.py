@@ -57,7 +57,8 @@ class SentimentAnalyzer(Component):
                 "http://91.184.203.22:5050/classes", json=data
             )   
             resp = response.json()  # This returns {"sentiment_classes":[{"sentiment_class":"positive","sentiment_score":<score>}, {"sentiment_class":"neutral","sentiment_score":<score>}, {"sentiment_class":"negative","sentiment_score":<score>}]}
-
+            response.close()
+            
             sentiment_classes = resp.get("sentiment_classes")
             
             max_score = sentiment_classes[0].get("sentiment_score")
