@@ -64,8 +64,7 @@ questionnaire_names_list = ["MSdomainI", "MSdomainII_1M", "MSdomainII_3M", "MSdo
 
 schedule_df = pd.read_csv("pilot_schedule.csv")                       
 endpoints_df = pd.read_csv("alameda_endpoints.csv") 
-c = endpoints_df[endpoints_df["name"]=="ONTOLOGY_SEND_SCORE_ENDPOINT"]["endpoint"].values[0]
-print(c)
+testers_ids_df = pd.read_csv("testers_ids.csv")
 class CustomSQLTrackerStore(TrackerStore):
     """Store which can save and retrieve trackers from an SQL database. Based on rasa's original SQLTrackerStore"""
 
@@ -761,6 +760,20 @@ class CustomSQLTrackerStore(TrackerStore):
             self.SQLEvent.timestamp >= today,
         ).first()[0] is None
 
+    def checkIfTestingID(self, sender_id):
+        """ Checks whether the user id is used for testing purposes
+            Currently testing ids are of the form:
+                - ms42-ms99
+                - stroke42-stroke99
+            User ids ms41 and stroke41 are also for testing purposes but are left out in order to be used for testing the ontology 
+        """
+        wcs_ids_list = testers_ids_df["sender_id"].tolist()
+        if sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys():
+            if int(sender_id[-2:]) >= 42:
+                return True
+        elif sender_id in wcs_ids_list:
+            return True
+        return False 
 
     def save(self, tracker: DialogueStateTracker) -> None:
         """Update database with events from the current conversation."""
@@ -811,8 +824,8 @@ class CustomSQLTrackerStore(TrackerStore):
                 if event.type_name == "action" and event.action_name=="action_ontology_store_sentiment":
                     # commit to store the events in the database so they can be found by the query
                     session.commit() 
-                    #if sender_id[:len(sender_id)-2].upper() not in questionnaire_per_usecase.keys():
-                    self.saveToOntology(sender_id)
+                    if not self.checkIfTestingID(sender_id):
+                        self.saveToOntology(sender_id)
                 elif event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_cancelled", "action_questionnaire_cancelled_app"]:
                     # commit to store the events in the database so they can be found by the query
                     session.commit() 
@@ -914,8 +927,8 @@ class CustomSQLTrackerStore(TrackerStore):
                         database_entry.state="finished"
 
                         # store score
-                        if questionnaire_name in ["psqi", "muscletone"]:# and not isDemo:
-                            self.storeNsendQuestionnaireScore(session, sender_id, questionnaire_name, database_entry)
+                        if questionnaire_name in ["psqi", "muscletone"] and not self.checkIfTestingID(sender_id):
+                            self.sendQuestionnaireScoreToOntology(session, sender_id, questionnaire_name, database_entry)
                                                     
                         #doing this everyday for the msdomain_daily might not be so efficient
                         if isDemo or self.getUserUsecase(sender_id).upper() == "STROKE":
@@ -1091,7 +1104,7 @@ class CustomSQLTrackerStore(TrackerStore):
             session.commit()
         return available_questionnaires, reset_questionnaires      
   
-    def storeNsendQuestionnaireScore(self, session, sender_id, questionnaire_name, database_entry, total_score=None, sub_scores: Dict={}):
+    def sendQuestionnaireScoreToOntology(self, session, sender_id, questionnaire_name, database_entry, total_score=None, sub_scores: Dict={}):
         """ Store the questionnaire score to the local database and send it to the ontology
             Scoring is available for the questionnares:
             - psqi
@@ -1495,7 +1508,7 @@ if __name__ == "__main__":
         # #print(ts._questionnaire_score_query(session, "stroke98", "muscletone"))
         # question_events = ts._questionnaire_state_query(session, "stroke92", datetime.datetime.now().timestamp(), "psqi").first()
         # print(question_events)
-        #ts.storeNsendQuestionnaireScore("stroke97", "muscletone")
+        #ts.sendQuestionnaireScoreToOntology("stroke97", "muscletone")
         #question_events = ts._questionnaire_state_query(session, "stroke05", now, "activLim")
         #print(question_events.first().state)
         #q = [json.loads(event.data) for event in question_events]
