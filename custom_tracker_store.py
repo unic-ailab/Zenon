@@ -921,8 +921,9 @@ class CustomSQLTrackerStore(TrackerStore):
                         if isDemo or self.getUserUsecase(sender_id).upper() == "STROKE":
                             new_timestamp = timestamp
                         else:
-                            last_availability = datetime.datetime.fromtimestamp(database_entry.available_at, tz=pytz.timezone(self.getUserTimezone(sender_id)))
-                            new_timestamp = getNextQuestTimestamp(schedule_df, questionnaire_name, last_availability)
+                            tz_timezone = pytz.timezone(self.getUserTimezone(sender_id))
+                            last_availability = datetime.datetime.fromtimestamp(database_entry.available_at, tz=tz_timezone)
+                            new_timestamp = getNextQuestTimestamp(schedule_df, questionnaire_name, last_availability, tz_timezone)
                     
                         # create new row in database
                         session.add(
@@ -1006,10 +1007,11 @@ class CustomSQLTrackerStore(TrackerStore):
 
                 # create new database entry
                 # doing this everyday for the msdomain_daily might not be so efficient
-                last_availability = datetime.datetime.fromtimestamp(entry.available_at, tz=pytz.timezone(self.getUserTimezone(sender_id)))
-                new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, last_availability)
+                tz_timezone = pytz.timezone(self.getUserTimezone(sender_id))
+                last_availability = datetime.datetime.fromtimestamp(entry.available_at, tz=tz_timezone)
+                new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, last_availability, tz_timezone)
                 while new_timestamp < today:
-                    new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(new_timestamp))
+                    new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(new_timestamp), tz_timezone)
                 
                 session.add(
                     self.SQLQuestState(
@@ -1049,10 +1051,11 @@ class CustomSQLTrackerStore(TrackerStore):
                         # create new database entry
                         # doing this everyday for the msdomain_daily might not be so efficient
                         today = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).replace(hour=0, minute=0, second=0, microsecond=0).timestamp() #timezone doesnt really matter hear as timestamps are universal
-                        last_availability = datetime.datetime.fromtimestamp(entry.available_at, tz=pytz.timezone(self.getUserTimezone(sender_id)))
-                        new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, last_availability)
+                        tz_timezone = pytz.timezone(self.getUserTimezone(sender_id))
+                        last_availability = datetime.datetime.fromtimestamp(entry.available_at, tz=tz_timezone)
+                        new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, last_availability, tz_timezone)
                         while new_timestamp < today:
-                            new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(new_timestamp))
+                            new_timestamp = getNextQuestTimestamp(schedule_df, entry.questionnaire_name, datetime.datetime.fromtimestamp(new_timestamp), tz_timezone)
                 
                         session.add(
                             self.SQLQuestState(
@@ -1272,13 +1275,9 @@ class CustomSQLTrackerStore(TrackerStore):
                                 if (questionnaire == "MSdomainIV_Daily"):
                                     timestamp = today
                                 else: 
-                                    timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday)
+                                    timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday, tz_timezone)
                                     while timestamp < today:
-                                        # print(questionnaire, datetime.datetime.fromtimestamp(timestamp, tz=tz_timezone))
-                                        # print(datetime.datetime.fromtimestamp(timestamp, tz=tz_timezone))
-                                        timestamp = getNextQuestTimestamp(schedule_df, questionnaire, datetime.datetime.fromtimestamp(timestamp, tz=tz_timezone)) 
-                                        # print(timestamp)
-                                        # print(datetime.datetime.fromtimestamp(timestamp, tz=tz_timezone))
+                                        timestamp = getNextQuestTimestamp(schedule_df, questionnaire, datetime.datetime.fromtimestamp(timestamp, tz=tz_timezone), tz_timezone) 
                                 session.add(
                                     self.SQLQuestState(
                                     sender_id=sender_id,
@@ -1398,7 +1397,7 @@ class CustomSQLTrackerStore(TrackerStore):
             session.commit()
             return new_symptoms   
 
-def getFirstQuestTimestamp(schedule_df, questionnaire_name, init_date):
+def getFirstQuestTimestamp(schedule_df, questionnaire_name, init_date, tz_timezone):
     """Get the date the specified questionnaire will be available for the first time
     Args: 
         schedule_df: pandas dataframe containing the schedule
@@ -1421,12 +1420,12 @@ def getFirstQuestTimestamp(schedule_df, questionnaire_name, init_date):
         q_day = init_date.timestamp()
         #q_day = getNextKTimestamps(init_date,1)[0]
     else:
-        q_day = (init_date + datetime.timedelta(days=dayOfWeek, weeks=max(0,weekOfMonth-1))).timestamp()
+        q_day_tmp = init_date + datetime.timedelta(days=dayOfWeek, weeks=max(0,weekOfMonth-1))
+        q_day = getDSTawareDate(init_date, q_day_tmp, tz_timezone).timestamp()
     return q_day
 
 
-
-def getNextQuestTimestamp(schedule_df, questionnaire_name, init_date):
+def getNextQuestTimestamp(schedule_df, questionnaire_name, init_date, tz_timezone):
     """Get the next date the specified questionnaire will be available given an intial date
     Args: 
         schedule_df: pandas dataframe containing the schedule
@@ -1443,12 +1442,12 @@ def getNextQuestTimestamp(schedule_df, questionnaire_name, init_date):
     if questionnaire_name == "MSdomainIV_Daily":
         q_day = getNextKTimestamps(init_date,1)[0]
     else:
-        q_day = (init_date + datetime.timedelta(weeks=frequencyInWeeks)).timestamp()
+        q_day_tmp = init_date + datetime.timedelta(weeks=frequencyInWeeks)
+        q_day = getDSTawareDate(init_date, q_day_tmp, tz_timezone).timestamp()
     return q_day
 
 
-
-def getNextKTimestamps(init_date, number_of_days:int=7):
+def getNextKTimestamps(init_date, tz_timezone, number_of_days:int=7):
     """Get the next (number_of_days) timestamps after an intial date
     Args: 
         init_date: initial date in datetime format
@@ -1460,8 +1459,24 @@ def getNextKTimestamps(init_date, number_of_days:int=7):
     """    
     q_days = []
     for i in range(number_of_days):
-        q_days.append((init_date + datetime.timedelta(days=i+1)).timestamp())
-    return q_days                    
+        q_day_tmp = init_date + datetime.timedelta(days=i+1)
+        q_day = getDSTawareDate(init_date, q_day_tmp, tz_timezone).timestamp()
+        q_days.append(q_day)
+    return q_days  
+
+def getDSTawareDate(init_date, new_date, tz_timezone):
+    """ Converts the new_date into a datetime object that takes into account the daylight saving changes (dst) based on the init_date
+        Code from: https://www.hacksoft.io/blog/handling-timezone-and-dst-changes-with-python
+    """
+    init_date = init_date.astimezone(tz_timezone)
+    new_date = new_date.astimezone(tz_timezone)
+    
+    dst_offset_diff = init_date.dst() - new_date.dst()
+    
+    new_date = new_date + dst_offset_diff
+    new_date = new_date.astimezone(tz_timezone)
+    
+    return new_date                  
 
 if __name__ == "__main__":
     ts = CustomSQLTrackerStore(db="demo.db")
