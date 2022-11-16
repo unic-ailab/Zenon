@@ -1130,7 +1130,7 @@ class CustomSQLTrackerStore(TrackerStore):
 
         print(ontology_data)
         ontology_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_SEND_SCORE_ENDPOINT"]["endpoint"].values[0]
-        response = requests.post(ontology_endpoint, json=ontology_data)
+        response = requests.post(ontology_endpoint, json=ontology_data, timeout=30)
         response.close()
         print(response)        
 
@@ -1169,7 +1169,7 @@ class CustomSQLTrackerStore(TrackerStore):
             session.commit()
             print(ontology_data)
         ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
-        response = requests.post(ontology_ca_endpoint, json=ontology_data)
+        response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30)
         response.close()
         print(response)
 
@@ -1234,7 +1234,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 else:
                     try:
                         wcs_endpoint= endpoints_df[endpoints_df["name"]=="WCS_ONBOARDING_ENDPOINT"]["endpoint"].values[0]
-                        response = requests.get(wcs_endpoint, params={"patient_uuid": sender_id})
+                        response = requests.get(wcs_endpoint, params={"patient_uuid": sender_id}, timeout=10)
                         response.close()
                         resp = response.json()
                         partner = resp["partner"]
@@ -1388,7 +1388,7 @@ class CustomSQLTrackerStore(TrackerStore):
 
         print(questionnaire_data)
         wcs_status_endpoint= endpoints_df[endpoints_df["name"]=="WCS_STATUS_ENDPOINT"]["endpoint"].values[0]
-        response = requests.post(wcs_status_endpoint, json=questionnaire_data)
+        response = requests.post(wcs_status_endpoint, json=questionnaire_data, timeout=30)
         response.close()
         print(response)
 
