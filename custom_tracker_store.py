@@ -1318,13 +1318,14 @@ class CustomSQLTrackerStore(TrackerStore):
                                     )
                             session.commit()
                     except:
-                        session.add(
-                            self.SQLIssue(
-                                sender_id=sender_id,
-                                timestamp=datetime.datetime.now().timestamp(),
-                                description="failed to retrieve user info from wcs endpoint",                        
+                        if sender_id and sender_id not in ["null", "default"]:
+                            session.add(
+                                self.SQLIssue(
+                                    sender_id=sender_id,
+                                    timestamp=datetime.datetime.now().timestamp(),
+                                    description="failed to retrieve user info from wcs endpoint",                        
+                                    )
                                 )
-                            )
                         language = "English"
                 session.commit()
             else:
