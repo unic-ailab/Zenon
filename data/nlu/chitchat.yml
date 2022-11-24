@@ -150,6 +150,38 @@ nlu:
       - continua chestionarul
       - Pot continua chestionarul
       - vreau să continui chestionarul
+  - intent: report_tech_issue
+    examples: |
+      # English
+      - I would like to report a problem
+      - I have a tech issue
+      - I have a technical issue
+      - Can i report something?
+      - I want to report an issue
+      - I want to disclose a problem
+      - report
+      - pass on a problem
+      - i am having problems
+      # Italian
+      - Vorrei segnalare un problema
+      - Ho un problema tecnico
+      - Ho un problema tecnico
+      - Posso segnalare qualcosa?
+      - Voglio segnalare un problema
+      - Voglio rivelare un problema
+      - rapporto
+      - il passaggio è un problema
+      - Ho dei problemi
+      # Romanian
+      - Aș dori să raportez o problemă
+      - Am o problemă de tehnologie
+      - Am o problemă tehnică
+      - Pot să raportez ceva?
+      - Vreau să raportez o problemă
+      - Vreau să dezvălui o problemă
+      - raport
+      - trecerea este o problemă
+      - Am probleme
   - intent: greet
     examples: |
       # English

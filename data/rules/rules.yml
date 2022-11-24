@@ -58,3 +58,14 @@ rules:
       - slot_was_set:
           - questionnaire: null
       - action: action_options_menu_extra
+
+  - rule: Report a technical issue rule
+    steps:
+      - intent: report_tech_issue
+      - action: report_tech_issue_form
+      - active_loop: report_tech_issue_form
+          - active_loop: null
+      - slot_was_set:
+          - requested_slot: null
+      - action: action_confirm_tech_issue
+      - action: action_options_menu_extra

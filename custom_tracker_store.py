@@ -1344,6 +1344,18 @@ class CustomSQLTrackerStore(TrackerStore):
         with self.session_scope() as session:
             user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
         return user_entry.usecase
+    
+    def logTechIssue(self, issue, sender_id):
+        """ Logs technical issues as reported by users"""
+        with self.session_scope() as session:
+            session.add(
+                self.SQLIssue(
+                    sender_id=sender_id,
+                    timestamp=datetime.datetime.now().timestamp(),
+                    description="Patient reported:"+ issue,                        
+                    )
+                )
+            session.commit()
 
     def sendQuestionnareStatus(self, sender_id, questionnare_abvr, status):
         """ Sends the status of the questionnaire to WCS

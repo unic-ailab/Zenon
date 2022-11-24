@@ -67,10 +67,10 @@ cancel_button = [
 
 # The main options the agent offers
 options_menu_buttons = [
-    ["Questionnaires", "Health Status update", "Tutorials"],
-    ["", "", ""],
-    ["Questionari", "Aggiornamento dello stato di salute", "Tutorial"],
-    ["Chestionare", "Actualizare stare de sănătate", "Tutoriale"]
+    ["Questionnaires", "Health Status update", "Tutorials", "Report Technical Issue"],
+    ["", "", "", ""],
+    ["Questionari", "Aggiornamento dello stato di salute", "Tutorial", "Segnala un problema tecnico"],
+    ["Chestionare", "Actualizare stare de sănătate", "Tutoriale", "Raportați o problemă tehnică"]
 ]
 
 # The helath status update options the agent offers
@@ -517,7 +517,7 @@ class ActionOptionsMenu(Action):
             tracker,
             options_menu_buttons,
             # TODO: maybe add health_related_report as option
-            ["/available_questionnaires", "/health_update_menu", "/tutorials"]
+            ["/available_questionnaires", "/health_update_menu", "/tutorials", "/report_tech_issue"]
         )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
@@ -544,11 +544,31 @@ class ActionOptionsMenuExtra(Action):
         buttons = get_buttons_from_lang(
             tracker,
             options_menu_buttons,
-            ["/available_questionnaires", "/health_update_menu", "/tutorials"]
+            ["/available_questionnaires", "/health_update_menu", "/tutorials", "/report_tech_issue"]
         )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
+#TODO: translate
+class ActionConfirmTechIssue(Action):
+    def name(self) -> Text:
+        return "action_confirm_tech_issue"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+        
+        text = get_text_from_lang(
+            tracker, 
+            [
+                "Thank you for your feedback!! I will do my best to fix it as soon as possible.",
+                "",
+                "Grazie per il tuo feedback!! Farò del mio meglio per risolverlo il prima possibile.",
+                "Multumim pentru feedback-ul dvs!! Voi face tot posibilul să o repar cât mai curând posibil."]
+            )
+        issue = tracker.get_slot("report_tech_issue_Q1")
+        customTrackerInstance.logTechIssue(issue, tracker.current_state()['sender_id'])
+        dispatcher.utter_message(text=text)
+        return []
 
 #TODO: translate
 class ActionHealthUpdateMenu(Action):
