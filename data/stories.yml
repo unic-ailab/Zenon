@@ -42,6 +42,14 @@ stories:
                             - intent: cancel
                   - action: action_options_menu
 
+        - story: User click on a notification for questionnaire and wants to start questionnaire #does this work for all cases?
+          steps:
+                  - intent: notification_questionnaire_open
+                  - action: action_utter_notification_greet
+                  - slot_was_set:
+                            - notification_questionnaire_start: true
+                  - action: action_utter_ask_questionnaire_start
+
         - story: Greeting, first time of the day using the agent, Agent receives positive sentiment
           steps:
                   - intent: greet
