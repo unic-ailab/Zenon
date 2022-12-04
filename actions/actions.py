@@ -246,6 +246,18 @@ def reset_form_slots(tracker, domain, list_questionnaire_abbreviation):
            
     return required
 
+
+def reset_and_save_form_slots(tracker, domain, questionnaire_abbreviation, isFinished):
+    required = []
+
+    if questionnaire_abbreviation is not None:
+        slots_to_reset = customTrackerInstance.saveQuestionnaireAnswers(tracker, domain, questionnaire_abbreviation, isFinished)
+        if isFinished:
+            for slot_name in slots_to_reset:
+                required.append(SlotSet(slot_name, None))
+    return required
+
+
 # def list_slots(tracker, slots, exceptions=[]):
 #     filled_slots = ""
 
@@ -444,6 +456,7 @@ class ActionGetAvailableQuestions(Action):
             # add button for cancel that takes the user back to the general questions
             buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
             dispatcher.utter_message(text=text, buttons=buttons)
+            # Note: reseting slots is done twice, maybe once will be enough
             return reset_form_slots(tracker, domain, reset_questionnaires)+slots_to_set
 
 class ActionContinueLatestQuestionnaire(Action):
@@ -911,14 +924,17 @@ class ActionQuestionnaireCompleted(Action):
         MSdomainII_both = tracker.get_slot("MSdomainII_both")
         MSdomainIV_both = tracker.get_slot("MSdomainIV_both")
 
-        customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
+        q_starting_time = datetime.datetime.now(tz=pytz.utc).timestamp()
+        #customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
+
+        slots_to_reset = reset_and_save_form_slots(tracker, domain, q_abbreviation, True)
 
         if q_abbreviation == "MSdomainIII_1W" and MSdomainIII_both:
-            return [SlotSet("questionnaire", "MSdomainIII_2W"), FollowupAction("MSdomainIII_2W_form")] 
+            return [SlotSet("questionnaire", "MSdomainIII_2W"), FollowupAction("MSdomainIII_2W_form"), SlotSet("q_starting_time", q_starting_time)] 
         elif q_abbreviation == "MSdomainII_1M" and MSdomainII_both:
-            return [SlotSet("questionnaire", "MSdomainII_3M"), FollowupAction("MSdomainII_3M_form")] 
+            return [SlotSet("questionnaire", "MSdomainII_3M"), FollowupAction("MSdomainII_3M_form"), SlotSet("q_starting_time", q_starting_time)] 
         elif q_abbreviation == "MSdomainIV_Daily" and MSdomainIV_both:
-            return [SlotSet("questionnaire", "MSdomainIV_1W"), FollowupAction("MSdomainIV_1W_form")] 
+            return [SlotSet("questionnaire", "MSdomainIV_1W"), FollowupAction("MSdomainIV_1W_form"), SlotSet("q_starting_time", q_starting_time)] 
         else:
             text = get_text_from_lang(
                 tracker,
@@ -930,7 +946,7 @@ class ActionQuestionnaireCompleted(Action):
                 ],
             )  
             dispatcher.utter_message(text=text)
-            return [SlotSet("questionnaire", None)]#, FollowupAction("action_options_menu")]
+            return [SlotSet("questionnaire", None), SlotSet("q_starting_time", None)] + slots_to_reset#, FollowupAction("action_options_menu")]
 
 # class ActionQuestionnaireCompletedFirstPart(Action):
 #     def name(self):
@@ -990,8 +1006,10 @@ class ActionQuestionnaireCancelled(Action):
             ],
         )
         dispatcher.utter_message(text=text)
-        customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), tracker.get_slot("questionnaire"))
-        return[]
+        slots_to_reset = reset_and_save_form_slots(tracker, domain, tracker.get_slot("questionnaire"), False)
+
+        #customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), tracker.get_slot("questionnaire"))
+        return[SlotSet("q_starting_time", None)] + slots_to_reset
 
 class ActionQuestionnaireCancelledApp(Action):
     def name(self):
@@ -1008,6 +1026,7 @@ class ActionUtterStartingQuestionnaire(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
         
+        q_starting_time = datetime.datetime.now(tz=pytz.utc).timestamp()
         q_abbreviation = tracker.latest_message["intent"].get("name").replace("_start", "")
         print("Q-abbrev:", q_abbreviation)
         if (q_abbreviation != None) & (q_abbreviation in questionnaire_abbreviations.keys()):
@@ -1026,9 +1045,9 @@ class ActionUtterStartingQuestionnaire(Action):
             )
             dispatcher.utter_message(text=text)
             if q_abbreviation == "activLim":
-                return [FollowupAction("action_utter_ACTIVLIM_intro_question")]
+                return [FollowupAction("action_utter_ACTIVLIM_intro_question"), SlotSet("q_starting_time", q_starting_time)]
             else:
-                return [FollowupAction("{}_form".format(q_abbreviation))]
+                return [FollowupAction("{}_form".format(q_abbreviation)), SlotSet("q_starting_time", q_starting_time)]
         else:
             #TODO: probably change this text
             text = get_text_from_lang(

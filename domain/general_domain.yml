@@ -120,6 +120,9 @@ slots:
   report_tech_issue_Q1:
     type: any
     influence_conversation: false
+  q_starting_time:
+    type: any
+    influence_conversation: false
   requested_slot:
     type: unfeaturized
     influence_conversation: false

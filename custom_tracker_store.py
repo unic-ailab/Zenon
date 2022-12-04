@@ -826,21 +826,21 @@ class CustomSQLTrackerStore(TrackerStore):
                     session.commit() 
                     if not self.checkIfTestingID(sender_id):
                         self.saveToOntology(sender_id)
-                elif event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_cancelled", "action_questionnaire_cancelled_app"]:
-                    # commit to store the events in the database so they can be found by the query
-                    session.commit() 
-                    # get questionnaire name because at that stage the questionnaire slot value might have changed
-                    try:
-                        questionnaire_name = self._questionnaire_name_query(session, sender_id, event.action_name)
-                    except:
-                        questionnaire_name = ""
-                    if questionnaire_name in questionnaire_names_list:
-                        if event.action_name=="action_questionnaire_cancelled" or  event.action_name=="action_questionnaire_cancelled_app":
-                            isSaved, isDemo = self.saveQuestionnaireAnswers(sender_id, questionnaire_name, False, tracker)
-                            if isSaved and not isDemo: self.sendQuestionnareStatus(sender_id, questionnaire_name, "IN_PROGRESS")
-                        else:                 
-                            isSaved, isDemo = self.saveQuestionnaireAnswers(sender_id, questionnaire_name, True, tracker)
-                            if isSaved and not isDemo: self.sendQuestionnareStatus(sender_id, questionnaire_name, "COMPLETED")             
+                # elif event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_cancelled", "action_questionnaire_cancelled_app"]:
+                #     # commit to store the events in the database so they can be found by the query
+                #     session.commit() 
+                #     # get questionnaire name because at that stage the questionnaire slot value might have changed
+                #     try:
+                #         questionnaire_name = self._questionnaire_name_query(session, sender_id, event.action_name)
+                #     except:
+                #         questionnaire_name = ""
+                    #if questionnaire_name in questionnaire_names_list:
+                        #if event.action_name=="action_questionnaire_cancelled" or  event.action_name=="action_questionnaire_cancelled_app":
+                            #isSaved, isDemo = self.saveQuestionnaireAnswers(sender_id, questionnaire_name, False, tracker)
+                            #if isSaved and not isDemo: self.sendQuestionnareStatus(sender_id, questionnaire_name, "IN_PROGRESS")
+                        #else:                 
+                            #isSaved, isDemo = self.saveQuestionnaireAnswers(sender_id, questionnaire_name, True, tracker)
+                            #if isSaved and not isDemo: self.sendQuestionnareStatus(sender_id, questionnaire_name, "COMPLETED")             
 
             session.commit()
 
@@ -862,8 +862,87 @@ class CustomSQLTrackerStore(TrackerStore):
             tracker.events, number_of_events_since_last_session, len(tracker.events)
         )
 
+    def saveQuestionnaireAnswers(self, tracker, domain, questionnaire_abbreviation:str, isFinished:bool) -> None:
+        """ Update database with answers from a specific questionnaire.
+            The answers of the questionnaires are retrieved directly from their dedicated slot value
+        """
 
-    def saveQuestionnaireAnswers(self, sender_id, questionnaire_name, isFinished: bool, tracker: DialogueStateTracker) -> None:
+        #boolean to know when any questionnaire answers have been saved
+        sender_id = tracker.current_state()['sender_id']
+        isDemo = sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys()
+        answers_data = []
+        slots_to_reset = []
+        init_timestamp = tracker.get_slot("q_starting_time")
+        with self.session_scope() as session:
+            try:
+                database_entry, _ = self.checkQuestionnaireTimelimit(session, sender_id, init_timestamp, questionnaire_abbreviation)
+            except:
+                print("Error: no such entry in database table 'questionnaires_state'.")
+                return []
+            
+            tracker_state = tracker.current_state()
+            timestamp = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).timestamp()
+
+            #tracker.get_last_event_for("slot", )
+            # TODO: see if we need to store the question itself and if the timestamp is needed
+            for slot_name in domain['slots'].keys():
+                if questionnaire_abbreviation in slot_name and tracker.get_slot(slot_name) is not None:
+                    slots_to_reset.append(slot_name)
+                    if questionnaire_abbreviation in ["activLim", "dizzNbalance"]:
+                        question_number = slot_name.split(questionnaire_abbreviation + "_")[1]
+                    else:
+                        question_number = slot_name.split("Q")[1]
+                    answers_data.append({"number": question_number, "answer": tracker.get_slot(slot_name), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
+                
+            if database_entry.state=="available":
+                database_entry.timestamp_start=init_timestamp
+            elif database_entry.state=="pending":
+                # previous_answers = json.loads(database_entry.answers)
+                # print(answers_data)
+                database_entry.answers = None
+            database_entry.answers = json.dumps(answers_data)                    
+            if isFinished:
+                database_entry.timestamp_end=timestamp
+                database_entry.state="finished"
+
+                # send questionnaire score to ontology
+                if questionnaire_abbreviation in ["psqi", "muscletone"] and not self.checkIfTestingID(sender_id):
+                    self.sendQuestionnaireScoreToOntology(session, sender_id, questionnaire_abbreviation, database_entry)
+                                                    
+                #doing this everyday for the msdomain_daily might not be so efficient
+                if isDemo or self.getUserUsecase(sender_id).upper() == "STROKE":
+                    new_timestamp = timestamp
+                else:
+                    tz_timezone = pytz.timezone(self.getUserTimezone(sender_id))
+                    last_availability = datetime.datetime.fromtimestamp(database_entry.available_at, tz=tz_timezone)
+                    new_timestamp = getNextQuestTimestamp(schedule_df, questionnaire_abbreviation, last_availability, tz_timezone)
+                    
+                # create new row in database
+                session.add(
+                    self.SQLQuestState(
+                    sender_id=sender_id,
+                    questionnaire_name=questionnaire_abbreviation,
+                    available_at=new_timestamp,
+                    state="available",
+                    timestamp_start=None,
+                    timestamp_end=None,
+                    answers=None,                          
+                    )
+                )
+
+            else:
+                database_entry.state="pending"
+                database_entry.timestamp_end=timestamp
+            session.commit()
+            if not isDemo and not isFinished: 
+                self.sendQuestionnareStatus(sender_id, questionnaire_abbreviation, "IN_PROGRESS")
+            elif not isDemo and isFinished: 
+                self.sendQuestionnareStatus(sender_id, questionnaire_abbreviation, "COMPLETED")
+
+        logger.debug(f"Questionnaire answers with sender_id '{tracker.sender_id}' stored to database")
+        return slots_to_reset
+
+    def saveQuestionnaireAnswers_old(self, sender_id, questionnaire_name, isFinished: bool, tracker: DialogueStateTracker) -> None:
         """Update database with answers from a specific questionnaire."""
 
         if self.event_broker:
