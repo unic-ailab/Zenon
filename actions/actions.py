@@ -73,6 +73,14 @@ options_menu_buttons = [
     ["Chestionare", "Actualizare stare de sănătate", "Tutoriale", "Raportați o problemă tehnică"]
 ]
 
+# The main options the agent offers
+options_menu_buttons_no_reporting = [
+    ["Questionnaires", "Health Status update", "Tutorials"],
+    ["", "", ""],
+    ["Questionari", "Aggiornamento dello stato di salute", "Tutorial"],
+    ["Chestionare", "Actualizare stare de sănătate", "Tutoriale"]
+]
+
 # The helath status update options the agent offers
 health_update_menu_buttons = { "MS": [["Sleep Quality", "Mobility", "Quality of Life", "Cancel"],
                                       ["", "", "", ""],
@@ -527,12 +535,22 @@ class ActionOptionsMenu(Action):
                 "Cosa posso fare per te oggi?",
                 "Ce pot face pentru tine azi?"]
             )
-        buttons = get_buttons_from_lang(
-            tracker,
-            options_menu_buttons,
-            # TODO: maybe add health_related_report as option
-            ["/available_questionnaires", "/health_update_menu", "/tutorials", "/report_tech_issue"]
-        )
+
+        usecase = customTrackerInstance.getUserUsecase(tracker.current_state()['sender_id'])
+        if usecase == "MS":
+            buttons = get_buttons_from_lang(
+                tracker,
+                options_menu_buttons,
+                # TODO: maybe add health_related_report as option
+                ["/available_questionnaires", "/health_update_menu", "/tutorials", "/report_tech_issue"]
+            )
+        else:
+            buttons = get_buttons_from_lang(
+                tracker,
+                options_menu_buttons_no_reporting,
+                # TODO: maybe add health_related_report as option
+                ["/available_questionnaires", "/health_update_menu", "/tutorials"]
+            )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -554,12 +572,22 @@ class ActionOptionsMenuExtra(Action):
                 "C'è qualcos'altro in cui posso aiutarti?",
                 "Te mai pot ajuta cu ceva?",
             ]
-            )
-        buttons = get_buttons_from_lang(
-            tracker,
-            options_menu_buttons,
-            ["/available_questionnaires", "/health_update_menu", "/tutorials", "/report_tech_issue"]
         )
+        usecase = customTrackerInstance.getUserUsecase(tracker.current_state()['sender_id'])
+        if usecase == "MS":
+            buttons = get_buttons_from_lang(
+                tracker,
+                options_menu_buttons,
+                # TODO: maybe add health_related_report as option
+                ["/available_questionnaires", "/health_update_menu", "/tutorials", "/report_tech_issue"]
+            )
+        else:
+            buttons = get_buttons_from_lang(
+                tracker,
+                options_menu_buttons_no_reporting,
+                # TODO: maybe add health_related_report as option
+                ["/available_questionnaires", "/health_update_menu", "/tutorials"]
+            )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
