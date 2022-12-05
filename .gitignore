@@ -30,3 +30,4 @@ results/
 # Files in folders
 actions/__pycache__
 models/*.tar.gz
+testers_ids.csv
