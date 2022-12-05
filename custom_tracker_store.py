@@ -1466,7 +1466,7 @@ def getNextQuestTimestamp(schedule_df, questionnaire_name, init_date, tz_timezon
     frequencyInWeeks=int(df_row["frequencyInWeeks"].values[0])
 
     if questionnaire_name == "MSdomainIV_Daily":
-        q_day = getNextKTimestamps(init_date,1)[0]
+        q_day = getNextKTimestamps(init_date, tz_timezone, 1)[0]
     else:
         q_day_tmp = init_date + datetime.timedelta(weeks=frequencyInWeeks)
         q_day = getDSTawareDate(init_date, q_day_tmp, tz_timezone).timestamp()
