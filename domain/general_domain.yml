@@ -11,6 +11,7 @@ intents:
   - mobility_status
   - qol_status
   - tutorials
+  - report_tech_issue
   - continue
   - options_menu
   - options_menu_extra
@@ -114,6 +115,9 @@ slots:
     type: any
     influence_conversation: false
   report_extra_Q1:
+    type: any
+    influence_conversation: false
+  report_tech_issue_Q1:
     type: any
     influence_conversation: false
   requested_slot:
@@ -532,11 +536,28 @@ responses:
           name: language
           value: Italian
       text: Mi spiace, questa funzionalità non è al momento disponibile.
+  utter_ask_report_tech_issue_Q1:
+    - condition:
+        - type: slot
+          name: language
+          value: English
+      text: I am sorry to hear that you are having technical complications. Please describe the problem.
+    - condition:
+        - type: slot
+          name: language
+          value: Romanian
+      text: Îmi pare rău să aud că întâmpinați complicații tehnice. Vă rugăm să descrieți problema.
+    - condition:
+        - type: slot
+          name: language
+          value: Italian
+      text: Mi dispiace sapere che stai avendo complicazioni tecniche. Descrivi il problema.
 actions:
   - action_utter_greet
   - action_utter_how_are_you
   - action_options_menu
   - action_options_menu_extra
+  - action_confirm_tech_issue
   - action_health_update_menu
   - action_get_sleep_status_fitbit
   - action_get_available_questionnaires
@@ -565,3 +586,8 @@ forms:
     required_slots:
       report_extra_Q1:
         - type: from_text
+  report_tech_issue_form:
+    required_slots:
+      report_tech_issue_Q1:
+        - type: from_text
+

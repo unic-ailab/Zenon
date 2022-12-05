@@ -67,10 +67,10 @@ cancel_button = [
 
 # The main options the agent offers
 options_menu_buttons = [
-    ["Questionnaires", "Health Status update", "Tutorials"],
-    ["", "", ""],
-    ["Questionari", "Aggiornamento dello stato di salute", "Tutorial"],
-    ["Chestionare", "Actualizare stare de sănătate", "Tutoriale"]
+    ["Questionnaires", "Health Status update", "Tutorials", "Report Technical Issue"],
+    ["", "", "", ""],
+    ["Questionari", "Aggiornamento dello stato di salute", "Tutorial", "Segnala un problema tecnico"],
+    ["Chestionare", "Actualizare stare de sănătate", "Tutoriale", "Raportați o problemă tehnică"]
 ]
 
 # The helath status update options the agent offers
@@ -517,7 +517,7 @@ class ActionOptionsMenu(Action):
             tracker,
             options_menu_buttons,
             # TODO: maybe add health_related_report as option
-            ["/available_questionnaires", "/health_update_menu", "/tutorials"]
+            ["/available_questionnaires", "/health_update_menu", "/tutorials", "/report_tech_issue"]
         )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
@@ -544,11 +544,31 @@ class ActionOptionsMenuExtra(Action):
         buttons = get_buttons_from_lang(
             tracker,
             options_menu_buttons,
-            ["/available_questionnaires", "/health_update_menu", "/tutorials"]
+            ["/available_questionnaires", "/health_update_menu", "/tutorials", "/report_tech_issue"]
         )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
+#TODO: translate
+class ActionConfirmTechIssue(Action):
+    def name(self) -> Text:
+        return "action_confirm_tech_issue"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+        
+        text = get_text_from_lang(
+            tracker, 
+            [
+                "Thank you for your feedback!! I will do my best to fix it as soon as possible.",
+                "",
+                "Grazie per il tuo feedback!! Farò del mio meglio per risolverlo il prima possibile.",
+                "Multumim pentru feedback-ul dvs!! Voi face tot posibilul să o repar cât mai curând posibil."]
+            )
+        issue = tracker.get_slot("report_tech_issue_Q1")
+        customTrackerInstance.logTechIssue(issue, tracker.current_state()['sender_id'])
+        dispatcher.utter_message(text=text)
+        return []
 
 #TODO: translate
 class ActionHealthUpdateMenu(Action):
@@ -603,7 +623,7 @@ class ActionSleepStatus(Action):
             seven_days_ago = (today - datetime.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
             today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
             wcs_sleep_endpoint= endpoints_df[endpoints_df["name"]=="WCS_FITBIT_SLEEP_ENDPOINT"]["endpoint"].values[0]
-            response = requests.get(wcs_sleep_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":seven_days_ago, "endDate":today})
+            response = requests.get(wcs_sleep_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":seven_days_ago, "endDate":today}, timeout=10)
             response.close()
             sleep_efficiency_score = json.loads(response.text)[0]
             
@@ -643,7 +663,7 @@ class ActionSleepStatus(Action):
 
             try :
                 fourteen_days_ago = (today - datetime.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
-                response = requests.get(wcs_sleep_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":fourteen_days_ago, "endDate":seven_days_ago})
+                response = requests.get(wcs_sleep_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":fourteen_days_ago, "endDate":seven_days_ago}, timeout=10)
                 response.close()
                 previous_sleep_efficiency_score = json.loads(response.text)[0]
 
@@ -788,9 +808,9 @@ class ActionUtterHowAreYou(Action):
         today = datetime.datetime.combine(datetime.datetime.now(tz=pytz.utc), datetime.datetime.min.time())
         yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
         today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
+        ontology_meaa_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_MEAA_ENDPOINT"]["endpoint"].values[0]
         try :
-            ontology_meaa_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_MEAA_ENDPOINT"]["endpoint"].values[0]
-            response = requests.get(ontology_meaa_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today})
+            response = requests.get(ontology_meaa_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today}, timeout=10)
             response.close()
             average_score_per_mood = json.loads(response.text)[0]
             average_score_per_mood.pop("userId")
@@ -798,7 +818,7 @@ class ActionUtterHowAreYou(Action):
             max_mood = max(average_score_per_mood, key=average_score_per_mood.get)
         except:
             max_mood = ""
-            print("Error: no such entry in the ontology.")
+            print("Error: no such entry from MEAA in the ontology.")
 
         if max_mood == "avgNeg":
             text = get_text_from_lang(

@@ -42,6 +42,14 @@ stories:
                             - intent: cancel
                   - action: action_options_menu
 
+        - story: User click on a notification for questionnaire and wants to start questionnaire #does this work for all cases?
+          steps:
+                  - intent: notification_questionnaire_open
+                  - action: action_utter_notification_greet
+                  - slot_was_set:
+                            - notification_questionnaire_start: true
+                  - action: action_utter_ask_questionnaire_start
+
         - story: Greeting, first time of the day using the agent, Agent receives positive sentiment
           steps:
                   - intent: greet
@@ -222,6 +230,17 @@ stories:
                   - intent: qol_status
                   - action: utter_not_available
                   - action: action_health_update_menu
+
+        - story: Report a technical issue
+          steps:
+                  - intent: report_tech_issue
+                  - action: report_tech_issue_form
+                  - active_loop: report_tech_issue_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_confirm_tech_issue
+                  - action: action_options_menu_extra
 
         - story: set language
           steps:
