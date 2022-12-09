@@ -862,12 +862,13 @@ class CustomSQLTrackerStore(TrackerStore):
             tracker.events, number_of_events_since_last_session, len(tracker.events)
         )
 
-    def saveQuestionnaireAnswers(self, tracker, domain, questionnaire_abbreviation:str, isFinished:bool) -> None:
+    def saveQuestionnaireAnswers(self, tracker, domain, questionnaire_abbreviation:str, questionnaire_name:str, isFinished:bool) -> None:
         """ Update database with answers from a specific questionnaire.
             The answers of the questionnaires are retrieved directly from their dedicated slot value
         """
 
         #boolean to know when any questionnaire answers have been saved
+        question_types_df = pd.read_csv("question_types.csv") 
         sender_id = tracker.current_state()['sender_id']
         isDemo = sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys()
         answers_data = []
@@ -880,29 +881,57 @@ class CustomSQLTrackerStore(TrackerStore):
                 print("Error: no such entry in database table 'questionnaires_state'.")
                 return []
             
-            tracker_state = tracker.current_state()
-            timestamp = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).timestamp()
+            submission_timestamp = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).timestamp()
 
-            #tracker.get_last_event_for("slot", )
             # TODO: see if we need to store the question itself and if the timestamp is needed
             for slot_name in domain['slots'].keys():
-                if questionnaire_abbreviation in slot_name and tracker.get_slot(slot_name) is not None:
+                if questionnaire_abbreviation in slot_name:# and tracker.get_slot(slot_name) is not None:
                     slots_to_reset.append(slot_name)
-                    if questionnaire_abbreviation in ["activLim", "dizzNbalance"]:
-                        question_number = slot_name.split(questionnaire_abbreviation + "_")[1]
-                    else:
-                        question_number = slot_name.split("Q")[1]
-                    answers_data.append({"number": question_number, "answer": tracker.get_slot(slot_name), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
-                
+
+            events = tracker.events
+            for slot_name in slots_to_reset:
+                if questionnaire_abbreviation in ["activLim", "dizzNbalance"]:
+                    question_number = slot_name.split(questionnaire_abbreviation + "_")[1]
+                else:
+                    question_number = slot_name.split("Q")[1] 
+                for event in events:
+                    if event["event"] == "bot":
+                        try:
+                            name = event["metadata"]["utter_action"]
+                            if name == "utter_ask_" + slot_name:
+                                question = event["metadata"]["utter_action"]
+                                #timestamp = event["timestamp"]
+                                question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
+                                answers_data.append({"question_id": question_number, "question": question, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
+                                break
+                        except:
+                            pass
+
+            partner, disease = self.getUserDetails(sender_id)
+            if questionnaire_abbreviation in ["psqi", "muscletone"]:
+                total_score = self._questionnaire_score_query(session, sender_id, questionnaire_name)
+            else:
+                total_score=None
+
+            questionnaire_data={"user_id": sender_id,
+                                "source": "CA",
+                                "survey_title": questionnaire_name,
+                                "partner": partner,
+                                "disease": disease,
+                                "abbreviation": questionnaire_abbreviation,
+                                "submission_date": datetime.datetime.fromtimestamp(submission_timestamp).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                                "survey_answers": answers_data,
+                                "survey_score": [{"score": total_score, "scoreDescription": "TOTAL"}]}
+
             if database_entry.state=="available":
                 database_entry.timestamp_start=init_timestamp
             elif database_entry.state=="pending":
                 # previous_answers = json.loads(database_entry.answers)
                 # print(answers_data)
                 database_entry.answers = None
-            database_entry.answers = json.dumps(answers_data)                    
+            database_entry.answers = json.dumps(questionnaire_data)                    
             if isFinished:
-                database_entry.timestamp_end=timestamp
+                database_entry.timestamp_end=submission_timestamp
                 database_entry.state="finished"
 
                 # send questionnaire score to ontology
@@ -911,7 +940,7 @@ class CustomSQLTrackerStore(TrackerStore):
                                                     
                 #doing this everyday for the msdomain_daily might not be so efficient
                 if isDemo or self.getUserUsecase(sender_id).upper() == "STROKE":
-                    new_timestamp = timestamp
+                    new_timestamp = submission_timestamp
                 else:
                     tz_timezone = pytz.timezone(self.getUserTimezone(sender_id))
                     last_availability = datetime.datetime.fromtimestamp(database_entry.available_at, tz=tz_timezone)
@@ -932,7 +961,7 @@ class CustomSQLTrackerStore(TrackerStore):
 
             else:
                 database_entry.state="pending"
-                database_entry.timestamp_end=timestamp
+                database_entry.timestamp_end=submission_timestamp
             session.commit()
             if not isDemo and not isFinished: 
                 self.sendQuestionnareStatus(sender_id, questionnaire_abbreviation, "IN_PROGRESS")
@@ -1419,10 +1448,22 @@ class CustomSQLTrackerStore(TrackerStore):
         return user_entry.timezone
 
     def getUserUsecase(self, sender_id):
-        """ Retrieves the specific user's timezone from the database."""
+        """ Retrieves the specific user's usecase from the database."""
         with self.session_scope() as session:
             user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
         return user_entry.usecase
+
+    def getUserDetails(self, sender_id):
+        """ Get specific user's partner name and disease"""
+        usecase = self.getUserUsecase(sender_id)
+        if usecase == "MS":
+            return "FISM", "MULTIPLE_SCLEROSIS"
+        elif usecase =="STROKE":
+            return "SUUB", "STROKE"
+        elif usecase =="PD":
+            return "NKUA", "PARKINSONS"
+        else:
+            return "N/A", "N/A"
     
     def logTechIssue(self, issue, sender_id):
         """ Logs technical issues as reported by users"""
@@ -1545,7 +1586,7 @@ def getNextQuestTimestamp(schedule_df, questionnaire_name, init_date, tz_timezon
     frequencyInWeeks=int(df_row["frequencyInWeeks"].values[0])
 
     if questionnaire_name == "MSdomainIV_Daily":
-        q_day = getNextKTimestamps(init_date,1)[0]
+        q_day = getNextKTimestamps(init_date, tz_timezone, 1)[0]
     else:
         q_day_tmp = init_date + datetime.timedelta(weeks=frequencyInWeeks)
         q_day = getDSTawareDate(init_date, q_day_tmp, tz_timezone).timestamp()
@@ -1581,7 +1622,7 @@ def getDSTawareDate(init_date, new_date, tz_timezone):
     new_date = new_date + dst_offset_diff
     new_date = new_date.astimezone(tz_timezone)
     
-    return new_date                  
+    return new_date  
 
 if __name__ == "__main__":
     ts = CustomSQLTrackerStore(db="demo.db")

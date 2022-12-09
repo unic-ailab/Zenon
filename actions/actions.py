@@ -258,8 +258,11 @@ def reset_form_slots(tracker, domain, list_questionnaire_abbreviation):
 def reset_and_save_form_slots(tracker, domain, questionnaire_abbreviation, isFinished):
     required = []
 
-    if questionnaire_abbreviation is not None:
-        slots_to_reset = customTrackerInstance.saveQuestionnaireAnswers(tracker, domain, questionnaire_abbreviation, isFinished)
+    if questionnaire_abbreviation is not None: 
+        questionnaire_name = get_text_from_lang(
+                tracker,
+                questionnaire_abbreviations[questionnaire_abbreviation])
+        slots_to_reset = customTrackerInstance.saveQuestionnaireAnswers(tracker, domain, questionnaire_abbreviation, questionnaire_name, isFinished)
         if isFinished:
             for slot_name in slots_to_reset:
                 required.append(SlotSet(slot_name, None))
@@ -958,11 +961,11 @@ class ActionQuestionnaireCompleted(Action):
         slots_to_reset = reset_and_save_form_slots(tracker, domain, q_abbreviation, True)
 
         if q_abbreviation == "MSdomainIII_1W" and MSdomainIII_both:
-            return [SlotSet("questionnaire", "MSdomainIII_2W"), FollowupAction("MSdomainIII_2W_form"), SlotSet("q_starting_time", q_starting_time)] 
+            return slots_to_reset + [SlotSet("questionnaire", "MSdomainIII_2W"), FollowupAction("MSdomainIII_2W_form"), SlotSet("q_starting_time", q_starting_time)] 
         elif q_abbreviation == "MSdomainII_1M" and MSdomainII_both:
-            return [SlotSet("questionnaire", "MSdomainII_3M"), FollowupAction("MSdomainII_3M_form"), SlotSet("q_starting_time", q_starting_time)] 
+            return slots_to_reset + [SlotSet("questionnaire", "MSdomainII_3M"), FollowupAction("MSdomainII_3M_form"), SlotSet("q_starting_time", q_starting_time)] 
         elif q_abbreviation == "MSdomainIV_Daily" and MSdomainIV_both:
-            return [SlotSet("questionnaire", "MSdomainIV_1W"), FollowupAction("MSdomainIV_1W_form"), SlotSet("q_starting_time", q_starting_time)] 
+            return slots_to_reset + [SlotSet("questionnaire", "MSdomainIV_1W"), FollowupAction("MSdomainIV_1W_form"), SlotSet("q_starting_time", q_starting_time)]
         else:
             text = get_text_from_lang(
                 tracker,
@@ -974,7 +977,7 @@ class ActionQuestionnaireCompleted(Action):
                 ],
             )  
             dispatcher.utter_message(text=text)
-            return [SlotSet("questionnaire", None), SlotSet("q_starting_time", None)] + slots_to_reset#, FollowupAction("action_options_menu")]
+            return slots_to_reset + [SlotSet("questionnaire", None), SlotSet("q_starting_time", None)]#, FollowupAction("action_options_menu")]
 
 # class ActionQuestionnaireCompletedFirstPart(Action):
 #     def name(self):
