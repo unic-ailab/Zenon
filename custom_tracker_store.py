@@ -1523,7 +1523,7 @@ class CustomSQLTrackerStore(TrackerStore):
         wcs_status_endpoint= endpoints_df[endpoints_df["name"]=="WCS_STATUS_ENDPOINT"]["endpoint"].values[0]
         response = requests.post(wcs_status_endpoint, json=questionnaire_data, timeout=30)
         response.close()
-        print(response)
+        print(f"POST request on sending questionnare's status: {response}")
 
     def getDizzinessNbalanceNewSymptoms(self, sender_id):
         """ Gets the symptoms of the latest Dizziness and Balance questionnaire and of the one before that
