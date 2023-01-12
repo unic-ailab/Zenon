@@ -536,6 +536,7 @@ nlu:
       - extremly sad
       - so sad
       - I'm sad
+      - tired
       # Italian
       - quando sono in ritardo
       - male
@@ -601,6 +602,7 @@ nlu:
       - ah non va bene
       - Sono caduto dalle scale e ho battuto la testa
       - un mese fa      
+      - stanca
       # Romanian
       - Astăzi, m-am dus în parc și picioarele mi-au cedat dat brusc, m-am simțit jenat.
       - Ieri, în timp ce mă jucam cu copiii, mâinile mele au început să tremure prea mult. M -am simțit groaznic și copiii mei erau foarte triști.
@@ -664,6 +666,7 @@ nlu:
       - Ah nu este bine
       - Am căzut pe scări și mi -am lovit capul
       - acum o lună      
+      - obosit
       # General
       - early   
       - at sunday    

@@ -166,7 +166,8 @@ coast_buttons_7 = [
 # Eating Habits Questionnaire Buttons
 eatingHabits_buttons = [
     ["Never", "Rarely", "Sometimes", "Often", "Very often", "Always"],
-    [" ", " ", " ", " ", " ", " "], #TODO might needs to add an extra line here
+    [" ", " ", " ", " ", " ", " "],
+    [" ", " ", " ", " ", " ", " "],
     ["Niciodată", "Rareori", "Uneori", "Adesea", "Foarte des", "Întotdeauna"]
 ]
 
