@@ -18,6 +18,7 @@ sentimentClasses.py
 test.py
 alameda_endpoints.csv
 requirements_pip.txt
+requirements_pip_sm.txt
 requirements.txt
 
 # Folders
