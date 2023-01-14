@@ -262,9 +262,7 @@ def reset_and_save_form_slots(tracker, domain, questionnaire_abbreviation, isFin
         questionnaire_name = get_text_from_lang(
                 tracker,
                 questionnaire_abbreviations[questionnaire_abbreviation])
-        print("questionnaire_name")
         slots_to_reset = customTrackerInstance.saveQuestionnaireAnswers(tracker, domain, questionnaire_abbreviation, questionnaire_name, isFinished)
-        print(slots_to_reset)
         if isFinished:
             for slot_name in slots_to_reset:
                 required.append(SlotSet(slot_name, None))
