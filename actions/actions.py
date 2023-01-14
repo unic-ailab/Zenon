@@ -262,7 +262,9 @@ def reset_and_save_form_slots(tracker, domain, questionnaire_abbreviation, isFin
         questionnaire_name = get_text_from_lang(
                 tracker,
                 questionnaire_abbreviations[questionnaire_abbreviation])
+        print("questionnaire_name")
         slots_to_reset = customTrackerInstance.saveQuestionnaireAnswers(tracker, domain, questionnaire_abbreviation, questionnaire_name, isFinished)
+        print(slots_to_reset)
         if isFinished:
             for slot_name in slots_to_reset:
                 required.append(SlotSet(slot_name, None))
@@ -927,7 +929,8 @@ class ActionUtterNotificationGreet(Action):
             dispatcher.utter_message(text=text)
             # might need to reset questionnaire slots here in case the user didn't go through getAvailableQuestionnaires after the questionnaire became available
             if state == "available": questionnaire_to_reset.append(q_abbreviation)
-            return reset_form_slots(tracker, domain, questionnaire_to_reset) + [SlotSet("notification_questionnaire_start", True)]#+ [FollowupAction("action_utter_ask_questionnaire_start")]
+            q_starting_time = datetime.datetime.now(tz=pytz.utc).timestamp()
+            return reset_form_slots(tracker, domain, questionnaire_to_reset) + [SlotSet("q_starting_time", q_starting_time), SlotSet("notification_questionnaire_start", True)]#+ [FollowupAction("action_utter_ask_questionnaire_start")]
         else:
             # normally it shouldn't get to this point
             text = get_text_from_lang(
@@ -940,7 +943,7 @@ class ActionUtterNotificationGreet(Action):
                 ],
             )
             dispatcher.utter_message(text=text)
-            return [SlotSet("questionnaire", None), SlotSet("is_first_time", isFirstTime), SlotSet("notification_questionnaire_start", False)]
+            return [SlotSet("questionnaire", None), SlotSet("q_starting_time", None), SlotSet("is_first_time", isFirstTime), SlotSet("notification_questionnaire_start", False)]
 
 
 class ActionQuestionnaireCompleted(Action):
@@ -1048,8 +1051,9 @@ class ActionQuestionnaireCancelledApp(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        return[]
-
+        slots_to_reset = reset_and_save_form_slots(tracker, domain, tracker.get_slot("questionnaire"), False)
+        return[SlotSet("q_starting_time", None)] + slots_to_reset
+        
 class ActionUtterStartingQuestionnaire(Action):
     def name(self):
         return "action_utter_starting_questionnaire"
