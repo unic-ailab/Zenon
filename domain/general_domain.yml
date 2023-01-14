@@ -428,7 +428,7 @@ responses:
         - type: slot
           name: language
           value: English
-      text: You are welcome
+      text: You are welcome. What else can I do for you?
     - condition:
         - type: slot
           name: language
@@ -438,12 +438,12 @@ responses:
         - type: slot
           name: language
           value: Romanian
-      text: Cu plăcere.
+      text: Cu plăcere. Ce altceva pot face pentru tine?
     - condition:
         - type: slot
           name: language
           value: Italian
-      text: Prego.
+      text: Prego. Cos'altro posso fare per te?
   utter_how_to_help:
     - condition:
         - type: slot
@@ -593,4 +593,3 @@ forms:
     required_slots:
       report_tech_issue_Q1:
         - type: from_text
-

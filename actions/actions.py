@@ -175,7 +175,7 @@ coast_buttons_7 = [
 eatingHabits_buttons = [
     ["Never", "Rarely", "Sometimes", "Often", "Very often", "Always"],
     [" ", " ", " ", " ", " ", " "],
-    [" ", " ", " ", " ", " "], 
+    [" ", " ", " ", " ", " ", " "],
     ["Niciodată", "Rareori", "Uneori", "Adesea", "Foarte des", "Întotdeauna"]
 ]
 
