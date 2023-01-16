@@ -1340,6 +1340,7 @@ class CustomSQLTrackerStore(TrackerStore):
             If not
             - adds the user id and his/her onboarding date on the information provided by WCS
             - adds the first set of questionnaires"""
+        #TODO The ID authorization might should be take place here
         with self.session_scope() as session:
             user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
             if user_entry is None:
@@ -1632,7 +1633,7 @@ def getDSTawareDate(init_date, new_date, tz_timezone):
     return new_date  
 
 if __name__ == "__main__":
-    ts = CustomSQLTrackerStore(db="demo.db")
+    ts = CustomSQLTrackerStore(db="after-meeting-demo.db")
     #print(ts.getAvailableQuestionnaires("stroke15", 1662449573.249213))
     print(datetime.datetime.now().timestamp())
     #print(ts.saveQuestionnaireAnswers("stroke03", "activLim", False))
