@@ -16,23 +16,23 @@ pipeline:
     dimensions: ["time", "number"]
     locale: "en_US"
   - name: DIETClassifier
-    epochs: 400
+    epochs: 300
     constrain_similarities: true
   - name: EntitySynonymMapper
   - name: FallbackClassifier
-    threshold: 0.25
+    threshold: 0.3
 
 policies:
   - name: "MemoizationPolicy"
-  # max_history: 8
+    max_history: 8
   - name: "TEDPolicy"
-    # max_history: 8
+    max_history: 8
     epochs: 300
     constrain_similarities: true
-  - name: "UnexpecTEDIntentPolicy"
-    #   max_history: 6
-    epochs: 200
+  # - name: "UnexpecTEDIntentPolicy"
+  #   max_history: 6
+  #   epochs: 200
   - name: "RulePolicy"
-    # core_fallback_threshold: 0.3
-    # core_fallback_action_name: "action_default_fallback"
-    # enable_fallback_prediction: True
+    core_fallback_threshold: 0.3
+    core_fallback_action_name: "action_default_fallback"
+    enable_fallback_prediction: True

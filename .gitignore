@@ -1,8 +1,8 @@
 # Files
 story_graph.dot
-.db
-.db-shm
-.db-wal
+*.db
+*.db-shm
+*.db-wal
 index.html
 webchat.js
 showdown.min.js
@@ -10,8 +10,6 @@ github-markdown.css
 requirements.txt
 requirements_pip.txt
 alameda-chatbot.yml
-demo.db
-demo_old.db
 test_stories.yml
 sentiment_old.py
 sentimentClasses.py

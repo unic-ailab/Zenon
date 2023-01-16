@@ -36,6 +36,11 @@ rules:
       - intent: nlu_fallback
       - action: utter_default
 
+  - rule: set language
+    steps:
+      - intent: set_language
+      - action: action_utter_set_language
+
   - rule: Handle out of scope input - Meaning input that agent doesn't know what to do.
     steps:
       - intent: out_of_scope
@@ -69,3 +74,8 @@ rules:
           - requested_slot: null
       - action: action_confirm_tech_issue
       - action: action_options_menu_extra
+
+  - rule: Options menu
+    steps:
+      - intent: options_menu
+      - action: action_options_menu

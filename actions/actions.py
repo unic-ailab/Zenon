@@ -25,7 +25,7 @@ import sys
 sys.path.append(os.getcwd().replace("\\","/"))
 from custom_tracker_store import CustomSQLTrackerStore
 
-customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="demo.db")
+customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="after-meeting-demo.db")
 endpoints_df = pd.read_csv("alameda_endpoints.csv")                       
 
 # Define this list as the values for the `language` slot. Arguments of the `get_..._lang` functions should respect this order.
@@ -511,6 +511,7 @@ class ActionContinueLatestQuestionnaire(Action):
                 dispatcher.utter_message(text=text, buttons=buttons)
                 return []
             else:
+                #TODO Add translations if this will stay here
                 text = get_text_from_lang(
                     tracker,
                     [
@@ -1169,10 +1170,54 @@ class ActionUtterStartQuestionnaire(Action):
         return []
 
 ####################################################################################################
+# Handle User's Deny                                                                               #
+####################################################################################################
+
+class ActionHandleUserDenyInformDoctors(Action):
+    def name(self):
+        return "action_utter_handle_user_deny_to_inform_doctors"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Are you sure? How you feel is also an important part of your physical progress.",
+                "Είσαι σίγουρος? Το πως αισθάνεσαι είναι σημαντικό μέρος της προόδου σου.",
+                "Sei sicuro? Anche il modo in cui ti senti è una parte importante del tuo andamento fisico.",
+                "Ești sigur(ă)? Modul în care te simți este, de asemenea, o parte importantă a progresului tău fizic."
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text)
+        return []
+
+####################################################################################################
+# Set Questionnaire Slot Value                                                                     #
+####################################################################################################
+
+# class ActionUtterSetQuestionnaire(Action):
+#     def name(self) -> Text:
+#         return "action_utter_set_questionnaire"
+
+#     def run(self, dispatcher, tracker, domain):
+#         announce(self, tracker)
+
+#         open_questionnaire = tracker.slots["questionnaire"].title()
+
+#         return []
+
+####################################################################################################
+# Questionnaires                                                                                   #
+####################################################################################################
+
+####################################################################################################
 # ACTIVLIM Questionnaire                                                                               #
 ####################################################################################################
 
-class ActionUtterACTIVLIMintro(Action):
+class ActionUtterACTIVLIMintro(Action): #TODO To check if this exists in stories.yml
     def name(self):
         return "action_utter_ACTIVLIM_intro_question"
 
@@ -1278,8 +1323,6 @@ class CalculatePSQIScore(Action):
 
         print(f"Global PSQI Score: {psqi_global_score}")
         return [SlotSet("psqi_score", psqi_global_score)]
-
-        
 
 class ActionAskPSQIQ1(Action):
     def name(self) -> Text:
@@ -2504,7 +2547,6 @@ class ValidatePSQIForm(FormValidationAction):
             return{"psqi_Q9_score": "2"}
         else:
             return{"psqi_Q9_score": "3"}                                                                                                                                                          
-
 
 ####################################################################################################
 # Dizziness and Balance Questionnaire                                                              #
@@ -5636,10 +5678,6 @@ class ValidateMuscleToneForm(FormValidationAction):
 
         return slots_mapped_in_domain
 
-class ValidateMuscleToneForm(FormValidationAction):
-    def name(self) -> Text:
-        return "validate_muscletone_form"
-
     def validate_muscletone_Q1(
         self,
         slot_value: Any,
@@ -6468,46 +6506,6 @@ class ActionAskCoastQ20(Action):
         print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
-
-####################################################################################################
-# Handle User's Deny                                                                               #
-####################################################################################################
-
-class ActionHandleUserDenyInformDoctors(Action):
-    def name(self):
-        return "action_utter_handle_user_deny_to_inform_doctors"
-
-    def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
-
-        text = get_text_from_lang(
-            tracker,
-            [
-                "Are you sure? How you feel is also an important part of your physical progress.",
-                "Είσαι σίγουρος? Το πως αισθάνεσαι είναι σημαντικό μέρος της προόδου σου.",
-                "Sei sicuro? Anche il modo in cui ti senti è una parte importante del tuo andamento fisico.",
-                "Ești sigur(ă)? Modul în care te simți este, de asemenea, o parte importantă a progresului tău fizic."
-            ]
-        )
-
-        print("\nBOT:", text)
-        dispatcher.utter_message(text=text)
-        return []
-
-####################################################################################################
-# Set Questionnaire Slot Value                                                                     #
-####################################################################################################
-
-# class ActionUtterSetQuestionnaire(Action):
-#     def name(self) -> Text:
-#         return "action_utter_set_questionnaire"
-
-#     def run(self, dispatcher, tracker, domain):
-#         announce(self, tracker)
-
-#         open_questionnaire = tracker.slots["questionnaire"].title()
-
-#         return []
 
 ####################################################################################################
 # STROKE Case Domain IV RQ1                                                                        #
