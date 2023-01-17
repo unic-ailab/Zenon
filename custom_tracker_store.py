@@ -235,7 +235,7 @@ class CustomSQLTrackerStore(TrackerStore):
             port = parsed.port or port
             host = parsed.hostname or host
 
-        return sa.engine.url.URL(
+        return sa.engine.url.URL.create(
             dialect,
             username,
             password,
@@ -878,7 +878,7 @@ class CustomSQLTrackerStore(TrackerStore):
             try:
                 database_entry, _ = self.checkQuestionnaireTimelimit(session, sender_id, init_timestamp, questionnaire_abbreviation)
             except:
-                print("Error: no such entry in database table 'questionnaires_state'.")
+                print(f"Error: no such entry ({sender_id}, {questionnaire_abbreviation}) in database table 'questionnaires_state'.")
                 return []
             
             submission_timestamp = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).timestamp()
@@ -898,7 +898,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 # store answers without storing the questions
                 question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
                 answers_data.append({"question_id": question_number, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
-
+                
                 # TODO: fix this to store answers along with the corresponding questions
                 # for event in events:
                 #     if event["event"] == "bot":
@@ -920,7 +920,7 @@ class CustomSQLTrackerStore(TrackerStore):
             else:
                 total_score=None
 
-            questionnaire_data={"user_id": sender_id,
+            questionnaire_data = {"user_id": sender_id,
                                 "source": "CA",
                                 "survey_title": questionnaire_name,
                                 "partner": partner,
@@ -936,14 +936,14 @@ class CustomSQLTrackerStore(TrackerStore):
                 # previous_answers = json.loads(database_entry.answers)
                 # print(answers_data)
                 database_entry.answers = None
-            database_entry.answers = json.dumps(questionnaire_data)                    
+            database_entry.answers = json.dumps(answers_data)                    
             if isFinished:
                 database_entry.timestamp_end=submission_timestamp
                 database_entry.state="finished"
 
                 # send questionnaire score to ontology
                 if questionnaire_abbreviation in ["psqi", "muscletone"] and not self.checkIfTestingID(sender_id):
-                    self.sendQuestionnaireScoreToOntology(session, sender_id, questionnaire_abbreviation, database_entry)
+                    self.sendQuestionnaireScoreToOntology(session, sender_id, questionnaire_abbreviation, questionnaire_data)
                                                     
                 #doing this everyday for the msdomain_daily might not be so efficient
                 if isDemo or self.getUserUsecase(sender_id).upper() == "STROKE":
@@ -1206,7 +1206,7 @@ class CustomSQLTrackerStore(TrackerStore):
                     # entry.answers = None
 
                     # questionnaires that are passed the time limit need to be reset
-                    #reset_questionnaires.append(entry.questionnaire_name)
+                    # reset_questionnaires.append(entry.questionnaire_name)
                     else:
                         # when the questionnaire becomes available again, reset its slots 
                         if entry.state == "available":
@@ -1633,8 +1633,8 @@ def getDSTawareDate(init_date, new_date, tz_timezone):
     return new_date  
 
 if __name__ == "__main__":
-    ts = CustomSQLTrackerStore(db="after-meeting-demo.db")
-    #print(ts.getAvailableQuestionnaires("stroke15", 1662449573.249213))
+    ts = CustomSQLTrackerStore(db="backUp-20230601.db")
+    print(ts.sendQuestionnareStatus("631327a2-0b50-417a-8c1d-625d84c5114a", "STROKEdomainIV", "COMPLETED"))
     print(datetime.datetime.now().timestamp())
     #print(ts.saveQuestionnaireAnswers("stroke03", "activLim", False))
     now = datetime.datetime.today()
