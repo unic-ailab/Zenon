@@ -110,6 +110,12 @@ class CustomSQLTrackerStore(TrackerStore):
         answers = sa.Column(sa.Text)
         scoring = sa.Column(sa.Text)
 
+        def __repr__(self):
+            """Add representation to print queries in human readable way"""
+
+            return f"SQLQuestState(sender_id= {self.sender_id}, questionnaire_name= {self.questionnaire_name}, state= {self.state}, available_at= {self.available_at})"
+
+
     class SQLUserID(Base):
         """Represents a user id event in the SQL Tracker Store."""
 
@@ -837,10 +843,10 @@ class CustomSQLTrackerStore(TrackerStore):
                     #if questionnaire_name in questionnaire_names_list:
                         #if event.action_name=="action_questionnaire_cancelled" or  event.action_name=="action_questionnaire_cancelled_app":
                             #isSaved, isDemo = self.saveQuestionnaireAnswers(sender_id, questionnaire_name, False, tracker)
-                            #if isSaved and not isDemo: self.sendQuestionnareStatus(sender_id, questionnaire_name, "IN_PROGRESS")
+                            #if isSaved and not isDemo: self.sendQuestionnaireStatus(sender_id, questionnaire_name, "IN_PROGRESS")
                         #else:                 
                             #isSaved, isDemo = self.saveQuestionnaireAnswers(sender_id, questionnaire_name, True, tracker)
-                            #if isSaved and not isDemo: self.sendQuestionnareStatus(sender_id, questionnaire_name, "COMPLETED")             
+                            #if isSaved and not isDemo: self.sendQuestionnaireStatus(sender_id, questionnaire_name, "COMPLETED")             
 
             session.commit()
 
@@ -872,6 +878,7 @@ class CustomSQLTrackerStore(TrackerStore):
         sender_id = tracker.current_state()['sender_id']
         isDemo = sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys()
         answers_data = []
+        answers_data_wcs_format = []
         slots_to_reset = []
         init_timestamp = tracker.get_slot("q_starting_time")
         with self.session_scope() as session:
@@ -900,19 +907,20 @@ class CustomSQLTrackerStore(TrackerStore):
                 answers_data.append({"question_id": question_number, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
                 
                 # TODO: fix this to store answers along with the corresponding questions
-                # for event in events:
-                #     if event["event"] == "bot":
-                #         try:
-                #             # Note: not all questions can be taken from "utter_action", some are in "text"
-                #             name = event["metadata"]["utter_action"]
-                #             if name == "utter_ask_" + slot_name:
-                #                 question = event["metadata"]["utter_action"]
-                #                 #timestamp = event["timestamp"]
-                #                 question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
-                #                 answers_data.append({"question_id": question_number, "question": question, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
-                #                 break
-                #         except:
-                #             pass
+                for event in events:
+                    if event["event"] == "bot":
+                        try:
+                            # Note: not all questions can be taken from "utter_action", some are in "text"
+                            name = event["metadata"]["utter_action"]
+                            if name == "utter_ask_" + slot_name:
+                                question = event["metadata"]["utter_action"]
+                                #timestamp = event["timestamp"]
+                                # question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
+                                # answers_data.append({"question_id": question_number, "question": question, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
+                                answers_data_wcs_format.append({"number": question_number, "question": question, "answer": tracker.get_slot(slot_name)})
+                                break
+                        except:
+                            pass
 
             partner, disease = self.getUserDetails(sender_id)
             if questionnaire_abbreviation in ["psqi", "muscletone"]:
@@ -936,7 +944,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 # previous_answers = json.loads(database_entry.answers)
                 # print(answers_data)
                 database_entry.answers = None
-            database_entry.answers = json.dumps(answers_data)                    
+            database_entry.answers = json.dumps(answers_data_wcs_format)                    
             if isFinished:
                 database_entry.timestamp_end=submission_timestamp
                 database_entry.state="finished"
@@ -971,15 +979,16 @@ class CustomSQLTrackerStore(TrackerStore):
                 database_entry.timestamp_end=submission_timestamp
             session.commit()
             if not isDemo and not isFinished: 
-                self.sendQuestionnareStatus(sender_id, questionnaire_abbreviation, "IN_PROGRESS")
+                self.sendQuestionnaireStatus(sender_id, questionnaire_abbreviation, "IN_PROGRESS")
             elif not isDemo and isFinished: 
-                self.sendQuestionnareStatus(sender_id, questionnaire_abbreviation, "COMPLETED")
+                self.sendQuestionnaireStatus(sender_id, questionnaire_abbreviation, "COMPLETED")
 
         logger.debug(f"Questionnaire answers with sender_id '{tracker.sender_id}' stored to database")
         return slots_to_reset
 
     def saveQuestionnaireAnswers_old(self, sender_id, questionnaire_name, isFinished: bool, tracker: DialogueStateTracker) -> None:
         """Update database with answers from a specific questionnaire."""
+        #TODO Not used anymore, To be removed
 
         if self.event_broker:
             self.stream_events(tracker)
@@ -1157,6 +1166,7 @@ class CustomSQLTrackerStore(TrackerStore):
 
     def getAvailableQuestionnaires(self, sender_id, current_timestamp) -> List[str]:
         """ Retrieve current available questionnaires"""
+
         available_questionnaires, reset_questionnaires = [],[]
         with self.session_scope() as session:
             database_entries = self._questionnaire_state_query(session, sender_id, current_timestamp).all()
@@ -1243,11 +1253,11 @@ class CustomSQLTrackerStore(TrackerStore):
             "submission_date": datetime.datetime.fromtimestamp(database_entry.timestamp_end).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "survey_score": score_list}
 
-        print(ontology_data)
+        print(f"Saved scores to ontology {ontology_data}")
         ontology_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_SEND_SCORE_ENDPOINT"]["endpoint"].values[0]
         response = requests.post(ontology_endpoint, json=ontology_data, timeout=30)
         response.close()
-        print(response)        
+        print(f"Response from POST score to ontology {response}")
 
 
     def saveToOntology(self, sender_id):
@@ -1282,11 +1292,11 @@ class CustomSQLTrackerStore(TrackerStore):
                     "on_dashboard": intent_to_bool[intent]}
                 ontology_data["observations"].append(data)
             session.commit()
-            print(ontology_data)
+            print(f"Saved data to ontology {ontology_data}")
         ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
         response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30)
         response.close()
-        print(response)
+        print(f"Response from POST data to ontology {response}")
 
     def registerUserIDdemo(self, sender_id, usecase):
         """ Checks if the specific user id is in the database. If not it adds it"""
@@ -1314,7 +1324,7 @@ class CustomSQLTrackerStore(TrackerStore):
             )
 
             # add the corresponding questionnaires based on the usecase
-            #change time to local time and then back to utc
+            # change time to local time and then back to utc
             tz_timezone = pytz.timezone(timezone) 
             now = now.astimezone(tz_timezone)
             now = now.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -1340,6 +1350,7 @@ class CustomSQLTrackerStore(TrackerStore):
             If not
             - adds the user id and his/her onboarding date on the information provided by WCS
             - adds the first set of questionnaires"""
+
         #TODO The ID authorization might should be take place here
         with self.session_scope() as session:
             user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
@@ -1485,7 +1496,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 )
             session.commit()
 
-    def sendQuestionnareStatus(self, sender_id, questionnare_abvr, status):
+    def sendQuestionnaireStatus(self, sender_id, questionnare_abvr, status):
         """ Sends the status of the questionnaire to WCS
 
         Object should be of the format:
@@ -1633,21 +1644,20 @@ def getDSTawareDate(init_date, new_date, tz_timezone):
     return new_date  
 
 if __name__ == "__main__":
-    ts = CustomSQLTrackerStore(db="backUp-20230601.db")
-    print(ts.sendQuestionnareStatus("631327a2-0b50-417a-8c1d-625d84c5114a", "STROKEdomainIV", "COMPLETED"))
-    print(datetime.datetime.now().timestamp())
-    #print(ts.saveQuestionnaireAnswers("stroke03", "activLim", False))
-    now = datetime.datetime.today()
-    first_monday = now + datetime.timedelta(days=(0-now.weekday())%7)
-    q_day = first_monday + datetime.timedelta(days=5, weeks=max(0,4-1))
-    #print(q_day)
+    ts = CustomSQLTrackerStore(db="after-meeting-demo.db")
+    # print(ts.sendQuestionnaireStatus("631327a2-0b50-417a-8c1d-625d84c5114a", "STROKEdomainIV", "COMPLETED"))
 
-    #print(1654808400<now)
-    #with ts.session_scope() as session:
-        # d = ts.checkQuestionnaireTimelimit(session, "stroke99", datetime.datetime.now().timestamp(), "psqi")
-        # #print(d)
-        # #print(ts._questionnaire_score_query(session, "stroke98", "muscletone"))
-        # question_events = ts._questionnaire_state_query(session, "stroke92", datetime.datetime.now().timestamp(), "psqi").first()
+    # print(datetime.datetime.now().timestamp())
+    # now = datetime.datetime.today()
+    # first_monday = now + datetime.timedelta(days=(0-now.weekday())%7)
+    # q_day = first_monday + datetime.timedelta(days=5, weeks=max(0,4-1))
+    # print(q_day.timestamp())
+
+    # with ts.session_scope() as session:
+        # d = ts.checkQuestionnaireTimelimit(session, "9f973de8-3c7d-452c-8161-b9f6a0461316", datetime.datetime.now().timestamp(), "MSdomainI")
+        # print(d)
+        # print(ts._questionnaire_score_query(session, "stroke98", "muscletone"))
+        # question_events = ts._questionnaire_state_query(session, "9f973de8-3c7d-452c-8161-b9f6a0461316", q_day).all()
         # print(question_events)
         #ts.sendQuestionnaireScoreToOntology("stroke97", "muscletone")
         #question_events = ts._questionnaire_state_query(session, "stroke05", now, "activLim")
@@ -1664,10 +1674,5 @@ if __name__ == "__main__":
 
         #ts.saveToOntology("ms24")
         #ts._sentiment_query(session, "stroke98")
-        #ts.sendQuestionnareStatus("stroke01", "dizzNbalance", "COMPLETED")
+        #ts.sendQuestionnaireStatus("stroke01", "dizzNbalance", "COMPLETED")
         #ts.getDizzinessNbalanceNewSymptoms("stroke01")
-
-
-  
-
-

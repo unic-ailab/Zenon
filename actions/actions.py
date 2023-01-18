@@ -25,7 +25,7 @@ import sys
 sys.path.append(os.getcwd().replace("\\","/"))
 from custom_tracker_store import CustomSQLTrackerStore
 
-customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="after-meeting-demo.db")
+customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="demo.db") # Remember to change the db name in endpoints.yml
 endpoints_df = pd.read_csv("alameda_endpoints.csv")                       
 
 # Define this list as the values for the `language` slot. Arguments of the `get_..._lang` functions should respect this order.
@@ -97,6 +97,13 @@ health_update_menu_payloads = { "MS": ["/sleep_status", "/mobility_status", "/qo
 
 # PSQI Questionnaire
 psqi_start_text = ["During the past month,", " ", " ", "In ultima luna,"]
+
+buttons_activlim = [
+    ["Impossible", "Difficult", "Easy", "?"],
+    ["", "", "", ""],
+    ["", "", "", ""],
+    ["Imposibil", "Dificil", "Ușor", "?"]
+]
 
 buttons_psqi = [
     ["Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week"],
@@ -1062,7 +1069,7 @@ class ActionUtterStartingQuestionnaire(Action):
         
         q_starting_time = datetime.datetime.now(tz=pytz.utc).timestamp()
         q_abbreviation = tracker.latest_message["intent"].get("name").replace("_start", "")
-        print("Q-abbrev:", q_abbreviation)
+        print("Q-abbrev:", q_abbreviation)  #TODO sometimes when starts the app set "Q-abbrev" -> /set_language
         if (q_abbreviation != None) & (q_abbreviation in questionnaire_abbreviations.keys()):
             q_name = get_text_from_lang(
                 tracker,
@@ -1219,7 +1226,7 @@ class ActionHandleUserDenyInformDoctors(Action):
 # ACTIVLIM Questionnaire                                                                               #
 ####################################################################################################
 
-class ActionUtterACTIVLIMintro(Action): #TODO To check if this exists in stories.yml
+class ActionUtterACTIVLIMintro(Action):
     def name(self):
         return "action_utter_ACTIVLIM_intro_question"
 
@@ -1237,6 +1244,647 @@ class ActionUtterACTIVLIMintro(Action): #TODO To check if this exists in stories
         )
         dispatcher.utter_message(text=text)
         return [FollowupAction("activLim_form")]    
+
+class ActionAskACTIVLimWalking(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_walking"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Walking more than one kilometer.",
+                " ",
+                " ",
+                "Mersul pe jos mai mult de un kilometru.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'   #TODO To send help intent for ACTIVLim
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskACTIVLimDoorbell(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_doorbell"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Ringing a doorbell.",
+                " ",
+                " ",
+                "Apasarea soneriei unei usi.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskACTIVLimHeavyLoad(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_heavyLoad"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Carrying a heavy load?",
+                " ",
+                " ",
+                "Transportarea unei greutati",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []      
+
+class ActionAskACTIVLimPickFromFloor(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_pickFromFloor"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Picking up something from the floor?",
+                " ",
+                " ",
+                "Ridicarea unui obiect de pe podea",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []     
+
+class ActionAskACTIVLimToilet(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_usingToilet"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Using the toilet",
+                " ",
+                " ",
+                "Utilizarea toaletei.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []   
+
+class ActionAskACTIVLimOutOfBed(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_outOfBed"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Getting out of bed.",
+                " ",
+                " ",
+                "Coborarea din pat",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []   
+
+class ActionAskACTIVLimBrushTeeth(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_brushTeeth"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Brushing one's teeth.",
+                " ",
+                " ",
+                "Periajul  dintilor.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []     
+
+class ActionAskACTIVLimTakingShower(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_takingShower"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Taking a shower.",
+                " ",
+                " ",
+                "A face duș.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []    
+
+class ActionAskACTIVLimPuttinSocks(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_puttinSocks"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Putting on socks.",
+                " ",
+                " ",
+                "Incaltarea șosetelor.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []    
+
+class ActionAskACTIVLimOutOfCar(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_outOfCar"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Getting out of a car.",
+                " ",
+                " ",
+                "Coborarea dintr-o masina.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []   
+
+class ActionAskACTIVLimTurnInBed(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_turnInBed"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Turning in bed.",
+                " ",
+                " ",
+                "Întoarcerea în pat.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []                                                  
+
+class ActionAskACTIVLimTyingLaces(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_tyingLaces"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Tying one’s laces.",
+                " ",
+                " ",
+                "Legarea șireturilor.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []  
+
+class ActionAskACTIVLimTakeOffTshirt(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_takeOffTshirt"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Taking off a t-shirt.",
+                " ",
+                " ",
+                "Dezbracarea unui tricou.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
+
+class ActionAskACTIVLimOpenDoor(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_openDoor"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Opening a door.",
+                " ",
+                " ",
+                "Deschiderea unei uși.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []    
+
+class ActionAskACTIVLimSweepVaccum(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_sweepVaccum"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Sweeping or vacuuming.",
+                " ",
+                " ",
+                "Măturarea sau aspirarea prafului in casa.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []   
+
+class ActionAskACTIVLimDishesInCupboard(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_dishesInCupboard"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Putting the dishes in the cupboard.",
+                " ",
+                " ",
+                "Punerea felurilor de mâncare pe masa.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []    
+
+class ActionAskACTIVLimGetUpFromChair(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_getUpFromChair"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Getting up from a chair.",
+                " ",
+                " ",
+                "Ridicarea de pe un scaun.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []   
+
+class ActionAskACTIVLimStandingNoSupport(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_standingNoSupport"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Standing for a long time without support.",
+                " ",
+                " ",
+                "Statul in picioare pentru o lungă perioadă de timp, fără sprijin.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return [] 
+
+class ActionAskACTIVLimWalkingUpstairs(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_walkingUpstairs"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Walking upstairs.",
+                " ",
+                " ",
+                "Urcarea scarilor.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []      
+
+class ActionAskACTIVLimPutKey(Action):
+    def name(self) -> Text:
+        return "action_ask_activLim_putKey"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Putting a key in a lock.",
+                " ",
+                " ",
+                "Introducerea unei chei in broasca.",
+            ],
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            buttons_activlim,
+            [
+                '/inform{"given_answer":"impossible"}', 
+                '/inform{"given_answer":"difficult"}', 
+                '/inform{"given_answer":"easy"}', 
+                '/inform{"given_answer":"?"}'
+            ]
+        )
+
+        print("\nBOT:", text)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []                                         
+
 
 ####################################################################################################
 # PSQI Questionnaire                                                                               #
@@ -6510,7 +7158,164 @@ class ActionAskCoastQ20(Action):
         return []
 
 ####################################################################################################
-# STROKE Case Domain IV RQ1                                                                        #
+# STROKE Case Domain III                                                                           #
+####################################################################################################
+
+class ActionStrokeDomainIIIRQ1(Action):
+    def name(self) -> Text:
+        return "action_ask_STROKEdomainIII_RQ1"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+             "In the last few days, did you find it difficult to concentrate on a task?",
+             " ",
+             " ",
+             "In ultimele cateva zile ati avut dificultati de concentrare in cursul unei activitati?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Never", "Rarely", "Sometimes", "Often"],
+                [" ", " "],
+                [" ", " "],                 
+                ["Niciodata", "Rar", "Uneori", "Frecvent"],
+            ],
+            [
+                '/inform{"given_answer":"never"}',
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []  
+
+class ActionStrokeDomainIIIRQ2(Action):
+    def name(self) -> Text:
+        return "action_ask_STROKEdomainIII_RQ2"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+             "Do you find it difficult to recall activities or details from the last days?",
+             " ",
+             " ",
+             "Aveti dificultati in a va aminti detalii sau evenimente din ultimele zile?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Never", "Rarely", "Sometimes", "Often"],
+                [" ", " "],
+                [" ", " "],                 
+                ["Niciodata", "Rar", "Uneori", "Frecvent"],
+            ],
+            [
+                '/inform{"given_answer":"never"}',
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []   
+
+####################################################################################################
+# STROKE Case Domain V                                                                             #
+####################################################################################################
+
+class ActionStrokeDomainVRQ1(Action):
+    def name(self) -> Text:
+        return "action_ask_STROKEdomainV_RQ1"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+             "In the last month, have you had to give up social activities (eg. going out with friends, dinners with relatives, attending events, etc.) due to STROKE?",
+             " ",
+             " ",
+             "In ultima luna ati fost nevoit/a sa renuntati la activitati sociale (ex. intalniri cy prietenii, cina in familie, mersul la diverse evenimente etc) datorita  accidentului vascular cerebral (AVC) suferit?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Never", "Rarely", "Sometimes", "Often"],
+                [" ", " "],
+                [" ", " "],                 
+                ["Niciodata", "Rar", "Uneori", "Frecvent"],
+            ],
+            [
+                '/inform{"given_answer":"never"}',
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []  
+
+class ActionStrokeDomainVRQ2(Action):
+    def name(self) -> Text:
+        return "action_ask_STROKEdomainV_RQ2"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+             "In the last month, have you had a greater need for assistance in carrying out your daily activities?",
+             " ",
+             " ",
+             "In ultima luna, ati simtit nevoia sa fiti ajutat/a mai ult in activitatile de zi cu zi de catre alta persoana?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Never", "Rarely", "Sometimes", "Often"],
+                [" ", " "],
+                [" ", " "],                 
+                ["Niciodata", "Rar", "Uneori", "Frecvent"],
+            ],
+            [
+                '/inform{"given_answer":"never"}',
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []                  
+
+
+####################################################################################################
+# STROKE Case Domain IV                                                                            #
 ####################################################################################################
 
 class ActionAskStrokeDomainIVRQ1(Action):
@@ -6558,6 +7363,80 @@ class ActionAskStrokeDomainIVRQ1(Action):
         print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
         return []
+
+class ActionStrokeDomainIVRQ2(Action):
+    def name(self) -> Text:
+        return "action_ask_STROKEdomainIV_RQ2"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+             "In the last 4 weeks have you felt nervous, anxious, or on edge?",
+             " ",
+             " ",
+             "In ultimele 4 saptamani v-ati simtit nervos, nelinistit, anxios?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Never", "Rarely", "Sometimes", "Often"],
+                [" ", " "],
+                [" ", " "],                 
+                ["Niciodata", "Rar", "Uneori", "Frecvent"],
+            ],
+            [
+                '/inform{"given_answer":"never"}',
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []  
+
+class ActionStrokeDomainIVRQ3(Action):
+    def name(self) -> Text:
+        return "action_ask_STROKEdomainIV_RQ3"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+             "In the last 4 weeks have you worried too much about different things related to the stroke you suffered?",
+             " ",
+             " ",
+             "In ultimele 4 saptamani v-ati ingrijorat maim ult decat de obicei in privinta anumitor dificultati care au leatura cu AVC suferit?"
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Never", "Rarely", "Sometimes", "Often"],
+                [" ", " "],
+                [" ", " "],                 
+                ["Niciodata", "Rar", "Uneori", "Frecvent"],
+            ],
+            [
+                '/inform{"given_answer":"never"}',
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []         
 
 ####################################################################################################
 # MS Case Domain I                                                                                 #
@@ -7047,6 +7926,43 @@ class ActionAskMSDomainII3MRQ3(Action):
 # MS Case Domain III                                                                               #
 ####################################################################################################        
 
+class ActionMSDomainIII1WRQ1(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainIII_1W_RQ1"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+             "In the last few days, did you go through the information you need over and over again in order to remember it?",
+             " ",
+             "Negli ultimi giorni, ti è capitato di dover riguardare più volte le informazioni di cui hai bisogno per riuscire a ricordarle?",
+             " "
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Never", "Rarely", "Sometimes", "Often"],
+                [" ", " "],
+                ["Mai", "Raramente", "A volte", "Spesso"],                 
+                [" ", " "],
+            ],
+            [
+                '/inform{"given_answer":"never"}',
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return [] 
+
 class ActionAskMSDomainIII1WRQ2(Action):
     def name(self) -> Text:
         return "action_ask_MSdomainIII_1W_RQ2"
@@ -7087,7 +8003,81 @@ class ActionAskMSDomainIII1WRQ2a(Action):
 
         print("\nBOT:", text)
         dispatcher.utter_message(text=text)
+        return []  
+
+class ActionMSDomainIII1WRQ3(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainIII_1W_RQ3"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+             "When an answer needs to be given, do you need to take an extra moment to pick up the thread and provide the best answer?",
+             " ",
+             "Quando occorre dare una risposta, hai bisogno prendere un momento in più per riprendere il filo e fornire la risposta migliore?",
+             " "
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Never", "Rarely", "Sometimes", "Often"],
+                [" ", " "],
+                ["Mai", "Raramente", "A volte", "Spesso"],                 
+                [" ", " "],
+            ],
+            [
+                '/inform{"given_answer":"never"}',
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
         return []    
+
+class ActionMSDomainIII1WRQ4(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainIII_1W_RQ4"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+             "During the day, do you have the feeling of having a full head that leads you to be less lucid?",
+             " ",
+             "Durante la giornata, hai la sensazione di avere la testa piena che ti porta ad essere meno lucido/a?",
+             " "
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Never", "Rarely", "Sometimes", "Often"],
+                [" ", " "],
+                ["Mai", "Raramente", "A volte", "Spesso"],                 
+                [" ", " "],
+            ],
+            [
+                '/inform{"given_answer":"never"}',
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []                
 
 class ActionAskMSDomainIII1WRQ5(Action):
     def name(self) -> Text:
@@ -7201,11 +8191,7 @@ class ValidateMSDomainIII1WForm(FormValidationAction):
 
         if tracker.get_slot("MSdomainIII_1W_RQ5") is not None:
             if tracker.get_slot("MSdomainIII_1W_RQ5") < 6:
-                slots_mapped_in_domain.remove("MSdomainIII_1W_RQ5a")  
-
-        # if not tracker.get_slot("MSdomainIII_both"):
-        #     slots_mapped_in_domain.remove("MSdomainIII_2W_RQ6") 
-        #     slots_mapped_in_domain.remove("MSdomainIII_2W_RQ7")                        
+                slots_mapped_in_domain.remove("MSdomainIII_1W_RQ5a")                       
 
         return slots_mapped_in_domain
 
@@ -7362,51 +8348,6 @@ class ActionAskMSDomainIVDailyRQ1(Action):
         dispatcher.utter_message(text=text, json_message=data)
         return []  
 
-# class ActionAskMSDomainIV1WRQ1(Action):
-#     def name(self) -> Text:
-#         return "action_ask_MSdomainIV_1W_RQ1"
-
-#     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-#         announce(self, tracker)
-
-#         text = get_text_from_lang(
-#             tracker,
-#             [
-#                 "How are you feeling today?",
-#                 " ",
-#                 "Cosa provi oggi? È possibile selezionare più di una parola",                 
-#                 " "
-#             ]
-#         )
-
-#         if tracker.get_slot("language") == "Italian":
-#             data = {
-#                 "choices": [
-#                     "Rabbia", "Paura", "Tristezza", "Gioia",
-#                     "Disprezzo", "Allegria", "Vergogna", "Ansia",
-#                     "Delusione", "Irritazione", "Serenità", "Gratitudine",
-#                     "Rancore", "Rassegnazione", "Speranza", "Nostalgia"
-#                 ]
-#             }
-#         # this shouldn't happen but just in case
-#         elif tracker.get_slot("language") == "Romanian":
-#             data = {
-#                 "choices": ["", ""]
-#             }
-#         else:
-#             data = {
-#                     "choices": [
-#                         "Anger", "Fear", "Sadness", "Joy", "Contempt",
-#                         "Cheer", "Shame", "Anxiety", "Disappointment", "Irritation",
-#                         "Serenity", "Gratitude", "Grudge", "Resignation", "Hope",
-#                         "Nostalgia"
-#                     ]
-#                 }
-
-#         print("\nBOT:", text + "\n" + str(data))
-#         dispatcher.utter_message(text=text, json_message=data)
-#         return []   
-
 class ActionAskMSDomainIV1WRQ2(Action):
     def name(self) -> Text:
         return "action_ask_MSdomainIV_1W_RQ2"
@@ -7532,3 +8473,155 @@ class ValidateMSDomainIV_1WForm(FormValidationAction):
             slots_mapped_in_domain.remove("MSdomainIV_1W_RQ2a")           
 
         return slots_mapped_in_domain
+
+####################################################################################################
+# MS Case Domain V                                                                                 #
+####################################################################################################         
+
+class ActionMSDomainVRQ1(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainV_RQ1"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+             "In the last month, have you had to give up social activities (eg. going out with friends, dinners with relatives, attending events, etc.) due to MS?",
+             " ",
+             "Nell'ultimo mese hai dovuto rinunciare ad attività sociali (es. uscire con gli amici, cene con parenti, partecipare ad eventi, ecc) a causa della SM?",
+             " "
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Never", "Rarely", "Sometimes", "Often"],
+                [" ", " "],
+                ["Mai", "Raramente", "A volte", "Spesso"],                 
+                [" ", " "],
+            ],
+            [
+                '/inform{"given_answer":"never"}',
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return [] 
+
+class ActionMSDomainVRQ2(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainV_RQ2"
+    
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+             "In the last month, have you had a greater need for assistance in carrying out your daily activities?",
+             " ",
+             "Nell'ultimo mese hai avuto maggiore necessità di assistenza per svolgere le tue attività quotidiane?",
+             " "
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Never", "Rarely", "Sometimes", "Often"],
+                [" ", " "],
+                ["Mai", "Raramente", "A volte", "Spesso"],                 
+                [" ", " "],
+            ],
+            [
+                '/inform{"given_answer":"never"}',
+                '/inform{"given_answer":"rarely"}',
+                '/inform{"given_answer":"sometimes"}',
+                '/inform{"given_answer":"often}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []         
+
+####################################################################################################
+# MS Case Domain V                                                                                 #
+#################################################################################################### 
+
+class ActionAskMSDomainII_1MRQ1(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainII_1M_RQ1"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Do you usually have trouble falling asleep (more than 30 minutes)?",
+                " ",
+                "Fai fatica ad addormentarti (impieghi più di 30 minuti)?",                 
+                " "
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                ["Sì", "No"],                
+                [" ", " "], 
+            ],
+            [
+                '/affirm{"given_answer":"yes"}',
+                '/deny{"given_answer":"no"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []  
+
+class ActionAskMSDomainII_1MRQ2(Action):
+    def name(self) -> Text:
+        return "action_ask_MSdomainII_1M_RQ2"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+
+        text = get_text_from_lang(
+            tracker,
+            [
+                "Would you define your sleep \"restful\"?",
+                " ",
+                "Definiresti il tuo sonno \"riposante\"?",                 
+                " "
+            ]
+        )
+
+        buttons = get_buttons_from_lang(
+            tracker,
+            [
+                ["Yes", "No"],
+                [" ", " "],
+                ["Sì", "No"],                
+                [" ", " "], 
+            ],
+            [
+                '/affirm{"given_answer":"yes"}',
+                '/deny{"given_answer":"no"}'
+            ]
+        )
+
+        print("\nBOT:", text, buttons)
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []                 
