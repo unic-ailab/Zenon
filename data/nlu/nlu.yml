@@ -39,6 +39,7 @@ nlu:
   - synonym: Italian
     examples: |
       - italian
+      - italiano
       - ITALIAN
       - Italiană
   - synonym: MuscleTone

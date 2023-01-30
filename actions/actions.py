@@ -55,7 +55,6 @@ questionnaire_per_usecase = {
     "STROKE": ["activLim", "muscletone", "dizzNbalance", "eatinghabits", "psqi", "coast", "STROKEdomainIII", "STROKEdomainIV", "STROKEdomainV"]
 }
 
-
 # cancel button
 cancel_button = [
     "Cancel",
@@ -63,7 +62,6 @@ cancel_button = [
     "Annulla",
     "Anulare",
 ]
-
 
 # The main options the agent offers
 options_menu_buttons = [
@@ -118,7 +116,6 @@ psqi_q5 = [
     " ",
     "In ultima luna cat de des ati avut probleme cu somnul deoarece nu"
     ]
-
 
 # Muscle Tone Questionnaire Buttons
 muscletone_buttons = [
@@ -231,24 +228,6 @@ def announce(action, tracker=None):
 # SLOTS                                                                                            #
 ####################################################################################################
 
-# def reset_slots(tracker, slots, exceptions=[]):
-#     events = []
-#     none_slots = []
-
-#     for exception in exceptions:
-#         if exception in slots:
-#             slots.remove(exception)
-
-#     for slot in slots:
-#         if tracker.get_slot(slot) is not None:
-#             none_slots.append(slot)
-
-#     for slot in none_slots:
-#         events.append(SlotSet(slot, None))
-
-#     print("\n> reset_slots:", ", ".join(none_slots))
-#     return events
-
 def reset_form_slots(tracker, domain, list_questionnaire_abbreviation):
     #async def required_slots(self, domain_slots, dispatcher, tracker, domain):
     required = []
@@ -260,7 +239,6 @@ def reset_form_slots(tracker, domain, list_questionnaire_abbreviation):
                 required.append(SlotSet(slot_name, None))
            
     return required
-
 
 def reset_and_save_form_slots(tracker, domain, questionnaire_abbreviation, isFinished):
     required = []
@@ -274,23 +252,6 @@ def reset_and_save_form_slots(tracker, domain, questionnaire_abbreviation, isFin
             for slot_name in slots_to_reset:
                 required.append(SlotSet(slot_name, None))
     return required
-
-
-# def list_slots(tracker, slots, exceptions=[]):
-#     filled_slots = ""
-
-#     for exception in exceptions:
-#         if exception in slots:
-#             slots.remove(exception)
-
-#     for slot in slots:
-#         value = tracker.get_slot(slot)
-
-#         if value is not None:
-#             filled_slots += f"\t- {slot}: {value}\n"
-
-#     # print(filled_slots[:-1])
-#     return filled_slots[:-1]
 
 ####################################################################################################
 # LANGUAGES                                                                                        #
@@ -395,7 +356,7 @@ class ActionUtterSetLanguage(Action):
         return [SlotSet("language", current_language)]
 
 ####################################################################################################
-# Onboarding                                                                                          #
+# Onboarding                                                                                       #
 ####################################################################################################
 
 class ActionOnboardUser(Action):
@@ -412,7 +373,7 @@ class ActionOnboardUser(Action):
 # General                                                                                          #
 ####################################################################################################
 
-class ActionGetAvailableQuestions(Action):
+class ActionGetAvailableQuestionnaires(Action):
     def name(self) -> Text:
         return "action_get_available_questionnaires"
 
@@ -950,7 +911,6 @@ class ActionUtterNotificationGreet(Action):
             )
             dispatcher.utter_message(text=text)
             return [SlotSet("questionnaire", None), SlotSet("q_starting_time", None), SlotSet("is_first_time", isFirstTime), SlotSet("notification_questionnaire_start", False)]
-
 
 class ActionQuestionnaireCompleted(Action):
     def name(self):

@@ -914,7 +914,7 @@ class CustomSQLTrackerStore(TrackerStore):
                             name = event["metadata"]["utter_action"]
                             if name == "utter_ask_" + slot_name:
                                 question = event["metadata"]["utter_action"]
-                                #timestamp = event["timestamp"]
+                                # timestamp = event["timestamp"]
                                 # question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
                                 # answers_data.append({"question_id": question_number, "question": question, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
                                 answers_data_wcs_format.append({"number": question_number, "question": question, "answer": tracker.get_slot(slot_name)})
@@ -986,9 +986,9 @@ class CustomSQLTrackerStore(TrackerStore):
         logger.debug(f"Questionnaire answers with sender_id '{tracker.sender_id}' stored to database")
         return slots_to_reset
 
+        #TODO Not used anymore, To be removed
     def saveQuestionnaireAnswers_old(self, sender_id, questionnaire_name, isFinished: bool, tracker: DialogueStateTracker) -> None:
         """Update database with answers from a specific questionnaire."""
-        #TODO Not used anymore, To be removed
 
         if self.event_broker:
             self.stream_events(tracker)
