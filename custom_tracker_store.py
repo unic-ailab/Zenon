@@ -88,6 +88,11 @@ class CustomSQLTrackerStore(TrackerStore):
         action_name = sa.Column(sa.String(255))
         data = sa.Column(sa.Text)
 
+        def __repr__(self):
+            """Add representation to print queries in human readable way"""
+
+            return f"SQLEvent(sender_id= {self.sender_id}, message= {self.message}, intent= {self.intent_name})"        
+
     class SQLQuestState(Base):
         """Represents a questionnaire event in the SQL Tracker Store.
            Available options for "state":
@@ -97,6 +102,7 @@ class CustomSQLTrackerStore(TrackerStore):
             - finished: the questiionnaire was completed
             - to_be_stored: the questionnaire's answers are about to be stored (temp state, used until the database catches up with the dialogue)
         """
+
         __tablename__ = "questionnaires_state"
         # `create_sequence` is needed to create a sequence for databases that
         # don't autoincrement Integer primary keys (e.g. Oracle)
@@ -335,7 +341,7 @@ class CustomSQLTrackerStore(TrackerStore):
             return [sender_id for (sender_id,) in sender_ids]
 
     def retrieve(self, sender_id: Text) -> Optional[DialogueStateTracker]:
-        # TODO: Remove this in Rasa Open Source 3.0 along with the
+        # Remove this in Rasa Open Source 3.0 along with the
         # deprecation warning in the constructor
         if self.retrieve_events_from_previous_conversation_sessions:
             return self.retrieve_full_tracker(sender_id)
@@ -427,17 +433,8 @@ class CustomSQLTrackerStore(TrackerStore):
         Returns:
             Query to get the questions and responses events.
         """
-        # Subquery to find the timestamp of the latest `SessionStarted` event
-        # latest_questionnaire_sub_query = (
-        #     session.query(sa.func.max(self.SQLQuestState.timestamp).label(questionnaire_name))
-        #     .filter(
-        #         self.SQLEvent.sender_id == sender_id,
-        #     )
-        #     .subquery()
-        # )
 
-        #not so great approach
-        # TODO: this might not always be true, might need start as well as completed
+        # TODO this might not always be true, might need start as well as completed
         if  questionnaire_name in ["MSdomainIII_2W", "MSdomainII_3M"]:
             # Subquery to find the timestamp of the latest `Questionnaire_Start` event
             latest_questionnaire_sub_query = (
@@ -675,16 +672,7 @@ class CustomSQLTrackerStore(TrackerStore):
             - A list with whether the messages in the dictionary would be included in the user's report
               potential list elements "deny", "affirm", "cancel"
         """
-        # Subquery to find the timestamp of the latest `SessionStarted` event
-        # session_start_sub_query = (
-        #     session.query(sa.func.max(self.SQLEvent.timestamp).label("session_start"))
-        #     .filter(
-        #         self.SQLEvent.sender_id == sender_id,
-        #         self.SQLEvent.type_name == SessionStarted.type_name,
-        #     )
-        #     .subquery()
-        # )
-
+        
         session_start_timestamp = session.query(sa.func.max(self.SQLEvent.timestamp)).filter(
                 self.SQLEvent.sender_id == sender_id,
                 self.SQLEvent.type_name == SessionStarted.type_name,
@@ -710,6 +698,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 ).order_by(self.SQLEvent.timestamp).first()[0]
         except:
             include_in_report_intent = "deny"
+        print(f"This is from line 701 in customTrackerStore. Print here the variable include_in_report: {include_in_report_intent}")
 
         # get second message, question: Is there anything else you would like ot report..?
         if message_entry:
@@ -793,7 +782,7 @@ class CustomSQLTrackerStore(TrackerStore):
 
             for event in events:
                 data = event.as_dict()
-                #if event.type_name == "action" and event.action_name=="action_listen":
+                # if event.type_name == "action" and event.action_name=="action_listen":
                 #    continue                
                 
                 intent = (
@@ -873,7 +862,6 @@ class CustomSQLTrackerStore(TrackerStore):
             The answers of the questionnaires are retrieved directly from their dedicated slot value
         """
 
-        #boolean to know when any questionnaire answers have been saved
         question_types_df = pd.read_csv("question_types.csv") 
         sender_id = tracker.current_state()['sender_id']
         isDemo = sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys()
@@ -881,9 +869,10 @@ class CustomSQLTrackerStore(TrackerStore):
         answers_data_wcs_format = []
         slots_to_reset = []
         init_timestamp = tracker.get_slot("q_starting_time")
+
         with self.session_scope() as session:
             try:
-                database_entry, _ = self.checkQuestionnaireTimelimit(session, sender_id, init_timestamp, questionnaire_abbreviation)
+                database_entry = self.checkQuestionnaireTimelimit(session, sender_id, init_timestamp, questionnaire_abbreviation)
             except:
                 print(f"Error: no such entry ({sender_id}, {questionnaire_abbreviation}) in database table 'questionnaires_state'.")
                 return []
@@ -894,7 +883,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 if questionnaire_abbreviation in slot_name:# and tracker.get_slot(slot_name) is not None:
                     slots_to_reset.append(slot_name)
 
-            #TODO: check if this gets all the latest events in the correct chronological order, latest events first?
+            #TODO check if this gets all the latest events in the correct chronological order, latest events first?
             events = tracker.events
             for slot_name in slots_to_reset:
                 if questionnaire_abbreviation in ["activLim", "dizzNbalance"]:
@@ -906,21 +895,22 @@ class CustomSQLTrackerStore(TrackerStore):
                 question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
                 answers_data.append({"question_id": question_number, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
                 
-                # TODO: fix this to store answers along with the corresponding questions
-                for event in events:
-                    if event["event"] == "bot":
-                        try:
-                            # Note: not all questions can be taken from "utter_action", some are in "text"
-                            name = event["metadata"]["utter_action"]
-                            if name == "utter_ask_" + slot_name:
-                                question = event["metadata"]["utter_action"]
-                                # timestamp = event["timestamp"]
-                                # question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
-                                # answers_data.append({"question_id": question_number, "question": question, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
-                                answers_data_wcs_format.append({"number": question_number, "question": question, "answer": tracker.get_slot(slot_name)})
-                                break
-                        except:
-                            pass
+                answers_data_wcs_format.append({"number": question_number, "answer": tracker.get_slot(slot_name)})
+
+                # for event in events:
+                #     if event["event"] == "bot":
+                #         try:
+                #             # Note: not all questions can be taken from "utter_action", some are in "text"
+                #             name = event["metadata"]["utter_action"]
+                #             if name == "utter_ask_" + slot_name:
+                #                 question = event["metadata"]["utter_action"]
+                #                 # timestamp = event["timestamp"]
+                #                 # question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
+                #                 # answers_data.append({"question_id": question_number, "question": question, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
+                                
+
+                #         except:
+                #             pass
 
             partner, disease = self.getUserDetails(sender_id)
             if questionnaire_abbreviation in ["psqi", "muscletone"]:
@@ -953,7 +943,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 if questionnaire_abbreviation in ["psqi", "muscletone"] and not self.checkIfTestingID(sender_id):
                     self.sendQuestionnaireScoreToOntology(session, sender_id, questionnaire_abbreviation, questionnaire_data)
                                                     
-                #doing this everyday for the msdomain_daily might not be so efficient
+                # doing this everyday for the msdomain_daily might not be so efficient
                 if isDemo or self.getUserUsecase(sender_id).upper() == "STROKE":
                     new_timestamp = submission_timestamp
                 else:
@@ -986,118 +976,122 @@ class CustomSQLTrackerStore(TrackerStore):
         logger.debug(f"Questionnaire answers with sender_id '{tracker.sender_id}' stored to database")
         return slots_to_reset
 
-        #TODO Not used anymore, To be removed
-    def saveQuestionnaireAnswers_old(self, sender_id, questionnaire_name, isFinished: bool, tracker: DialogueStateTracker) -> None:
-        """Update database with answers from a specific questionnaire."""
+    # def saveQuestionnaireAnswers_old(self, sender_id, questionnaire_name, isFinished: bool, tracker: DialogueStateTracker) -> None:
+    #     """
+    #     Update database with answers from a specific questionnaire.
 
-        if self.event_broker:
-            self.stream_events(tracker)
+    #     ===TO BE REMOVED===
+    #     It is no longer used.
+    #     """
 
-        #boolean to know when any questionnaire answers have been saved
-        isSaved = False
-        isDemo = sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys()
-        question_numbers_list =[]
-        with self.session_scope() as session:
-            try:
-                q_events, s_events  = self._questionnaire_query(session, sender_id, questionnaire_name)
-            except:
-                q_events = None
-            if q_events:
-                question_events = [json.loads(event.data) for event in q_events]
-                slot_events = [json.loads(event.data) for event in s_events]
-                # answers_data = UniqueDict()
-                answers_data = []
+    #     if self.event_broker:
+    #         self.stream_events(tracker)
 
-                for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
-                    # print(question_data, slot_data)
-                    if i==0:
-                        init_timestamp = slot_data.get("timestamp")
-                    timestamp = slot_data.get("timestamp")
+    #     #boolean to know when any questionnaire answers have been saved
+    #     isSaved = False
+    #     isDemo = sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys()
+    #     question_numbers_list =[]
+    #     with self.session_scope() as session:
+    #         try:
+    #             q_events, s_events  = self._questionnaire_query(session, sender_id, questionnaire_name)
+    #         except:
+    #             q_events = None
+    #         if q_events:
+    #             question_events = [json.loads(event.data) for event in q_events]
+    #             slot_events = [json.loads(event.data) for event in s_events]
+    #             # answers_data = UniqueDict()
+    #             answers_data = []
 
-                    try:
-                        question_number = slot_data.get("name").split("Q")[1]
-                        #if question_number in question_numbers_list:
+    #             for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
+    #                 # print(question_data, slot_data)
+    #                 if i==0:
+    #                     init_timestamp = slot_data.get("timestamp")
+    #                 timestamp = slot_data.get("timestamp")
 
-                        # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
-                        answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
-                    except:
-                        if questionnaire_name in ["activLim", "dizzNbalance"]:
-                            question_number = slot_data.get("name").split(questionnaire_name + "_")[1]
-                    # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
-                    answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
+    #                 try:
+    #                     question_number = slot_data.get("name").split("Q")[1]
+    #                     #if question_number in question_numbers_list:
 
-                print(answers_data)
-                #TODO: only have unique question numbers
-                try:
-                    database_entry, _ = self.checkQuestionnaireTimelimit(session, sender_id, init_timestamp, questionnaire_name)
-                    #database_entry = self._questionnaire_state_query(session, sender_id, init_timestamp, questionnaire_name).first()
-                    if database_entry.state=="to_be_stored":
-                        if not database_entry.answers:
-                            database_entry.timestamp_start=init_timestamp
-                            database_entry.answers = json.dumps(answers_data)                       
-                        else:
-                            previous_answers = json.loads(database_entry.answers)
-                            answers_data.extend(previous_answers)
-                            database_entry.answers = json.dumps(answers_data)                    
-                    elif database_entry.state=="available":
-                        database_entry.timestamp_start=init_timestamp
-                        database_entry.answers = json.dumps(answers_data)
-                    elif database_entry.state=="pending":
-                        previous_answers = json.loads(database_entry.answers)
-                        answers_data.extend(previous_answers)
-                        database_entry.answers = json.dumps(answers_data)#json.dumps({key: value for (key, value) in answers_data.items()})
-                    if isFinished:
-                        database_entry.timestamp_end=timestamp
-                        database_entry.state="finished"
+    #                     # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
+    #                     answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
+    #                 except:
+    #                     if questionnaire_name in ["activLim", "dizzNbalance"]:
+    #                         question_number = slot_data.get("name").split(questionnaire_name + "_")[1]
+    #                 # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
+    #                 answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
 
-                        # store score
-                        if questionnaire_name in ["psqi", "muscletone"] and not self.checkIfTestingID(sender_id):
-                            self.sendQuestionnaireScoreToOntology(session, sender_id, questionnaire_name, database_entry)
+    #             print(answers_data)
+
+    #             try:
+    #                 database_entry, _ = self.checkQuestionnaireTimelimit(session, sender_id, init_timestamp, questionnaire_name)
+    #                 #database_entry = self._questionnaire_state_query(session, sender_id, init_timestamp, questionnaire_name).first()
+    #                 if database_entry.state=="to_be_stored":
+    #                     if not database_entry.answers:
+    #                         database_entry.timestamp_start=init_timestamp
+    #                         database_entry.answers = json.dumps(answers_data)                       
+    #                     else:
+    #                         previous_answers = json.loads(database_entry.answers)
+    #                         answers_data.extend(previous_answers)
+    #                         database_entry.answers = json.dumps(answers_data)                    
+    #                 elif database_entry.state=="available":
+    #                     database_entry.timestamp_start=init_timestamp
+    #                     database_entry.answers = json.dumps(answers_data)
+    #                 elif database_entry.state=="pending":
+    #                     previous_answers = json.loads(database_entry.answers)
+    #                     answers_data.extend(previous_answers)
+    #                     database_entry.answers = json.dumps(answers_data)#json.dumps({key: value for (key, value) in answers_data.items()})
+    #                 if isFinished:
+    #                     database_entry.timestamp_end=timestamp
+    #                     database_entry.state="finished"
+
+    #                     # store score
+    #                     if questionnaire_name in ["psqi", "muscletone"] and not self.checkIfTestingID(sender_id):
+    #                         self.sendQuestionnaireScoreToOntology(session, sender_id, questionnaire_name, database_entry)
                                                     
-                        #doing this everyday for the msdomain_daily might not be so efficient
-                        if isDemo or self.getUserUsecase(sender_id).upper() == "STROKE":
-                            new_timestamp = timestamp
-                        else:
-                            tz_timezone = pytz.timezone(self.getUserTimezone(sender_id))
-                            last_availability = datetime.datetime.fromtimestamp(database_entry.available_at, tz=tz_timezone)
-                            new_timestamp = getNextQuestTimestamp(schedule_df, questionnaire_name, last_availability, tz_timezone)
+    #                     #doing this everyday for the msdomain_daily might not be so efficient
+    #                     if isDemo or self.getUserUsecase(sender_id).upper() == "STROKE":
+    #                         new_timestamp = timestamp
+    #                     else:
+    #                         tz_timezone = pytz.timezone(self.getUserTimezone(sender_id))
+    #                         last_availability = datetime.datetime.fromtimestamp(database_entry.available_at, tz=tz_timezone)
+    #                         new_timestamp = getNextQuestTimestamp(schedule_df, questionnaire_name, last_availability, tz_timezone)
                     
-                        # create new row in database
-                        session.add(
-                            self.SQLQuestState(
-                            sender_id=sender_id,
-                            questionnaire_name=questionnaire_name,
-                            available_at=new_timestamp,
-                            state="available",
-                            timestamp_start=None,
-                            timestamp_end=None,
-                            answers=None,                          
-                            )
-                        )
+    #                     # create new row in database
+    #                     session.add(
+    #                         self.SQLQuestState(
+    #                         sender_id=sender_id,
+    #                         questionnaire_name=questionnaire_name,
+    #                         available_at=new_timestamp,
+    #                         state="available",
+    #                         timestamp_start=None,
+    #                         timestamp_end=None,
+    #                         answers=None,                          
+    #                         )
+    #                     )
 
-                        # previous version where we keep the same database entry and change the available_at timestamp
-                        # new_day = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
-                        # database_entry.available_at= new_day
-                        # database_entry.state="available"
-                        # database_entry.timestamp_start=None
-                        # database_entry.timestamp_end=None # this seems to not be used
-                        # database_entry.answers = None
-                    else:
-                        database_entry.state="pending"
-                        database_entry.timestamp_end=timestamp
-                    isSaved = True
-                except:
-                    print("Error: no such entry in database table 'questionnaires_state'.")
+    #                     # previous version where we keep the same database entry and change the available_at timestamp
+    #                     # new_day = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
+    #                     # database_entry.available_at= new_day
+    #                     # database_entry.state="available"
+    #                     # database_entry.timestamp_start=None
+    #                     # database_entry.timestamp_end=None # this seems to not be used
+    #                     # database_entry.answers = None
+    #                 else:
+    #                     database_entry.state="pending"
+    #                     database_entry.timestamp_end=timestamp
+    #                 isSaved = True
+    #             except:
+    #                 print("Error: no such entry in database table 'questionnaires_state'.")
 
-            session.commit()
+    #         session.commit()
 
-        logger.debug(f"Questionnaire answers with sender_id '{tracker.sender_id}' stored to database")
-        return isSaved, isDemo
+    #     logger.debug(f"Questionnaire answers with sender_id '{tracker.sender_id}' stored to database")
+    #     return isSaved, isDemo
 
     def getSpecificQuestionnaireAvailability(self, sender_id, current_timestamp, questionnaire_name) -> bool:
         with self.session_scope() as session:
             try: 
-                _,_ = self.checkQuestionnaireTimelimit(session, sender_id, current_timestamp, questionnaire_name)
+                _ = self.checkQuestionnaireTimelimit(session, sender_id, current_timestamp, questionnaire_name)
                 entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first() 
                 if entry is not None and entry.state != "to_be_stored":
                     return True, entry.state
@@ -1107,6 +1101,12 @@ class CustomSQLTrackerStore(TrackerStore):
                     return False, None
 
     def setQuestionnaireTempState(self, sender_id, current_timestamp, questionnaire_name):
+        """
+        This function stores questionnaire's temporal state.
+
+        ===TO BE REMOVED===
+        Nor here neither in actions.py is used.
+        """
         with self.session_scope() as session:
             try: 
                 entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first()
@@ -1123,10 +1123,14 @@ class CustomSQLTrackerStore(TrackerStore):
                 return self._first_time_of_day_query(session, sender_id) 
 
     def checkQuestionnaireTimelimit(self, session, sender_id, current_timestamp, questionnaire_name):
-        passedTheLimit = False
+        """
+        ===ADD DOCUMENTATION HERE===
+        """
+
         entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first()
         if entry.state == "to_be_stored":
-            return entry, passedTheLimit
+            return entry
+
         # this step might need to happen somewhere else, myb automatically
         # checks whether 1 or 2 days has passed after the questionnaire was first available
         usecase = sender_id[:len(sender_id)-2].upper()
@@ -1140,7 +1144,6 @@ class CustomSQLTrackerStore(TrackerStore):
                 
             if time_limit < current_timestamp:
                 entry.state = "incomplete"
-                passedTheLimit = True
 
                 # create new database entry
                 # doing this everyday for the msdomain_daily might not be so efficient
@@ -1162,7 +1165,7 @@ class CustomSQLTrackerStore(TrackerStore):
                     )
                 )
         session.commit()
-        return entry, passedTheLimit
+        return entry
 
     def getAvailableQuestionnaires(self, sender_id, current_timestamp) -> List[str]:
         """ Retrieve current available questionnaires"""
@@ -1170,14 +1173,19 @@ class CustomSQLTrackerStore(TrackerStore):
         available_questionnaires, reset_questionnaires = [],[]
         with self.session_scope() as session:
             database_entries = self._questionnaire_state_query(session, sender_id, current_timestamp).all()
+            print(len(database_entries))
             if len(database_entries) == 0:
                 return available_questionnaires, reset_questionnaires
             for entry in database_entries:
                 if entry.state == "to_be_stored":
                     continue
+
                 # this step might need to happen somewhere else, myb automatically
                 # checks whether 1 or 2 days has passed after the questionnaire was first available
                 usecase = sender_id[:len(sender_id)-2].upper()
+
+                # the first if-branch checks whether the id is a demoID (starting from ms or stroke or is an official
+                # STROKE id given by WCS. If it is neither cases then it should be an official MS id given by WCS.
                 if usecase not in questionnaire_per_usecase.keys() and self.getUserUsecase(sender_id).upper() != "STROKE":
                     df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == entry.questionnaire_name]
                     lifespanInDays = int(df_row["lifespanInDays"].values[0])
@@ -1215,8 +1223,8 @@ class CustomSQLTrackerStore(TrackerStore):
                     # entry.timestamp_end=None
                     # entry.answers = None
 
-                    # questionnaires that are passed the time limit need to be reset
-                    # reset_questionnaires.append(entry.questionnaire_name)
+                        # questionnaires that are passed the time limit need to be reset
+                        reset_questionnaires.append(entry.questionnaire_name)
                     else:
                         # when the questionnaire becomes available again, reset its slots 
                         if entry.state == "available":
@@ -1261,6 +1269,55 @@ class CustomSQLTrackerStore(TrackerStore):
 
 
     def saveToOntology(self, sender_id):
+        """
+        Data send to ontology should hold a specific format given below.
+
+        {
+            "user_id": "b292b4c3-7d36-4991-a1b2-5055f16489bc",
+            "source": "Conversational Agent",
+            "observations": [
+                {
+                "sentiment_scores": [
+                    {
+                    "sentiment_class": "Positive",
+                    "sentiment_score": 87.0
+                    },
+                    {
+                    "sentiment_class": "Neutral",
+                    "sentiment_score": 2.0
+                    },
+                    {
+                    "sentiment_class": "Negative",
+                    "sentiment_score": 11.0
+                    }
+                ],
+                "timestamp": "2022-05-17T16:19:55Z",
+                "explanation": "I feel great",
+                "on_dashboard": "False"
+                },
+                {
+                "sentiment_scores": [
+                    {
+                    "sentiment_class": "Positive",
+                    "sentiment_score": 3.0
+                    },
+                    {
+                    "sentiment_class": "Neutral",
+                    "sentiment_score": 27.0
+                    },
+                    {
+                    "sentiment_class": "Negative",
+                    "sentiment_score": 70.0
+                    }
+                ],
+                "timestamp": "2022-05-17T16:37:34Z",
+                "explanation": "I fell down the stairs yesterday",
+                "on_dashboard": "True"
+                }
+            ]
+        }
+        """
+
         ontology_data = {"user_id": sender_id, "source": "Conversational Agent", "observations" : []}
         with self.session_scope() as session:
             message_entries, include_in_report_intents = self._sentiment_query(session, sender_id)
@@ -1271,7 +1328,6 @@ class CustomSQLTrackerStore(TrackerStore):
                 if type == "message":
                     message_data = json.loads(message.data)
                     message_sentiment = message_data.get("parse_data", {}).get("entities", {})[1].get("value") # returns a list of dicts
-                    #sentiment = json.loads(message_data.get("parse_data", {}).get("entities", {})[1].get("value")[0])
                     timestamp = datetime.datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
                     message_text = message.message
                 elif type == "slot":
@@ -1286,18 +1342,23 @@ class CustomSQLTrackerStore(TrackerStore):
                 temp_sentiment = temp_sentiment.replace("negative", "Negative")
                 temp_sentiment = temp_sentiment.replace("neutral", "Neutral")
 
+                print(25*"=")
+                print(f"Intent to report is {intent}")
+
                 data = {"sentiment_scores": json.loads(temp_sentiment),
                     "timestamp": timestamp,
                     "explanation": message_text,
                     "on_dashboard": intent_to_bool[intent]}
                 ontology_data["observations"].append(data)
             session.commit()
+            
             print(f"Saved data to ontology {ontology_data}")
         ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
         response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30)
         response.close()
         print(f"Response from POST data to ontology {response}")
-
+        print(25*"=")
+        
     def registerUserIDdemo(self, sender_id, usecase):
         """ Checks if the specific user id is in the database. If not it adds it"""
         with self.session_scope() as session:
@@ -1507,7 +1568,7 @@ class CustomSQLTrackerStore(TrackerStore):
             "submission_date": "yyyy-MM-dd",
             "questionnaire_answers": [{
                     "number": "String",
-                    "question": "String",
+                    "question": "String",   
                     "answer": "String"
             }]
         }
@@ -1537,7 +1598,7 @@ class CustomSQLTrackerStore(TrackerStore):
                     "number": "Symptoms",
                     "question": "SYMPTOMS: Select all that apply and press send:",
                     "answer": areNewSymptoms}]
-
+        print(10*"="+" Sending questionaire data to WCS "+10*"=")
         print(questionnaire_data)
         wcs_status_endpoint= endpoints_df[endpoints_df["name"]=="WCS_STATUS_ENDPOINT"]["endpoint"].values[0]
         response = requests.post(wcs_status_endpoint, json=questionnaire_data, timeout=30)
@@ -1644,7 +1705,7 @@ def getDSTawareDate(init_date, new_date, tz_timezone):
     return new_date  
 
 if __name__ == "__main__":
-    ts = CustomSQLTrackerStore(db="after-meeting-demo.db")
+    ts = CustomSQLTrackerStore(db="demo-fism.db")
     # print(ts.sendQuestionnaireStatus("631327a2-0b50-417a-8c1d-625d84c5114a", "STROKEdomainIV", "COMPLETED"))
 
     # print(datetime.datetime.now().timestamp())
@@ -1653,26 +1714,14 @@ if __name__ == "__main__":
     # q_day = first_monday + datetime.timedelta(days=5, weeks=max(0,4-1))
     # print(q_day.timestamp())
 
-    # with ts.session_scope() as session:
-        # d = ts.checkQuestionnaireTimelimit(session, "9f973de8-3c7d-452c-8161-b9f6a0461316", datetime.datetime.now().timestamp(), "MSdomainI")
-        # print(d)
-        # print(ts._questionnaire_score_query(session, "stroke98", "muscletone"))
-        # question_events = ts._questionnaire_state_query(session, "9f973de8-3c7d-452c-8161-b9f6a0461316", q_day).all()
-        # print(question_events)
-        #ts.sendQuestionnaireScoreToOntology("stroke97", "muscletone")
-        #question_events = ts._questionnaire_state_query(session, "stroke05", now, "activLim")
-        #print(question_events.first().state)
-        #q = [json.loads(event.data) for event in question_events]
-        #print(q)
-        #question_events, slot = ts._questionnaire_query(session, "ms11", "MSdomainII_3M")
-        # print([json.loads(event.data) for event in question_events])
-        # print([json.loads(event.data) for event in slot])
-        #print(ts._first_time_of_day_query(session, "stroke23"))
+    with ts.session_scope() as session:
+        sender_id = "e5e5d505-b5f9-408b-82db-20d8eb3a4e14"
+        current_timestamp = datetime.datetime.now().timestamp()
+        print(ts._questionnaire_state_query(session, sender_id, current_timestamp).all())
+        print(ts.checkQuestionnaireTimelimit(session, sender_id, current_timestamp, "MSdomainIV_Daily"))
+        print(ts.getAvailableQuestionnaires(sender_id, current_timestamp))
 
-        #answers, previous_answers = ts._questionnaire_state_query(session, "stroke04", now, "activLim")
-        #print(previous_answers)
-
-        #ts.saveToOntology("ms24")
-        #ts._sentiment_query(session, "stroke98")
-        #ts.sendQuestionnaireStatus("stroke01", "dizzNbalance", "COMPLETED")
-        #ts.getDizzinessNbalanceNewSymptoms("stroke01")
+        # message_entries, report = ts._sentiment_query(session, sender_id)
+        # print(message_entries)
+        # print(25*"=")
+        # print(report)

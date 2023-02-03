@@ -506,7 +506,25 @@ stories:
                   - action: action_calculate_psqi_score
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
-        #TODO Add PSQI Questionnaire - Interruption scenarios
+
+        - story: PSQI Questionnaire - Interruption - Bot Challenge
+          steps:
+                  - intent: psqi_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: psqi
+                  - action: action_utter_starting_questionnaire
+                  - action: psqi_form
+                  - active_loop: psqi_form
+                  - intent: bot_challenge
+                  - action: utter_iamabot
+                  - action: psqi_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_calculate_psqi_score
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
         - story: Dizziness and Balance Questionnaire - fully completed
           steps:
@@ -560,7 +578,24 @@ stories:
                   - active_loop: null
                   - action: action_questionnaire_cancelled
                   - action: action_options_menu_extra
-        #TODO Add DnB Interruption scenarios
+
+        - story: Dizziness and Balance Questionnaire - Interruption - Bot Challenge
+          steps:
+                  - intent: dizzNbalance_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: dizzNbalance
+                  - action: action_utter_starting_questionnaire
+                  - action: dizzNbalance_form
+                  - active_loop: dizzNbalance_form
+                  - intent: bot_challenge
+                  - action: utter_iamabot
+                  - action: dizzNbalance_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
         - story: Eating Habits Questionnaire - fully completed
           steps:
@@ -614,7 +649,24 @@ stories:
                   - active_loop: null
                   - action: action_questionnaire_cancelled
                   - action: action_options_menu_extra
-        #TODO Add Eating habits interruption scenarios
+
+        - story: Eating Habits Questionnaire - Interruption - Bot Challenge
+          steps:
+                  - intent: eatinghabits_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: eatinghabits
+                  - action: action_utter_starting_questionnaire
+                  - action: eatinghabits_form
+                  - active_loop: eatinghabits_form
+                  - intent: bot_challenge
+                  - action: utter_iamabot
+                  - action: eatinghabits_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
         - story: Muscle Tone Questionnaire - fully completed
           steps:
@@ -668,7 +720,24 @@ stories:
                   - active_loop: null
                   - action: action_questionnaire_cancelled
                   - action: action_options_menu_extra
-        #TODO Add Muscletone interruption scenarios
+
+        - story: Muscle Tone Questionnaire - Interruption - Bot Challenge
+          steps:
+                  - intent: muscletone_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: muscletone
+                  - action: action_utter_starting_questionnaire
+                  - action: muscletone_form
+                  - active_loop: muscletone_form
+                  - intent: bot_challenge
+                  - action: utter_iamabot
+                  - action: muscletone_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
         - story: Stroke Domain III relevant questions - fully completed
           steps:
@@ -767,7 +836,24 @@ stories:
                   - active_loop: null
                   - action: action_questionnaire_cancelled
                   - action: action_options_menu_extra
-        #TODO Add Coast interruption scenarios
+
+        - story: Coast Questionnaire - Interruption - Bot Challenge
+          steps:
+                  - intent: coast_start
+                  - action: action_set_questionnaire_slot
+                  - slot_was_set:
+                            - questionnaire: coast
+                  - action: action_utter_starting_questionnaire
+                  - action: coast_form
+                  - active_loop: coast_form
+                  - intent: bot_challenge
+                  - action: utter_iamabot
+                  - action: coast_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_questionnaire_completed
+                  - action: action_get_available_questionnaires
 
         - story: MS Domain V relevant questions - fully completed
           steps:

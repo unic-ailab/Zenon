@@ -25,6 +25,7 @@ __pycache__/
 ZenonEnv/
 train_test_split/
 results/
+.vscode
 
 # Files in folders
 actions/__pycache__

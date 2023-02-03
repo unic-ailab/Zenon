@@ -453,7 +453,7 @@ class ActionContinueLatestQuestionnaire(Action):
 
             if isAvailable: 
                 q_name = get_text_from_lang(tracker, questionnaire_abbreviations[q_abbreviation])
-                #TODO: fix translation
+                #TODO fix translation
                 text = get_text_from_lang(
                     tracker,
                     [
@@ -513,14 +513,14 @@ class ActionOptionsMenu(Action):
             buttons = get_buttons_from_lang(
                 tracker,
                 options_menu_buttons,
-                # TODO: maybe add health_related_report as option
+                #TODO maybe add health_related_report as option
                 ["/available_questionnaires", "/health_update_menu", "/tutorials", "/report_tech_issue"]
             )
         else:
             buttons = get_buttons_from_lang(
                 tracker,
                 options_menu_buttons_no_reporting,
-                # TODO: maybe add health_related_report as option
+                #TODO maybe add health_related_report as option
                 ["/available_questionnaires", "/health_update_menu", "/tutorials"]
             )
         dispatcher.utter_message(text=text, buttons=buttons)
@@ -550,20 +550,20 @@ class ActionOptionsMenuExtra(Action):
             buttons = get_buttons_from_lang(
                 tracker,
                 options_menu_buttons,
-                # TODO: maybe add health_related_report as option
+                #TODO maybe add health_related_report as option
                 ["/available_questionnaires", "/health_update_menu", "/tutorials", "/report_tech_issue"]
             )
         else:
             buttons = get_buttons_from_lang(
                 tracker,
                 options_menu_buttons_no_reporting,
-                # TODO: maybe add health_related_report as option
+                #TODO maybe add health_related_report as option
                 ["/available_questionnaires", "/health_update_menu", "/tutorials"]
             )
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-#TODO: translate
+#TODO translate
 class ActionConfirmTechIssue(Action):
     def name(self) -> Text:
         return "action_confirm_tech_issue"
@@ -584,7 +584,7 @@ class ActionConfirmTechIssue(Action):
         dispatcher.utter_message(text=text)
         return []
 
-#TODO: translate
+#TODO translate
 class ActionHealthUpdateMenu(Action):
     def name(self) -> Text:
         return "action_health_update_menu"
@@ -610,7 +610,7 @@ class ActionHealthUpdateMenu(Action):
                 )
             dispatcher.utter_message(text=text, buttons=buttons)
         else:
-            #TODO: translate
+            #TODO translate
             text = get_text_from_lang(
                 tracker, 
                 [
@@ -624,7 +624,7 @@ class ActionHealthUpdateMenu(Action):
         return []
 
 
-#TODO: translate
+#TODO translate
 class ActionSleepStatus(Action):
     def name(self) -> Text:
         return "action_get_sleep_status_fitbit"
@@ -986,7 +986,7 @@ class ActionOntologyStoreSentiment(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        #customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
+        customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
         return [FollowupAction("action_options_menu")]
 
 class ActionQuestionnaireCancelled(Action):
@@ -1050,7 +1050,7 @@ class ActionUtterStartingQuestionnaire(Action):
             else:
                 return [FollowupAction("{}_form".format(q_abbreviation)), SlotSet("q_starting_time", q_starting_time)]
         else:
-            #TODO: probably change this text
+            #TODO probably change this text
             text = get_text_from_lang(
                 tracker,
                 [

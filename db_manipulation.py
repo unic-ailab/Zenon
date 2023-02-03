@@ -54,4 +54,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     userid = args.userid
 
-    delete_entry(userid)
+    insert_data(userid)
