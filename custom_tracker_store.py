@@ -879,16 +879,17 @@ class CustomSQLTrackerStore(TrackerStore):
             
             submission_timestamp = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).timestamp()
 
+            #TODO The next 2 "for" loops possibly can be combined in 1
             for slot_name in domain['slots'].keys():
-                if questionnaire_abbreviation in slot_name:# and tracker.get_slot(slot_name) is not None:
+                if questionnaire_abbreviation in slot_name:
+                    print(f"Q_abbr: {questionnaire_abbreviation} in slot_name: {slot_name}")
                     slots_to_reset.append(slot_name)
 
-            #TODO check if this gets all the latest events in the correct chronological order, latest events first?
-            events = tracker.events
             for slot_name in slots_to_reset:
                 if questionnaire_abbreviation in ["activLim", "dizzNbalance"]:
                     question_number = slot_name.split(questionnaire_abbreviation + "_")[1]
                 else:
+                    print(f"slot_name: {slot_name}")
                     question_number = slot_name.split("Q")[1] 
 
                 # store answers without storing the questions
@@ -896,21 +897,6 @@ class CustomSQLTrackerStore(TrackerStore):
                 answers_data.append({"question_id": question_number, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
                 
                 answers_data_wcs_format.append({"number": question_number, "answer": tracker.get_slot(slot_name)})
-
-                # for event in events:
-                #     if event["event"] == "bot":
-                #         try:
-                #             # Note: not all questions can be taken from "utter_action", some are in "text"
-                #             name = event["metadata"]["utter_action"]
-                #             if name == "utter_ask_" + slot_name:
-                #                 question = event["metadata"]["utter_action"]
-                #                 # timestamp = event["timestamp"]
-                #                 # question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
-                #                 # answers_data.append({"question_id": question_number, "question": question, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
-                                
-
-                #         except:
-                #             pass
 
             partner, disease = self.getUserDetails(sender_id)
             if questionnaire_abbreviation in ["psqi", "muscletone"]:
