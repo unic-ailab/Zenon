@@ -24,15 +24,13 @@ pipeline:
 
 policies:
   - name: "MemoizationPolicy"
-    max_history: 8
   - name: "TEDPolicy"
-    max_history: 8
+    max_history: 12
     epochs: 300
     constrain_similarities: true
+    use_gpu: true
   # - name: "UnexpecTEDIntentPolicy"
   #   max_history: 6
   #   epochs: 200
   - name: "RulePolicy"
-    core_fallback_threshold: 0.3
     core_fallback_action_name: "utter_default"
-    enable_fallback_prediction: True
