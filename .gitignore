@@ -18,6 +18,7 @@ alameda_endpoints.csv
 requirements_pip.txt
 requirements_pip_sm.txt
 requirements.txt
+unic_iam_credentials.json
 
 # Folders
 __pycache__/

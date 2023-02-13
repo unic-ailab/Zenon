@@ -51,6 +51,8 @@ from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 
 from rasa.core.tracker_store import TrackerStore, _create_sequence, create_engine_kwargs, ensure_schema_exists
 
+from .connect_to_iam import BearerAuth, IAMLogin, VerifyAuthentication
+
 
 logger = logging.getLogger(__name__)
 
