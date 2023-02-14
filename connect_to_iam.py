@@ -34,9 +34,10 @@ class IAMLogin(object):
             print("Successfully log in to IAM component")
             data = json.loads(response.text)
 
-            return data["access_token"], data["refresh_token"]
+            return response.status_code, data["access_token"], data["refresh_token"]
         elif response.status_code == 401:
             print("****IAM log in failed****")
+            return response.status_code, data["access_token"], data["refresh_token"]
 
 class VerifyAuthentication(object):
     """Verify token received from WM"""

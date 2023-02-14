@@ -783,6 +783,18 @@ class ActionUtterGreet(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
+        events = tracker.current_state()["events"]
+
+        for i in range(len(events)):
+            if events[i]["event"] == "slot" and "value" in events[i].keys():
+                try:
+                    access_token = events[i]["value"]["accessToken"]
+                except KeyError:
+                    access_token = "null"
+                print(access_token)
+                break
+
+
         text = get_text_from_lang(
             tracker,
             [

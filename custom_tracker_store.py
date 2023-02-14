@@ -51,7 +51,7 @@ from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 
 from rasa.core.tracker_store import TrackerStore, _create_sequence, create_engine_kwargs, ensure_schema_exists
 
-from .connect_to_iam import BearerAuth, IAMLogin, VerifyAuthentication
+from connect_to_iam import BearerAuth, IAMLogin, VerifyAuthentication
 
 
 logger = logging.getLogger(__name__)
@@ -1306,6 +1306,10 @@ class CustomSQLTrackerStore(TrackerStore):
         }
         """
 
+        # Perform Login against IAM
+        status_code, access_token, refresh_token = IAMLogin().login()
+
+        # Build ontology payload
         ontology_data = {"user_id": sender_id, "source": "Conversational Agent", "observations" : []}
         with self.session_scope() as session:
             message_entries, include_in_report_intents = self._sentiment_query(session, sender_id)
@@ -1341,11 +1345,20 @@ class CustomSQLTrackerStore(TrackerStore):
             session.commit()
             
             print(f"Saved data to ontology {ontology_data}")
-        ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
-        response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30)
-        response.close()
-        print(f"Response from POST data to ontology {response}")
-        print(25*"=")
+
+        # Check the status_code from IAM component
+        # If it is 200 we send the data to ontology,
+        # adding the access_token in request's headers
+        if status_code == 200:
+            ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
+            headers = {"accessToken": access_token}
+            response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, headers=headers)
+            response.close()
+            print(f"Response from POST data to ontology {response}")
+            print(25*"=")
+        elif status_code == 401:
+            print(25*"*")
+            print(f"Communication with semKG failed - Response [{status_code}]")
         
     def registerUserIDdemo(self, sender_id, usecase):
         """ Checks if the specific user id is in the database. If not it adds it"""
