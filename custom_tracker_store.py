@@ -964,118 +964,6 @@ class CustomSQLTrackerStore(TrackerStore):
         logger.debug(f"Questionnaire answers with sender_id '{tracker.sender_id}' stored to database")
         return slots_to_reset
 
-    # def saveQuestionnaireAnswers_old(self, sender_id, questionnaire_name, isFinished: bool, tracker: DialogueStateTracker) -> None:
-    #     """
-    #     Update database with answers from a specific questionnaire.
-
-    #     ===TO BE REMOVED===
-    #     It is no longer used.
-    #     """
-
-    #     if self.event_broker:
-    #         self.stream_events(tracker)
-
-    #     #boolean to know when any questionnaire answers have been saved
-    #     isSaved = False
-    #     isDemo = sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys()
-    #     question_numbers_list =[]
-    #     with self.session_scope() as session:
-    #         try:
-    #             q_events, s_events  = self._questionnaire_query(session, sender_id, questionnaire_name)
-    #         except:
-    #             q_events = None
-    #         if q_events:
-    #             question_events = [json.loads(event.data) for event in q_events]
-    #             slot_events = [json.loads(event.data) for event in s_events]
-    #             # answers_data = UniqueDict()
-    #             answers_data = []
-
-    #             for i, (question_data, slot_data) in enumerate(zip(question_events, slot_events)):
-    #                 # print(question_data, slot_data)
-    #                 if i==0:
-    #                     init_timestamp = slot_data.get("timestamp")
-    #                 timestamp = slot_data.get("timestamp")
-
-    #                 try:
-    #                     question_number = slot_data.get("name").split("Q")[1]
-    #                     #if question_number in question_numbers_list:
-
-    #                     # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
-    #                     answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
-    #                 except:
-    #                     if questionnaire_name in ["activLim", "dizzNbalance"]:
-    #                         question_number = slot_data.get("name").split(questionnaire_name + "_")[1]
-    #                 # example: {"number": "1", "question": "How difficult is it..?", "answer": "very", "timestamp": ""}
-    #                 answers_data.append({"number": question_number, "question": question_data.get("text"), "answer": slot_data.get("value"), "timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
-
-    #             print(answers_data)
-
-    #             try:
-    #                 database_entry, _ = self.checkQuestionnaireTimelimit(session, sender_id, init_timestamp, questionnaire_name)
-    #                 #database_entry = self._questionnaire_state_query(session, sender_id, init_timestamp, questionnaire_name).first()
-    #                 if database_entry.state=="to_be_stored":
-    #                     if not database_entry.answers:
-    #                         database_entry.timestamp_start=init_timestamp
-    #                         database_entry.answers = json.dumps(answers_data)                       
-    #                     else:
-    #                         previous_answers = json.loads(database_entry.answers)
-    #                         answers_data.extend(previous_answers)
-    #                         database_entry.answers = json.dumps(answers_data)                    
-    #                 elif database_entry.state=="available":
-    #                     database_entry.timestamp_start=init_timestamp
-    #                     database_entry.answers = json.dumps(answers_data)
-    #                 elif database_entry.state=="pending":
-    #                     previous_answers = json.loads(database_entry.answers)
-    #                     answers_data.extend(previous_answers)
-    #                     database_entry.answers = json.dumps(answers_data)#json.dumps({key: value for (key, value) in answers_data.items()})
-    #                 if isFinished:
-    #                     database_entry.timestamp_end=timestamp
-    #                     database_entry.state="finished"
-
-    #                     # store score
-    #                     if questionnaire_name in ["psqi", "muscletone"] and not self.checkIfTestingID(sender_id):
-    #                         self.sendQuestionnaireScoreToOntology(session, sender_id, questionnaire_name, database_entry)
-                                                    
-    #                     #doing this everyday for the msdomain_daily might not be so efficient
-    #                     if isDemo or self.getUserUsecase(sender_id).upper() == "STROKE":
-    #                         new_timestamp = timestamp
-    #                     else:
-    #                         tz_timezone = pytz.timezone(self.getUserTimezone(sender_id))
-    #                         last_availability = datetime.datetime.fromtimestamp(database_entry.available_at, tz=tz_timezone)
-    #                         new_timestamp = getNextQuestTimestamp(schedule_df, questionnaire_name, last_availability, tz_timezone)
-                    
-    #                     # create new row in database
-    #                     session.add(
-    #                         self.SQLQuestState(
-    #                         sender_id=sender_id,
-    #                         questionnaire_name=questionnaire_name,
-    #                         available_at=new_timestamp,
-    #                         state="available",
-    #                         timestamp_start=None,
-    #                         timestamp_end=None,
-    #                         answers=None,                          
-    #                         )
-    #                     )
-
-    #                     # previous version where we keep the same database entry and change the available_at timestamp
-    #                     # new_day = (datetime.datetime.fromtimestamp(database_entry.available_at)+datetime.timedelta(days=3)).timestamp()
-    #                     # database_entry.available_at= new_day
-    #                     # database_entry.state="available"
-    #                     # database_entry.timestamp_start=None
-    #                     # database_entry.timestamp_end=None # this seems to not be used
-    #                     # database_entry.answers = None
-    #                 else:
-    #                     database_entry.state="pending"
-    #                     database_entry.timestamp_end=timestamp
-    #                 isSaved = True
-    #             except:
-    #                 print("Error: no such entry in database table 'questionnaires_state'.")
-
-    #         session.commit()
-
-    #     logger.debug(f"Questionnaire answers with sender_id '{tracker.sender_id}' stored to database")
-    #     return isSaved, isDemo
-
     def getSpecificQuestionnaireAvailability(self, sender_id, current_timestamp, questionnaire_name) -> bool:
         with self.session_scope() as session:
             try: 
@@ -1203,14 +1091,6 @@ class CustomSQLTrackerStore(TrackerStore):
                             )
                         )
 
-                    # previous version where we keep the same database entry and change the available_at timestamp
-                    # new_day = (datetime.datetime.fromtimestamp(entry.available_at)+datetime.timedelta(days=3)).timestamp()
-                    # entry.available_at= new_day
-                    # entry.state="available"
-                    # entry.timestamp_start=None
-                    # entry.timestamp_end=None
-                    # entry.answers = None
-
                         # questionnaires that are passed the time limit need to be reset
                         reset_questionnaires.append(entry.questionnaire_name)
                     else:
@@ -1312,6 +1192,7 @@ class CustomSQLTrackerStore(TrackerStore):
         # Build ontology payload
         ontology_data = {"user_id": sender_id, "source": "Conversational Agent", "observations" : []}
         with self.session_scope() as session:
+            #TODO Even if intent is affirm the intent_to_bool turns out to be `False`
             message_entries, include_in_report_intents = self._sentiment_query(session, sender_id)
 
             intent_to_bool = {"affirm": True, "deny": False, "cancel": False}
@@ -1351,8 +1232,7 @@ class CustomSQLTrackerStore(TrackerStore):
         # adding the access_token in request's headers
         if status_code == 200:
             ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
-            headers = {"accessToken": access_token}
-            response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, headers=headers)
+            response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(access_token))
             response.close()
             print(f"Response from POST data to ontology {response}")
             print(25*"=")

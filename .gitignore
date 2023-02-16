@@ -19,6 +19,7 @@ requirements_pip.txt
 requirements_pip_sm.txt
 requirements.txt
 unic_iam_credentials.json
+archived_stories.yml
 
 # Folders
 __pycache__/

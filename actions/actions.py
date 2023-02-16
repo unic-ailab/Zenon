@@ -21,7 +21,8 @@ from rasa_sdk.events import SlotSet, FollowupAction, UserUttered
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormValidationAction
 
-import sys        
+import sys
+from connect_to_iam import BearerAuth, IAMLogin, VerifyAuthentication        
 sys.path.append(os.getcwd().replace("\\","/"))
 from custom_tracker_store import CustomSQLTrackerStore
 
@@ -783,8 +784,14 @@ class ActionUtterGreet(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
+        # Verify token received from WM
+        #TODO this maybe is better to happen within app, NOT here
+
+        # Get all events from the tracker for the current state
         events = tracker.current_state()["events"]
 
+        # Find the first `slot` event that contains the key `value`
+        # and holds an `accessToken` key. Get this value.
         for i in range(len(events)):
             if events[i]["event"] == "slot" and "value" in events[i].keys():
                 try:
@@ -793,35 +800,42 @@ class ActionUtterGreet(Action):
                     access_token = "null"
                 print(access_token)
                 break
+        
+        # Perform verification for the received `accessToken`
+        status_code = VerifyAuthentication().verification(access_token)
 
-
-        text = get_text_from_lang(
-            tracker,
-            [
-                random.choice(["Hey there! I am Zenon, your ALAMEDA personal assistant bot.", 
-                                "Welcome, I am your ALAMEDA personal assistant bot.", 
-                                "Hi, I am Zenon.",
-                                "Greetings!"
-                                ]),
-                " ",
-                random.choice(["Ciao! Sono Zenon, il tuo assistente personale ALAMEDA.",
-                                "Benvenuto, sono il tuo assistente personale ALAMEDA",
-                                "Ciao, sono Zenon.",
-                                "Saluti!"]),
-                random.choice(["Salutare! Sunt Zenon, asistentul tău personal ALAMEDA.",
-                                "Bine ai venit, sunt asistentul tău personal ALAMEDA.",
-                                "Bună, sunt Zenon.",
-                                "Salutări!"])
-            ],
-        )
-        dispatcher.utter_message(text=text)
-        # check if it is the first time of the day
-        isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
-        if isFirstTime:
-            print("This is the first time for today.")
-            return [SlotSet("is_first_time", isFirstTime)]#, FollowupAction("action_utter_how_are_you")]
-        else:
-            return [SlotSet("is_first_time", isFirstTime)]#, FollowupAction("action_options_menu")]
+        # If status_code is 200 move forward.
+        if status_code == 200:
+            text = get_text_from_lang(
+                tracker,
+                [
+                    random.choice(["Hey there! I am Zenon, your ALAMEDA personal assistant bot.", 
+                                    "Welcome, I am your ALAMEDA personal assistant bot.", 
+                                    "Hi, I am Zenon.",
+                                    "Greetings!"
+                                    ]),
+                    " ",
+                    random.choice(["Ciao! Sono Zenon, il tuo assistente personale ALAMEDA.",
+                                    "Benvenuto, sono il tuo assistente personale ALAMEDA",
+                                    "Ciao, sono Zenon.",
+                                    "Saluti!"]),
+                    random.choice(["Salutare! Sunt Zenon, asistentul tău personal ALAMEDA.",
+                                    "Bine ai venit, sunt asistentul tău personal ALAMEDA.",
+                                    "Bună, sunt Zenon.",
+                                    "Salutări!"])
+                ],
+            )
+            dispatcher.utter_message(text=text)
+            # check if it is the first time of the day
+            isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
+            if isFirstTime:
+                print("This is the first time for today.")
+                return [SlotSet("is_first_time", isFirstTime)]#, FollowupAction("action_utter_how_are_you")]
+            else:
+                return [SlotSet("is_first_time", isFirstTime)]#, FollowupAction("action_options_menu")]
+        elif status_code == 401:
+            print(25*"*")
+            print("AccessToken verification failed")
 
 class ActionUtterHowAreYou(Action):
     def name(self):
@@ -835,16 +849,34 @@ class ActionUtterHowAreYou(Action):
         yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
         today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
         ontology_meaa_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_MEAA_ENDPOINT"]["endpoint"].values[0]
-        try :
-            response = requests.get(ontology_meaa_endpoint, params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today}, timeout=10)
-            response.close()
-            average_score_per_mood = json.loads(response.text)[0]
-            average_score_per_mood.pop("userId")
-            # returned classes ["avgPos","avgNeg","avgNeut","avgOth"]
-            max_mood = max(average_score_per_mood, key=average_score_per_mood.get)
-        except:
-            max_mood = ""
-            print("Error: no such entry from MEAA in the ontology.")
+
+        # Perform Login against IAM
+        status_code, access_token, refresh_token = IAMLogin().login()
+
+        # Check status_code. If it is 200 try to connect to semKG
+        # by adding the access_token in the headers.
+        if status_code == 200:
+            try :
+                response = requests.get(
+                    ontology_meaa_endpoint,
+                    params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today},
+                    timeout=10,
+                    auth=BearerAuth(access_token)
+                )
+                response.close()
+                average_score_per_mood = json.loads(response.text)[0]
+                average_score_per_mood.pop("userId")
+
+                # returned classes ["avgPos","avgNeg","avgNeut","avgOth"]
+                max_mood = max(average_score_per_mood, key=average_score_per_mood.get)
+            except:
+                # This should happen when no previous MEAA measurements
+                # stored in the database.
+                max_mood = ""
+                print("Error: no such entry from MEAA in the ontology.")
+        elif status_code == 401:
+            print(25*"*")
+            print(f"Communication with semKG failed - Response [{status_code}]")
 
         if max_mood == "avgNeg":
             text = get_text_from_lang(
