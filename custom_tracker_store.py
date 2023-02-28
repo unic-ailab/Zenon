@@ -688,6 +688,7 @@ class CustomSQLTrackerStore(TrackerStore):
             self.SQLEvent.intent_name == "inform",
             self.SQLEvent.timestamp >= session_start_timestamp,
         ).order_by(self.SQLEvent.timestamp).first()
+        print(message_entry)
 
         # if there is no second message, it means the first message had positive or neutral sentiment
         # and is not included in the report
@@ -696,7 +697,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 self.SQLEvent.sender_id == sender_id,
                 self.SQLEvent.type_name == "user",
                 self.SQLEvent.intent_name.in_(["deny", "affirm", "cancel"]),
-                self.SQLEvent.timestamp >= message_entry.timestamp,
+                self.SQLEvent.timestamp > message_entry.timestamp,
                 ).order_by(self.SQLEvent.timestamp).first()[0]
         except:
             include_in_report_intent = "deny"
@@ -876,12 +877,21 @@ class CustomSQLTrackerStore(TrackerStore):
             try:
                 database_entry = self.checkQuestionnaireTimelimit(session, sender_id, init_timestamp, questionnaire_abbreviation)
             except:
-                print(f"Error: no such entry ({sender_id}, {questionnaire_abbreviation}) in database table 'questionnaires_state'.")
+                print(f"In custom_tracker_store 'saveQuestionnaireAnswers': no such entry ({sender_id}, {questionnaire_abbreviation}) in database table 'questionnaires_state'.")
                 return []
             
             submission_timestamp = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).timestamp()
 
-            #TODO The next 2 "for" loops possibly can be combined in 1
+            #TODO Apply the changes below
+            #========================================================#
+            # for slot_name in domain['slots'].keys():
+            #     if questionnaire_abbreviation in slot_name:
+            #         slots_to_reset.append(slot_name)
+
+            #         if questionnaire_abbreviation in ["activLim", "dizzNbalance"]:
+            #             question_number = slot_name.split(questionnaire_abbreviation + "_")[1]
+            #         else question_number = slot_name.split("Q")[1]
+
             for slot_name in domain['slots'].keys():
                 if questionnaire_abbreviation in slot_name:
                     print(f"Q_abbr: {questionnaire_abbreviation} in slot_name: {slot_name}")
@@ -1189,10 +1199,10 @@ class CustomSQLTrackerStore(TrackerStore):
         # Perform Login against IAM
         status_code, access_token, refresh_token = IAMLogin().login()
 
-        # Build ontology payload
+        # Building ontology payload
         ontology_data = {"user_id": sender_id, "source": "Conversational Agent", "observations" : []}
         with self.session_scope() as session:
-            #TODO Even if intent is affirm the intent_to_bool turns out to be `False`
+            #TODO Even if intent is `affirm` the `intent_to_bool` turns out to be `False`
             message_entries, include_in_report_intents = self._sentiment_query(session, sender_id)
 
             intent_to_bool = {"affirm": True, "deny": False, "cancel": False}
@@ -1586,7 +1596,7 @@ def getDSTawareDate(init_date, new_date, tz_timezone):
     return new_date  
 
 if __name__ == "__main__":
-    ts = CustomSQLTrackerStore(db="demo-fism.db")
+    ts = CustomSQLTrackerStore(db="demo.db")
     # print(ts.sendQuestionnaireStatus("631327a2-0b50-417a-8c1d-625d84c5114a", "STROKEdomainIV", "COMPLETED"))
 
     # print(datetime.datetime.now().timestamp())
@@ -1598,11 +1608,11 @@ if __name__ == "__main__":
     with ts.session_scope() as session:
         sender_id = "e5e5d505-b5f9-408b-82db-20d8eb3a4e14"
         current_timestamp = datetime.datetime.now().timestamp()
-        print(ts._questionnaire_state_query(session, sender_id, current_timestamp).all())
-        print(ts.checkQuestionnaireTimelimit(session, sender_id, current_timestamp, "MSdomainIV_Daily"))
-        print(ts.getAvailableQuestionnaires(sender_id, current_timestamp))
+        # print(ts._questionnaire_state_query(session, sender_id, current_timestamp).all())
+        # print(ts.checkQuestionnaireTimelimit(session, sender_id, current_timestamp, "MSdomainIV_Daily"))
+        # print(ts.getAvailableQuestionnaires(sender_id, current_timestamp))
 
-        # message_entries, report = ts._sentiment_query(session, sender_id)
-        # print(message_entries)
-        # print(25*"=")
-        # print(report)
+        message_entries, report = ts._sentiment_query(session, sender_id)
+        print(message_entries)
+        print(25*"=")
+        print(report)

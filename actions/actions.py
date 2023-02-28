@@ -787,6 +787,10 @@ class ActionUtterGreet(Action):
         # Verify token received from WM
         #TODO this maybe is better to happen within app, NOT here
 
+        #==================================================================#
+        # Below code might not necessary if we get properly the accessToken
+        # via the message's metadata
+
         # Get all events from the tracker for the current state
         events = tracker.current_state()["events"]
 
@@ -800,7 +804,8 @@ class ActionUtterGreet(Action):
                     access_token = "null"
                 print(access_token)
                 break
-        
+        #==================================================================#
+
         # Perform verification for the received `accessToken`
         status_code = VerifyAuthentication().verification(access_token)
 
@@ -830,9 +835,9 @@ class ActionUtterGreet(Action):
             isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
             if isFirstTime:
                 print("This is the first time for today.")
-                return [SlotSet("is_first_time", isFirstTime)]#, FollowupAction("action_utter_how_are_you")]
+                return [SlotSet("is_first_time", isFirstTime)]
             else:
-                return [SlotSet("is_first_time", isFirstTime)]#, FollowupAction("action_options_menu")]
+                return [SlotSet("is_first_time", isFirstTime)]
         elif status_code == 401:
             print(25*"*")
             print("AccessToken verification failed")
@@ -844,7 +849,7 @@ class ActionUtterHowAreYou(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
-        # query the ontology for meaa results of the previous day
+        # query the ontology for MEAA results of the previous day
         today = datetime.datetime.combine(datetime.datetime.now(tz=pytz.utc), datetime.datetime.min.time())
         yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
         today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -856,6 +861,7 @@ class ActionUtterHowAreYou(Action):
         # Check status_code. If it is 200 try to connect to semKG
         # by adding the access_token in the headers.
         if status_code == 200:
+            print("*****Service's communication with semKG successfully established*****")
             try :
                 response = requests.get(
                     ontology_meaa_endpoint,
@@ -875,8 +881,7 @@ class ActionUtterHowAreYou(Action):
                 max_mood = ""
                 print("Error: no such entry from MEAA in the ontology.")
         elif status_code == 401:
-            print(25*"*")
-            print(f"Communication with semKG failed - Response [{status_code}]")
+            print(f"*****Communication with semKG failed - Response [{status_code}]*****")
 
         if max_mood == "avgNeg":
             text = get_text_from_lang(
@@ -992,38 +997,6 @@ class ActionQuestionnaireCompleted(Action):
             dispatcher.utter_message(text=text)
             return slots_to_reset + [SlotSet("questionnaire", None), SlotSet("q_starting_time", None)]#, FollowupAction("action_options_menu")]
 
-# class ActionQuestionnaireCompletedFirstPart(Action):
-#     def name(self):
-#         return "action_questionnaire_completed_first_part"
-
-#     def run(self, dispatcher, tracker, domain):
-#         announce(self, tracker)
-
-#         q_abbreviation = tracker.get_slot("questionnaire")
-#         customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
-
-#         #fake_intent={"name": "/"+q_abbreviation+"_start", "confidence": 1.0}
-#         #UserUttered("/MSdomainIII_2W_start", fake_intent)
-
-#         if q_abbreviation == "MSdomainIII_1W":
-#             return [SlotSet("questionnaire", "MSdomainIII_2W"), FollowupAction("MSdomainIII_2W_form")] #UserUttered("/MSdomainIII_2W_start", fake_intent)]
-#         elif q_abbreviation == "MSdomainII_1M":
-#             return [SlotSet("questionnaire", "MSdomainII_3M"), FollowupAction("MSdomainII_3M_form")] #UserUttered("/MSdomainII_3M_start")]
-#         elif q_abbreviation == "MSdomainIV_Daily":
-#             return [SlotSet("questionnaire", "MSdomainIV_1W"), FollowupAction("MSdomainIV_1W_form")] #UserUttered("/MSdomainII_3M_start")]
-#         else:
-#             text = get_text_from_lang(
-#                 tracker,
-#                 [
-#                     "We are good. Thank you for your time.",
-#                     "Το ερωτηματολόγιο ολοκληρώθηκε. Ευχαριστώ.",
-#                     "A posto! Grazie per il tuo tempo.",
-#                     "Suntem buni! Mulțumesc pentru timpul acordat.",
-#                 ],
-#             )  
-#             dispatcher.utter_message(text=text)
-#             return [SlotSet("questionnaire", None), FollowupAction("action_options_menu")]
-
 class ActionOntologyStoreSentiment(Action):
     def name(self):
         return "action_ontology_store_sentiment"
@@ -1051,8 +1024,6 @@ class ActionQuestionnaireCancelled(Action):
         )
         dispatcher.utter_message(text=text)
         slots_to_reset = reset_and_save_form_slots(tracker, domain, tracker.get_slot("questionnaire"), False)
-
-        #customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), tracker.get_slot("questionnaire"))
         return[SlotSet("q_starting_time", None)] + slots_to_reset
 
 class ActionQuestionnaireCancelledApp(Action):
@@ -1085,8 +1056,8 @@ class ActionUtterStartingQuestionnaire(Action):
                     "Starting '{}' questionnaire...".format(q_name),
                     " ",
                     "Iniziamo il questionario {}...".format(q_name),
-                    "Pornește chestionarul '{}' ...".format(q_name),
-                ],
+                    "Pornește chestionarul '{}' ...".format(q_name)
+                ]
             )
             dispatcher.utter_message(text=text)
             if q_abbreviation == "activLim":
@@ -1100,9 +1071,9 @@ class ActionUtterStartingQuestionnaire(Action):
                 [
                     "Something is wrong and I am not sure how to deal with it.",
                     " ",
-                    "Qualcosa non va e non so come affrontarlo." #, Puoi digitare 'menu principale' per riportare la conversazione a un livello che mi è più familiare?",
-                    "Ceva nu este în regulă și nu sunt sigur cum să mă descurc.",# Poți, te rog, tasta 'meniu principal' pentru a readuce conversația la un nivel cu care sunt mai familiarizat?",
-                ],
+                    "Qualcosa non va e non so come affrontarlo.",
+                    "Ceva nu este în regulă și nu sunt sigur cum să mă descurc."
+                ]
             )
             dispatcher.utter_message(text=text)
             return [SlotSet("questionnaire", None), FollowupAction("action_options_menu_extra")]
@@ -1227,7 +1198,7 @@ class ActionHandleUserDenyInformDoctors(Action):
 ####################################################################################################
 
 ####################################################################################################
-# ACTIVLIM Questionnaire                                                                               #
+# ACTIVLIM Questionnaire                                                                           #
 ####################################################################################################
 
 class ActionUtterACTIVLIMintro(Action):
