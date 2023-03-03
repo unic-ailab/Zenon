@@ -802,7 +802,6 @@ class ActionUtterGreet(Action):
                     access_token = events[i]["value"]["accessToken"]
                 except KeyError:
                     access_token = "null"
-                print(access_token)
                 break
         #==================================================================#
 
@@ -1003,7 +1002,26 @@ class ActionOntologyStoreSentiment(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-        customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
+
+                #==================================================================#
+        # Below code might not necessary if we get properly the accessToken
+        # via the message's metadata
+
+        # Get all events from the tracker for the current state
+        events = tracker.current_state()["events"]
+
+        # Find the first `slot` event that contains the key `value`
+        # and holds an `accessToken` key. Get this value.
+        for i in range(len(events)):
+            if events[i]["event"] == "slot" and "value" in events[i].keys():
+                try:
+                    access_token = events[i]["value"]["accessToken"]
+                except KeyError:
+                    access_token = "null"
+                break
+        #==================================================================#
+
+        customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'], access_token)
         return [FollowupAction("action_options_menu")]
 
 class ActionQuestionnaireCancelled(Action):

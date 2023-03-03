@@ -688,7 +688,6 @@ class CustomSQLTrackerStore(TrackerStore):
             self.SQLEvent.intent_name == "inform",
             self.SQLEvent.timestamp >= session_start_timestamp,
         ).order_by(self.SQLEvent.timestamp).first()
-        print(message_entry)
 
         # if there is no second message, it means the first message had positive or neutral sentiment
         # and is not included in the report
@@ -701,7 +700,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 ).order_by(self.SQLEvent.timestamp).first()[0]
         except:
             include_in_report_intent = "deny"
-        print(f"This is from line 701 in customTrackerStore. Print here the variable include_in_report: {include_in_report_intent}")
+            print(f"This is from line 701 in customTrackerStore. Print here the variable include_in_report: {include_in_report_intent}")
 
         # get second message, question: Is there anything else you would like ot report..?
         if message_entry:
@@ -1059,7 +1058,6 @@ class CustomSQLTrackerStore(TrackerStore):
         available_questionnaires, reset_questionnaires = [],[]
         with self.session_scope() as session:
             database_entries = self._questionnaire_state_query(session, sender_id, current_timestamp).all()
-            print(len(database_entries))
             if len(database_entries) == 0:
                 return available_questionnaires, reset_questionnaires
             for entry in database_entries:
@@ -1146,7 +1144,7 @@ class CustomSQLTrackerStore(TrackerStore):
         print(f"Response from POST score to ontology {response}")
 
 
-    def saveToOntology(self, sender_id):
+    def saveToOntology(self, sender_id, user_access_token):
         """
         Data send to ontology should hold a specific format given below.
 
@@ -1242,7 +1240,7 @@ class CustomSQLTrackerStore(TrackerStore):
         # adding the access_token in request's headers
         if status_code == 200:
             ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
-            response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(access_token))
+            response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_access_token))
             response.close()
             print(f"Response from POST data to ontology {response}")
             print(25*"=")
@@ -1606,7 +1604,7 @@ if __name__ == "__main__":
     # print(q_day.timestamp())
 
     with ts.session_scope() as session:
-        sender_id = "e5e5d505-b5f9-408b-82db-20d8eb3a4e14"
+        sender_id = "23e4e5e9-7580-442d-a256-9b66d16e23a8"
         current_timestamp = datetime.datetime.now().timestamp()
         # print(ts._questionnaire_state_query(session, sender_id, current_timestamp).all())
         # print(ts.checkQuestionnaireTimelimit(session, sender_id, current_timestamp, "MSdomainIV_Daily"))
