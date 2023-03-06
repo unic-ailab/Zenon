@@ -1003,7 +1003,7 @@ class ActionOntologyStoreSentiment(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
-                #==================================================================#
+        #==================================================================#
         # Below code might not necessary if we get properly the accessToken
         # via the message's metadata
 
@@ -1015,13 +1015,13 @@ class ActionOntologyStoreSentiment(Action):
         for i in range(len(events)):
             if events[i]["event"] == "slot" and "value" in events[i].keys():
                 try:
-                    access_token = events[i]["value"]["accessToken"]
+                    user_access_token = events[i]["value"]["accessToken"]
                 except KeyError:
-                    access_token = "null"
+                    user_access_token = "null"
                 break
         #==================================================================#
 
-        customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'], access_token)
+        customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
         return [FollowupAction("action_options_menu")]
 
 class ActionQuestionnaireCancelled(Action):

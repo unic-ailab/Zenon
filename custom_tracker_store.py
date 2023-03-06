@@ -688,6 +688,7 @@ class CustomSQLTrackerStore(TrackerStore):
             self.SQLEvent.intent_name == "inform",
             self.SQLEvent.timestamp >= session_start_timestamp,
         ).order_by(self.SQLEvent.timestamp).first()
+        print(message_entry)
 
         # if there is no second message, it means the first message had positive or neutral sentiment
         # and is not included in the report
@@ -781,6 +782,7 @@ class CustomSQLTrackerStore(TrackerStore):
         with self.session_scope() as session:
             # only store recent events
             events = self._additional_events(session, tracker)
+            print("Save things here - line 785")
 
             for event in events:
                 data = event.as_dict()
@@ -985,20 +987,20 @@ class CustomSQLTrackerStore(TrackerStore):
             except:
                     return False, None
 
-    def setQuestionnaireTempState(self, sender_id, current_timestamp, questionnaire_name):
-        """
-        This function stores questionnaire's temporal state.
+    # def setQuestionnaireTempState(self, sender_id, current_timestamp, questionnaire_name):
+    #     """
+    #     This function stores questionnaire's temporal state.
 
-        ===TO BE REMOVED===
-        Nor here neither in actions.py is used.
-        """
-        with self.session_scope() as session:
-            try: 
-                entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first()
-                entry.state = "to_be_stored"
-                session.commit()
-            except:
-                print("Questionnaire has already been stored")
+    #     ===TO BE REMOVED===
+    #     Nor here neither in actions.py is used.
+    #     """
+    #     with self.session_scope() as session:
+    #         try: 
+    #             entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first()
+    #             entry.state = "to_be_stored"
+    #             session.commit()
+    #         except:
+    #             print("Questionnaire has already been stored")
 
     def isFirstTimeToday(self, sender_id) -> bool:
         if sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys():
@@ -1119,6 +1121,8 @@ class CustomSQLTrackerStore(TrackerStore):
             - psqi
             - muscle tone
         """
+        #TODO Apply IAM integration here
+
         questionnaires = {"psqi": "Pittsburgh Sleep Quality Index", "muscletone": "Muscle Tone"} 
 
         score_list = []
@@ -1144,7 +1148,7 @@ class CustomSQLTrackerStore(TrackerStore):
         print(f"Response from POST score to ontology {response}")
 
 
-    def saveToOntology(self, sender_id, user_access_token):
+    def saveToOntology(self, sender_id):
         """
         Data send to ontology should hold a specific format given below.
 
@@ -1240,7 +1244,7 @@ class CustomSQLTrackerStore(TrackerStore):
         # adding the access_token in request's headers
         if status_code == 200:
             ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
-            response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_access_token))
+            response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(access_token))
             response.close()
             print(f"Response from POST data to ontology {response}")
             print(25*"=")
@@ -1465,6 +1469,9 @@ class CustomSQLTrackerStore(TrackerStore):
         Available Status: COMPLETED, IN_PROGRESS, CANCELED
         """
 
+        # Perform Login against IAM
+        status_code, access_token, refresh_token = IAMLogin().login()
+
         submission_date = datetime.datetime.now(datetime.timezone.utc)
         questionnaire_data = {"patient_uuid": sender_id, 
                         "abbreviation": questionnare_abvr, 
@@ -1487,12 +1494,20 @@ class CustomSQLTrackerStore(TrackerStore):
                     "number": "Symptoms",
                     "question": "SYMPTOMS: Select all that apply and press send:",
                     "answer": areNewSymptoms}]
-        print(10*"="+" Sending questionaire data to WCS "+10*"=")
-        print(questionnaire_data)
-        wcs_status_endpoint= endpoints_df[endpoints_df["name"]=="WCS_STATUS_ENDPOINT"]["endpoint"].values[0]
-        response = requests.post(wcs_status_endpoint, json=questionnaire_data, timeout=30)
-        response.close()
-        print(f"POST request on sending questionnare's status: {response}")
+
+        # Check the status_code from IAM component
+        # If it is 200 we send the data to ontology,
+        # adding the access_token in request's headers
+        if status_code == 200:        
+            print(10*"="+" Sending questionaire data to WCS "+10*"=")
+            print(questionnaire_data)
+            wcs_status_endpoint= endpoints_df[endpoints_df["name"]=="WCS_STATUS_ENDPOINT"]["endpoint"].values[0]
+            response = requests.post(wcs_status_endpoint, json=questionnaire_data, timeout=30, auth=BearerAuth(access_token))
+            response.close()
+            print(f"POST request on sending questionnare's status: {response}")
+        elif status_code == 401:
+            print(25*"*")
+            print(f"Sending questionnaire data to WCS failed - Response [{status_code}]")            
 
     def getDizzinessNbalanceNewSymptoms(self, sender_id):
         """ Gets the symptoms of the latest Dizziness and Balance questionnaire and of the one before that
@@ -1593,8 +1608,8 @@ def getDSTawareDate(init_date, new_date, tz_timezone):
     
     return new_date  
 
-if __name__ == "__main__":
-    ts = CustomSQLTrackerStore(db="demo.db")
+# if __name__ == "__main__":
+#     ts = CustomSQLTrackerStore(db="demo.db")
     # print(ts.sendQuestionnaireStatus("631327a2-0b50-417a-8c1d-625d84c5114a", "STROKEdomainIV", "COMPLETED"))
 
     # print(datetime.datetime.now().timestamp())
@@ -1603,14 +1618,14 @@ if __name__ == "__main__":
     # q_day = first_monday + datetime.timedelta(days=5, weeks=max(0,4-1))
     # print(q_day.timestamp())
 
-    with ts.session_scope() as session:
-        sender_id = "23e4e5e9-7580-442d-a256-9b66d16e23a8"
-        current_timestamp = datetime.datetime.now().timestamp()
+    # with ts.session_scope() as session:
+    #     sender_id = "23e4e5e9-7580-442d-a256-9b66d16e23a8"
+    #     current_timestamp = datetime.datetime.now().timestamp()
         # print(ts._questionnaire_state_query(session, sender_id, current_timestamp).all())
         # print(ts.checkQuestionnaireTimelimit(session, sender_id, current_timestamp, "MSdomainIV_Daily"))
         # print(ts.getAvailableQuestionnaires(sender_id, current_timestamp))
 
-        message_entries, report = ts._sentiment_query(session, sender_id)
-        print(message_entries)
-        print(25*"=")
-        print(report)
+        # message_entries, report = ts._sentiment_query(session, sender_id)
+        # print(message_entries)
+        # print(25*"=")
+        # print(report)
