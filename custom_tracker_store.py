@@ -782,7 +782,6 @@ class CustomSQLTrackerStore(TrackerStore):
         with self.session_scope() as session:
             # only store recent events
             events = self._additional_events(session, tracker)
-            print("Save things here - line 785")
 
             for event in events:
                 data = event.as_dict()
@@ -940,7 +939,7 @@ class CustomSQLTrackerStore(TrackerStore):
 
                 # send questionnaire score to ontology
                 if questionnaire_abbreviation in ["psqi", "muscletone"] and not self.checkIfTestingID(sender_id):
-                    self.sendQuestionnaireScoreToOntology(session, sender_id, questionnaire_abbreviation, questionnaire_data)
+                    self.sendQuestionnaireScoreToOntology(session, tracker, sender_id, questionnaire_abbreviation, questionnaire_data)
                                                     
                 # doing this everyday for the msdomain_daily might not be so efficient
                 if isDemo or self.getUserUsecase(sender_id).upper() == "STROKE":
@@ -968,9 +967,9 @@ class CustomSQLTrackerStore(TrackerStore):
                 database_entry.timestamp_end=submission_timestamp
             session.commit()
             if not isDemo and not isFinished: 
-                self.sendQuestionnaireStatus(sender_id, questionnaire_abbreviation, "IN_PROGRESS")
+                self.sendQuestionnaireStatus(tracker, sender_id, questionnaire_abbreviation, "IN_PROGRESS")
             elif not isDemo and isFinished: 
-                self.sendQuestionnaireStatus(sender_id, questionnaire_abbreviation, "COMPLETED")
+                self.sendQuestionnaireStatus(tracker, sender_id, questionnaire_abbreviation, "COMPLETED")
 
         logger.debug(f"Questionnaire answers with sender_id '{tracker.sender_id}' stored to database")
         return slots_to_reset
@@ -1115,13 +1114,15 @@ class CustomSQLTrackerStore(TrackerStore):
             session.commit()
         return available_questionnaires, reset_questionnaires      
   
-    def sendQuestionnaireScoreToOntology(self, session, sender_id, questionnaire_name, database_entry, total_score=None, sub_scores: Dict={}):
+    def sendQuestionnaireScoreToOntology(self, session, tracker, sender_id, questionnaire_name, database_entry, total_score=None, sub_scores: Dict={}):
         """ Store the questionnaire score to the local database and send it to the ontology
             Scoring is available for the questionnares:
             - psqi
             - muscle tone
         """
-        #TODO Apply IAM integration here
+
+        # Perform Login against IAM
+        status_code, access_token, refresh_token = IAMLogin().login()        
 
         questionnaires = {"psqi": "Pittsburgh Sleep Quality Index", "muscletone": "Muscle Tone"} 
 
@@ -1141,14 +1142,19 @@ class CustomSQLTrackerStore(TrackerStore):
             "submission_date": datetime.datetime.fromtimestamp(database_entry.timestamp_end).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "survey_score": score_list}
 
-        print(f"Saved scores to ontology {ontology_data}")
-        ontology_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_SEND_SCORE_ENDPOINT"]["endpoint"].values[0]
-        response = requests.post(ontology_endpoint, json=ontology_data, timeout=30)
-        response.close()
-        print(f"Response from POST score to ontology {response}")
+        if status_code == 200:
+            print(f"Saved scores to ontology {ontology_data}")
+            ontology_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_SEND_SCORE_ENDPOINT"]["endpoint"].values[0]
+            user_accessToken = tracker.get_slot("user_accessToken")
+            response = requests.post(ontology_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(access_token))
+            response.close()
+            print(f"Response from POST score to ontology {response}")
+        elif status_code == 401:
+            print(25*"*")
+            print(f"Couldn't save scores to ontology - Response [{status_code}]")            
 
 
-    def saveToOntology(self, sender_id):
+    def saveToOntology(self, tracker, sender_id):
         """
         Data send to ontology should hold a specific format given below.
 
@@ -1244,7 +1250,8 @@ class CustomSQLTrackerStore(TrackerStore):
         # adding the access_token in request's headers
         if status_code == 200:
             ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
-            response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(access_token))
+            user_accessToken = tracker.get_slot("user_accessToken")
+            response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_accessToken))
             response.close()
             print(f"Response from POST data to ontology {response}")
             print(25*"=")
@@ -1306,113 +1313,121 @@ class CustomSQLTrackerStore(TrackerStore):
             - adds the first set of questionnaires"""
 
         #TODO The ID authorization might should be take place here
-        with self.session_scope() as session:
-            user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
-            if user_entry is None:
-                usecase = sender_id[:len(sender_id)-2].upper()
-                if usecase in questionnaire_per_usecase.keys():
-                    language = self.registerUserIDdemo(sender_id, usecase)
-                else:
-                    try:
-                        wcs_endpoint= endpoints_df[endpoints_df["name"]=="WCS_ONBOARDING_ENDPOINT"]["endpoint"].values[0]
-                        response = requests.get(wcs_endpoint, params={"patient_uuid": sender_id}, timeout=10)
-                        response.close()
-                        resp = response.json()
-                        partner = resp["partner"]
 
-                        if partner == "FISM":
-                            usecase = "MS"
-                            language = "Italian"
-                            timezone = "Europe/Brussels"
-                        elif partner == "SUUB":
-                            usecase = "STROKE"
-                            language = "Romanian"
-                            timezone = "Europe/Bucharest"
-                        elif partner == "NKUA":
-                            usecase = "PD"
-                            language = "Greek"        
-                            timezone = "Europe/Athens"
-                        else:
-                            usecase = "None"
-                            language = "English"
-                            timezone = "UTC"
+        # Perform Login against IAM
+        status_code, access_token, refresh_token = IAMLogin().login()
 
-                        wcs_registration_date = resp["registration_date"]
-                        registration_date = datetime.datetime.strptime(wcs_registration_date, "%Y-%m-%d")
+        if status_code ==200:
+            with self.session_scope() as session:
+                user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
+                if user_entry is None:
+                    usecase = sender_id[:len(sender_id)-2].upper()
+                    if usecase in questionnaire_per_usecase.keys():
+                        language = self.registerUserIDdemo(sender_id, usecase)
+                    else:
+                        try:
+                            wcs_endpoint= endpoints_df[endpoints_df["name"]=="WCS_ONBOARDING_ENDPOINT"]["endpoint"].values[0]
+                            response = requests.get(wcs_endpoint, params={"patient_uuid": sender_id}, timeout=10, auth=BearerAuth(access_token))
+                            response.close()
+                            resp = response.json()
+                            partner = resp["partner"]
 
-                        tz_timezone = pytz.timezone(timezone) 
-                        tz_registration_date = registration_date.astimezone(tz_timezone)
-                        tz_registration_date = tz_registration_date.replace(hour=0, minute=0, second=0, microsecond=0) 
-                        registration_timestamp = registration_date.timestamp()
+                            if partner == "FISM":
+                                usecase = "MS"
+                                language = "Italian"
+                                timezone = "Europe/Brussels"
+                            elif partner == "SUUB":
+                                usecase = "STROKE"
+                                language = "Romanian"
+                                timezone = "Europe/Bucharest"
+                            elif partner == "NKUA":
+                                usecase = "PD"
+                                language = "Greek"        
+                                timezone = "Europe/Athens"
+                            else:
+                                usecase = "None"
+                                language = "English"
+                                timezone = "UTC"
 
-                        session.add(
-                            self.SQLUserID(
-                                sender_id=sender_id,
-                                usecase=usecase,
-                                language=language,
-                                onboarding_timestamp=registration_timestamp,
-                                timezone=timezone,                        
-                            )   
-                        )
-                        session.commit()
-                    
-                        df_questionnaires=schedule_df[schedule_df["usecase"]==usecase]
-                        #onboarding_date = datetime.datetime.strptime(registration_date, "%Y-%m-%d")
-                        #onboarding_timestamp = onboarding_date.replace(hour=0, minute=0, second=0, microsecond=0)
-                
-                        now = datetime.datetime.now(tz=tz_timezone)
-                        today= now.replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
-                        if usecase == "MS":
-                            for questionnaire in df_questionnaires["questionnaire_abvr"]:
-                                first_monday = tz_registration_date + datetime.timedelta(days=(0-tz_registration_date.weekday())%7)
-                                #doing this everyday for the msdomain_dialy might not be so efficient
-                                if (questionnaire == "MSdomainIV_Daily"):
-                                    timestamp = today
-                                else: 
-                                    timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday, tz_timezone)
-                                    while timestamp < today:
-                                        timestamp = getNextQuestTimestamp(schedule_df, questionnaire, datetime.datetime.fromtimestamp(timestamp, tz=tz_timezone), tz_timezone) 
-                                session.add(
-                                    self.SQLQuestState(
+                            wcs_registration_date = resp["registration_date"]
+                            registration_date = datetime.datetime.strptime(wcs_registration_date, "%Y-%m-%d")
+
+                            tz_timezone = pytz.timezone(timezone) 
+                            tz_registration_date = registration_date.astimezone(tz_timezone)
+                            tz_registration_date = tz_registration_date.replace(hour=0, minute=0, second=0, microsecond=0) 
+                            registration_timestamp = registration_date.timestamp()
+
+                            session.add(
+                                self.SQLUserID(
                                     sender_id=sender_id,
-                                    questionnaire_name=questionnaire,
-                                    available_at=timestamp,
-                                    state="available",
-                                    timestamp_start=None,
-                                    timestamp_end=None,
-                                    answers=None,                          
-                                    )
-                                )
+                                    usecase=usecase,
+                                    language=language,
+                                    onboarding_timestamp=registration_timestamp,
+                                    timezone=timezone,                        
+                                )   
+                            )
                             session.commit()
-                        elif usecase == "STROKE":
-                            for questionnaire in df_questionnaires["questionnaire_abvr"]:
-                                session.add(
-                                    self.SQLQuestState(
+                        
+                            df_questionnaires=schedule_df[schedule_df["usecase"]==usecase]
+                            #onboarding_date = datetime.datetime.strptime(registration_date, "%Y-%m-%d")
+                            #onboarding_timestamp = onboarding_date.replace(hour=0, minute=0, second=0, microsecond=0)
+                    
+                            now = datetime.datetime.now(tz=tz_timezone)
+                            today= now.replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+                            if usecase == "MS":
+                                for questionnaire in df_questionnaires["questionnaire_abvr"]:
+                                    first_monday = tz_registration_date + datetime.timedelta(days=(0-tz_registration_date.weekday())%7)
+                                    #doing this everyday for the msdomain_dialy might not be so efficient
+                                    if (questionnaire == "MSdomainIV_Daily"):
+                                        timestamp = today
+                                    else: 
+                                        timestamp = getFirstQuestTimestamp(schedule_df, questionnaire, first_monday, tz_timezone)
+                                        while timestamp < today:
+                                            timestamp = getNextQuestTimestamp(schedule_df, questionnaire, datetime.datetime.fromtimestamp(timestamp, tz=tz_timezone), tz_timezone) 
+                                    session.add(
+                                        self.SQLQuestState(
                                         sender_id=sender_id,
                                         questionnaire_name=questionnaire,
-                                        available_at=today,
+                                        available_at=timestamp,
                                         state="available",
                                         timestamp_start=None,
                                         timestamp_end=None,
                                         answers=None,                          
                                         )
                                     )
-                            session.commit()
-                    except:
-                        if sender_id and sender_id not in ["null", "default"]:
-                            session.add(
-                                self.SQLIssue(
-                                    sender_id=sender_id,
-                                    timestamp=datetime.datetime.now().timestamp(),
-                                    description="failed to retrieve user info from wcs endpoint",                        
+                                session.commit()
+                            elif usecase == "STROKE":
+                                for questionnaire in df_questionnaires["questionnaire_abvr"]:
+                                    session.add(
+                                        self.SQLQuestState(
+                                            sender_id=sender_id,
+                                            questionnaire_name=questionnaire,
+                                            available_at=today,
+                                            state="available",
+                                            timestamp_start=None,
+                                            timestamp_end=None,
+                                            answers=None,                          
+                                            )
+                                        )
+                                session.commit()
+                        except:
+                            if sender_id and sender_id not in ["null", "default"]:
+                                session.add(
+                                    self.SQLIssue(
+                                        sender_id=sender_id,
+                                        timestamp=datetime.datetime.now().timestamp(),
+                                        description="failed to retrieve user info from wcs endpoint",                        
+                                        )
                                     )
-                                )
-                        language = "English"
-                session.commit()
-            else:
-                # is the user already exists in the database retrieve their language
-                language = user_entry.language
-        return language
+                            language = "English"
+                    session.commit()
+                else:
+                    # is the user already exists in the database retrieve their language
+                    language = user_entry.language
+            return language
+        elif status_code == 401:
+            print(25*"*")
+            print(f"Communication with WM - Response [{status_code}]")            
 
     def getUserTimezone(self, sender_id):
         """ Retrieves the specific user's timezone from the database."""
@@ -1450,7 +1465,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 )
             session.commit()
 
-    def sendQuestionnaireStatus(self, sender_id, questionnare_abvr, status):
+    def sendQuestionnaireStatus(self, tracker, sender_id, questionnare_abvr, status):
         """ Sends the status of the questionnaire to WCS
 
         Object should be of the format:
@@ -1501,8 +1516,9 @@ class CustomSQLTrackerStore(TrackerStore):
         if status_code == 200:        
             print(10*"="+" Sending questionaire data to WCS "+10*"=")
             print(questionnaire_data)
+            user_accessToken = tracker.get_slot("user_accessToken")
             wcs_status_endpoint= endpoints_df[endpoints_df["name"]=="WCS_STATUS_ENDPOINT"]["endpoint"].values[0]
-            response = requests.post(wcs_status_endpoint, json=questionnaire_data, timeout=30, auth=BearerAuth(access_token))
+            response = requests.post(wcs_status_endpoint, json=questionnaire_data, timeout=30, auth=BearerAuth(user_accessToken))
             response.close()
             print(f"POST request on sending questionnare's status: {response}")
         elif status_code == 401:

@@ -56,6 +56,8 @@ entities:
   - sentiment_classes
   - number
 slots:
+  user_accessToken:
+    type: any
   questionnaire:
     type: categorical
     influence_conversation: true

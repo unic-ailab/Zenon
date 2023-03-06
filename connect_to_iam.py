@@ -59,3 +59,5 @@ class VerifyAuthentication(object):
         if response.status_code == 200:
             print("****User access token verification succeeded****")
             return response.status_code
+        elif response.status_code == 401:
+            print("****User access token verification FAILED****")

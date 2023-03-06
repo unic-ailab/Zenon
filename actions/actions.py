@@ -787,26 +787,15 @@ class ActionUtterGreet(Action):
         # Verify token received from WM
         #TODO this maybe is better to happen within app, NOT here
 
-        #==================================================================#
-        # Below code might not necessary if we get properly the accessToken
-        # via the message's metadata
-
-        # Get all events from the tracker for the current state
-        events = tracker.current_state()["events"]
-
-        # Find the first `slot` event that contains the key `value`
-        # and holds an `accessToken` key. Get this value.
-        for i in range(len(events)):
-            if events[i]["event"] == "slot" and "value" in events[i].keys():
-                try:
-                    access_token = events[i]["value"]["accessToken"]
-                except KeyError:
-                    access_token = "null"
-                break
-        #==================================================================#
+        metadata = tracker.latest_message.get("metadata")
+        print("***** METADATA *****")
+        print(metadata)
+        user_accessToken = metadata["accessToken"]
+        print(user_accessToken)
+        print(25*"=")
 
         # Perform verification for the received `accessToken`
-        status_code = VerifyAuthentication().verification(access_token)
+        status_code = VerifyAuthentication().verification(user_accessToken)
 
         # If status_code is 200 move forward.
         if status_code == 200:
@@ -834,9 +823,9 @@ class ActionUtterGreet(Action):
             isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
             if isFirstTime:
                 print("This is the first time for today.")
-                return [SlotSet("is_first_time", isFirstTime)]
+                return [SlotSet("is_first_time", isFirstTime), SlotSet("user_accessToken", user_accessToken)]
             else:
-                return [SlotSet("is_first_time", isFirstTime)]
+                return [SlotSet("is_first_time", isFirstTime), SlotSet("user_accessToken", user_accessToken)]
         elif status_code == 401:
             print(25*"*")
             print("AccessToken verification failed")
@@ -1004,24 +993,25 @@ class ActionOntologyStoreSentiment(Action):
         announce(self, tracker)
 
         #==================================================================#
+        #TODO Remove the code in between '='
         # Below code might not necessary if we get properly the accessToken
         # via the message's metadata
 
         # Get all events from the tracker for the current state
-        events = tracker.current_state()["events"]
+        # events = tracker.current_state()["events"]
 
         # Find the first `slot` event that contains the key `value`
         # and holds an `accessToken` key. Get this value.
-        for i in range(len(events)):
-            if events[i]["event"] == "slot" and "value" in events[i].keys():
-                try:
-                    user_access_token = events[i]["value"]["accessToken"]
-                except KeyError:
-                    user_access_token = "null"
-                break
+        # for i in range(len(events)):
+        #     if events[i]["event"] == "slot" and "value" in events[i].keys():
+        #         try:
+        #             user_access_token = events[i]["value"]["accessToken"]
+        #         except KeyError:
+        #             user_access_token = "null"
+        #         break
         #==================================================================#
 
-        customTrackerInstance.saveToOntology(tracker.current_state()['sender_id'])
+        customTrackerInstance.saveToOntology(tracker, tracker.current_state()['sender_id'])
         return [FollowupAction("action_options_menu")]
 
 class ActionQuestionnaireCancelled(Action):
