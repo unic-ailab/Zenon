@@ -36,7 +36,7 @@ tracker_store:
   type: custom_tracker_store.CustomSQLTrackerStore
   url: # (optional) host of the sql db, e.g. "localhost"
   dialect: "sqlite" # the dialect used to interact with the db
-  db: "demo.db"
+  db: "local-alameda.db"
 # Event broker which all conversation events should be streamed to.
 # https://rasa.com/docs/rasa/event-brokers
 

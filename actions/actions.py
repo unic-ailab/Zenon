@@ -26,7 +26,7 @@ from connect_to_iam import BearerAuth, IAMLogin, VerifyAuthentication
 sys.path.append(os.getcwd().replace("\\","/"))
 from custom_tracker_store import CustomSQLTrackerStore
 
-customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="demo.db") # Remember to change the db name in endpoints.yml
+customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="local-alameda.db") # Remember to change the db name in endpoints.yml
 endpoints_df = pd.read_csv("alameda_endpoints.csv")                       
 
 # Define this list as the values for the `language` slot. Arguments of the `get_..._lang` functions should respect this order.
@@ -6350,6 +6350,7 @@ class ValidateMuscleToneForm(FormValidationAction):
         else:
             return {"muscletone_score": muscletone_score}
 
+
     def validate_muscletone_Q2(
         self,
         slot_value: Any,
@@ -6362,6 +6363,8 @@ class ValidateMuscleToneForm(FormValidationAction):
 
         if "Yes" in slot_value:
             return {"muscletone_score": muscletone_score + 1}
+        else:
+            return {"muscletone_score": muscletone_score}
 
     def validate_muscletone_Q3(
         self,
@@ -6375,6 +6378,8 @@ class ValidateMuscleToneForm(FormValidationAction):
 
         if "Yes" in slot_value:
             return {"muscletone_score": muscletone_score + 1}
+        else:
+            return {"muscletone_score": muscletone_score}
 
     def validate_muscletone_Q4(
         self,
@@ -6388,6 +6393,8 @@ class ValidateMuscleToneForm(FormValidationAction):
 
         if "Yes" in slot_value:
             return {"muscletone_score": muscletone_score + 1}
+        else:
+            return {"muscletone_score": muscletone_score}
 
     def validate_muscletone_Q5(
         self,
@@ -6401,6 +6408,8 @@ class ValidateMuscleToneForm(FormValidationAction):
 
         if "Yes" in slot_value:
             return {"muscletone_score": muscletone_score + 1}
+        else:
+            return {"muscletone_score": muscletone_score}
 
     def validate_muscletone_Q6(
         self,
@@ -6414,6 +6423,8 @@ class ValidateMuscleToneForm(FormValidationAction):
 
         if "Yes" in slot_value:
             return {"muscletone_score": muscletone_score + 1}
+        else:
+            return {"muscletone_score": muscletone_score}
 
     def validate_muscletone_Q7(
         self,
@@ -6427,6 +6438,8 @@ class ValidateMuscleToneForm(FormValidationAction):
 
         if "Yes" in slot_value:
             return {"muscletone_score": muscletone_score + 1}
+        else:
+            return {"muscletone_score": muscletone_score}
 
     def validate_muscletone_Q8(
         self,
@@ -6440,6 +6453,8 @@ class ValidateMuscleToneForm(FormValidationAction):
 
         if "Yes" in slot_value:
             return {"muscletone_score": muscletone_score + 1}
+        else:
+            return {"muscletone_score": muscletone_score}
 
     def validate_muscletone_Q9(
         self,
@@ -6453,6 +6468,8 @@ class ValidateMuscleToneForm(FormValidationAction):
 
         if "Yes" in slot_value:
             return {"muscletone_score": muscletone_score + 1}
+        else:
+            return {"muscletone_score": muscletone_score}
 
     def validate_muscletone_Q10(
         self,
@@ -6466,6 +6483,8 @@ class ValidateMuscleToneForm(FormValidationAction):
 
         if "Yes" in slot_value:
             return {"muscletone_score": muscletone_score + 1}
+        else:
+            return {"muscletone_score": muscletone_score}
 
 ####################################################################################################
 # Coast Questionnaire                                                                              #

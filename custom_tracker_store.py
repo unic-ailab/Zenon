@@ -911,7 +911,7 @@ class CustomSQLTrackerStore(TrackerStore):
                         print(f"IndexError for slot {slot_name} - Line 911")
 
                 # store answers without storing the questions
-                if slot_name.split(questionnaire_abbreviation + "_")[1] != "score":
+                if "score" not in slot_name:
                     question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
                     answers_data.append({"question_id": question_number, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
                     
@@ -919,7 +919,9 @@ class CustomSQLTrackerStore(TrackerStore):
 
             partner, disease = self.getUserDetails(sender_id)
             if questionnaire_abbreviation in ["psqi", "muscletone"]:
-                total_score = self._questionnaire_score_query(session, sender_id, questionnaire_name)
+                #BUG Score for questionnaires isn't filled correctly
+                # total_score = self._questionnaire_score_query(session, sender_id, questionnaire_name)
+                total_score = tracker.get_slot(questionnaire_abbreviation + "_score")
             else:
                 total_score=None
 
@@ -965,7 +967,8 @@ class CustomSQLTrackerStore(TrackerStore):
                     state="available",
                     timestamp_start=None,
                     timestamp_end=None,
-                    answers=None,                          
+                    answers=None,
+                    scoring=total_score                          
                     )
                 )
 
@@ -1492,9 +1495,9 @@ class CustomSQLTrackerStore(TrackerStore):
 
         Available Status: COMPLETED, IN_PROGRESS, CANCELED
         """
-        #TODO Might need to remove it from here
+
         # Perform Login against IAM
-        # status_code, access_token, refresh_token = IAMLogin().login()
+        status_code, access_token, refresh_token = IAMLogin().login()
 
         submission_date = datetime.datetime.now(datetime.timezone.utc)
         questionnaire_data = {"patient_uuid": sender_id, 
