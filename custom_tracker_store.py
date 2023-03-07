@@ -1057,7 +1057,8 @@ class CustomSQLTrackerStore(TrackerStore):
                     state="available",
                     timestamp_start=None,
                     timestamp_end=None,
-                    answers=None,                          
+                    answers=None,
+                    scoring=None                          
                     )
                 )
         session.commit()
@@ -1106,7 +1107,8 @@ class CustomSQLTrackerStore(TrackerStore):
                             state="available",
                             timestamp_start=None,
                             timestamp_end=None,
-                            answers=None,                          
+                            answers=None,
+                            scoring=None                          
                             )
                         )
 
@@ -1310,7 +1312,8 @@ class CustomSQLTrackerStore(TrackerStore):
                         state="available",
                         timestamp_start=None,
                         timestamp_end=None,
-                        answers=None,                          
+                        answers=None,
+                        scoring=None                          
                     )
                 )
             session.commit()
@@ -1404,7 +1407,8 @@ class CustomSQLTrackerStore(TrackerStore):
                                         state="available",
                                         timestamp_start=None,
                                         timestamp_end=None,
-                                        answers=None,                          
+                                        answers=None,
+                                        scoring=None                          
                                         )
                                     )
                                 session.commit()
@@ -1418,7 +1422,8 @@ class CustomSQLTrackerStore(TrackerStore):
                                             state="available",
                                             timestamp_start=None,
                                             timestamp_end=None,
-                                            answers=None,                          
+                                            answers=None,
+                                            scoring=None                          
                                             )
                                         )
                                 session.commit()
