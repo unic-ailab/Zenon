@@ -882,7 +882,7 @@ class CustomSQLTrackerStore(TrackerStore):
             
             submission_timestamp = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).timestamp()
 
-            #TODO Apply the changes below
+            #TODO Check if I can merge the two for loops below
             #========================================================#
             # for slot_name in domain['slots'].keys():
             #     if questionnaire_abbreviation in slot_name:
@@ -890,25 +890,32 @@ class CustomSQLTrackerStore(TrackerStore):
 
             #         if questionnaire_abbreviation in ["activLim", "dizzNbalance"]:
             #             question_number = slot_name.split(questionnaire_abbreviation + "_")[1]
-            #         else question_number = slot_name.split("Q")[1]
+            #         else:
+            #             try:
+            #                 question_number = slot_name.split("Q")[1]
+            #             except IndexError:
+            #                 print(f"IndexError for slot {slot_name} - Line 895")
+            #========================================================#
 
             for slot_name in domain['slots'].keys():
                 if questionnaire_abbreviation in slot_name:
-                    print(f"Q_abbr: {questionnaire_abbreviation} in slot_name: {slot_name}")
                     slots_to_reset.append(slot_name)
 
             for slot_name in slots_to_reset:
                 if questionnaire_abbreviation in ["activLim", "dizzNbalance"]:
                     question_number = slot_name.split(questionnaire_abbreviation + "_")[1]
                 else:
-                    print(f"slot_name: {slot_name}")
-                    question_number = slot_name.split("Q")[1] 
+                    try:
+                        question_number = slot_name.split("Q")[1]
+                    except IndexError:
+                        print(f"IndexError for slot {slot_name} - Line 911")
 
                 # store answers without storing the questions
-                question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
-                answers_data.append({"question_id": question_number, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
-                
-                answers_data_wcs_format.append({"number": question_number, "answer": tracker.get_slot(slot_name)})
+                if slot_name.split(questionnaire_abbreviation + "_")[1] != "score":
+                    question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
+                    answers_data.append({"question_id": question_number, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
+                    
+                    answers_data_wcs_format.append({"number": question_number, "answer": tracker.get_slot(slot_name)})
 
             partner, disease = self.getUserDetails(sender_id)
             if questionnaire_abbreviation in ["psqi", "muscletone"]:
@@ -1146,7 +1153,7 @@ class CustomSQLTrackerStore(TrackerStore):
             print(f"Saved scores to ontology {ontology_data}")
             ontology_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_SEND_SCORE_ENDPOINT"]["endpoint"].values[0]
             user_accessToken = tracker.get_slot("user_accessToken")
-            response = requests.post(ontology_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(access_token))
+            response = requests.post(ontology_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_accessToken))
             response.close()
             print(f"Response from POST score to ontology {response}")
         elif status_code == 401:
@@ -1243,7 +1250,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 ontology_data["observations"].append(data)
             session.commit()
             
-            print(f"Saved data to ontology {ontology_data}")
+        print(f"Saved data to ontology {ontology_data}")
 
         # Check the status_code from IAM component
         # If it is 200 we send the data to ontology,
@@ -1306,16 +1313,11 @@ class CustomSQLTrackerStore(TrackerStore):
             session.commit()
         return language
 
-    def checkUserID(self, sender_id):
+    def checkUserID(self, tracker, sender_id, status_code, ca_accessToken):
         """ Checks if the specific user id is in the database. 
             If not
             - adds the user id and his/her onboarding date on the information provided by WCS
             - adds the first set of questionnaires"""
-
-        #TODO The ID authorization might should be take place here
-
-        # Perform Login against IAM
-        status_code, access_token, refresh_token = IAMLogin().login()
 
         if status_code ==200:
             with self.session_scope() as session:
@@ -1327,7 +1329,14 @@ class CustomSQLTrackerStore(TrackerStore):
                     else:
                         try:
                             wcs_endpoint= endpoints_df[endpoints_df["name"]=="WCS_ONBOARDING_ENDPOINT"]["endpoint"].values[0]
-                            response = requests.get(wcs_endpoint, params={"patient_uuid": sender_id}, timeout=10, auth=BearerAuth(access_token))
+                            user_accessToken = tracker.get_slot("user_accessToken")
+                            response = requests.get(
+                                wcs_endpoint, 
+                                params={"patient_uuid": sender_id}, 
+                                timeout=10, 
+                                auth=BearerAuth(ca_accessToken)
+                            )
+                            print(f"Get data from WCS for userid {sender_id} - Response <{response}> - Line 1334")
                             response.close()
                             resp = response.json()
                             partner = resp["partner"]
@@ -1427,7 +1436,7 @@ class CustomSQLTrackerStore(TrackerStore):
             return language
         elif status_code == 401:
             print(25*"*")
-            print(f"Communication with WM - Response [{status_code}]")            
+            print(f"Communication with WM failed - Response [{status_code}]")            
 
     def getUserTimezone(self, sender_id):
         """ Retrieves the specific user's timezone from the database."""
@@ -1483,9 +1492,9 @@ class CustomSQLTrackerStore(TrackerStore):
 
         Available Status: COMPLETED, IN_PROGRESS, CANCELED
         """
-
+        #TODO Might need to remove it from here
         # Perform Login against IAM
-        status_code, access_token, refresh_token = IAMLogin().login()
+        # status_code, access_token, refresh_token = IAMLogin().login()
 
         submission_date = datetime.datetime.now(datetime.timezone.utc)
         questionnaire_data = {"patient_uuid": sender_id, 
@@ -1624,8 +1633,8 @@ def getDSTawareDate(init_date, new_date, tz_timezone):
     
     return new_date  
 
-# if __name__ == "__main__":
-#     ts = CustomSQLTrackerStore(db="demo.db")
+if __name__ == "__main__":
+    ts = CustomSQLTrackerStore(db="demo.db")
     # print(ts.sendQuestionnaireStatus("631327a2-0b50-417a-8c1d-625d84c5114a", "STROKEdomainIV", "COMPLETED"))
 
     # print(datetime.datetime.now().timestamp())
