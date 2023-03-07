@@ -948,7 +948,7 @@ class CustomSQLTrackerStore(TrackerStore):
 
                 # send questionnaire score to ontology
                 if questionnaire_abbreviation in ["psqi", "muscletone"] and not self.checkIfTestingID(sender_id):
-                    self.sendQuestionnaireScoreToOntology(session, tracker, sender_id, questionnaire_abbreviation, questionnaire_data)
+                    self.sendQuestionnaireScoreToOntology(session, tracker, sender_id, questionnaire_abbreviation, questionnaire_data, total_score)
                                                     
                 # doing this everyday for the msdomain_daily might not be so efficient
                 if isDemo or self.getUserUsecase(sender_id).upper() == "STROKE":
