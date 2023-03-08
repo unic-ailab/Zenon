@@ -1142,7 +1142,7 @@ class CustomSQLTrackerStore(TrackerStore):
         if not total_score:
                 total_score = self._questionnaire_score_query(session, sender_id, questionnaire_name)
         score_list.append({"score": total_score, "scoreDescription": "TOTAL"})
-        database_entry.scoring = json.dumps(score_list)
+        # database_entry.scoring = json.dumps(score_list)
         
         ontology_data = {
             "user_id": sender_id,
