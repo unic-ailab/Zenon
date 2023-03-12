@@ -688,7 +688,6 @@ class CustomSQLTrackerStore(TrackerStore):
             self.SQLEvent.intent_name == "inform",
             self.SQLEvent.timestamp >= session_start_timestamp,
         ).order_by(self.SQLEvent.timestamp).first()
-        print(message_entry)
 
         # if there is no second message, it means the first message had positive or neutral sentiment
         # and is not included in the report
@@ -1222,7 +1221,7 @@ class CustomSQLTrackerStore(TrackerStore):
         # Building ontology payload
         ontology_data = {"user_id": sender_id, "source": "Conversational Agent", "observations" : []}
         with self.session_scope() as session:
-            #TODO Even if intent is `affirm` the `intent_to_bool` turns out to be `False`
+            #BUG Even if intent is `affirm` the `intent_to_bool` turns out to be `False`
             message_entries, include_in_report_intents = self._sentiment_query(session, sender_id)
 
             intent_to_bool = {"affirm": True, "deny": False, "cancel": False}
@@ -1335,7 +1334,7 @@ class CustomSQLTrackerStore(TrackerStore):
                     else:
                         try:
                             wcs_endpoint= endpoints_df[endpoints_df["name"]=="WCS_ONBOARDING_ENDPOINT"]["endpoint"].values[0]
-                            # user_accessToken = tracker.get_slot("user_accessToken")
+
                             response = requests.get(
                                 wcs_endpoint, 
                                 params={"patient_uuid": sender_id}, 

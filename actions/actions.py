@@ -1057,7 +1057,7 @@ class ActionUtterStartingQuestionnaire(Action):
         
         q_starting_time = datetime.datetime.now(tz=pytz.utc).timestamp()
         q_abbreviation = tracker.latest_message["intent"].get("name").replace("_start", "")
-        print("Q-abbrev:", q_abbreviation)  #TODO sometimes when starts the app set "Q-abbrev" -> /set_language
+
         if (q_abbreviation != None) & (q_abbreviation in questionnaire_abbreviations.keys()):
             q_name = get_text_from_lang(
                 tracker,
@@ -1100,7 +1100,7 @@ class ActionSetQuestionnaireSlot(Action):
         
         q_abbreviation = tracker.latest_message["intent"].get("name").replace("_start", "")
         usecase = customTrackerInstance.getUserUsecase(tracker.current_state()['sender_id'])
-        print("usecase:", usecase)
+
         if (usecase != None) & (usecase in questionnaire_per_usecase.keys()):
             if q_abbreviation in questionnaire_per_usecase[usecase]:
                 return [SlotSet("questionnaire", q_abbreviation)]
