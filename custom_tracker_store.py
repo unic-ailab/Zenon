@@ -823,7 +823,7 @@ class CustomSQLTrackerStore(TrackerStore):
                     # commit to store the events in the database so they can be found by the query
                     session.commit() 
                     if not self.checkIfTestingID(sender_id):
-                        self.saveToOntology(sender_id)
+                        self.saveToOntology(tracker, sender_id)
                 # elif event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_cancelled", "action_questionnaire_cancelled_app"]:
                 #     # commit to store the events in the database so they can be found by the query
                 #     session.commit() 
@@ -1335,7 +1335,7 @@ class CustomSQLTrackerStore(TrackerStore):
                     else:
                         try:
                             wcs_endpoint= endpoints_df[endpoints_df["name"]=="WCS_ONBOARDING_ENDPOINT"]["endpoint"].values[0]
-                            user_accessToken = tracker.get_slot("user_accessToken")
+                            # user_accessToken = tracker.get_slot("user_accessToken")
                             response = requests.get(
                                 wcs_endpoint, 
                                 params={"patient_uuid": sender_id}, 
