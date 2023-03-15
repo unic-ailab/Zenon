@@ -1125,7 +1125,7 @@ class CustomSQLTrackerStore(TrackerStore):
             session.commit()
         return available_questionnaires, reset_questionnaires      
   
-    def sendQuestionnaireScoreToOntology(self, session, tracker, sender_id, questionnaire_name, database_entry, total_score=None, sub_scores: Dict={}):
+    def sendQuestionnaireScoreToOntology(self, session, tracker, sender_id, questionnaire_name, database_entry: Dict, total_score=None, sub_scores: Dict={}):
         """ Store the questionnaire score to the local database and send it to the ontology
             Scoring is available for the questionnares:
             - psqi
@@ -1150,7 +1150,7 @@ class CustomSQLTrackerStore(TrackerStore):
             "partner": "UPB",
             "disease": "STROKE",
             "abbreviation": questionnaire_name,
-            "submission_date": datetime.datetime.fromtimestamp(database_entry.timestamp_end).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "submission_date": database_entry["submission_date"],
             "survey_score": score_list}
 
         if status_code == 200:
