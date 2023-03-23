@@ -859,9 +859,20 @@ class CustomSQLTrackerStore(TrackerStore):
             tracker.events, number_of_events_since_last_session, len(tracker.events)
         )
 
-    def saveQuestionnaireAnswers(self, tracker, domain, questionnaire_abbreviation:str, questionnaire_name:str, isFinished:bool) -> None:
-        """ Update database with answers from a specific questionnaire.
-            The answers of the questionnaires are retrieved directly from their dedicated slot value
+    def saveQuestionnaireAnswers(self, tracker: DialogueStateTracker, domain: Domain, questionnaire_abbreviation: str, questionnaire_name: str, isFinished: bool) -> List[str]:
+        """
+        Update database with answers from a specific questionnaire.
+        The answers of the questionnaires are retrieved directly from their dedicated slot value.
+
+        Args:
+        - tracker (DialogueStateTracker): Rasa tracker object
+        - domain (Domain): Rasa domain object
+        - questionnaire_abbreviation (str): Abbreviation for the questionnaire being answered
+        - questionnaire_name (str): Name of the questionnaire being answered
+        - isFinished (bool): Whether the questionnaire has been fully completed or not
+
+        Returns:
+        - slots_to_reset (List[str]): List of slots that were reset after storing their values
         """
 
         question_types_df = pd.read_csv("question_types.csv") 
@@ -880,21 +891,6 @@ class CustomSQLTrackerStore(TrackerStore):
                 return []
             
             submission_timestamp = datetime.datetime.now(pytz.timezone(self.getUserTimezone(sender_id))).timestamp()
-
-            #TODO Check if I can merge the two for loops below
-            #========================================================#
-            # for slot_name in domain['slots'].keys():
-            #     if questionnaire_abbreviation in slot_name:
-            #         slots_to_reset.append(slot_name)
-
-            #         if questionnaire_abbreviation in ["activLim", "dizzNbalance"]:
-            #             question_number = slot_name.split(questionnaire_abbreviation + "_")[1]
-            #         else:
-            #             try:
-            #                 question_number = slot_name.split("Q")[1]
-            #             except IndexError:
-            #                 print(f"IndexError for slot {slot_name} - Line 895")
-            #========================================================#
 
             for slot_name in domain['slots'].keys():
                 if questionnaire_abbreviation in slot_name:
@@ -983,17 +979,29 @@ class CustomSQLTrackerStore(TrackerStore):
         logger.debug(f"Questionnaire answers with sender_id '{tracker.sender_id}' stored to database")
         return slots_to_reset
 
-    def getSpecificQuestionnaireAvailability(self, sender_id, current_timestamp, questionnaire_name) -> bool:
+    def getSpecificQuestionnaireAvailability(self, sender_id: str, current_timestamp: int, questionnaire_name: str) -> bool:
+        """
+        Determines if a specific questionnaire is available for the given sender_id and current_timestamp.
+
+        Args:
+            sender_id (str): The unique ID of the sender.
+            current_timestamp (int): The current timestamp.
+            questionnaire_name (str): The name of the questionnaire to check availability for.
+
+        Returns:
+            bool: True if the questionnaire is available, False otherwise.
+        """
         with self.session_scope() as session:
             try: 
                 _ = self.checkQuestionnaireTimelimit(session, sender_id, current_timestamp, questionnaire_name)
                 entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first() 
                 if entry is not None and entry.state != "to_be_stored":
-                    return True, entry.state
+                    return True
                 else:
-                    return False, None
+                    return False
             except:
-                    return False, None
+                return False
+
 
     # def setQuestionnaireTempState(self, sender_id, current_timestamp, questionnaire_name):
     #     """
@@ -1010,16 +1018,38 @@ class CustomSQLTrackerStore(TrackerStore):
     #         except:
     #             print("Questionnaire has already been stored")
 
-    def isFirstTimeToday(self, sender_id) -> bool:
+    def isFirstTimeToday(self, sender_id: str) -> bool:
+        """
+        Check if user has already interacted with the bot today.
+
+        Args:
+        - sender_id (str): User identifier.
+
+        Returns:
+        - bool: True if it's the user's first interaction with the bot today, False otherwise.
+        """
+
         if sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys():
             return True
         else:
             with self.session_scope() as session:
                 return self._first_time_of_day_query(session, sender_id) 
 
-    def checkQuestionnaireTimelimit(self, session, sender_id, current_timestamp, questionnaire_name):
+    def checkQuestionnaireTimelimit(self, session: Session, sender_id: str, 
+                               current_timestamp: float, questionnaire_name: str) -> SQLQuestState:
         """
-        ===ADD DOCUMENTATION HERE===
+        Checks whether a user has completed a questionnaire within the allowed time limit.
+        If the time limit has been exceeded, creates a new database entry for the questionnaire
+        with a new available timestamp.
+        
+        Args:
+        - session (Session): A SQLAlchemy session object for the database
+        - sender_id (str): A string representing the unique identifier for the user
+        - current_timestamp (float): A float representing the current timestamp
+        - questionnaire_name (str): A string representing the name of the questionnaire
+        
+        Returns:
+        - (SQLQuestState): A SQLQuestState object representing the state of the questionnaire
         """
 
         entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first()
@@ -1063,8 +1093,18 @@ class CustomSQLTrackerStore(TrackerStore):
         session.commit()
         return entry
 
-    def getAvailableQuestionnaires(self, sender_id, current_timestamp) -> List[str]:
-        """ Retrieve current available questionnaires"""
+    def getAvailableQuestionnaires(self, sender_id: str, current_timestamp: float) -> Tuple[List[str], List[str]]:
+        """
+        Retrieve current available questionnaires.
+
+        Args:
+        - sender_id (str): the unique identifier of the user.
+        - current_timestamp (float): the current timestamp in Unix format.
+        
+        Returns:
+        - Tuple[List[str], List[str]]: a tuple containing a list of available questionnaires 
+        and a list of questionnaires that need to be reset.
+        """
 
         available_questionnaires, reset_questionnaires = [],[]
         with self.session_scope() as session:
@@ -1125,12 +1165,24 @@ class CustomSQLTrackerStore(TrackerStore):
             session.commit()
         return available_questionnaires, reset_questionnaires      
   
-    def sendQuestionnaireScoreToOntology(self, session, tracker, sender_id, questionnaire_name, database_entry: Dict, total_score=None, sub_scores: Dict={}):
-        """ Store the questionnaire score to the local database and send it to the ontology
-            Scoring is available for the questionnares:
-            - psqi
-            - muscle tone
+    def sendQuestionnaireScoreToOntology(self, session: Session, tracker: DialogueStateTracker, sender_id: str, questionnaire_name: str, database_entry: Dict, total_score: Optional[float] = None, sub_scores: Dict[str, float] = {}) -> None:
         """
+        Store the questionnaire score to the local database and send it to the ontology.
+
+        Score only available for:
+        - muscletone
+        - psqi
+        
+        Args:
+            session (Session): A SQLAlchemy session object for the database
+            tracker (DialogueStateTracker): Tracker object to retrieve the user access token.
+            sender_id (str): ID of the user who completed the questionnaire.
+            questionnaire_name (str): Name of the questionnaire.
+            database_entry (Dict): Dictionary containing the database entry for the questionnaire.
+            total_score (Optional[float], optional): The total score of the questionnaire. Defaults to None.
+            sub_scores (Dict[str, float], optional): The sub-scores of the questionnaire. Defaults to {}.
+        """
+
 
         # Perform Login against IAM
         status_code, access_token, refresh_token = IAMLogin().login()        
@@ -1165,7 +1217,7 @@ class CustomSQLTrackerStore(TrackerStore):
             print(f"Couldn't save scores to ontology - Response [{status_code}]")            
 
 
-    def saveToOntology(self, tracker, sender_id):
+    def saveToOntology(self, tracker: DialogueStateTracker, sender_id: str) -> None:
         """
         Data send to ontology should hold a specific format given below.
 
@@ -1213,6 +1265,13 @@ class CustomSQLTrackerStore(TrackerStore):
                 }
             ]
         }
+
+        Args:
+        - tracker: A tracker object containing conversation state information.
+        - sender_id: A string containing the user ID.
+
+        Returns:
+        - None
         """
 
         # Perform Login against IAM
@@ -1270,8 +1329,19 @@ class CustomSQLTrackerStore(TrackerStore):
             print(25*"*")
             print(f"Communication with semKG failed - Response [{status_code}]")
         
-    def registerUserIDdemo(self, sender_id, usecase):
-        """ Checks if the specific user id is in the database. If not it adds it"""
+    def registerUserIDdemo(self, sender_id: str, usecase: str) -> str:
+        """Checks if the specific user id is in the database. If not, it adds it.
+
+        Args:
+            self: An instance of the class.
+            sender_id: A string representing the ID of the sender.
+            usecase: A string representing the usecase of the user.
+
+        Returns:
+            A string representing the language of the user.
+
+        """
+
         with self.session_scope() as session:
             # assumes user ids are of the form "ms00" or "stroke00"
             if usecase == "MS":
@@ -1318,11 +1388,21 @@ class CustomSQLTrackerStore(TrackerStore):
             session.commit()
         return language
 
-    def checkUserID(self, tracker, sender_id, status_code, ca_accessToken):
-        """ Checks if the specific user id is in the database. 
-            If not
-            - adds the user id and his/her onboarding date on the information provided by WCS
-            - adds the first set of questionnaires"""
+    def checkUserID(self, tracker: DialogueStateTracker, sender_id: str, status_code: int, ca_accessToken: str) -> str:
+        """
+        Checks if the specific user id is in the database. If not:
+        - adds the user id and his/her onboarding date on the information provided by WCS
+        - adds the first set of questionnaires
+
+        Args:
+        - tracker (DialogueStateTracker): tracker object from Rasa framework
+        - sender_id (str): ID of the user
+        - status_code (int): HTTP status code returned by WCS endpoint
+        - ca_accessToken (str): access token for WCS
+
+        Returns:
+        - language (str): the language of the user, either retrieved from WCS or assigned by default
+        """
 
         if status_code ==200:
             with self.session_scope() as session:
@@ -1445,20 +1525,44 @@ class CustomSQLTrackerStore(TrackerStore):
             print(25*"*")
             print(f"Communication with WM failed - Response [{status_code}]")            
 
-    def getUserTimezone(self, sender_id):
-        """ Retrieves the specific user's timezone from the database."""
+    def getUserTimezone(self, sender_id: str) -> str:
+        """
+        Retrieves the specific user's timezone from the database.
+        
+        Args:
+            sender_id (str): The ID of the user whose timezone is to be retrieved.
+        
+        Returns:
+            str: The timezone of the user.
+        """        
         with self.session_scope() as session:
             user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
         return user_entry.timezone
 
-    def getUserUsecase(self, sender_id):
-        """ Retrieves the specific user's usecase from the database."""
+    def getUserUsecase(self, sender_id: str) -> str:
+        """
+        Retrieves the specific user's usecase from the database.
+        
+        Args:
+            sender_id (str): The ID of the user whose usecase is to be retrieved.
+        
+        Returns:
+            str: The usecase of the user.
+        """
         with self.session_scope() as session:
             user_entry = session.query(self.SQLUserID).filter(self.SQLUserID.sender_id == sender_id).first()
         return user_entry.usecase
 
-    def getUserDetails(self, sender_id):
-        """ Get specific user's partner name and disease"""
+    def getUserDetails(self, sender_id: str) -> Tuple[str, str]:
+        """
+        Get specific user's partner name and disease based on their usecase.
+        
+        Args:
+            sender_id (str): The ID of the user whose details are to be retrieved.
+        
+        Returns:
+            Tuple[str, str]: A tuple containing the partner name and disease of the user.
+        """
         usecase = self.getUserUsecase(sender_id)
         if usecase == "MS":
             return "FISM", "MULTIPLE_SCLEROSIS"
@@ -1469,8 +1573,14 @@ class CustomSQLTrackerStore(TrackerStore):
         else:
             return "N/A", "N/A"
     
-    def logTechIssue(self, issue, sender_id):
-        """ Logs technical issues as reported by users"""
+    def logTechIssue(self, issue: str, sender_id: str) -> None:
+        """
+        Logs technical issues as reported by users.
+        
+        Args:
+            issue (str): The description of the technical issue reported by the user.
+            sender_id (str): The ID of the user who reported the issue.
+        """
         with self.session_scope() as session:
             session.add(
                 self.SQLIssue(
@@ -1481,8 +1591,9 @@ class CustomSQLTrackerStore(TrackerStore):
                 )
             session.commit()
 
-    def sendQuestionnaireStatus(self, tracker, sender_id, questionnare_abvr, status):
-        """ Sends the status of the questionnaire to WCS
+    def sendQuestionnaireStatus(self, tracker: DialogueStateTracker, sender_id: str, questionnare_abvr: str, status:str) -> None:
+        """ 
+        Sends the status of the questionnaire to WCS
 
         Object should be of the format:
         {
@@ -1498,6 +1609,15 @@ class CustomSQLTrackerStore(TrackerStore):
         }
 
         Available Status: COMPLETED, IN_PROGRESS, CANCELED
+
+        Args:
+            - tracker (DialogueStateTracker): tracker object from Rasa framework
+            - sender_id (str): ID of the sender.
+            - questionnare_abvr (str): abbreviation of the questionnaire.
+            - status (str): status of the questionnaire.
+    
+        Raises:
+            KeyError: if questionnare_abvr is not supported.
         """
 
         # Perform Login against IAM
@@ -1541,9 +1661,17 @@ class CustomSQLTrackerStore(TrackerStore):
             print(25*"*")
             print(f"Sending questionnaire data to WCS failed - Response [{status_code}]")            
 
-    def getDizzinessNbalanceNewSymptoms(self, sender_id):
-        """ Gets the symptoms of the latest Dizziness and Balance questionnaire and of the one before that
-            Compares the symptoms and sends all new symptoms to wcs for the alert mechanism"""
+    def getDizzinessNbalanceNewSymptoms(self, sender_id: str) -> List[(str)]:
+        """
+        Gets the symptoms of the latest Dizziness and Balance questionnaire and of the one before that
+        Compares the symptoms and sends all new symptoms to wcs for the alert mechanism
+        
+        Args:
+            sender_id (str): the id of the sender/patient
+
+        Returns:
+            list of str: a list containing the new symptoms
+        """
         with self.session_scope() as session:
             answers_events, previous_answers_events  = self._questionnaire_answers_query(session, sender_id, "dizzNbalance", False, 1)
             answers = json.loads(answers_events.answers)
