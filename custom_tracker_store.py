@@ -14,7 +14,6 @@ from sqlite3 import Timestamp
 from time import sleep
 from typing import (
     Any,
-    Callable,
     Dict,
     Iterable,
     Iterator,
@@ -24,8 +23,7 @@ from typing import (
     Union,
     TYPE_CHECKING,
     Generator,
-    TypeVar,
-    Generic,
+    Tuple
 )
 
 import rasa.core.utils as core_utils
@@ -1410,7 +1408,7 @@ class CustomSQLTrackerStore(TrackerStore):
                                 timeout=10, 
                                 auth=BearerAuth(ca_accessToken)
                             )
-                            print(f"Get data from WCS for userid {sender_id} - Response <{response}> - Line 1334")
+                            print(f"Get data from WCS for userid {sender_id} - Response <{response}> - Line 1411")
                             response.close()
                             resp = response.json()
                             partner = resp["partner"]
@@ -1507,7 +1505,7 @@ class CustomSQLTrackerStore(TrackerStore):
                             language = "English"
                     session.commit()
                 else:
-                    # is the user already exists in the database retrieve their language
+                    # if the user already exists in the database retrieve their language
                     language = user_entry.language
             return language
         elif status_code == 401:

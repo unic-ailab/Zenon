@@ -192,24 +192,38 @@ def announce(action, tracker=None):
     output = ">>> Action: " + action.name()
     output = "=" * min(100, len(output)) + "\n" + output
     if tracker:
+        output += f"\n- UserId: {tracker.current_state()['sender_id']}"
+        try:
+            msg = tracker.latest_message
+            output += "\n- Text:       " + str(msg["text"])
+            output += "\n- Intent:     " + str(msg["intent"]["name"])
+            output += "\n- Confidence: " + str(msg["intent"]["confidence"])
+        except Exception as e:
+            print(f"\n> announce: [ERROR] occured when tried to retrieve latest message \n>{e}")            
+
+        try:
+            msg = tracker.latest_message
+
+            # Add Entities section
+            if len(msg["entities"]) > 0:
+                if "value" in msg["entities"][0].keys():
+                    output += (
+                        "\n- Entities:   "
+                        + str(msg["entities"][0]["entity"])
+                        + ", Value: "
+                        + str(msg["entities"][0]["value"])
+                    )
+                else:
+                    output += "\n- Entities:   " + str(msg["entities"][0]["entity"])
+            else:
+                output += "\n- Entities:   "
+        except Exception as e:
+            print(f"\n> announce: [ERROR] occured when tried to retrieve entities from latest message \n>{e}")
+
         try:
             msg = tracker.latest_message
             slots = tracker.slots
             filled_slots = {}
-            output += "\n- Text:       " + str(msg["text"])
-            output += "\n- Intent:     " + str(msg["intent"]["name"])
-            output += "\n- Confidence: " + str(msg["intent"]["confidence"])
-
-            # Add Entities section
-            if "value" in msg["entities"][0].keys():
-                output += (
-                    "\n- Entities:   "
-                    + str(msg["entities"][0]["entity"])
-                    + ", Value: "
-                    + str(msg["entities"][0]["value"])
-                )
-            else:
-                output += "\n- Entities:   " + str(msg["entities"][0]["entity"])
 
             # Add Slots section
             output += "\n- Slots:      "
@@ -222,7 +236,7 @@ def announce(action, tracker=None):
                 output = output[:-2]    # clear the last ", "
 
         except Exception as e:
-            print(f"\n> announce: [ERROR] {e}")
+            print(f"\n> announce: [ERROR] when tried to retrieve slots from latest message \n>{e}")
     print(output)
 
 ####################################################################################################
@@ -309,7 +323,6 @@ class ActionUtterAskLanguage(Action):
         return "action_utter_ask_language"
 
     def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -337,7 +350,6 @@ class ActionUtterSetLanguage(Action):
         return "action_utter_set_language"
 
     def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
 
         current_language = tracker.slots["language"].title()
 
@@ -365,7 +377,6 @@ class ActionOnboardUser(Action):
         return "action_onboard_user"
 
     def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
 
         # Perform Login against IAM
         status_code, ca_accessToken, refresh_token = IAMLogin().login()
@@ -383,7 +394,7 @@ class ActionGetAvailableQuestionnaires(Action):
         return "action_get_available_questionnaires"
 
     def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
+        
         now = datetime.datetime.now(tz=pytz.utc).timestamp()
         # its better to not check the user id here as here it won't update the app languge
         # keep it here for now to avoid not onboarding users between database updates
@@ -541,7 +552,6 @@ class ActionOptionsMenuExtra(Action):
         return "action_options_menu_extra"
 
     def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
         
         #time.sleep(5) # 5 second delay before the next action
         #smthg missing here but i dont remember
@@ -693,7 +703,7 @@ class ActionSleepStatus(Action):
                 average_score_text2 =""
 
             try :
-                fourteen_days_ago = (today - datetime.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
+                fourteen_days_ago = (today - datetime.timedelta(days=14)).strftime("%Y-%m-%dT%H:%M:%SZ")
                 response = requests.get(
                     wcs_sleep_endpoint, 
                     params={"userId": tracker.current_state()['sender_id'], "startDate":fourteen_days_ago, "endDate":seven_days_ago}, 
@@ -1096,7 +1106,6 @@ class ActionSetQuestionnaireSlot(Action):
         return "action_set_questionnaire_slot"
 
     def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
         
         q_abbreviation = tracker.latest_message["intent"].get("name").replace("_start", "")
         usecase = customTrackerInstance.getUserUsecase(tracker.current_state()['sender_id'])
@@ -1115,7 +1124,6 @@ class ActionUtterStartQuestionnaire(Action):
         return "action_utter_ask_questionnaire_start"
 
     def run(self, dispatcher, tracker, domain):
-        announce(self, tracker)
 
         q_abbreviation = tracker.get_slot("questionnaire")
         if q_abbreviation == None or q_abbreviation not in questionnaire_abbreviations:
@@ -1238,7 +1246,6 @@ class ActionAskACTIVLimWalking(Action):
         return "action_ask_activLim_walking"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1270,7 +1277,6 @@ class ActionAskACTIVLimDoorbell(Action):
         return "action_ask_activLim_doorbell"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1302,7 +1308,6 @@ class ActionAskACTIVLimHeavyLoad(Action):
         return "action_ask_activLim_heavyLoad"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1334,7 +1339,6 @@ class ActionAskACTIVLimPickFromFloor(Action):
         return "action_ask_activLim_pickFromFloor"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1366,7 +1370,6 @@ class ActionAskACTIVLimToilet(Action):
         return "action_ask_activLim_usingToilet"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1398,7 +1401,6 @@ class ActionAskACTIVLimOutOfBed(Action):
         return "action_ask_activLim_outOfBed"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1430,7 +1432,6 @@ class ActionAskACTIVLimBrushTeeth(Action):
         return "action_ask_activLim_brushTeeth"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1462,7 +1463,6 @@ class ActionAskACTIVLimTakingShower(Action):
         return "action_ask_activLim_takingShower"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1494,7 +1494,6 @@ class ActionAskACTIVLimPuttinSocks(Action):
         return "action_ask_activLim_puttinSocks"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1526,7 +1525,6 @@ class ActionAskACTIVLimOutOfCar(Action):
         return "action_ask_activLim_outOfCar"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1558,7 +1556,6 @@ class ActionAskACTIVLimTurnInBed(Action):
         return "action_ask_activLim_turnInBed"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1590,7 +1587,6 @@ class ActionAskACTIVLimTyingLaces(Action):
         return "action_ask_activLim_tyingLaces"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1622,7 +1618,6 @@ class ActionAskACTIVLimTakeOffTshirt(Action):
         return "action_ask_activLim_takeOffTshirt"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1654,7 +1649,6 @@ class ActionAskACTIVLimOpenDoor(Action):
         return "action_ask_activLim_openDoor"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1686,7 +1680,6 @@ class ActionAskACTIVLimSweepVaccum(Action):
         return "action_ask_activLim_sweepVaccum"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1718,7 +1711,6 @@ class ActionAskACTIVLimDishesInCupboard(Action):
         return "action_ask_activLim_dishesInCupboard"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1750,7 +1742,6 @@ class ActionAskACTIVLimGetUpFromChair(Action):
         return "action_ask_activLim_getUpFromChair"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1782,7 +1773,6 @@ class ActionAskACTIVLimStandingNoSupport(Action):
         return "action_ask_activLim_standingNoSupport"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1814,7 +1804,6 @@ class ActionAskACTIVLimWalkingUpstairs(Action):
         return "action_ask_activLim_walkingUpstairs"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1846,7 +1835,6 @@ class ActionAskACTIVLimPutKey(Action):
         return "action_ask_activLim_putKey"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -1883,7 +1871,6 @@ class CalculatePSQIScore(Action):
         return "action_calculate_psqi_score"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         # Calculate Component 1 Score
         psqi_comp_1_score = int(tracker.get_slot("psqi_Q6_score"))
@@ -2075,7 +2062,6 @@ class ActionAskPSQIQ5a(Action):
         return "action_ask_psqi_Q5a"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         entry_text = get_text_from_lang(
             tracker, psqi_q5
@@ -2113,7 +2099,6 @@ class ActionAskPSQIQ5b(Action):
         return "action_ask_psqi_Q5b"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         entry_text = get_text_from_lang(
             tracker, psqi_q5
@@ -2151,7 +2136,6 @@ class ActionAskPSQIQ5c(Action):
         return "action_ask_psqi_Q5c"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         entry_text = get_text_from_lang(
             tracker, psqi_q5
@@ -2189,7 +2173,6 @@ class ActionAskPSQIQ5d(Action):
         return "action_ask_psqi_Q5d"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         entry_text = get_text_from_lang(
             tracker, psqi_q5
@@ -2227,7 +2210,6 @@ class ActionAskPSQIQ5e(Action):
         return "action_ask_psqi_Q5e"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         entry_text = get_text_from_lang(
             tracker, psqi_q5
@@ -2265,7 +2247,6 @@ class ActionAskPSQIQ5f(Action):
         return "action_ask_psqi_Q5f"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         entry_text = get_text_from_lang(
             tracker, psqi_q5
@@ -2303,7 +2284,6 @@ class ActionAskPSQIQ5g(Action):
         return "action_ask_psqi_Q5g"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         entry_text = get_text_from_lang(
             tracker, psqi_q5
@@ -2341,7 +2321,6 @@ class ActionAskPSQIQ5h(Action):
         return "action_ask_psqi_Q5h"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         entry_text = get_text_from_lang(
             tracker, psqi_q5
@@ -2379,7 +2358,6 @@ class ActionAskPSQIQ5i(Action):
         return "action_ask_psqi_Q5i"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         entry_text = get_text_from_lang(
             tracker, psqi_q5
@@ -2444,7 +2422,6 @@ class ActionAskPSQIQ5k(Action):
         return "action_ask_psqi_Q5k"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -2476,7 +2453,6 @@ class ActionAskPSQIQ6(Action):
         return "action_ask_psqi_Q6"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         entry_text = get_text_from_lang(
             tracker, psqi_start_text
@@ -2518,7 +2494,6 @@ class ActionAskPSQIQ7(Action):
         return "action_ask_psqi_Q7"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         entry_text = get_text_from_lang(
             tracker, psqi_start_text
@@ -2560,7 +2535,6 @@ class ActionAskPSQIQ8(Action):
         return "action_ask_psqi_Q8"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         entry_text = get_text_from_lang(
             tracker, psqi_start_text
@@ -2602,7 +2576,6 @@ class ActionAskPSQIQ9(Action):
         return "action_ask_psqi_Q9"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         entry_text = get_text_from_lang(
             tracker, psqi_start_text
@@ -2644,7 +2617,6 @@ class ActionAskPSQIQ10(Action):
         return "action_ask_psqi_Q10"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker, [
@@ -2680,7 +2652,6 @@ class ActionAskPSQIQ10a(Action):
         return "action_ask_psqi_Q10a"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker, [
@@ -2716,7 +2687,6 @@ class ActionAskPSQIQ10b(Action):
         return "action_ask_psqi_Q10b"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker, [
@@ -2752,7 +2722,6 @@ class ActionAskPSQIQ10c(Action):
         return "action_ask_psqi_Q10c"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker, [
@@ -2788,7 +2757,6 @@ class ActionAskPSQIQ10d(Action):
         return "action_ask_psqi_Q10d"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker, [
@@ -3216,7 +3184,6 @@ class ActionAskDnBQ2(Action):
         return "action_ask_dizzNbalance_Q2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -3264,7 +3231,6 @@ class ActionAskDnBQ3(Action):
         return "action_ask_dizzNbalance_Q3"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -3312,7 +3278,6 @@ class ActionAskDnBQ4(Action):
         return "action_ask_dizzNbalance_Q4"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -3365,7 +3330,6 @@ class ActionAskDnBQ4b(Action):
         return "action_ask_dizzNbalance_Q4b"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -3406,7 +3370,6 @@ class ActionAskDnBQ4c(Action):
         return "action_ask_dizzNbalance_Q4c"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -3459,7 +3422,6 @@ class ActionAskDnBQ4d(Action):
         return "action_ask_dizzNbalance_Q4d"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -3491,7 +3453,6 @@ class ActionAskDnBSymptoms(Action):
         return "action_ask_dizzNbalance_Symptoms"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
         
         text = get_text_from_lang(
             tracker, [
@@ -3535,7 +3496,6 @@ class ActionAskDnBQ5(Action):
         return "action_ask_dizzNbalance_Q5"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -3567,7 +3527,6 @@ class ActionAskDnBQ5i(Action):
         return "action_ask_dizzNbalance_Q5i"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
         
         text = get_text_from_lang(
             tracker, [
@@ -3610,7 +3569,6 @@ class ActionAskDnBQ6(Action):
         return "action_ask_dizzNbalance_Q6"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -3642,7 +3600,6 @@ class ActionAskDnBQ6i(Action):
         return "action_ask_dizzNbalance_Q6i"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
         
         text = get_text_from_lang(
             tracker, [
@@ -3685,7 +3642,6 @@ class ActionAskDnBQ7(Action):
         return "action_ask_dizzNbalance_Q7"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -3733,7 +3689,6 @@ class ActionAskDnBQ8(Action):
         return "action_ask_dizzNbalance_Q8"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -3768,7 +3723,6 @@ class ActionAskDnBQ9(Action):
         return "action_ask_dizzNbalance_Q9"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -3821,7 +3775,6 @@ class ActionAskDnBQ10(Action):
         return "action_ask_dizzNbalance_Q10"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -3856,7 +3809,6 @@ class ActionAskDnBQ11(Action):
         return "action_ask_dizzNbalance_Q11"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -3907,7 +3859,6 @@ class ActionAskDnBQ12(Action):
         return "action_ask_dizzNbalance_Q12"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -3961,7 +3912,6 @@ class ActionAskDnBPastMedicalHistory(Action):
         return "action_ask_dizzNbalance_PastMedicalHistory"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
         
         text = get_text_from_lang(
             tracker, [
@@ -4035,7 +3985,6 @@ class ActionAskDnBMedicalTests(Action):
         return "action_ask_dizzNbalance_MedicalTests"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
         
         text = get_text_from_lang(
             tracker, [
@@ -4095,7 +4044,6 @@ class ActionAskDnBOnSetType(Action):
         return "action_ask_dizzNbalance_OnSetType"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4135,7 +4083,6 @@ class ActionAskDnBEarSymptomI(Action):
         return "action_ask_dizzNbalance_EarSymptomI"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4181,7 +4128,6 @@ class ActionAskDnBEarSymptomIa(Action):
         return "action_ask_dizzNbalance_EarSymptomIa"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4238,7 +4184,6 @@ class ActionAskDnBEarSymptomII(Action):
         return "action_ask_dizzNbalance_EarSymptomII"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4273,7 +4218,6 @@ class ActionAskDnBEarSymptomIIa(Action):
         return "action_ask_dizzNbalance_EarSymptomIIa"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4309,7 +4253,6 @@ class ActionAskDnBEarSymptomIII(Action):
         return "action_ask_dizzNbalance_EarSymptomIII"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4344,7 +4287,6 @@ class ActionAskDnBEarSymptomIIIa(Action):
         return "action_ask_dizzNbalance_EarSymptomIIIa"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4416,7 +4358,6 @@ class ActionAskDnBEarSymptomIIIa2(Action):
         return "action_ask_dizzNbalance_EarSymptomIIIa2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4452,7 +4393,6 @@ class ActionAskDnBEarSymptomIIIa3(Action):
         return "action_ask_dizzNbalance_EarSymptomIIIa3"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4508,7 +4448,6 @@ class ActionAskDnBEarSymptomIV(Action):
         return "action_ask_dizzNbalance_EarSymptomIV"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4543,7 +4482,6 @@ class ActionAskDnBEarSymptomV(Action):
         return "action_ask_dizzNbalance_EarSymptomV"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4578,7 +4516,6 @@ class ActionAskDnBEarSymptomVI(Action):
         return "action_ask_dizzNbalance_EarSymptomVI"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4624,7 +4561,6 @@ class ActionAskDnBEarSymptomVII(Action):
         return "action_ask_dizzNbalance_EarSymptomVII"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4658,7 +4594,6 @@ class ActionAskDnBEarSymptomVIII(Action):
         return "action_ask_dizzNbalance_EarSymptomVIII"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4692,7 +4627,6 @@ class ActionAskDnBEarSymptomIX(Action):
         return "action_ask_dizzNbalance_EarSymptomIX"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4726,7 +4660,6 @@ class ActionAskDnBEarSymptomX(Action):
         return "action_ask_dizzNbalance_EarSymptomX"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4760,7 +4693,6 @@ class ActionAskDnBEarSymptomXI(Action):
         return "action_ask_dizzNbalance_EarSymptomXI"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4795,7 +4727,6 @@ class ActionAskDnBSocial_a(Action):
         return "action_ask_dizzNbalance_Social_a"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4853,7 +4784,6 @@ class ActionAskDnBSocial_b(Action):
         return "action_ask_dizzNbalance_Social_b"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -4911,7 +4841,6 @@ class ActionAskDnBSocial_c(Action):
         return "action_ask_dizzNbalance_Social_c"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
         
         text = get_text_from_lang(
             tracker, [
@@ -4950,7 +4879,6 @@ class ActionAskDnBHabitsCaffeine(Action):
         return "action_ask_dizzNbalance_Habits_caffeine"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5005,7 +4933,6 @@ class ActionAskDnBHabitsAlcohol(Action):
         return "action_ask_dizzNbalance_Habits_alcohol"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5060,7 +4987,6 @@ class ActionAskDnBHabitsTobacco(Action):
         return "action_ask_dizzNbalance_Habits_tobacco"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5296,7 +5222,6 @@ class ActionAskeatinghabitsQ1(Action):
         return "action_ask_eatinghabits_Q1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5329,7 +5254,6 @@ class ActionAskeatinghabitsQ2(Action):
         return "action_ask_eatinghabits_Q2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5362,7 +5286,6 @@ class ActionAskeatinghabitsQ3(Action):
         return "action_ask_eatinghabits_Q3"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5395,7 +5318,6 @@ class ActionAskeatinghabitsQ4(Action):
         return "action_ask_eatinghabits_Q4"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5428,7 +5350,6 @@ class ActionAskeatinghabitsQ5(Action):
         return "action_ask_eatinghabits_Q5"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5461,7 +5382,6 @@ class ActionAskeatinghabitsQ6(Action):
         return "action_ask_eatinghabits_Q6"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5494,7 +5414,6 @@ class ActionAskeatinghabitsQ7(Action):
         return "action_ask_eatinghabits_Q7"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5527,7 +5446,6 @@ class ActionAskeatinghabitsQ8(Action):
         return "action_ask_eatinghabits_Q8"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5560,7 +5478,6 @@ class ActionAskeatinghabitsQ9(Action):
         return "action_ask_eatinghabits_Q9"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5593,7 +5510,6 @@ class ActionAskeatinghabitsQ10(Action):
         return "action_ask_eatinghabits_Q10"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5626,7 +5542,6 @@ class ActionAskeatinghabitsQ11(Action):
         return "action_ask_eatinghabits_Q11"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5659,7 +5574,6 @@ class ActionAskeatinghabitsQ12(Action):
         return "action_ask_eatinghabits_Q12"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5692,7 +5606,6 @@ class ActionAskeatinghabitsQ13(Action):
         return "action_ask_eatinghabits_Q13"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5725,7 +5638,6 @@ class ActionAskeatinghabitsQ14(Action):
         return "action_ask_eatinghabits_Q14"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5758,7 +5670,6 @@ class ActionAskeatinghabitsQ15(Action):
         return "action_ask_eatinghabits_Q15"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5791,7 +5702,6 @@ class ActionAskeatinghabitsQ16(Action):
         return "action_ask_eatinghabits_Q16"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5824,7 +5734,6 @@ class ActionAskeatinghabitsQ17(Action):
         return "action_ask_eatinghabits_Q17"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5857,7 +5766,6 @@ class ActionAskeatinghabitsQ18(Action):
         return "action_ask_eatinghabits_Q18"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5890,7 +5798,6 @@ class ActionAskeatinghabitsQ19(Action):
         return "action_ask_eatinghabits_Q19"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5923,7 +5830,6 @@ class ActionAskeatinghabitsQ20(Action):
         return "action_ask_eatinghabits_Q20"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5960,7 +5866,6 @@ class ActionAskMuscleToneQ1(Action):
         return "action_ask_muscletone_Q1"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -5991,7 +5896,6 @@ class ActionAskMuscleToneQ2(Action):
         return "action_ask_muscletone_Q2"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6022,7 +5926,6 @@ class ActionAskMuscleToneQ3(Action):
         return "action_ask_muscletone_Q3"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6053,7 +5956,6 @@ class ActionAskMuscleToneQ4(Action):
         return "action_ask_muscletone_Q4"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6084,7 +5986,7 @@ class ActionAskMuscleToneQ5(Action):
         return "action_ask_muscletone_Q5"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
+
 
         text = get_text_from_lang(
             tracker,
@@ -6115,7 +6017,6 @@ class ActionAskMuscleToneQ6(Action):
         return "action_ask_muscletone_Q6"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6155,7 +6056,6 @@ class ActionAskMuscleToneQ7(Action):
         return "action_ask_muscletone_Q7"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6186,7 +6086,6 @@ class ActionAskMuscleToneQ8(Action):
         return "action_ask_muscletone_Q8"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6217,7 +6116,6 @@ class ActionAskMuscleToneQ9(Action):
         return "action_ask_muscletone_Q9"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6248,7 +6146,6 @@ class ActionAskMuscleToneQ10(Action):
         return "action_ask_muscletone_Q10"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6287,7 +6184,6 @@ class ActionAskMuscleToneQ10i(Action):
         return "action_ask_muscletone_Q10i"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6476,7 +6372,6 @@ class ActionAskCoastQ0(Action):
         return "action_ask_coast_Q0"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6509,7 +6404,6 @@ class ActionAskCoastQ1(Action):
         return "action_ask_coast_Q1"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6542,7 +6436,6 @@ class ActionAskCoastQ2(Action):
         return "action_ask_coast_Q2"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6575,7 +6468,6 @@ class ActionAskCoastQ3(Action):
         return "action_ask_coast_Q3"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6608,7 +6500,6 @@ class ActionAskCoastQ4(Action):
         return "action_ask_coast_Q4"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6641,7 +6532,6 @@ class ActionAskCoastQ5(Action):
         return "action_ask_coast_Q5"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6674,7 +6564,6 @@ class ActionAskCoastQ6(Action):
         return "action_ask_coast_Q6"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6707,7 +6596,6 @@ class ActionAskCoastQ7(Action):
         return "action_ask_coast_Q7"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6740,7 +6628,6 @@ class ActionAskCoastQ8(Action):
         return "action_ask_coast_Q8"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6773,7 +6660,6 @@ class ActionAskCoastQ9(Action):
         return "action_ask_coast_Q9"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6806,7 +6692,6 @@ class ActionAskCoastQ10(Action):
         return "action_ask_coast_Q10"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6839,7 +6724,6 @@ class ActionAskCoastQ11(Action):
         return "action_ask_coast_Q11"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6872,7 +6756,6 @@ class ActionAskCoastQ12(Action):
         return "action_ask_coast_Q12"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6905,7 +6788,6 @@ class ActionAskCoastQ13(Action):
         return "action_ask_coast_Q13"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6938,7 +6820,6 @@ class ActionAskCoastQ14(Action):
         return "action_ask_coast_Q14"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -6971,7 +6852,6 @@ class ActionAskCoastQ15(Action):
         return "action_ask_coast_Q15"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7004,7 +6884,6 @@ class ActionAskCoastQ16(Action):
         return "action_ask_coast_Q16"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7037,7 +6916,6 @@ class ActionAskCoastQ17(Action):
         return "action_ask_coast_Q17"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7070,7 +6948,6 @@ class ActionAskCoastQ18(Action):
         return "action_ask_coast_Q18"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7103,7 +6980,6 @@ class ActionAskCoastQ19(Action):
         return "action_ask_coast_Q19"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7136,7 +7012,6 @@ class ActionAskCoastQ20(Action):
         return "action_ask_coast_Q20"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7173,7 +7048,6 @@ class ActionStrokeDomainIIIRQ1(Action):
         return "action_ask_STROKEdomainIII_RQ1"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7210,7 +7084,6 @@ class ActionStrokeDomainIIIRQ2(Action):
         return "action_ask_STROKEdomainIII_RQ2"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7251,7 +7124,6 @@ class ActionStrokeDomainVRQ1(Action):
         return "action_ask_STROKEdomainV_RQ1"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7288,7 +7160,6 @@ class ActionStrokeDomainVRQ2(Action):
         return "action_ask_STROKEdomainV_RQ2"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7330,7 +7201,6 @@ class ActionAskStrokeDomainIVRQ1(Action):
         return "action_ask_STROKEdomainIV_RQ1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7376,7 +7246,6 @@ class ActionStrokeDomainIVRQ2(Action):
         return "action_ask_STROKEdomainIV_RQ2"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7413,7 +7282,6 @@ class ActionStrokeDomainIVRQ3(Action):
         return "action_ask_STROKEdomainIV_RQ3"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7454,7 +7322,6 @@ class ActionAskMSDomainIRQ1(Action):
         return "action_ask_MSdomainI_RQ1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7510,7 +7377,6 @@ class ActionAskMSDomainIRQ1b(Action):
         return "action_ask_MSdomainI_RQ1b"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7545,7 +7411,6 @@ class ActionAskMSDomainIRQ1c(Action):
         return "action_ask_MSdomainI_RQ1c"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7582,7 +7447,6 @@ class ActionAskMSDomainIRQ2(Action):
         return "action_ask_MSdomainI_RQ2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7638,7 +7502,6 @@ class ActionAskMSDomainIRQ2b(Action):
         return "action_ask_MSdomainI_RQ2b"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7673,7 +7536,6 @@ class ActionAskMSDomainIRQ2c(Action):
         return "action_ask_MSdomainI_RQ2c"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7710,7 +7572,6 @@ class ActionAskMSDomainIRQ3(Action):
         return "action_ask_MSdomainI_RQ3"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7789,7 +7650,6 @@ class ActionAskMSDomainIRQ6(Action):
         return "action_ask_MSdomainI_RQ6"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7899,7 +7759,6 @@ class ActionAskMSDomainII3MRQ3(Action):
         return "action_ask_MSdomainII_3M_RQ3"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -7938,7 +7797,6 @@ class ActionMSDomainIII1WRQ1(Action):
         return "action_ask_MSdomainIII_1W_RQ1"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -8017,7 +7875,6 @@ class ActionMSDomainIII1WRQ3(Action):
         return "action_ask_MSdomainIII_1W_RQ3"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -8054,7 +7911,6 @@ class ActionMSDomainIII1WRQ4(Action):
         return "action_ask_MSdomainIII_1W_RQ4"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -8154,7 +8010,6 @@ class ActionAskMSDomainIII2WRQ7(Action):
         return "action_ask_MSdomainIII_2W_RQ7"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -8315,7 +8170,6 @@ class ActionAskMSDomainIVDailyRQ1(Action):
         return "action_ask_MSdomainIV_Daily_RQ1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -8360,7 +8214,6 @@ class ActionAskMSDomainIV1WRQ2(Action):
         return "action_ask_MSdomainIV_1W_RQ2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -8395,7 +8248,6 @@ class ActionAskMSDomainIV1WRQ2a(Action):
         return "action_ask_MSdomainIV_1W_RQ2a"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -8438,7 +8290,6 @@ class ActionAskMSDomainIV_1WRQ3(Action):
         return "action_ask_MSdomainIV_1W_RQ3"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -8490,7 +8341,6 @@ class ActionMSDomainVRQ1(Action):
         return "action_ask_MSdomainV_RQ1"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -8527,7 +8377,6 @@ class ActionMSDomainVRQ2(Action):
         return "action_ask_MSdomainV_RQ2"
     
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -8568,7 +8417,6 @@ class ActionAskMSDomainII_1MRQ1(Action):
         return "action_ask_MSdomainII_1M_RQ1"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
@@ -8603,7 +8451,6 @@ class ActionAskMSDomainII_1MRQ2(Action):
         return "action_ask_MSdomainII_1M_RQ2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
 
         text = get_text_from_lang(
             tracker,
