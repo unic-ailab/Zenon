@@ -507,7 +507,7 @@ class CustomSQLTrackerStore(TrackerStore):
         
         return question_events, slot_events
 
-    def _questionnaire_answers_query(self, session: "Session", sender_id: Text, questionnaire_name: Text, onlyFinished:bool=False, previous: int=0) -> Tuple[Optional[Any], List[Optional[Any]]]:
+    def _questionnaire_state_query(self, session: "Session", sender_id: Text, questionnaire_name: Text, onlyFinished:bool=False, previous: int=0) -> Tuple[Optional[Any], List[Optional[Any]]]:
         """
         Provide the query to retrieve a specific questionnaire's answers for a specific sender.
 
