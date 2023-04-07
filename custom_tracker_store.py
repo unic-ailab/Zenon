@@ -507,20 +507,17 @@ class CustomSQLTrackerStore(TrackerStore):
         
         return question_events, slot_events
 
-    def _questionnaire_state_query(self, session: "Session", sender_id: Text, questionnaire_name: Text, onlyFinished:bool=False, previous: int=0) -> Tuple[Optional[Any], List[Optional[Any]]]:
-        """
-        Provide the query to retrieve a specific questionnaire's answers for a specific sender.
+    def _questionnaire_state_query(self, session: "Session", sender_id: Text, timestamp: float, questionnaire_name: Text=None):
+        """Provide the query to retrieve the questionnaire state events for a specific sender.
 
         Args:
             session: Current database session.
             sender_id: Sender id whose conversation events should be retrieved.
             questionnaire_name: The name of the questionnaire whose questions and responses should be retrieved.
-            onlyFinished: boolean, whether to search for only finished questionnaires or also pending questionnaires
-            previous: integer, how many questionnaires before the latest one to retrieve
+
 
         Returns:
-            - latest questionnaire answers database cell
-            - list of the k-previous questionnaire answers database cell
+            One database row entry.
         """
 
         if questionnaire_name:
