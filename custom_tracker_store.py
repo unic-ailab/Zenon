@@ -14,6 +14,7 @@ from sqlite3 import Timestamp
 from time import sleep
 from typing import (
     Any,
+    Callable,
     Dict,
     Iterable,
     Iterator,
@@ -23,7 +24,8 @@ from typing import (
     Union,
     TYPE_CHECKING,
     Generator,
-    Tuple
+    TypeVar,
+    Generic,
 )
 
 import rasa.core.utils as core_utils
@@ -214,8 +216,7 @@ class CustomSQLTrackerStore(TrackerStore):
         login_db: Optional[Text] = None,
         query: Optional[Dict] = None,
     ) -> Union[Text, "URL"]:
-        """
-        Build an SQLAlchemy `URL` object representing the parameters needed
+        """Build an SQLAlchemy `URL` object representing the parameters needed
         to connect to an SQL database.
 
         Args:
@@ -395,7 +396,6 @@ class CustomSQLTrackerStore(TrackerStore):
         Returns:
             Query to get the conversation events.
         """
-
         # Subquery to find the timestamp of the latest `session_started` event
         session_start_sub_query = (
             session.query(sa.func.max(self.SQLEvent.timestamp).label("session_start"))
@@ -409,7 +409,6 @@ class CustomSQLTrackerStore(TrackerStore):
         event_query = session.query(self.SQLEvent).filter(
             self.SQLEvent.sender_id == sender_id
         )
-
         if not fetch_events_from_all_sessions:
             event_query = event_query.filter(
                 # Find events after the latest `session_started` event or return all
@@ -422,19 +421,19 @@ class CustomSQLTrackerStore(TrackerStore):
 
         return event_query.order_by(self.SQLEvent.timestamp)
 
-    def _questionnaire_query(self, session: "Session", sender_id: Text, questionnaire_name: Text) -> Tuple[List[SQLEvent], List[SQLEvent]]:
-        """
-        Provide the query to retrieve the questions and responses events for a specific sender for a specific questionnaire.
+    def _questionnaire_query(
+        self, session: "Session", sender_id: Text, questionnaire_name: Text,
+    ) -> "Query":
+        """Provide the query to retrieve the questions and responses events for a specific sender for a specific questionnaire.
 
         Args:
             session: Current database session.
             sender_id: Sender id whose conversation events should be retrieved.
+            timestamp: timestamp after when to search for these events
             questionnaire_name: The name of the questionnaire whose questions and responses should be retrieved.
 
         Returns:
-            A tuple containing two lists of SQLEvent objects:
-                - question_events: list of bot events representing the questions asked to the user
-                - slot_events: list of slot events representing the user's responses to the questions
+            Query to get the questions and responses events.
         """
 
         # TODO this might not always be true, might need start as well as completed
@@ -504,10 +503,14 @@ class CustomSQLTrackerStore(TrackerStore):
                 self.SQLEvent.action_name.notlike(questionnaire_name+"_score"),
                 self.SQLEvent.action_name.ilike(questionnaire_name+"_%")
                 ).order_by(self.SQLEvent.timestamp).all()
-        
+
+        print(len(question_events))
+        print(len(slot_events))
+        print("agree", len(question_events)==len(slot_events))
         return question_events, slot_events
 
-    def _questionnaire_state_query(self, session: "Session", sender_id: Text, timestamp: float, questionnaire_name: Text=None):
+    def _questionnaire_state_query(
+        self, session: "Session", sender_id: Text, timestamp: float, questionnaire_name: Text=None):
         """Provide the query to retrieve the questionnaire state events for a specific sender.
 
         Args:
@@ -542,28 +545,22 @@ class CustomSQLTrackerStore(TrackerStore):
         
         return database_entries
 
-    def _questionnaire_answers_query(self, session: "Session", sender_id: Text, questionnaire_name: Text, onlyFinished: bool = False, previous: int = 0) -> Union[Tuple[None, None], Tuple[SQLQuestState, List[str]]]:
-        """
-        Provide the query to retrieve a specific questionnaire's answers for a specific sender.
+    def _questionnaire_answers_query(
+        self, session: "Session", sender_id: Text, questionnaire_name: Text, onlyFinished:bool=False, previous: int=0):
+        """Provide the query to retrieve a specific questionnaire's answers for a specific sender.
 
         Args:
             session: Current database session.
             sender_id: Sender id whose conversation events should be retrieved.
             questionnaire_name: The name of the questionnaire whose questions and responses should be retrieved.
-            onlyFinished: Whether to search for only finished questionnaires or also pending questionnaires.
-            previous: How many questionnaires before the latest one to retrieve.
+            onlyFinished: boolean, whether to search for only finished questionnaires or also pending questionnaires
+            previous: integer, how many questionnaires before the latest one to retrieve
+
 
         Returns:
-            If there is no previous answer or if `previous` is zero:
-            - The latest questionnaire answers database cell if it exists, otherwise `None`.
-
-            If `previous` is greater than zero:
-            - The latest questionnaire answers database cell.
-            - A list of the `previous` questionnaire answers database cell in reverse order, i.e., from oldest to newest.
-            If there are fewer than `previous` questionnaires, only the available ones are returned.
-            If there are no previous questionnaires, an empty list is returned.
+            - latest questionnaire answers database cell
+            - latest questionnaire answers database cell, list of the k-previous questionnaire answers database cell
         """
-
         if onlyFinished:
             states = ["finished"]
         else:
@@ -585,7 +582,6 @@ class CustomSQLTrackerStore(TrackerStore):
                     self.SQLQuestState.timestamp_end >= latest_questionnaire_sub_query.c.latest_timestamp,
                 )
             ).first()
-        
         if previous > 0:
             previous_answers_entries = (
                 session.query(self.SQLQuestState.answers)
@@ -596,14 +592,15 @@ class CustomSQLTrackerStore(TrackerStore):
                     self.SQLQuestState.timestamp_end < answers_entry.timestamp_end,
                 )
             ).order_by(self.SQLQuestState.timestamp_end.desc()).limit(previous).all()
-            
+        #tell wcs you send all answers not only the new
             return answers_entry, previous_answers_entries
         else:
             return answers_entry
 
-    def _questionnaire_score_query(self, session: Session, sender_id: str, questionnaire_name: str) -> float:
-        """
-        Provide the query to retrieve the questionnaire score for a specific sender.
+    def _questionnaire_score_query(
+        self, session: "Session", sender_id: Text, questionnaire_name: Text,
+    ) -> "Query":
+        """Provide the query to retrieve the questionnaire score for a specific sender.
 
         Args:
             session: Current database session.
@@ -613,7 +610,6 @@ class CustomSQLTrackerStore(TrackerStore):
         Returns:
             Float with questionnaire score.
         """
-
         latest_questionnaire_score_sub = session.query(sa.func.max(self.SQLEvent.timestamp).label("latest_timestamp")).filter(
                 self.SQLEvent.sender_id == sender_id,
                 self.SQLEvent.action_name.ilike(questionnaire_name+"_score"),
@@ -629,9 +625,10 @@ class CustomSQLTrackerStore(TrackerStore):
         data = json.loads(latest_questionnaire_score)
         return float(data.get("value", -1))
 
-    def _questionnaire_name_query(self, session: Session, sender_id: Text, action_name: Text) -> str:
-        """
-        Provide the query to retrieve the questionnaire name (abbreviation) after it has been completed or cancelled for a specific sender.
+    def _questionnaire_name_query(
+        self, session: "Session", sender_id: Text, action_name: Text,
+    ) -> "Query":
+        """Provide the query to retrieve the questionnaire name (abbreviation) after it has been completed or cancelled for a specific sender.
 
         Args:
             session: Current database session.
@@ -639,9 +636,8 @@ class CustomSQLTrackerStore(TrackerStore):
             action_name: The name of the action before which the questionnaire name should be retrieved.
 
         Returns:
-            str: String with questionnaire name.
+            String with questionnaire name.
         """
-
         latest_timestamp_sub_query = session.query(sa.func.max(self.SQLEvent.timestamp).label("latest_timestamp")).filter(
                 self.SQLEvent.sender_id == sender_id,
                 self.SQLEvent.action_name == action_name,
@@ -661,22 +657,22 @@ class CustomSQLTrackerStore(TrackerStore):
         return latest_questionnaire_name.replace("_form", "")
 
 
-    def _sentiment_query(self, session: Session, sender_id: Text) -> Tuple[Dict[str, Union[SQLAlchemyEvent, List[Union[SQLAlchemyEvent, None]]]], List[str]]:
-        """
-        Provide the query to retrieve the sender message and their sentiment for a specific sender.
-        The messages were the result of free-text questions about the user's mood or a general question asking whether the user wants to report anything of any nature.
+    def _sentiment_query(
+        self, session: "Session", sender_id: Text) -> "Query":
+        """Provide the query to retrieve the sender message and their sentiment for a specific sender.
+           The messages were the result of free-text questions about the user's mood or a general question asking whether the user
+           wants to report anything of any nature.
 
         Args:
             session: Current database session.
             sender_id: Sender id whose conversation events should be retrieved.
 
         Returns:
-            A tuple with two items:
-            - A dictionary with two keys: "message" and "slot". The value for the "message" key is the result of the first user message, which contains sentiment data. 
-            The value for the "slot" key is a list containing two elements. The first element is the result of the second user message, and the second element is the result of the sentiment of the second message. 
-            If there is no second message, the "slot" key contains only one element, the result of the first message. Both the "message" and "slot" values are instances of the SQLAlchemyEvent class.
-            - A list of strings indicating whether the messages in the dictionary would be included in the user's report. The list contains one or two elements: "deny", "affirm", and "cancel".
-
+            Returns the following objects with max 2 items each. The two objects should have the same length.
+            - Dictionary in the form {"message": Query result of the first user message,contains sentiment data, 
+                                    "slot": [Query result of the second user message, Query result of the sentiment of the second message]
+            - A list with whether the messages in the dictionary would be included in the user's report
+              potential list elements "deny", "affirm", "cancel"
         """
         
         session_start_timestamp = session.query(sa.func.max(self.SQLEvent.timestamp)).filter(
@@ -738,18 +734,17 @@ class CustomSQLTrackerStore(TrackerStore):
 
         return message_entries, report
 
-    def _first_time_of_day_query(self, session: "Session", sender_id: Text) -> bool:
-        """
-        Return whether it is the first time of the day the user was greeted by the agent.
+    def _first_time_of_day_query(
+        self, session: "Session", sender_id: Text) -> "Query":
+        """Query to retrieve whether is the first time of day the user was greeted by the agent (i.e. talked to the agent)
 
         Args:
-            session: The current database session.
-            sender_id: The sender id whose conversation events should be retrieved.
+            session: Current database session.
+            sender_id: Sender id whose conversation events should be retrieved.
 
         Returns:
-            bool: True if it's the first time of the day, False otherwise.
+            Boolean, True=first time, False=not first time
         """
-
         try:
             timezone = pytz.timezone(self.getUserTimezone(sender_id))
         except:
@@ -762,24 +757,13 @@ class CustomSQLTrackerStore(TrackerStore):
             self.SQLEvent.timestamp >= today,
         ).first()[0] is None
 
-    def checkIfTestingID(self, sender_id: str) -> bool:
+    def checkIfTestingID(self, sender_id):
+        """ Checks whether the user id is used for testing purposes
+            Currently testing ids are of the form:
+                - ms42-ms99
+                - stroke42-stroke99
+            User ids ms41 and stroke41 are also for testing purposes but are left out in order to be used for testing the ontology 
         """
-        Checks whether the given user ID is used for testing purposes.
-
-        Args:
-            sender_id (str): The ID of the user to check.
-
-        Returns:
-            bool: True if the given user ID is used for testing purposes, False otherwise.
-
-        Currently, testing IDs are of the form:
-            - ms42-ms99
-            - stroke42-stroke99
-
-        User IDs ms41 and stroke41 are also for testing purposes but are left out in order to be used for testing the ontology.
-        If the given user ID matches any of the testing IDs, returns True. Otherwise, returns False.
-        """
-
         wcs_ids_list = testers_ids_df["sender_id"].tolist()
         if sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys():
             if int(sender_id[-2:]) >= 42:
@@ -789,65 +773,80 @@ class CustomSQLTrackerStore(TrackerStore):
         return False 
 
     def save(self, tracker: DialogueStateTracker) -> None:
-        """
-        Update the database with events from the current conversation.
-
-        Args:
-            tracker (DialogueStateTracker): The current state of the dialogue.
-
-        Returns:
-            None
-        """
+        """Update database with events from the current conversation."""
 
         if self.event_broker:
             self.stream_events(tracker)
 
-        with self.session_scope() as session:  # type: Session
+        with self.session_scope() as session:
             # only store recent events
-            events = self._additional_events(session, tracker)  # type: List[Event]
+            events = self._additional_events(session, tracker)
 
             for event in events:
-                data = event.as_dict()  # type: Dict[str, any]
+                data = event.as_dict()
+                # if event.type_name == "action" and event.action_name=="action_listen":
+                #    continue                
+                
                 intent = (
                     data.get("parse_data", {}).get("intent", {}).get(INTENT_NAME_KEY)
-                )
+                )                    
                 action = data.get("name")
                 timestamp = data.get("timestamp")
                 message = data.get("text")
                 sender_id = tracker.sender_id
+                # if event.type_name == "user":
+                #     sentiment = {
+                #         "value": data.get("parse_data", {}).get("entities", {})[0].get("value", ""),
+                #         "confidence": data.get("parse_data", {}).get("entities", {})[0].get("confidence", "")
+                #     }
+                # else:
+                #     sentiment = None
+                # temp_data = json.dumps(data)
+                # if "sentiment_classes" in temp_data:
+                #     data["on_dashboard"] = "true" 
+                # noinspection PyArgumentList
                 session.add(
                     self.SQLEvent(
                         sender_id=sender_id,
                         message=message,
+                        #sentiment=json.dumps(sentiment),
                         type_name=event.type_name,
                         timestamp=timestamp,
                         intent_name=intent,
                         action_name=action,
                         data=json.dumps(data),
                     )
-                )
-                if event.type_name == "action" and event.action_name == "action_ontology_store_sentiment":
-                    session.commit()
+                )                 
+
+                if event.type_name == "action" and event.action_name=="action_ontology_store_sentiment":
+                    # commit to store the events in the database so they can be found by the query
+                    session.commit() 
                     if not self.checkIfTestingID(sender_id):
                         self.saveToOntology(tracker, sender_id)
+                # elif event.type_name == "action" and event.action_name in ["action_questionnaire_completed", "action_questionnaire_cancelled", "action_questionnaire_cancelled_app"]:
+                #     # commit to store the events in the database so they can be found by the query
+                #     session.commit() 
+                #     # get questionnaire name because at that stage the questionnaire slot value might have changed
+                #     try:
+                #         questionnaire_name = self._questionnaire_name_query(session, sender_id, event.action_name)
+                #     except:
+                #         questionnaire_name = ""
+                    #if questionnaire_name in questionnaire_names_list:
+                        #if event.action_name=="action_questionnaire_cancelled" or  event.action_name=="action_questionnaire_cancelled_app":
+                            #isSaved, isDemo = self.saveQuestionnaireAnswers(sender_id, questionnaire_name, False, tracker)
+                            #if isSaved and not isDemo: self.sendQuestionnaireStatus(sender_id, questionnaire_name, "IN_PROGRESS")
+                        #else:                 
+                            #isSaved, isDemo = self.saveQuestionnaireAnswers(sender_id, questionnaire_name, True, tracker)
+                            #if isSaved and not isDemo: self.sendQuestionnaireStatus(sender_id, questionnaire_name, "COMPLETED")             
 
             session.commit()
 
         logger.debug(f"Tracker with sender_id '{tracker.sender_id}' stored to database")
 
-    def _additional_events(self, session: "Session", tracker: DialogueStateTracker) -> Iterator[Event]:
-        """
-        Return events from the tracker which aren't currently stored.
-
-        Args:
-            session: The database session.
-            tracker: The tracker containing the events to be stored.
-
-        Returns:
-            An iterator of events which aren't currently stored in the database.
-        """
-
-        # Count the number of events in the database since the last session
+    def _additional_events(
+        self, session: "Session", tracker: DialogueStateTracker
+    ) -> Iterator:
+        """Return events from the tracker which aren't currently stored."""
         number_of_events_since_last_session = self._event_query(
             session,
             tracker.sender_id,
@@ -856,8 +855,9 @@ class CustomSQLTrackerStore(TrackerStore):
             ),
         ).count()
 
-        # Return the unrecorded events
-        return itertools.islice(tracker.events, number_of_events_since_last_session, len(tracker.events))
+        return itertools.islice(
+            tracker.events, number_of_events_since_last_session, len(tracker.events)
+        )
 
     def saveQuestionnaireAnswers(self, tracker: DialogueStateTracker, domain: Domain, questionnaire_abbreviation: str, questionnaire_name: str, isFinished: bool) -> List[str]:
         """
@@ -865,14 +865,14 @@ class CustomSQLTrackerStore(TrackerStore):
         The answers of the questionnaires are retrieved directly from their dedicated slot value.
 
         Args:
-            tracker (DialogueStateTracker): Rasa tracker object
-            domain (Domain): Rasa domain object
-            questionnaire_abbreviation (str): Abbreviation for the questionnaire being answered
-            questionnaire_name (str): Name of the questionnaire being answered
-            isFinished (bool): Whether the questionnaire has been fully completed or not
+        - tracker (DialogueStateTracker): Rasa tracker object
+        - domain (Domain): Rasa domain object
+        - questionnaire_abbreviation (str): Abbreviation for the questionnaire being answered
+        - questionnaire_name (str): Name of the questionnaire being answered
+        - isFinished (bool): Whether the questionnaire has been fully completed or not
 
         Returns:
-            slots_to_reset (List[str]): List of slots that were reset after storing their values
+        - slots_to_reset (List[str]): List of slots that were reset after storing their values
         """
 
         question_types_df = pd.read_csv("question_types.csv") 
@@ -1002,15 +1002,31 @@ class CustomSQLTrackerStore(TrackerStore):
             except:
                 return False
 
+
+    # def setQuestionnaireTempState(self, sender_id, current_timestamp, questionnaire_name):
+    #     """
+    #     This function stores questionnaire's temporal state.
+
+    #     ===TO BE REMOVED===
+    #     Nor here neither in actions.py is used.
+    #     """
+    #     with self.session_scope() as session:
+    #         try: 
+    #             entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first()
+    #             entry.state = "to_be_stored"
+    #             session.commit()
+    #         except:
+    #             print("Questionnaire has already been stored")
+
     def isFirstTimeToday(self, sender_id: str) -> bool:
         """
         Check if user has already interacted with the bot today.
 
         Args:
-            sender_id (str): User identifier.
+        - sender_id (str): User identifier.
 
         Returns:
-            bool: True if it's the user's first interaction with the bot today, False otherwise.
+        - bool: True if it's the user's first interaction with the bot today, False otherwise.
         """
 
         if sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys():
@@ -1027,13 +1043,13 @@ class CustomSQLTrackerStore(TrackerStore):
         with a new available timestamp.
         
         Args:
-            session (Session): A SQLAlchemy session object for the database
-            sender_id (str): A string representing the unique identifier for the user
-            current_timestamp (float): A float representing the current timestamp
-            questionnaire_name (str): A string representing the name of the questionnaire
+        - session (Session): A SQLAlchemy session object for the database
+        - sender_id (str): A string representing the unique identifier for the user
+        - current_timestamp (float): A float representing the current timestamp
+        - questionnaire_name (str): A string representing the name of the questionnaire
         
         Returns:
-            (SQLQuestState): A SQLQuestState object representing the state of the questionnaire
+        - (SQLQuestState): A SQLQuestState object representing the state of the questionnaire
         """
 
         entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first()
@@ -1082,12 +1098,12 @@ class CustomSQLTrackerStore(TrackerStore):
         Retrieve current available questionnaires.
 
         Args:
-            sender_id (str): the unique identifier of the user.
-            current_timestamp (float): the current timestamp in Unix format.
+        - sender_id (str): the unique identifier of the user.
+        - current_timestamp (float): the current timestamp in Unix format.
         
         Returns:
-            Tuple[List[str], List[str]]: a tuple containing a list of available questionnaires 
-            and a list of questionnaires that need to be reset.
+        - Tuple[List[str], List[str]]: a tuple containing a list of available questionnaires 
+        and a list of questionnaires that need to be reset.
         """
 
         available_questionnaires, reset_questionnaires = [],[]
@@ -1251,11 +1267,11 @@ class CustomSQLTrackerStore(TrackerStore):
         }
 
         Args:
-            tracker: A tracker object containing conversation state information.
-            sender_id: A string containing the user ID.
+        - tracker: A tracker object containing conversation state information.
+        - sender_id: A string containing the user ID.
 
         Returns:
-            None
+        - None
         """
 
         # Perform Login against IAM
@@ -1379,13 +1395,13 @@ class CustomSQLTrackerStore(TrackerStore):
         - adds the first set of questionnaires
 
         Args:
-            tracker (DialogueStateTracker): tracker object from Rasa framework
-            sender_id (str): ID of the user
-            status_code (int): HTTP status code returned by WCS endpoint
-            ca_accessToken (str): access token for WCS
+        - tracker (DialogueStateTracker): tracker object from Rasa framework
+        - sender_id (str): ID of the user
+        - status_code (int): HTTP status code returned by WCS endpoint
+        - ca_accessToken (str): access token for WCS
 
         Returns:
-            language (str): the language of the user, either retrieved from WCS or assigned by default
+        - language (str): the language of the user, either retrieved from WCS or assigned by default
         """
 
         if status_code ==200:
@@ -1405,7 +1421,7 @@ class CustomSQLTrackerStore(TrackerStore):
                                 timeout=10, 
                                 auth=BearerAuth(ca_accessToken)
                             )
-                            print(f"Get data from WCS for userid {sender_id} - Response <{response}> - Line 1411")
+                            print(f"Get data from WCS for userid {sender_id} - Response <{response}> - Line 1334")
                             response.close()
                             resp = response.json()
                             partner = resp["partner"]
@@ -1502,7 +1518,7 @@ class CustomSQLTrackerStore(TrackerStore):
                             language = "English"
                     session.commit()
                 else:
-                    # if the user already exists in the database retrieve their language
+                    # is the user already exists in the database retrieve their language
                     language = user_entry.language
             return language
         elif status_code == 401:
@@ -1671,143 +1687,86 @@ class CustomSQLTrackerStore(TrackerStore):
             session.commit()
             return new_symptoms   
 
-def getFirstQuestTimestamp(schedule_df: pd.DataFrame, questionnaire_name: str, init_date: datetime.datetime, tz_timezone: Union[datetime.timezone, None]) -> Union[float, None]:
-    """
-    Get the timestamp for the first availability of the specified questionnaire.
-
+def getFirstQuestTimestamp(schedule_df, questionnaire_name, init_date, tz_timezone):
+    """Get the date the specified questionnaire will be available for the first time
     Args: 
-        schedule_df: A pandas dataframe containing the schedule.
-        questionnaire_name: A string representing the abbreviation of the questionnaire name.
-        init_date: A timezone-aware datetime object representing the initial date.
-        tz_timezone: A timezone object to convert the datetime object to.
-
+        schedule_df: pandas dataframe containing the schedule
+        questionnaire_name:
+        init_date: initial date in datetime format
     Returns:
-        A float value representing the timestamp, or None if no timestamp is available.
-
-    NOTE: Always use timezone-aware datetime objects.
-
-    Raises:
-        KeyError: If the specified questionnaire is not found in the schedule dataframe.
+        timestamp
+        
+    NOTE: always use timezone aware datetime objects 
     """
-
-    try:
-        df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == questionnaire_name]
-    except KeyError:
-        raise KeyError("The specified questionnaire name does not exist in the provided schedule dataframe.")
-
-    dayOfWeek = int(df_row["dayOfWeek"].values[0])
-    weekOfMonth = int(df_row["weekOfMonth"].values[0])
-    frequencyInWeeks = int(df_row["frequencyInWeeks"].values[0])
-
-    # If the questionnaire is not available in the current month
+    df_row=schedule_df.loc[schedule_df["questionnaire_abvr"] == questionnaire_name]                    
+    dayOfWeek=int(df_row["dayOfWeek"].values[0])
+    weekOfMonth=int(df_row["weekOfMonth"].values[0])
+    frequencyInWeeks=int(df_row["frequencyInWeeks"].values[0])
+    # if the questionnaire is not available in the current month 
     if frequencyInWeeks > 4:
-        weekOfMonth = frequencyInWeeks - 1
+        weekOfMonth = frequencyInWeeks-1
 
     if questionnaire_name == "MSdomainIV_Daily":
         q_day = init_date.timestamp()
-        # q_day = getNextKTimestamps(init_date,1)[0]
+        #q_day = getNextKTimestamps(init_date,1)[0]
     else:
         q_day_tmp = init_date + datetime.timedelta(days=dayOfWeek, weeks=max(0,weekOfMonth-1))
         q_day = getDSTawareDate(init_date, q_day_tmp, tz_timezone).timestamp()
-
     return q_day
 
 
-def getNextQuestTimestamp(schedule_df: pd.DataFrame, questionnaire_name: str, init_date: datetime.datetime, tz_timezone: Union[datetime.timezone, None]) -> Union[float, None]:
-    """
-    Get the next timestamp for the availability of the specified questionnaire.
-
-    Args:
-        schedule_df: A pandas dataframe containing the schedule.
-        questionnaire_name: A string representing the abbreviation of the questionnaire name.
-        init_date: A timezone-aware datetime object representing the initial date.
-        tz_timezone: A timezone object to convert the datetime object to.
-
+def getNextQuestTimestamp(schedule_df, questionnaire_name, init_date, tz_timezone):
+    """Get the next date the specified questionnaire will be available given an intial date
+    Args: 
+        schedule_df: pandas dataframe containing the schedule
+        questionnaire_name:
+        init_date: initial date in datetime format
     Returns:
-        A float value representing the timestamp, or None if no timestamp is available.
+        timestamp
 
-    NOTE: Always use timezone-aware datetime objects.
-
-    Raises:
-        KeyError: If the specified questionnaire is not found in the schedule dataframe.
+    NOTE: always use timezone aware datetime objects     
     """
-
-    try:
-        df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == questionnaire_name]
-    except KeyError:
-        raise KeyError("The specified questionnaire name does not exist in the provided schedule dataframe.")
-
-    frequencyInWeeks = int(df_row["frequencyInWeeks"].values[0])
+    df_row = schedule_df.loc[schedule_df["questionnaire_abvr"] == questionnaire_name]                    
+    frequencyInWeeks=int(df_row["frequencyInWeeks"].values[0])
 
     if questionnaire_name == "MSdomainIV_Daily":
         q_day = getNextKTimestamps(init_date, tz_timezone, 1)[0]
     else:
         q_day_tmp = init_date + datetime.timedelta(weeks=frequencyInWeeks)
         q_day = getDSTawareDate(init_date, q_day_tmp, tz_timezone).timestamp()
-
     return q_day
 
 
-def getNextKTimestamps(init_date: datetime.datetime, tz_timezone: Union[datetime.timezone, None], number_of_days: int = 7) -> List[float]:
-    """
-    Get the next (number_of_days) timestamps after an initial date.
-
-    Args:
-        init_date: A timezone-aware datetime object representing the initial date.
-        tz_timezone: A timezone object to convert the datetime object to.
-        number_of_days: An integer representing the number of next days.
-
+def getNextKTimestamps(init_date, tz_timezone, number_of_days:int=7):
+    """Get the next (number_of_days) timestamps after an intial date
+    Args: 
+        init_date: initial date in datetime format
+        number_of_days: number of next days
     Returns:
-        A list of float values representing the timestamps.
+        timestamp
 
-    NOTE: Always use timezone-aware datetime objects.
-
-    Raises:
-        TypeError: If the init_date argument is not a datetime object or if the tz_timezone argument is not a timezone object.
-    """
-
-    if not isinstance(init_date, datetime.datetime):
-        raise TypeError("The init_date argument must be a datetime object.")
-
-    if not isinstance(tz_timezone, datetime.timezone) and tz_timezone is not None:
-        raise TypeError("The tz_timezone argument must be a timezone object or None.")
-
+    NOTE: always use timezone aware datetime objects 
+    """    
     q_days = []
     for i in range(number_of_days):
         q_day_tmp = init_date + datetime.timedelta(days=i+1)
         q_day = getDSTawareDate(init_date, q_day_tmp, tz_timezone).timestamp()
         q_days.append(q_day)
+    return q_days  
 
-    return q_days
-
-def getDSTawareDate(init_date: datetime.datetime, new_date: datetime.datetime, tz_timezone: datetime.timezone) -> datetime.datetime:
+def getDSTawareDate(init_date, new_date, tz_timezone):
+    """ Converts the new_date into a datetime object that takes into account the daylight saving changes (dst) based on the init_date
+        Code from: https://www.hacksoft.io/blog/handling-timezone-and-dst-changes-with-python
     """
-    Converts the new_date into a datetime object that takes into account the daylight saving changes (dst) based on the init_date.
-
-    Args:
-        init_date: A timezone-aware datetime object representing the initial date.
-        new_date: A timezone-aware datetime object representing the new date.
-        tz_timezone: A timezone object to convert the datetime object to.
-
-    Returns:
-        A timezone-aware datetime object representing the new date with the daylight saving changes taken into account.
-
-    NOTE: Always use timezone-aware datetime objects.
-
-    ---
-
-    Code from: https://www.hacksoft.io/blog/handling-timezone-and-dst-changes-with-python
-    """
-
     init_date = init_date.astimezone(tz_timezone)
     new_date = new_date.astimezone(tz_timezone)
-
+    
     dst_offset_diff = init_date.dst() - new_date.dst()
-
+    
     new_date = new_date + dst_offset_diff
     new_date = new_date.astimezone(tz_timezone)
-
-    return new_date
+    
+    return new_date  
 
 if __name__ == "__main__":
     ts = CustomSQLTrackerStore(db="demo.db")
