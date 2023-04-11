@@ -136,6 +136,8 @@ stories:
           steps:
                   - intent: available_questionnaires
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: false
                   - or:
                             - intent: deny
                             - intent: cancel
@@ -144,6 +146,8 @@ stories:
           steps:
                   - intent: available_questionnaires
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: false
                   - intent: affirm
                   - action: action_options_menu_extra
 

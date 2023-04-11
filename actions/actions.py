@@ -404,6 +404,8 @@ class ActionGetAvailableQuestionnaires(Action):
 
         _ = customTrackerInstance.checkUserID(tracker, tracker.current_state()['sender_id'], status_code, ca_accessToken)
         available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
+
+        availableQuestionnaires = tracker.get_slot("availableQuestionnaires")
         if len(available_questionnaires) == 0:
             text = get_text_from_lang(
                 tracker, 
@@ -416,7 +418,8 @@ class ActionGetAvailableQuestionnaires(Action):
             )
 
             dispatcher.utter_message(text=text)
-            return []
+            availableQuestionnaires = False
+            return [SlotSet("availableQuestionnaires", availableQuestionnaires)]
         else :
             text = get_text_from_lang(
                 tracker,
@@ -455,8 +458,9 @@ class ActionGetAvailableQuestionnaires(Action):
             # add button for cancel that takes the user back to the general questions
             buttons.append({"title": get_text_from_lang(tracker, cancel_button), "payload": "/options_menu"})
             dispatcher.utter_message(text=text, buttons=buttons)
+            availableQuestionnaires = True
             # Note: reseting slots is done twice, maybe once will be enough
-            return reset_form_slots(tracker, domain, reset_questionnaires)+slots_to_set
+            return [SlotSet("availableQuestionnaires", availableQuestionnaires)] + reset_form_slots(tracker, domain, reset_questionnaires) + slots_to_set
 
 class ActionContinueLatestQuestionnaire(Action):
     def name(self) -> Text:
@@ -642,6 +646,15 @@ class ActionHealthUpdateMenu(Action):
             dispatcher.utter_message(text=text)
         return []
 
+class ActionMobilityStatus(Action):
+    def name(self) -> Text:
+        return "action_get_mobility_status"
+    
+    def run(self, dispatcher: "CollectingDispatcher", tracker: Tracker, domain: "Dict") -> List[Dict[Text, Any]]:
+        announce(self, tracker)
+        pass
+        
+        # return await super().run(dispatcher, tracker, domain)
 
 #TODO translate
 class ActionSleepStatus(Action):
@@ -850,6 +863,8 @@ class ActionUtterGreet(Action):
                 ],
             )
             dispatcher.utter_message(text=text)
+            print("\nBOT:", text)
+
             # check if it is the first time of the day
             isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
             if isFirstTime:
