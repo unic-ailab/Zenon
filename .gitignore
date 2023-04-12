@@ -20,6 +20,8 @@ requirements_pip_sm.txt
 requirements.txt
 unic_iam_credentials.json
 archived_stories.yml
+refresh_generated_token.py
+generatedTokens.csv
 
 # Folders
 __pycache__/

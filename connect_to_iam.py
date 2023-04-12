@@ -61,3 +61,42 @@ class VerifyAuthentication(object):
             return response.status_code
         elif response.status_code == 401:
             print("****User access token verification FAILED****")
+
+class RefreshAccessToken(object):
+    """
+    To refresh generated access token.
+    """
+
+    def __init__(self) -> None:
+        """
+        Instance initialization
+        """
+
+        # IAM backend
+        self.url_base = "https://iam-backend.alamedaproject.eu"
+
+        # API endpoint to verify received token
+        self.request_url = "/api/v1/auth/refresh-token"
+
+    def refresh_token(self, ca_access_token, ca_refresh_token):
+        """
+        Refresh token
+        """
+
+        payload = {
+            "access_token":ca_access_token,
+            "refresh_token":ca_refresh_token
+        }
+
+        response = requests.post(
+            url=self.url_base+self.request_url,
+            json=payload
+        )
+        print(response.json())
+
+        if response.status_code == 200:
+            print("****Token successfully refreshed****")
+            data = json.loads(response.text)
+            return response.status_code, data["access_token"], data["refresh_token"]
+        else:
+            print(f"****Failed to refresh token with code {response.status_code}****")
