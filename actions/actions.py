@@ -27,7 +27,8 @@ sys.path.append(os.getcwd().replace("\\","/"))
 from custom_tracker_store import CustomSQLTrackerStore
 
 customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="local-alameda.db") # Remember to change the db name in endpoints.yml
-endpoints_df = pd.read_csv("alameda_endpoints.csv")                       
+endpoints_df = pd.read_csv("alameda_endpoints.csv")     
+generatedTokens = pd.read_csv("generatedTokens.csv")
 
 # Define this list as the values for the `language` slot. Arguments of the `get_..._lang` functions should respect this order.
 lang_list = ["English", "Greek", "Italian", "Romanian"]  # Same as slot values
@@ -378,10 +379,10 @@ class ActionOnboardUser(Action):
 
     def run(self, dispatcher, tracker, domain):
 
-        # Perform Login against IAM
-        status_code, ca_accessToken, refresh_token = IAMLogin().login()
+        # Get stored access_token from csv file
+        ca_accessToken = generatedTokens["access_token"].iloc[-1]
 
-        language = customTrackerInstance.checkUserID(tracker, tracker.current_state()['sender_id'], status_code, ca_accessToken)
+        language = customTrackerInstance.checkUserID(tracker, tracker.current_state()['sender_id'], ca_accessToken)
         dispatcher.utter_message(text=language)
         return [SlotSet("language", language)]
 
@@ -399,10 +400,10 @@ class ActionGetAvailableQuestionnaires(Action):
         # its better to not check the user id here as here it won't update the app languge
         # keep it here for now to avoid not onboarding users between database updates
 
-        # Perform Login against IAM
-        status_code, ca_accessToken, refresh_token = IAMLogin().login()
+        # Get stored access_token from csv file
+        ca_accessToken = generatedTokens["access_token"].iloc[-1]
 
-        _ = customTrackerInstance.checkUserID(tracker, tracker.current_state()['sender_id'], status_code, ca_accessToken)
+        _ = customTrackerInstance.checkUserID(tracker, tracker.current_state()['sender_id'], ca_accessToken)
         available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
 
         availableQuestionnaires = tracker.get_slot("availableQuestionnaires")
@@ -664,8 +665,8 @@ class ActionSleepStatus(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
-        # Perform Login against IAM
-        status_code, ca_accessToken, refresh_token = IAMLogin().login()
+        # Get stored access_token from csv file
+        ca_accessToken = generatedTokens["access_token"].iloc[-1]
 
         try :
             today = datetime.datetime.now(tz=pytz.utc)
@@ -872,9 +873,9 @@ class ActionUtterGreet(Action):
                 return [SlotSet("is_first_time", isFirstTime), SlotSet("user_accessToken", user_accessToken)]
             else:
                 return [SlotSet("is_first_time", isFirstTime), SlotSet("user_accessToken", user_accessToken)]
-        elif status_code == 401:
+        else:
             print(25*"*")
-            print("AccessToken verification failed")
+            print(f"AccessToken verification failed with code {status_code}")
 
 class ActionUtterHowAreYou(Action):
     def name(self):
@@ -889,33 +890,27 @@ class ActionUtterHowAreYou(Action):
         today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
         ontology_meaa_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_MEAA_ENDPOINT"]["endpoint"].values[0]
 
-        # Perform Login against IAM
-        status_code, ca_accessToken, refresh_token = IAMLogin().login()
+        # Get stored access_token from csv file
+        ca_accessToken = generatedTokens["access_token"].iloc[-1]
 
-        # Check status_code. If it is 200 try to connect to semKG
-        # by adding the access_token in the headers.
-        if status_code == 200:
-            print("*****Service's communication with semKG successfully established*****")
-            try :
-                response = requests.get(
-                    ontology_meaa_endpoint,
-                    params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today},
-                    timeout=10,
-                    auth=BearerAuth(ca_accessToken)
-                )
-                response.close()
-                average_score_per_mood = json.loads(response.text)[0]
-                average_score_per_mood.pop("userId")
+        try :
+            response = requests.get(
+                ontology_meaa_endpoint,
+                params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today},
+                timeout=10,
+                auth=BearerAuth(ca_accessToken)
+            )
+            response.close()
+            average_score_per_mood = json.loads(response.text)[0]
+            average_score_per_mood.pop("userId")
 
-                # returned classes ["avgPos","avgNeg","avgNeut","avgOth"]
-                max_mood = max(average_score_per_mood, key=average_score_per_mood.get)
-            except:
-                # This should happen when no previous MEAA measurements
-                # stored in the database.
-                max_mood = ""
-                print("Error: no such entry from MEAA in the ontology.")
-        elif status_code == 401:
-            print(f"*****Communication with semKG failed - Response [{status_code}]*****")
+            # returned classes ["avgPos","avgNeg","avgNeut","avgOth"]
+            max_mood = max(average_score_per_mood, key=average_score_per_mood.get)
+        except:
+            # This should happen when no previous MEAA measurements
+            # stored in the database.
+            max_mood = ""
+            print("Error: no such entry from MEAA in the ontology.")
 
         if max_mood == "avgNeg":
             text = get_text_from_lang(
@@ -949,11 +944,11 @@ class ActionUtterNotificationGreet(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
-        # Perform Login against IAM
-        status_code, ca_accessToken, refresh_token = IAMLogin().login()
+        # Get stored access_token from csv file
+        ca_accessToken = generatedTokens["access_token"].iloc[-1]
 
         # onboard the user here in case the first time users open the app from a notification
-        _ = customTrackerInstance.checkUserID(tracker, tracker.current_state()['sender_id'], status_code, ca_accessToken)
+        _ = customTrackerInstance.checkUserID(tracker, tracker.current_state()['sender_id'], ca_accessToken)
 
         q_abbreviation = tracker.get_slot("questionnaire")
         try: 

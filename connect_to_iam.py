@@ -31,12 +31,10 @@ class IAMLogin(object):
         response = requests.post(self.url_base + self.request_url, json=data)
 
         if response.status_code == 200:
-            print("Service successfully logged in to IAM component")
             data = json.loads(response.text)
-
             return response.status_code, data["access_token"], data["refresh_token"]
-        elif response.status_code == 401:
-            print("****Service failed to log in against IAM****")
+        elif response.status_code != 200:
+            print(f"****Service failed to log in against IAM with code {response.status_code}****")
             return response.status_code, data["access_token"], data["refresh_token"]
 
 class VerifyAuthentication(object):
@@ -57,10 +55,9 @@ class VerifyAuthentication(object):
         response = requests.get(self.url_base + self.request_url, auth=BearerAuth(access_token))
 
         if response.status_code == 200:
-            print("****User access token verification succeeded****")
             return response.status_code
-        elif response.status_code == 401:
-            print("****User access token verification FAILED****")
+        elif response.status_code != 200:
+            print(f"****User access token verification FAILED with code {response.status_code}****")
 
 class RefreshAccessToken(object):
     """
