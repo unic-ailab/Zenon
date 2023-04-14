@@ -382,7 +382,7 @@ class ActionOnboardUser(Action):
         # Get stored access_token from csv file
         ca_accessToken = generatedTokens["access_token"].iloc[-1]
 
-        language = customTrackerInstance.checkUserID(tracker, tracker.current_state()['sender_id'], ca_accessToken)
+        language = customTrackerInstance.checkUserID(tracker.current_state()['sender_id'], ca_accessToken)
         dispatcher.utter_message(text=language)
         return [SlotSet("language", language)]
 
@@ -403,7 +403,7 @@ class ActionGetAvailableQuestionnaires(Action):
         # Get stored access_token from csv file
         ca_accessToken = generatedTokens["access_token"].iloc[-1]
 
-        _ = customTrackerInstance.checkUserID(tracker, tracker.current_state()['sender_id'], ca_accessToken)
+        _ = customTrackerInstance.checkUserID(tracker.current_state()['sender_id'], ca_accessToken)
         available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
 
         availableQuestionnaires = tracker.get_slot("availableQuestionnaires")
@@ -948,7 +948,7 @@ class ActionUtterNotificationGreet(Action):
         ca_accessToken = generatedTokens["access_token"].iloc[-1]
 
         # onboard the user here in case the first time users open the app from a notification
-        _ = customTrackerInstance.checkUserID(tracker, tracker.current_state()['sender_id'], ca_accessToken)
+        _ = customTrackerInstance.checkUserID(tracker.current_state()['sender_id'], ca_accessToken)
 
         q_abbreviation = tracker.get_slot("questionnaire")
         try: 
