@@ -1378,7 +1378,7 @@ class CustomSQLTrackerStore(TrackerStore):
             session.commit()
         return language
 
-    def checkUserID(self, sender_id: str, status_code: int, ca_accessToken: str) -> str:
+    def checkUserID(self, sender_id: str, ca_accessToken: str) -> str:
         """
         Checks if the specific user id is in the database. If not:
         - adds the user id and his/her onboarding date on the information provided by WCS
