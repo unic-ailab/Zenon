@@ -1003,22 +1003,6 @@ class CustomSQLTrackerStore(TrackerStore):
             except:
                 return False
 
-
-    # def setQuestionnaireTempState(self, sender_id, current_timestamp, questionnaire_name):
-    #     """
-    #     This function stores questionnaire's temporal state.
-
-    #     ===TO BE REMOVED===
-    #     Nor here neither in actions.py is used.
-    #     """
-    #     with self.session_scope() as session:
-    #         try: 
-    #             entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first()
-    #             entry.state = "to_be_stored"
-    #             session.commit()
-    #         except:
-    #             print("Questionnaire has already been stored")
-
     def isFirstTimeToday(self, sender_id: str) -> bool:
         """
         Check if user has already interacted with the bot today.
