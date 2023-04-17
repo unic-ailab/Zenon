@@ -52,7 +52,7 @@ from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 
 from rasa.core.tracker_store import TrackerStore, _create_sequence, create_engine_kwargs, ensure_schema_exists
 
-from connect_to_iam import BearerAuth
+from connect_to_iam import BearerAuth, VerifyAuthentication
 
 
 logger = logging.getLogger(__name__)
@@ -504,10 +504,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 self.SQLEvent.action_name.notlike(questionnaire_name+"_score"),
                 self.SQLEvent.action_name.ilike(questionnaire_name+"_%")
                 ).order_by(self.SQLEvent.timestamp).all()
-
-        print(len(question_events))
-        print(len(slot_events))
-        print("agree", len(question_events)==len(slot_events))
+        
         return question_events, slot_events
 
     def _questionnaire_state_query(
@@ -904,10 +901,11 @@ class CustomSQLTrackerStore(TrackerStore):
                     try:
                         question_number = slot_name.split("Q")[1]
                     except IndexError:
-                        print(f"IndexError for slot {slot_name} - Line 911")
+                        print(f"IndexError for slot {slot_name} - Line 904")
 
                 # store answers without storing the questions
                 if "score" not in slot_name:
+                    #BUG Check 2023-04-16 in logs
                     question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
                     answers_data.append({"question_id": question_number, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
                     
@@ -934,8 +932,6 @@ class CustomSQLTrackerStore(TrackerStore):
             if database_entry.state=="available":
                 database_entry.timestamp_start=init_timestamp
             elif database_entry.state=="pending":
-                # previous_answers = json.loads(database_entry.answers)
-                # print(answers_data)
                 database_entry.answers = None
             database_entry.answers = json.dumps(answers_data_wcs_format)                    
             if isFinished:
@@ -1186,17 +1182,32 @@ class CustomSQLTrackerStore(TrackerStore):
             "submission_date": database_entry["submission_date"],
             "survey_score": score_list}
 
-        try:
-            print(f"Saved scores to ontology {ontology_data}")
-            ontology_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_SEND_SCORE_ENDPOINT"]["endpoint"].values[0]
-            user_accessToken = tracker.get_slot("user_accessToken")
-            response = requests.post(ontology_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_accessToken))
-            response.close()
-            print(f"Response from POST score to ontology {response}")
-        except:
-            print("In custom_tracker_store function sendQuestionnaireScoreToOntology")
-            print(f"Couldn't save scores to ontology - Response [{response.status_code}]")
+        # Send scores to ontology
+        print(f"*****Store scores to ontology: {ontology_data}*****")
+        ontology_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_SEND_SCORE_ENDPOINT"]["endpoint"].values[0]
+        user_accessToken = tracker.get_slot("user_accessToken")
 
+        try:
+            verification_status_code = VerifyAuthentication().verification(user_accessToken)
+        except TypeError as error:
+            print(error)
+            verification_status_code == None
+
+        if verification_status_code == 200:
+            try:
+                response = requests.post(ontology_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_accessToken))
+                response.close()
+            except TypeError as error:
+                print("In custom_tracker_store function sendQuestionnaireScoreToOntology")
+                print(error)
+
+            if response.status_code == 200:
+                print("Scores successfully stored in ontology")
+            else:
+                print(f"Failed to store scores in ontology with Response [{response.status_code}]")
+        else:
+            print("Failed to verify user access token in line 1191 --- sendQuestionnaireScoreToOntology")
+            print(f"Response from verification Response [{verification_status_code}]")
 
     def saveToOntology(self, tracker: DialogueStateTracker, sender_id: str) -> None:
         """
@@ -1283,6 +1294,7 @@ class CustomSQLTrackerStore(TrackerStore):
 
                 print(25*"=")
                 print(f"Intent to report is {intent}")
+                print(25*"=")
 
                 data = {"sentiment_scores": json.loads(temp_sentiment),
                     "timestamp": timestamp,
@@ -1290,18 +1302,33 @@ class CustomSQLTrackerStore(TrackerStore):
                     "on_dashboard": intent_to_bool[intent]}
                 ontology_data["observations"].append(data)
             session.commit()
-            
-        print(f"Saved data to ontology {ontology_data} --- function saveToOntology")
+
+        # Store data to ontology            
+        print(f"*****Store data to ontology*****")
+        ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
+        user_accessToken = tracker.get_slot("user_accessToken")
 
         try:
-            ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
-            user_accessToken = tracker.get_slot("user_accessToken")
-            response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_accessToken))
-            response.close()
-            print(f"Response from POST data to ontology {response.status_code}")
-        except:
-            print("In custom_tracker_store function saveToOntology")
-            print(f"Communication with semKG failed - Response [{response.status_code}]")
+            verification_status_code = VerifyAuthentication().verification(user_accessToken)
+        except TypeError as error:
+            print(error)
+            verification_status_code == None
+
+        if verification_status_code == 200:            
+            try:
+                response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_accessToken))
+                response.close()
+            except TypeError as error:
+                print("In custom_tracker_store function saveToOntology")
+                print(error)
+
+            if response.status_code == 200:
+                print("Successfully stored data to ontology")
+            else:
+                print(f"Failed to store data to ontology with Response [{response.status_code}]")
+        else:
+            print("Failed to verify user access token in line 1312 --- sendQuestionnaireScoreToOntology")
+            print(f"Response from verification Response <[{verification_status_code}]>")            
         
     def registerUserIDdemo(self, sender_id: str, usecase: str) -> str:
         """Checks if the specific user id is in the database. If not, it adds it.
@@ -1394,7 +1421,7 @@ class CustomSQLTrackerStore(TrackerStore):
                             timeout=10, 
                             auth=BearerAuth(ca_accessToken)
                         )
-                        print(f"Get data from WCS for userid {sender_id} - Response <{response}> - Line 1334")
+                        print(f"Get data from WCS for userid {sender_id} - Response <{response}> - Line 1419")
                         response.close()
                         resp = response.json()
                         partner = resp["partner"]
@@ -1614,16 +1641,29 @@ class CustomSQLTrackerStore(TrackerStore):
                     "question": "SYMPTOMS: Select all that apply and press send:",
                     "answer": areNewSymptoms}]
 
+        print(10*"="+" Sending questionaire data to WCS "+10*"=")
+        wcs_status_endpoint= endpoints_df[endpoints_df["name"]=="WCS_STATUS_ENDPOINT"]["endpoint"].values[0]
+        user_accessToken = tracker.get_slot("user_accessToken")
         try:
-            print(10*"="+" Sending questionaire data to WCS "+10*"=")
-            print(questionnaire_data)
-            user_accessToken = tracker.get_slot("user_accessToken")
-            wcs_status_endpoint= endpoints_df[endpoints_df["name"]=="WCS_STATUS_ENDPOINT"]["endpoint"].values[0]
-            response = requests.post(wcs_status_endpoint, json=questionnaire_data, timeout=30, auth=BearerAuth(user_accessToken))
-            response.close()
-            print(f"POST request on sending questionnare's status: {response.status_code} --- sendQuestionnaireStatus")
-        except:
-            print(f"Sending questionnaire data to WCS failed - Response [{response.status_code}] --- sendQuestionnaireStatus")
+            verification_status_code = VerifyAuthentication().verification(user_accessToken)
+        except TypeError as error:
+            print(error)
+            verification_status_code = None
+
+        if verification_status_code == 200:
+            try:
+                response = requests.post(wcs_status_endpoint, json=questionnaire_data, timeout=30, auth=BearerAuth(user_accessToken))
+                response.close()
+            except TypeError as error:
+                print(error)
+                print("Sending questionnaire data to WCS failed --- sendQuestionnaireStatus")
+
+            if response.status_code == 200:
+                print("Successfully sent data to WCS")
+            else:
+                print(f"Failed to send data to WCS with Response[{response.status_code}]")
+        else:
+            print(f"Failed to verify user access token - Response [{verification_status_code}] --- sendQuestionnaireStatus")
 
     def getDizzinessNbalanceNewSymptoms(self, sender_id: str) -> List[(str)]:
         """

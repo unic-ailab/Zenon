@@ -834,9 +834,8 @@ class ActionUtterGreet(Action):
 
         metadata = tracker.latest_message.get("metadata")
         print("***** METADATA *****")
-        print(metadata)
         user_accessToken = metadata["accessToken"]
-        print(user_accessToken)
+        print("User access token is equal to metadata access token",user_accessToken == metadata["accessToken"])
         print(25*"=")
 
         # Perform verification for the received `accessToken`
