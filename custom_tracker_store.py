@@ -906,14 +906,15 @@ class CustomSQLTrackerStore(TrackerStore):
                 # store answers without storing the questions
                 if "score" not in slot_name:
                     #BUG Check 2023-04-16 in logs
-                    question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
-                    answers_data.append({"question_id": question_number, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
-                    
-                    answers_data_wcs_format.append({"number": question_number, "answer": tracker.get_slot(slot_name)})
+                    try:
+                        question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
+                        answers_data.append({"question_id": question_number, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
+                        answers_data_wcs_format.append({"number": question_number, "answer": tracker.get_slot(slot_name)})
+                    except IndexError as error:
+                        print(error+f"\nFor {slot_name} --- saveQuestionnaireAnswers")
 
             partner, disease = self.getUserDetails(sender_id)
             if questionnaire_abbreviation in ["psqi", "muscletone"]:
-                #BUG Score for questionnaires isn't filled correctly
                 # total_score = self._questionnaire_score_query(session, sender_id, questionnaire_name)
                 total_score = tracker.get_slot(questionnaire_abbreviation + "_score")
             else:
@@ -993,11 +994,11 @@ class CustomSQLTrackerStore(TrackerStore):
                 _ = self.checkQuestionnaireTimelimit(session, sender_id, current_timestamp, questionnaire_name)
                 entry = self._questionnaire_state_query(session, sender_id, current_timestamp, questionnaire_name).first() 
                 if entry is not None and entry.state != "to_be_stored":
-                    return True
+                    return True, entry.state
                 else:
-                    return False
+                    return False, None
             except:
-                return False
+                return False, None
 
     def isFirstTimeToday(self, sender_id: str) -> bool:
         """
@@ -1193,7 +1194,7 @@ class CustomSQLTrackerStore(TrackerStore):
             print(error)
             verification_status_code == None
 
-        if verification_status_code == 200:
+        if verification_status_code == 200 or 201:
             try:
                 response = requests.post(ontology_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_accessToken))
                 response.close()
@@ -1201,10 +1202,10 @@ class CustomSQLTrackerStore(TrackerStore):
                 print("In custom_tracker_store function sendQuestionnaireScoreToOntology")
                 print(error)
 
-            if response.status_code == 200:
+            if response.status_code == 200 or 201:
                 print("Scores successfully stored in ontology")
             else:
-                print(f"Failed to store scores in ontology with Response [{response.status_code}]")
+                print(f"Failed to store scores in ontology with {response}")
         else:
             print("Failed to verify user access token in line 1191 --- sendQuestionnaireScoreToOntology")
             print(f"Response from verification Response [{verification_status_code}]")
@@ -1269,17 +1270,19 @@ class CustomSQLTrackerStore(TrackerStore):
         # Building ontology payload
         ontology_data = {"user_id": sender_id, "source": "Conversational Agent", "observations" : []}
         with self.session_scope() as session:
-            #BUG Even if intent is `affirm` the `intent_to_bool` turns out to be `False`
             message_entries, include_in_report_intents = self._sentiment_query(session, sender_id)
-
             intent_to_bool = {"affirm": True, "deny": False, "cancel": False}
 
             for (type, message), intent  in zip(message_entries.items(), include_in_report_intents):
                 if type == "message":
-                    message_data = json.loads(message.data)
-                    message_sentiment = message_data.get("parse_data", {}).get("entities", {})[1].get("value") # returns a list of dicts
-                    timestamp = datetime.datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
-                    message_text = message.message
+                    try:
+                        message_data = json.loads(message.data)
+                        message_sentiment = message_data.get("parse_data", {}).get("entities", {})[1].get("value")
+                        timestamp = datetime.datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
+                        message_text = message.message
+                    except AttributeError as error:
+                        print(error)
+                        message_text = " "
                 elif type == "slot":
                     message_sentiment = json.loads(message[1].data).get("value")
                     timestamp = datetime.datetime.fromtimestamp(message[0].timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -1314,7 +1317,7 @@ class CustomSQLTrackerStore(TrackerStore):
             print(error)
             verification_status_code == None
 
-        if verification_status_code == 200:            
+        if verification_status_code == 200 or 201:            
             try:
                 response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_accessToken))
                 response.close()
@@ -1322,10 +1325,10 @@ class CustomSQLTrackerStore(TrackerStore):
                 print("In custom_tracker_store function saveToOntology")
                 print(error)
 
-            if response.status_code == 200:
+            if response.status_code == 200 or 201:
                 print("Successfully stored data to ontology")
             else:
-                print(f"Failed to store data to ontology with Response [{response.status_code}]")
+                print(f"Failed to store data to ontology with {response}")
         else:
             print("Failed to verify user access token in line 1312 --- sendQuestionnaireScoreToOntology")
             print(f"Response from verification Response <[{verification_status_code}]>")            
@@ -1414,14 +1417,13 @@ class CustomSQLTrackerStore(TrackerStore):
                 else:
                     try:
                         wcs_endpoint= endpoints_df[endpoints_df["name"]=="WCS_ONBOARDING_ENDPOINT"]["endpoint"].values[0]
-
                         response = requests.get(
                             wcs_endpoint, 
                             params={"patient_uuid": sender_id}, 
                             timeout=10, 
                             auth=BearerAuth(ca_accessToken)
                         )
-                        print(f"Get data from WCS for userid {sender_id} - Response <{response}> - Line 1419")
+                        print(f"Get data from WCS for userid {sender_id} - {response} - Line 1424")
                         response.close()
                         resp = response.json()
                         partner = resp["partner"]
@@ -1650,7 +1652,7 @@ class CustomSQLTrackerStore(TrackerStore):
             print(error)
             verification_status_code = None
 
-        if verification_status_code == 200:
+        if verification_status_code == 200 or 201:
             try:
                 response = requests.post(wcs_status_endpoint, json=questionnaire_data, timeout=30, auth=BearerAuth(user_accessToken))
                 response.close()
@@ -1658,10 +1660,10 @@ class CustomSQLTrackerStore(TrackerStore):
                 print(error)
                 print("Sending questionnaire data to WCS failed --- sendQuestionnaireStatus")
 
-            if response.status_code == 200:
+            if response.status_code == 200 or 201:
                 print("Successfully sent data to WCS")
             else:
-                print(f"Failed to send data to WCS with Response[{response.status_code}]")
+                print(f"Failed to send data to WCS with {response}")
         else:
             print(f"Failed to verify user access token - Response [{verification_status_code}] --- sendQuestionnaireStatus")
 
@@ -1772,8 +1774,8 @@ def getDSTawareDate(init_date, new_date, tz_timezone):
     
     return new_date  
 
-if __name__ == "__main__":
-    ts = CustomSQLTrackerStore(db="demo.db")
+# if __name__ == "__main__":
+#     ts = CustomSQLTrackerStore(db="G:\\.shortcut-targets-by-id\\1UxkjI9sIqZr2t87jpGt5qjUHgA1tMcyT\\ALAMEDA\\Zenon\\db BackUps\\backUp-20231904.db")
     # print(ts.sendQuestionnaireStatus("631327a2-0b50-417a-8c1d-625d84c5114a", "STROKEdomainIV", "COMPLETED"))
 
     # print(datetime.datetime.now().timestamp())
@@ -1783,11 +1785,25 @@ if __name__ == "__main__":
     # print(q_day.timestamp())
 
     # with ts.session_scope() as session:
-    #     sender_id = "23e4e5e9-7580-442d-a256-9b66d16e23a8"
+    #     sender_id = "91175647-bbd4-4ea5-a1b2-13c491e1b076"
     #     current_timestamp = datetime.datetime.now().timestamp()
         # print(ts._questionnaire_state_query(session, sender_id, current_timestamp).all())
         # print(ts.checkQuestionnaireTimelimit(session, sender_id, current_timestamp, "MSdomainIV_Daily"))
         # print(ts.getAvailableQuestionnaires(sender_id, current_timestamp))
+        # session_start_timestamp = session.query(sa.func.max(ts.SQLEvent.timestamp)).filter(
+        #         ts.SQLEvent.sender_id == "91175647-bbd4-4ea5-a1b2-13c491e1b076",
+        #         ts.SQLEvent.type_name == SessionStarted.type_name,
+        #     ).first()[0]      
+
+        # print(session_start_timestamp)  
+        # message_entry = session.query(ts.SQLEvent).filter(
+        #     ts.SQLEvent.sender_id == "91175647-bbd4-4ea5-a1b2-13c491e1b076",
+        #     ts.SQLEvent.type_name == "user",
+        #     ts.SQLEvent.intent_name == "inform",
+        #     ts.SQLEvent.timestamp >= 1678571115.89694,
+        # ).order_by(ts.SQLEvent.timestamp).first() 
+
+        # print(message_entry.data)       
 
         # message_entries, report = ts._sentiment_query(session, sender_id)
         # print(message_entries)
