@@ -905,10 +905,9 @@ class CustomSQLTrackerStore(TrackerStore):
 
                 # store answers without storing the questions
                 if "score" not in slot_name:
-                    #BUG Check 2023-04-16 in logs
                     try:
                         question_type = question_types_df.loc[question_types_df["slot_name"] == slot_name, "type"].values[0]
-                        answers_data.append({"question_id": question_number, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})#"timestamp": datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")})
+                        answers_data.append({"question_id": question_number, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})
                         answers_data_wcs_format.append({"number": question_number, "answer": tracker.get_slot(slot_name)})
                     except IndexError as error:
                         print(error+f"\nFor {slot_name} --- saveQuestionnaireAnswers")
@@ -1191,7 +1190,8 @@ class CustomSQLTrackerStore(TrackerStore):
         try:
             verification_status_code = VerifyAuthentication().verification(user_accessToken)
         except TypeError as error:
-            print(error + "--- line 1194")
+            print("line 1194")
+            print(error)
             verification_status_code == None
 
         if verification_status_code == 200 or 201:
@@ -1205,7 +1205,8 @@ class CustomSQLTrackerStore(TrackerStore):
                     print(f"Failed to store scores in ontology with {response}")                
             except TypeError as error:
                 print("In custom_tracker_store function sendQuestionnaireScoreToOntology")
-                print(error + "--- line 1208")
+                print("line 1208")
+                print(error)
         else:
             print("Failed to verify user access token in line 1191 --- sendQuestionnaireScoreToOntology")
             print(f"Response from verification Response [{verification_status_code}]")
@@ -1278,7 +1279,8 @@ class CustomSQLTrackerStore(TrackerStore):
                     try:
                         message_data = json.loads(message.data)
                     except AttributeError as error:
-                        print(error + "--- line 1281")
+                        print("line 1281")
+                        print(error)
                         message_text = {}
 
                     message_sentiment = message_data.get("parse_data", {}).get("entities", {})[1].get("value")
@@ -1315,7 +1317,8 @@ class CustomSQLTrackerStore(TrackerStore):
         try:
             verification_status_code = VerifyAuthentication().verification(user_accessToken)
         except TypeError as error:
-            print(error + "--- line 1318")
+            print("line 1321")
+            print(error)
             verification_status_code == None
 
         if verification_status_code == 200 or 201:            
@@ -1329,7 +1332,8 @@ class CustomSQLTrackerStore(TrackerStore):
                     print(f"Failed to store data to ontology with {response}")                
             except TypeError as error:
                 print("In custom_tracker_store function saveToOntology")
-                print(error + "--- line 1332")
+                print("line 1332")
+                print(error)
         else:
             print("Failed to verify user access token in line 1312 --- sendQuestionnaireScoreToOntology")
             print(f"Response from verification Response <[{verification_status_code}]>")            
@@ -1650,7 +1654,8 @@ class CustomSQLTrackerStore(TrackerStore):
         try:
             verification_status_code = VerifyAuthentication().verification(user_accessToken)
         except TypeError as error:
-            print(error + "--- line 1653")
+            print("line 1653")
+            print(error)
             verification_status_code = None
 
         if verification_status_code == 200 or 201:
@@ -1663,7 +1668,8 @@ class CustomSQLTrackerStore(TrackerStore):
                 else:
                     print(f"Failed to send data to WCS with {response}")                
             except TypeError as error:
-                print(error + "--- line 1666")
+                print("line 1666")
+                print(error)
                 print("Sending questionnaire data to WCS failed --- sendQuestionnaireStatus")
         else:
             print(f"Failed to verify user access token - Response [{verification_status_code}] --- sendQuestionnaireStatus")

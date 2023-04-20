@@ -1289,7 +1289,6 @@ class ActionAskACTIVLimWalking(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -1320,7 +1319,6 @@ class ActionAskACTIVLimDoorbell(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -1351,7 +1349,6 @@ class ActionAskACTIVLimHeavyLoad(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []      
 
@@ -1382,7 +1379,6 @@ class ActionAskACTIVLimPickFromFloor(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []     
 
@@ -1413,7 +1409,6 @@ class ActionAskACTIVLimToilet(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []   
 
@@ -1444,7 +1439,6 @@ class ActionAskACTIVLimOutOfBed(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []   
 
@@ -1475,7 +1469,6 @@ class ActionAskACTIVLimBrushTeeth(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []     
 
@@ -1506,7 +1499,6 @@ class ActionAskACTIVLimTakingShower(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []    
 
@@ -1537,7 +1529,6 @@ class ActionAskACTIVLimPuttinSocks(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []    
 
@@ -1568,7 +1559,6 @@ class ActionAskACTIVLimOutOfCar(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []   
 
@@ -1599,7 +1589,6 @@ class ActionAskACTIVLimTurnInBed(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []                                                  
 
@@ -1630,7 +1619,6 @@ class ActionAskACTIVLimTyingLaces(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []  
 
@@ -1661,7 +1649,6 @@ class ActionAskACTIVLimTakeOffTshirt(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -1692,7 +1679,6 @@ class ActionAskACTIVLimOpenDoor(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []    
 
@@ -1723,7 +1709,6 @@ class ActionAskACTIVLimSweepVaccum(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []   
 
@@ -1754,7 +1739,6 @@ class ActionAskACTIVLimDishesInCupboard(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []    
 
@@ -1785,7 +1769,6 @@ class ActionAskACTIVLimGetUpFromChair(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []   
 
@@ -1816,7 +1799,6 @@ class ActionAskACTIVLimStandingNoSupport(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return [] 
 
@@ -1847,7 +1829,6 @@ class ActionAskACTIVLimWalkingUpstairs(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []      
 
@@ -1878,7 +1859,6 @@ class ActionAskACTIVLimPutKey(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []                                         
 
@@ -1993,7 +1973,6 @@ class ActionAskPSQIQ1(Action):
 
         text = entry_text + text
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -2020,7 +1999,6 @@ class ActionAskPSQIQ2(Action):
 
         text = entry_text + text
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -2047,7 +2025,6 @@ class ActionAskPSQIQ3(Action):
 
         text = entry_text + text
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -2074,7 +2051,6 @@ class ActionAskPSQIQ4(Action):
 
         text = entry_text + text
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -2111,7 +2087,6 @@ class ActionAskPSQIQ5a(Action):
 
         text = entry_text + text
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2148,7 +2123,6 @@ class ActionAskPSQIQ5b(Action):
 
         text = entry_text + text
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2185,7 +2159,6 @@ class ActionAskPSQIQ5c(Action):
 
         text = entry_text + text
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2222,7 +2195,6 @@ class ActionAskPSQIQ5d(Action):
 
         text = entry_text + text
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2259,7 +2231,6 @@ class ActionAskPSQIQ5e(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2296,7 +2267,6 @@ class ActionAskPSQIQ5f(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2333,7 +2303,6 @@ class ActionAskPSQIQ5g(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2370,7 +2339,6 @@ class ActionAskPSQIQ5h(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2407,7 +2375,6 @@ class ActionAskPSQIQ5i(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2434,7 +2401,6 @@ class ActionAskPSQIQ5j(Action):
 
         text = entry_text[:-3] + "of" + text
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -2465,7 +2431,6 @@ class ActionAskPSQIQ5k(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2506,7 +2471,6 @@ class ActionAskPSQIQ6(Action):
 
         text = entry_text + text
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
         
@@ -2547,7 +2511,6 @@ class ActionAskPSQIQ7(Action):
 
         text = entry_text + text
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2588,7 +2551,6 @@ class ActionAskPSQIQ8(Action):
 
         text = entry_text + text
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2629,7 +2591,6 @@ class ActionAskPSQIQ9(Action):
 
         text = entry_text + text
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2664,7 +2625,6 @@ class ActionAskPSQIQ10(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2699,7 +2659,6 @@ class ActionAskPSQIQ10a(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2734,7 +2693,6 @@ class ActionAskPSQIQ10b(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -2769,7 +2727,6 @@ class ActionAskPSQIQ10c(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []  
 
@@ -2804,7 +2761,6 @@ class ActionAskPSQIQ10d(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3196,7 +3152,6 @@ class ActionAskDnBQ1(Action):
             ]
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -3227,7 +3182,6 @@ class ActionAskDnBQ2(Action):
             ['/affirm', '/deny']
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3243,7 +3197,6 @@ class ActionAskDnBQ2i(Action):
             ["Please explain:", " ", " ", "Daca da, explicati...",],
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -3274,7 +3227,6 @@ class ActionAskDnBQ3(Action):
             ['/affirm', '/affirm', '/affirm', '/deny']
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3290,7 +3242,6 @@ class ActionAskDnBQ3i(Action):
             ["describe", " ", " ", "detaliati"]
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -3321,7 +3272,6 @@ class ActionAskDnBQ4(Action):
             ['/deny', '/affirm']
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3342,7 +3292,6 @@ class ActionAskDnBQ4a(Action):
             ]
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -3382,7 +3331,6 @@ class ActionAskDnBQ4b(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3413,7 +3361,6 @@ class ActionAskDnBQ4c(Action):
             ['/affirm', '/deny']
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3434,7 +3381,6 @@ class ActionAskDnBQ4ci(Action):
             ]
         )
         
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -3465,7 +3411,6 @@ class ActionAskDnBQ4d(Action):
             ['/affirm', '/deny']
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3508,7 +3453,6 @@ class ActionAskDnBSymptoms(Action):
                     ]
                 }
 
-        print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
@@ -3539,7 +3483,6 @@ class ActionAskDnBQ5(Action):
             ['/affirm', '/deny']
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3581,7 +3524,6 @@ class ActionAskDnBQ5i(Action):
                 }
 
 
-        print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
@@ -3612,7 +3554,7 @@ class ActionAskDnBQ6(Action):
             ['/affirm', '/deny']
         )
 
-        print("\nBot:", text, buttons)
+
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3654,7 +3596,6 @@ class ActionAskDnBQ6i(Action):
                 }
 
 
-        print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
@@ -3685,7 +3626,6 @@ class ActionAskDnBQ7(Action):
             ['/affirm', '/deny']
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3701,7 +3641,6 @@ class ActionAskDnBQ7i(Action):
             ["Please explain:", " ", " ", "Detaliati:"]
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -3735,7 +3674,6 @@ class ActionAskDnBQ8(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3766,7 +3704,6 @@ class ActionAskDnBQ9(Action):
             ['/affirm', '/deny']
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3787,7 +3724,6 @@ class ActionAskDnBQ9i(Action):
             ]
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -3821,7 +3757,6 @@ class ActionAskDnBQ10(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3852,7 +3787,6 @@ class ActionAskDnBQ11(Action):
             ['/affirm', '/deny']
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3871,7 +3805,6 @@ class ActionAskDnBQ11i(Action):
              "Cate caderi au fost pe parcursul a 6 luni?"]
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -3905,7 +3838,6 @@ class ActionAskDnBQ12(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -3924,7 +3856,6 @@ class ActionAskDnBQ12i(Action):
              "Explicati:"]
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -3976,7 +3907,6 @@ class ActionAskDnBPastMedicalHistory(Action):
                 }
 
 
-        print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
@@ -3997,7 +3927,6 @@ class ActionAskDnBPastMedicalHistoryOther(Action):
             ]
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -4035,7 +3964,6 @@ class ActionAskDnBMedicalTests(Action):
                 }
 
 
-        print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
@@ -4056,7 +3984,6 @@ class ActionAskDnBMedicalTestsOther(Action):
             ]
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -4095,7 +4022,6 @@ class ActionAskDnBOnSetType(Action):
                 }
 
 
-        print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
@@ -4139,7 +4065,6 @@ class ActionAskDnBEarSymptomI(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=intro_text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
@@ -4175,7 +4100,6 @@ class ActionAskDnBEarSymptomIa(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4230,7 +4154,6 @@ class ActionAskDnBEarSymptomII(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4265,7 +4188,6 @@ class ActionAskDnBEarSymptomIIa(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4299,7 +4221,6 @@ class ActionAskDnBEarSymptomIII(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4334,7 +4255,6 @@ class ActionAskDnBEarSymptomIIIa(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4370,7 +4290,6 @@ class ActionAskDnBEarSymptomIIIa1(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4405,7 +4324,6 @@ class ActionAskDnBEarSymptomIIIa2(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4460,7 +4378,6 @@ class ActionAskDnBEarSymptomIIIa3i(Action):
             ]
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -4494,7 +4411,6 @@ class ActionAskDnBEarSymptomIV(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4528,7 +4444,6 @@ class ActionAskDnBEarSymptomV(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4572,7 +4487,6 @@ class ActionAskDnBEarSymptomVI(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=intro_text)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
@@ -4606,7 +4520,7 @@ class ActionAskDnBEarSymptomVII(Action):
                 '/deny{"given_answer":"No"}'
             ]
         )
-        print("\nBot:", text, buttons)
+
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4639,7 +4553,7 @@ class ActionAskDnBEarSymptomVIII(Action):
                 '/deny{"given_answer":"No"}'
             ]
         )
-        print("\nBot:", text, buttons)
+
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4672,7 +4586,7 @@ class ActionAskDnBEarSymptomIX(Action):
                 '/deny{"given_answer":"No"}'
             ]
         )
-        print("\nBot:", text, buttons)
+
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4705,7 +4619,7 @@ class ActionAskDnBEarSymptomX(Action):
                 '/deny{"given_answer":"No"}'
             ]
         )
-        print("\nBot:", text, buttons)
+
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4739,7 +4653,7 @@ class ActionAskDnBEarSymptomXI(Action):
                 '/inform{"given_answer":"remain in a straight path?"}'
             ]
         )
-        print("\nBot:", text, buttons)
+
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4774,7 +4688,7 @@ class ActionAskDnBSocial_a(Action):
                 '/inform{"given_answer":"vigorous with/without walker/cane"}'
             ]
         )
-        print("\nBot:", text, buttons)
+
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4795,8 +4709,6 @@ class ActionAskDnBSocial_ai(Action):
             ]
         )
 
-        
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -4831,7 +4743,7 @@ class ActionAskDnBSocial_b(Action):
                 '/inform{"given_answer":"vigorous with/without walker/cane"}'
             ]
         )
-        print("\nBot:", text, buttons)
+
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4852,8 +4764,6 @@ class ActionAskDnBSocial_bi(Action):
             ]
         )
 
-        
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []
 
@@ -4890,8 +4800,6 @@ class ActionAskDnBSocial_c(Action):
                     ]
                 }
 
-
-        print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
@@ -4924,7 +4832,7 @@ class ActionAskDnBHabitsCaffeine(Action):
                 '/affirm{"given_answer":"consume caffeine"}'
             ]
         )
-        print("\nBot:", text, buttons)
+
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -4945,7 +4853,6 @@ class ActionAskDnBHabitsCaffeineFollow(Action):
             ]
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []        
 
@@ -4978,7 +4885,7 @@ class ActionAskDnBHabitsAlcohol(Action):
                 '/affirm{"given_answer":"consume alcohol"}'
             ]
         )
-        print("\nBot:", text, buttons)
+
         dispatcher.utter_message(text=text, buttons=buttons)
         return []     
 
@@ -4999,7 +4906,6 @@ class ActionAskDnBHabitsAlcoholFollow(Action):
             ]
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []           
 
@@ -5032,7 +4938,7 @@ class ActionAskDnBHabitsTobacco(Action):
                 '/affirm{"given_answer":"consume tobacco"}'
             ]
         )
-        print("\nBot:", text, buttons)
+
         dispatcher.utter_message(text=text, buttons=buttons)
         return [] 
 
@@ -5053,7 +4959,6 @@ class ActionAskDnBHabitsTobaccoFollow(Action):
             ]
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []            
 
@@ -5074,7 +4979,6 @@ class ActionAskDnBMedications(Action):
             ]
         )
 
-        print("\nBot:", text)
         dispatcher.utter_message(text=text)
         return []                          
 
@@ -5266,7 +5170,6 @@ class ActionAskeatinghabitsQ1(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5298,7 +5201,6 @@ class ActionAskeatinghabitsQ2(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5330,7 +5232,6 @@ class ActionAskeatinghabitsQ3(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5362,7 +5263,6 @@ class ActionAskeatinghabitsQ4(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5394,7 +5294,6 @@ class ActionAskeatinghabitsQ5(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5426,7 +5325,6 @@ class ActionAskeatinghabitsQ6(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5458,7 +5356,6 @@ class ActionAskeatinghabitsQ7(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5490,7 +5387,6 @@ class ActionAskeatinghabitsQ8(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5522,7 +5418,6 @@ class ActionAskeatinghabitsQ9(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5554,7 +5449,6 @@ class ActionAskeatinghabitsQ10(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5586,7 +5480,6 @@ class ActionAskeatinghabitsQ11(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5618,7 +5511,6 @@ class ActionAskeatinghabitsQ12(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5650,7 +5542,6 @@ class ActionAskeatinghabitsQ13(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5682,7 +5573,6 @@ class ActionAskeatinghabitsQ14(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5714,7 +5604,6 @@ class ActionAskeatinghabitsQ15(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5746,7 +5635,6 @@ class ActionAskeatinghabitsQ16(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5778,7 +5666,6 @@ class ActionAskeatinghabitsQ17(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5810,7 +5697,6 @@ class ActionAskeatinghabitsQ18(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5842,7 +5728,6 @@ class ActionAskeatinghabitsQ19(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5874,7 +5759,6 @@ class ActionAskeatinghabitsQ20(Action):
             ]
         )
 
-        print("\nBot:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5908,7 +5792,6 @@ class ActionAskMuscleToneQ1(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5938,7 +5821,6 @@ class ActionAskMuscleToneQ2(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5968,7 +5850,6 @@ class ActionAskMuscleToneQ3(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -5998,7 +5879,6 @@ class ActionAskMuscleToneQ4(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6029,7 +5909,6 @@ class ActionAskMuscleToneQ5(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6068,7 +5947,6 @@ class ActionAskMuscleToneQ6(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6098,7 +5976,6 @@ class ActionAskMuscleToneQ7(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6128,7 +6005,6 @@ class ActionAskMuscleToneQ8(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6158,7 +6034,6 @@ class ActionAskMuscleToneQ9(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6196,7 +6071,6 @@ class ActionAskMuscleToneQ10(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6216,7 +6090,6 @@ class ActionAskMuscleToneQ10i(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []        
 
@@ -6416,7 +6289,6 @@ class ActionAskCoastQ0(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6448,7 +6320,6 @@ class ActionAskCoastQ1(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6480,7 +6351,6 @@ class ActionAskCoastQ2(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6512,7 +6382,6 @@ class ActionAskCoastQ3(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6544,7 +6413,6 @@ class ActionAskCoastQ4(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6576,7 +6444,6 @@ class ActionAskCoastQ5(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6608,7 +6475,6 @@ class ActionAskCoastQ6(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6640,7 +6506,6 @@ class ActionAskCoastQ7(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6672,7 +6537,6 @@ class ActionAskCoastQ8(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6704,7 +6568,6 @@ class ActionAskCoastQ9(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6736,7 +6599,6 @@ class ActionAskCoastQ10(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6768,7 +6630,6 @@ class ActionAskCoastQ11(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6800,7 +6661,6 @@ class ActionAskCoastQ12(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6832,7 +6692,6 @@ class ActionAskCoastQ13(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6864,7 +6723,6 @@ class ActionAskCoastQ14(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6896,7 +6754,6 @@ class ActionAskCoastQ15(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6928,7 +6785,6 @@ class ActionAskCoastQ16(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6960,7 +6816,6 @@ class ActionAskCoastQ17(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -6992,7 +6847,6 @@ class ActionAskCoastQ18(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -7024,7 +6878,6 @@ class ActionAskCoastQ19(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -7056,7 +6909,6 @@ class ActionAskCoastQ20(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -7096,7 +6948,6 @@ class ActionStrokeDomainIIIRQ1(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []  
 
@@ -7132,7 +6983,6 @@ class ActionStrokeDomainIIIRQ2(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []   
 
@@ -7172,7 +7022,6 @@ class ActionStrokeDomainVRQ1(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []  
 
@@ -7208,7 +7057,6 @@ class ActionStrokeDomainVRQ2(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []                  
 
@@ -7258,7 +7106,6 @@ class ActionAskStrokeDomainIVRQ1(Action):
                 }
 
 
-        print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
         return []
 
@@ -7294,7 +7141,6 @@ class ActionStrokeDomainIVRQ2(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []  
 
@@ -7330,7 +7176,6 @@ class ActionStrokeDomainIVRQ3(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []         
 
@@ -7368,7 +7213,6 @@ class ActionAskMSDomainIRQ1(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []     
 
@@ -7389,7 +7233,6 @@ class ActionAskMSDomainIRQ1a(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []   
 
@@ -7423,7 +7266,6 @@ class ActionAskMSDomainIRQ1b(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []          
 
@@ -7459,7 +7301,6 @@ class ActionAskMSDomainIRQ1c(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
@@ -7493,7 +7334,6 @@ class ActionAskMSDomainIRQ2(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []   
 
@@ -7514,7 +7354,6 @@ class ActionAskMSDomainIRQ2a(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []   
 
@@ -7548,7 +7387,6 @@ class ActionAskMSDomainIRQ2b(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []          
 
@@ -7584,7 +7422,6 @@ class ActionAskMSDomainIRQ2c(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []    
 
@@ -7620,7 +7457,6 @@ class ActionAskMSDomainIRQ3(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []    
 
@@ -7641,7 +7477,6 @@ class ActionAskMSDomainIRQ4(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []  
 
@@ -7662,7 +7497,6 @@ class ActionAskMSDomainIRQ5(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []  
 
@@ -7696,7 +7530,6 @@ class ActionAskMSDomainIRQ6(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []                                                             
 
@@ -7805,7 +7638,6 @@ class ActionAskMSDomainII3MRQ3(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return [] 
 
@@ -7845,7 +7677,6 @@ class ActionMSDomainIII1WRQ1(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return [] 
 
@@ -7866,7 +7697,6 @@ class ActionAskMSDomainIII1WRQ2(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return [] 
 
@@ -7887,7 +7717,6 @@ class ActionAskMSDomainIII1WRQ2a(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []  
 
@@ -7923,7 +7752,6 @@ class ActionMSDomainIII1WRQ3(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []    
 
@@ -7959,7 +7787,6 @@ class ActionMSDomainIII1WRQ4(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []                
 
@@ -7980,7 +7807,6 @@ class ActionAskMSDomainIII1WRQ5(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return [] 
 
@@ -8001,7 +7827,6 @@ class ActionAskMSDomainIII1WRQ5a(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []   
 
@@ -8022,7 +7847,6 @@ class ActionAskMSDomainIII2WRQ6(Action):
             ]
         )
 
-        print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []  
 
@@ -8056,7 +7880,6 @@ class ActionAskMSDomainIII2WRQ7(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []                     
 
@@ -8226,7 +8049,6 @@ class ActionAskMSDomainIVDailyRQ1(Action):
                     ]
                 }
 
-        print("\nBOT:", text + "\n" + str(data))
         dispatcher.utter_message(text=text, json_message=data)
         return []  
 
@@ -8260,7 +8082,6 @@ class ActionAskMSDomainIV1WRQ2(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []          
 
@@ -8302,7 +8123,6 @@ class ActionAskMSDomainIV1WRQ2a(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []      
 
@@ -8336,7 +8156,6 @@ class ActionAskMSDomainIV_1WRQ3(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []                    
 
@@ -8389,7 +8208,6 @@ class ActionMSDomainVRQ1(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return [] 
 
@@ -8425,7 +8243,6 @@ class ActionMSDomainVRQ2(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []         
 
@@ -8463,7 +8280,6 @@ class ActionAskMSDomainII_1MRQ1(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []  
 
@@ -8497,6 +8313,5 @@ class ActionAskMSDomainII_1MRQ2(Action):
             ]
         )
 
-        print("\nBOT:", text, buttons)
         dispatcher.utter_message(text=text, buttons=buttons)
         return []                 
