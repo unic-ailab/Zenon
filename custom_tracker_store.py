@@ -1191,21 +1191,21 @@ class CustomSQLTrackerStore(TrackerStore):
         try:
             verification_status_code = VerifyAuthentication().verification(user_accessToken)
         except TypeError as error:
-            print(error)
+            print(error + "--- line 1194")
             verification_status_code == None
 
         if verification_status_code == 200 or 201:
             try:
                 response = requests.post(ontology_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_accessToken))
                 response.close()
+
+                if response.status_code == 200 or 201:
+                    print("Scores successfully stored in ontology")
+                else:
+                    print(f"Failed to store scores in ontology with {response}")                
             except TypeError as error:
                 print("In custom_tracker_store function sendQuestionnaireScoreToOntology")
-                print(error)
-
-            if response.status_code == 200 or 201:
-                print("Scores successfully stored in ontology")
-            else:
-                print(f"Failed to store scores in ontology with {response}")
+                print(error + "--- line 1208")
         else:
             print("Failed to verify user access token in line 1191 --- sendQuestionnaireScoreToOntology")
             print(f"Response from verification Response [{verification_status_code}]")
@@ -1277,12 +1277,13 @@ class CustomSQLTrackerStore(TrackerStore):
                 if type == "message":
                     try:
                         message_data = json.loads(message.data)
-                        message_sentiment = message_data.get("parse_data", {}).get("entities", {})[1].get("value")
-                        timestamp = datetime.datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
-                        message_text = message.message
                     except AttributeError as error:
-                        print(error)
-                        message_text = " "
+                        print(error + "--- line 1281")
+                        message_text = {}
+
+                    message_sentiment = message_data.get("parse_data", {}).get("entities", {})[1].get("value")
+                    timestamp = datetime.datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
+                    message_text = message.message                    
                 elif type == "slot":
                     message_sentiment = json.loads(message[1].data).get("value")
                     timestamp = datetime.datetime.fromtimestamp(message[0].timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -1314,21 +1315,21 @@ class CustomSQLTrackerStore(TrackerStore):
         try:
             verification_status_code = VerifyAuthentication().verification(user_accessToken)
         except TypeError as error:
-            print(error)
+            print(error + "--- line 1318")
             verification_status_code == None
 
         if verification_status_code == 200 or 201:            
             try:
                 response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_accessToken))
                 response.close()
+
+                if response.status_code == 200 or 201:
+                    print("Successfully stored data to ontology")
+                else:
+                    print(f"Failed to store data to ontology with {response}")                
             except TypeError as error:
                 print("In custom_tracker_store function saveToOntology")
-                print(error)
-
-            if response.status_code == 200 or 201:
-                print("Successfully stored data to ontology")
-            else:
-                print(f"Failed to store data to ontology with {response}")
+                print(error + "--- line 1332")
         else:
             print("Failed to verify user access token in line 1312 --- sendQuestionnaireScoreToOntology")
             print(f"Response from verification Response <[{verification_status_code}]>")            
@@ -1649,21 +1650,21 @@ class CustomSQLTrackerStore(TrackerStore):
         try:
             verification_status_code = VerifyAuthentication().verification(user_accessToken)
         except TypeError as error:
-            print(error)
+            print(error + "--- line 1653")
             verification_status_code = None
 
         if verification_status_code == 200 or 201:
             try:
                 response = requests.post(wcs_status_endpoint, json=questionnaire_data, timeout=30, auth=BearerAuth(user_accessToken))
                 response.close()
-            except TypeError as error:
-                print(error)
-                print("Sending questionnaire data to WCS failed --- sendQuestionnaireStatus")
 
-            if response.status_code == 200 or 201:
-                print("Successfully sent data to WCS")
-            else:
-                print(f"Failed to send data to WCS with {response}")
+                if response.status_code == 200 or 201:
+                    print("Successfully sent data to WCS")
+                else:
+                    print(f"Failed to send data to WCS with {response}")                
+            except TypeError as error:
+                print(error + "--- line 1666")
+                print("Sending questionnaire data to WCS failed --- sendQuestionnaireStatus")
         else:
             print(f"Failed to verify user access token - Response [{verification_status_code}] --- sendQuestionnaireStatus")
 

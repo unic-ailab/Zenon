@@ -869,9 +869,9 @@ class ActionUtterGreet(Action):
             isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
             if isFirstTime:
                 print("This is the first time for today.")
-                return [SlotSet("is_first_time", isFirstTime), SlotSet("user_accessToken", user_accessToken)]
+                return [SlotSet("is_first_time", isFirstTime)] + [SlotSet("user_accessToken", user_accessToken)]
             else:
-                return [SlotSet("is_first_time", isFirstTime), SlotSet("user_accessToken", user_accessToken)]
+                return [SlotSet("is_first_time", isFirstTime)] + [SlotSet("user_accessToken", user_accessToken)]
         else:
             print(25*"*")
             print(f"AccessToken verification failed with code {status_code}")
@@ -949,6 +949,18 @@ class ActionUtterNotificationGreet(Action):
         # onboard the user here in case the first time users open the app from a notification
         _ = customTrackerInstance.checkUserID(tracker.current_state()['sender_id'], ca_accessToken)
 
+        # Verify token received from WM
+        #TODO this maybe is better to happen within app, NOT here
+
+        metadata = tracker.latest_message.get("metadata")
+        print("***** METADATA *****")
+        user_accessToken = metadata["accessToken"]
+        print("User access token is equal to metadata access token",user_accessToken == metadata["accessToken"])
+        print(25*"=")
+
+        # Perform verification for the received `accessToken`
+        status_code = VerifyAuthentication().verification(user_accessToken)
+
         q_abbreviation = tracker.get_slot("questionnaire")
         try: 
             q_name = get_text_from_lang(
@@ -977,7 +989,7 @@ class ActionUtterNotificationGreet(Action):
             # might need to reset questionnaire slots here in case the user didn't go through getAvailableQuestionnaires after the questionnaire became available
             if state == "available": questionnaire_to_reset.append(q_abbreviation)
             q_starting_time = datetime.datetime.now(tz=pytz.utc).timestamp()
-            return reset_form_slots(tracker, domain, questionnaire_to_reset) + [SlotSet("q_starting_time", q_starting_time), SlotSet("notification_questionnaire_start", True)]#+ [FollowupAction("action_utter_ask_questionnaire_start")]
+            return reset_form_slots(tracker, domain, questionnaire_to_reset) + [SlotSet("q_starting_time", q_starting_time), SlotSet("notification_questionnaire_start", True)] + [SlotSet("user_accessToken", user_accessToken)]
         else:
             # normally it shouldn't get to this point
             text = get_text_from_lang(
@@ -990,7 +1002,7 @@ class ActionUtterNotificationGreet(Action):
                 ],
             )
             dispatcher.utter_message(text=text)
-            return [SlotSet("questionnaire", None), SlotSet("q_starting_time", None), SlotSet("is_first_time", isFirstTime), SlotSet("notification_questionnaire_start", False)]
+            return [SlotSet("questionnaire", None), SlotSet("q_starting_time", None), SlotSet("is_first_time", isFirstTime), SlotSet("notification_questionnaire_start", False)] + [SlotSet("user_accessToken", user_accessToken)]
 
 class ActionQuestionnaireCompleted(Action):
     def name(self):

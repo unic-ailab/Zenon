@@ -34,7 +34,7 @@ class IAMLogin(object):
             data = json.loads(response.text)
             return response.status_code, data["access_token"], data["refresh_token"]
         elif response.status_code != 200:
-            print(f"****Service failed to log in against IAM with code {response.status_code}****")
+            print(f"****Service failed to log in against IAM with code {response}****")
             return response.status_code, data["access_token"], data["refresh_token"]
 
 class VerifyAuthentication(object):
@@ -57,7 +57,7 @@ class VerifyAuthentication(object):
         if response.status_code == 200:
             return response.status_code
         elif response.status_code != 200:
-            print(f"****User access token verification FAILED with code {response.status_code}****")
+            print(f"****User access token verification FAILED with code {response}****")
 
 class RefreshAccessToken(object):
     """
