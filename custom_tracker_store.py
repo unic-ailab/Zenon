@@ -874,7 +874,7 @@ class CustomSQLTrackerStore(TrackerStore):
         """
 
         question_types_df = pd.read_csv("question_types.csv") 
-        sender_id = tracker.current_state()['sender_id']
+        sender_id = tracker.sender_id
         isDemo = sender_id[:len(sender_id)-2].upper() in questionnaire_per_usecase.keys()
         answers_data = []
         answers_data_wcs_format = []

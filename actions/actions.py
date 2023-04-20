@@ -193,7 +193,7 @@ def announce(action, tracker=None):
     output = ">>> Action: " + action.name()
     output = "=" * min(100, len(output)) + "\n" + output
     if tracker:
-        output += f"\n- UserId: {tracker.current_state()['sender_id']}"
+        output += f"\n- UserId: {tracker.sender_id}"
         try:
             msg = tracker.latest_message
             output += "\n- Text:       " + str(msg["text"])
@@ -382,7 +382,7 @@ class ActionOnboardUser(Action):
         # Get stored access_token from csv file
         ca_accessToken = generatedTokens["access_token"].iloc[-1]
 
-        language = customTrackerInstance.checkUserID(tracker.current_state()['sender_id'], ca_accessToken)
+        language = customTrackerInstance.checkUserID(tracker.sender_id, ca_accessToken)
         dispatcher.utter_message(text=language)
         return [SlotSet("language", language)]
 
@@ -403,8 +403,8 @@ class ActionGetAvailableQuestionnaires(Action):
         # Get stored access_token from csv file
         ca_accessToken = generatedTokens["access_token"].iloc[-1]
 
-        _ = customTrackerInstance.checkUserID(tracker.current_state()['sender_id'], ca_accessToken)
-        available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.current_state()['sender_id'], now) 
+        _ = customTrackerInstance.checkUserID(tracker.sender_id, ca_accessToken)
+        available_questionnaires, reset_questionnaires = customTrackerInstance.getAvailableQuestionnaires(tracker.sender_id, now) 
 
         availableQuestionnaires = tracker.get_slot("availableQuestionnaires")
         if len(available_questionnaires) == 0:
@@ -474,7 +474,7 @@ class ActionContinueLatestQuestionnaire(Action):
             return []
         else:
             q_abbreviation = tracker.get_slot("questionnaire")
-            isAvailable, _ = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
+            isAvailable, _ = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.sender_id, datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
 
             if isAvailable: 
                 q_name = get_text_from_lang(tracker, questionnaire_abbreviations[q_abbreviation])
@@ -533,7 +533,7 @@ class ActionOptionsMenu(Action):
                 "Ce pot face pentru tine azi?"]
             )
 
-        usecase = customTrackerInstance.getUserUsecase(tracker.current_state()['sender_id'])
+        usecase = customTrackerInstance.getUserUsecase(tracker.sender_id)
         if usecase == "MS":
             buttons = get_buttons_from_lang(
                 tracker,
@@ -569,7 +569,7 @@ class ActionOptionsMenuExtra(Action):
                 "Te mai pot ajuta cu ceva?",
             ]
         )
-        usecase = customTrackerInstance.getUserUsecase(tracker.current_state()['sender_id'])
+        usecase = customTrackerInstance.getUserUsecase(tracker.sender_id)
         if usecase == "MS":
             buttons = get_buttons_from_lang(
                 tracker,
@@ -604,7 +604,7 @@ class ActionConfirmTechIssue(Action):
                 "Multumim pentru feedback-ul dvs!! Voi face tot posibilul să o repar cât mai curând posibil."]
             )
         issue = tracker.get_slot("report_tech_issue_Q1")
-        customTrackerInstance.logTechIssue(issue, tracker.current_state()['sender_id'])
+        customTrackerInstance.logTechIssue(issue, tracker.sender_id)
         dispatcher.utter_message(text=text)
         return []
 
@@ -616,7 +616,7 @@ class ActionHealthUpdateMenu(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
-        usecase = customTrackerInstance.getUserUsecase(tracker.current_state()['sender_id'])
+        usecase = customTrackerInstance.getUserUsecase(tracker.sender_id)
         if usecase in ["MS", "STROKE"]:
             text = get_text_from_lang(
                 tracker, 
@@ -675,7 +675,7 @@ class ActionSleepStatus(Action):
             wcs_sleep_endpoint= endpoints_df[endpoints_df["name"]=="WCS_FITBIT_SLEEP_ENDPOINT"]["endpoint"].values[0]
             response = requests.get(
                 wcs_sleep_endpoint, 
-                params={"userId": tracker.current_state()['sender_id'], "startDate":seven_days_ago, "endDate":today},
+                params={"userId": tracker.sender_id, "startDate":seven_days_ago, "endDate":today},
                 timeout=10, 
                 auth=BearerAuth(ca_accessToken)
             )
@@ -720,7 +720,7 @@ class ActionSleepStatus(Action):
                 fourteen_days_ago = (today - datetime.timedelta(days=14)).strftime("%Y-%m-%dT%H:%M:%SZ")
                 response = requests.get(
                     wcs_sleep_endpoint, 
-                    params={"userId": tracker.current_state()['sender_id'], "startDate":fourteen_days_ago, "endDate":seven_days_ago}, 
+                    params={"userId": tracker.sender_id, "startDate":fourteen_days_ago, "endDate":seven_days_ago}, 
                     timeout=10, 
                     auth=BearerAuth(ca_accessToken)
                 )
@@ -866,7 +866,7 @@ class ActionUtterGreet(Action):
             print("\nBOT:", text)
 
             # check if it is the first time of the day
-            isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
+            isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.sender_id)
             if isFirstTime:
                 print("This is the first time for today.")
                 return [SlotSet("is_first_time", isFirstTime)] + [SlotSet("user_accessToken", user_accessToken)]
@@ -895,7 +895,7 @@ class ActionUtterHowAreYou(Action):
         try :
             response = requests.get(
                 ontology_meaa_endpoint,
-                params={"userId": tracker.current_state()['sender_id'], "startDate":yesterday, "endDate":today},
+                params={"userId": tracker.sender_id, "startDate":yesterday, "endDate":today},
                 timeout=10,
                 auth=BearerAuth(ca_accessToken)
             )
@@ -947,7 +947,7 @@ class ActionUtterNotificationGreet(Action):
         ca_accessToken = generatedTokens["access_token"].iloc[-1]
 
         # onboard the user here in case the first time users open the app from a notification
-        _ = customTrackerInstance.checkUserID(tracker.current_state()['sender_id'], ca_accessToken)
+        _ = customTrackerInstance.checkUserID(tracker.sender_id, ca_accessToken)
 
         # Verify token received from WM
         #TODO this maybe is better to happen within app, NOT here
@@ -970,10 +970,10 @@ class ActionUtterNotificationGreet(Action):
         except:
             q_name = "None"
 
-        isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.current_state()['sender_id'])
+        isFirstTime = customTrackerInstance.isFirstTimeToday(tracker.sender_id)
         questionnaire_to_reset = []
         # check if questionnaire is still pending
-        isAvailable, state = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
+        isAvailable, state = customTrackerInstance.getSpecificQuestionnaireAvailability(tracker.sender_id, datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
         if isAvailable:
             text = get_text_from_lang(
                 tracker,
@@ -1017,7 +1017,7 @@ class ActionQuestionnaireCompleted(Action):
         MSdomainIV_both = tracker.get_slot("MSdomainIV_both")
 
         q_starting_time = datetime.datetime.now(tz=pytz.utc).timestamp()
-        #customTrackerInstance.setQuestionnaireTempState(tracker.current_state()['sender_id'], datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
+        #customTrackerInstance.setQuestionnaireTempState(tracker.sender_id, datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
 
         slots_to_reset = reset_and_save_form_slots(tracker, domain, q_abbreviation, True)
 
@@ -1047,7 +1047,7 @@ class ActionOntologyStoreSentiment(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
-        customTrackerInstance.saveToOntology(tracker, tracker.current_state()['sender_id'])
+        customTrackerInstance.saveToOntology(tracker, tracker.sender_id)
         return [FollowupAction("action_options_menu")]
 
 class ActionQuestionnaireCancelled(Action):
@@ -1129,7 +1129,7 @@ class ActionSetQuestionnaireSlot(Action):
     def run(self, dispatcher, tracker, domain):
         
         q_abbreviation = tracker.latest_message["intent"].get("name").replace("_start", "")
-        usecase = customTrackerInstance.getUserUsecase(tracker.current_state()['sender_id'])
+        usecase = customTrackerInstance.getUserUsecase(tracker.sender_id)
 
         if (usecase != None) & (usecase in questionnaire_per_usecase.keys()):
             if q_abbreviation in questionnaire_per_usecase[usecase]:
