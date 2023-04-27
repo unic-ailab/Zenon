@@ -56,6 +56,11 @@ from connect_to_iam import BearerAuth, VerifyAuthentication
 
 
 logger = logging.getLogger(__name__)
+f_handler = logging.FileHandler("zenon.log", mode="a")
+f_handler.setLevel(logging.DEBUG)
+f_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+f_handler.setFormatter(f_format)
+logger.addHandler(f_handler)
 
 # will relevant questions be available from the chatbot outside notifications?
 questionnaire_per_usecase = {
@@ -94,7 +99,7 @@ class CustomSQLTrackerStore(TrackerStore):
         def __repr__(self):
             """Add representation to print queries in human readable way"""
 
-            return f"SQLEvent(sender_id= {self.sender_id}, message= {self.message}, intent= {self.intent_name})"        
+            return f"SQLEvent(\nsender_id={self.sender_id},\nmessage={self.message}\nintent={self.intent_name}\data={self.data})"        
 
     class SQLQuestState(Base):
         """Represents a questionnaire event in the SQL Tracker Store.
@@ -122,7 +127,7 @@ class CustomSQLTrackerStore(TrackerStore):
         def __repr__(self):
             """Add representation to print queries in human readable way"""
 
-            return f"SQLQuestState(sender_id= {self.sender_id}, questionnaire_name= {self.questionnaire_name}, state= {self.state}, available_at= {self.available_at})"
+            return f"SQLQuestState(\nsender_id={self.sender_id}\nquestionnaire_name={self.questionnaire_name}\nstate= {self.state}\navailable_at={self.available_at})"
 
 
     class SQLUserID(Base):
@@ -687,6 +692,8 @@ class CustomSQLTrackerStore(TrackerStore):
             self.SQLEvent.timestamp >= session_start_timestamp,
         ).order_by(self.SQLEvent.timestamp).first()
 
+        logger.debug(f"For userID:{sender_id}\n{message_entry}")
+
         # if there is no second message, it means the first message had positive or neutral sentiment
         # and is not included in the report
         try: 
@@ -695,7 +702,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 self.SQLEvent.type_name == "user",
                 self.SQLEvent.intent_name.in_(["deny", "affirm", "cancel"]),
                 self.SQLEvent.timestamp > message_entry.timestamp,
-                ).order_by(self.SQLEvent.timestamp).first()[0]
+                ).order_by(self.SQLEvent.timestamp.desc()).first()[0]
         except:
             include_in_report_intent = "deny"
             print(f"This is from line 701 in customTrackerStore. Print here the variable include_in_report: {include_in_report_intent}")
@@ -910,7 +917,8 @@ class CustomSQLTrackerStore(TrackerStore):
                         answers_data.append({"question_id": question_number, "question_type": question_type, "answer": tracker.get_slot(slot_name), "score": None})
                         answers_data_wcs_format.append({"number": question_number, "answer": tracker.get_slot(slot_name)})
                     except IndexError as error:
-                        print(error+f"\nFor {slot_name} --- saveQuestionnaireAnswers")
+                        print(error)
+                        print(f"For {slot_name} --- saveQuestionnaireAnswers")
 
             partner, disease = self.getUserDetails(sender_id)
             if questionnaire_abbreviation in ["psqi", "muscletone"]:
@@ -997,6 +1005,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 else:
                     return False, None
             except:
+                logger.error(f"Couldn't retrieve information for\nUserID: {sender_id}\nQuestionnaire: {questionnaire_name}")
                 return False, None
 
     def isFirstTimeToday(self, sender_id: str) -> bool:
@@ -1170,7 +1179,6 @@ class CustomSQLTrackerStore(TrackerStore):
         if not total_score:
                 total_score = self._questionnaire_score_query(session, sender_id, questionnaire_name)
         score_list.append({"score": total_score, "scoreDescription": "TOTAL"})
-        # database_entry.scoring = json.dumps(score_list)
         
         ontology_data = {
             "user_id": sender_id,
@@ -1190,8 +1198,8 @@ class CustomSQLTrackerStore(TrackerStore):
         try:
             verification_status_code = VerifyAuthentication().verification(user_accessToken)
         except TypeError as error:
-            print("line 1194")
-            print(error)
+            logger.error(f"Couldn't vefify accessToken for\nUserID: {sender_id}", exc_info=True)
+            print(f"in line 1194\n{error}")
             verification_status_code == None
 
         if verification_status_code == 200 or 201:
@@ -1200,16 +1208,14 @@ class CustomSQLTrackerStore(TrackerStore):
                 response.close()
 
                 if response.status_code == 200 or 201:
-                    print("Scores successfully stored in ontology")
+                    logger.debug("Scores successfully stored in ontology")
                 else:
-                    print(f"Failed to store scores in ontology with {response}")                
+                    logger.debug(f"Failed to store scores in ontology for\UserID: {sender_id}\nQuestionnaire: {questionnaire_name}\nwith {response}")                
             except TypeError as error:
-                print("In custom_tracker_store function sendQuestionnaireScoreToOntology")
-                print("line 1208")
-                print(error)
+                logger.error("In custom_tracker_store function sendQuestionnaireScoreToOntology", exc_info=True)
+                print(f"in line 1208\n{error}")
         else:
-            print("Failed to verify user access token in line 1191 --- sendQuestionnaireScoreToOntology")
-            print(f"Response from verification Response [{verification_status_code}]")
+            logger.debug(f"Failed to verify user access token in sendQuestionnaireScoreToOntology for\nUserID: {sender_id}\nwith response {verification_status_code}")
 
     def saveToOntology(self, tracker: DialogueStateTracker, sender_id: str) -> None:
         """
@@ -1274,19 +1280,20 @@ class CustomSQLTrackerStore(TrackerStore):
             message_entries, include_in_report_intents = self._sentiment_query(session, sender_id)
             intent_to_bool = {"affirm": True, "deny": False, "cancel": False}
 
-            for (type, message), intent  in zip(message_entries.items(), include_in_report_intents):
-                if type == "message":
+            for (msg_type, message), intent  in zip(message_entries.items(), include_in_report_intents):
+                if msg_type == "message":
                     try:
                         message_data = json.loads(message.data)
                     except AttributeError as error:
-                        print("line 1281")
-                        print(error)
+                        logger.error("Couldn't retrieve message data.", exc_info=True)
+                        print(f"in line 1281 {error}")
                         message_text = {}
+                        message_data = {}
 
                     message_sentiment = message_data.get("parse_data", {}).get("entities", {})[1].get("value")
                     timestamp = datetime.datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
                     message_text = message.message                    
-                elif type == "slot":
+                elif msg_type == "slot":
                     message_sentiment = json.loads(message[1].data).get("value")
                     timestamp = datetime.datetime.fromtimestamp(message[0].timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
                     message_text = json.loads(message[0].data).get("value")
@@ -1297,10 +1304,6 @@ class CustomSQLTrackerStore(TrackerStore):
                 temp_sentiment = temp_sentiment.replace("positive", "Positive")
                 temp_sentiment = temp_sentiment.replace("negative", "Negative")
                 temp_sentiment = temp_sentiment.replace("neutral", "Neutral")
-
-                print(25*"=")
-                print(f"Intent to report is {intent}")
-                print(25*"=")
 
                 data = {"sentiment_scores": json.loads(temp_sentiment),
                     "timestamp": timestamp,
@@ -1317,8 +1320,8 @@ class CustomSQLTrackerStore(TrackerStore):
         try:
             verification_status_code = VerifyAuthentication().verification(user_accessToken)
         except TypeError as error:
-            print("line 1321")
-            print(error)
+            logger.error(f"Couldn't verify userID:{sender_id}", exc_info=True)
+            print(f"in line 1321\n{error}")
             verification_status_code == None
 
         if verification_status_code == 200 or 201:            
@@ -1331,12 +1334,10 @@ class CustomSQLTrackerStore(TrackerStore):
                 else:
                     print(f"Failed to store data to ontology with {response}")                
             except TypeError as error:
-                print("In custom_tracker_store function saveToOntology")
-                print("line 1332")
-                print(error)
+                logger.error(f"Couldn't store data on to ontology", exc_info=True)
+                print(f"In custom_tracker_store function saveToOntology\n{error}")
         else:
-            print("Failed to verify user access token in line 1312 --- sendQuestionnaireScoreToOntology")
-            print(f"Response from verification Response <[{verification_status_code}]>")            
+            print(f"Failed to verify user access token in sendQuestionnaireScoreToOntology with verification response:{verification_status_code}")
         
     def registerUserIDdemo(self, sender_id: str, usecase: str) -> str:
         """Checks if the specific user id is in the database. If not, it adds it.
@@ -1428,7 +1429,7 @@ class CustomSQLTrackerStore(TrackerStore):
                             timeout=10, 
                             auth=BearerAuth(ca_accessToken)
                         )
-                        print(f"Get data from WCS for userid {sender_id} - {response} - Line 1424")
+                        logger.debug(f"Get data from WCS for userid {sender_id} - {response}")
                         response.close()
                         resp = response.json()
                         partner = resp["partner"]
@@ -1523,6 +1524,7 @@ class CustomSQLTrackerStore(TrackerStore):
                                     )
                                 )
                         language = "English"
+                        logger.error(f"Failed to retrieve user info from WCS endpoint for\nuserID:{sender_id}")
                 session.commit()
             else:
                 # is the user already exists in the database retrieve their language
@@ -1654,8 +1656,7 @@ class CustomSQLTrackerStore(TrackerStore):
         try:
             verification_status_code = VerifyAuthentication().verification(user_accessToken)
         except TypeError as error:
-            print("line 1653")
-            print(error)
+            print(f"in line 1653\n{error}")
             verification_status_code = None
 
         if verification_status_code == 200 or 201:
@@ -1668,9 +1669,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 else:
                     print(f"Failed to send data to WCS with {response}")                
             except TypeError as error:
-                print("line 1666")
-                print(error)
-                print("Sending questionnaire data to WCS failed --- sendQuestionnaireStatus")
+                print(f"Sending questionnaire data to WCS failed in sendQuestionnaireStatus\n{error}")
         else:
             print(f"Failed to verify user access token - Response [{verification_status_code}] --- sendQuestionnaireStatus")
 

@@ -9,6 +9,7 @@ import requests
 import json
 import pytz
 import pandas as pd
+import logging
 
 from typing import Any, Dict, List, Text
 from urllib import response
@@ -25,6 +26,13 @@ import sys
 from connect_to_iam import BearerAuth, IAMLogin, VerifyAuthentication        
 sys.path.append(os.getcwd().replace("\\","/"))
 from custom_tracker_store import CustomSQLTrackerStore
+
+logger = logging.getLogger(__name__)
+f_handler = logging.FileHandler("zenon.log", mode="a")
+f_handler.setLevel(logging.DEBUG)
+f_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+f_handler.setFormatter(f_format)
+logger.addHandler(f_handler)
 
 customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="local-alameda.db") # Remember to change the db name in endpoints.yml
 endpoints_df = pd.read_csv("alameda_endpoints.csv")     
@@ -892,7 +900,7 @@ class ActionUtterHowAreYou(Action):
         # Get stored access_token from csv file
         ca_accessToken = generatedTokens["access_token"].iloc[-1]
 
-        try :
+        try:
             response = requests.get(
                 ontology_meaa_endpoint,
                 params={"userId": tracker.sender_id, "startDate":yesterday, "endDate":today},
@@ -900,6 +908,7 @@ class ActionUtterHowAreYou(Action):
                 auth=BearerAuth(ca_accessToken)
             )
             response.close()
+            logger.debug(f"MEAA data collected from ontology\n{response.text}")
             average_score_per_mood = json.loads(response.text)[0]
             average_score_per_mood.pop("userId")
 
@@ -908,8 +917,9 @@ class ActionUtterHowAreYou(Action):
         except:
             # This should happen when no previous MEAA measurements
             # stored in the database.
+            logger.error("Couldn't retrieve MEEA data", exc_info=True)
             max_mood = ""
-            print("Error: no such entry from MEAA in the ontology.")
+            print(f"Error: no such entry {tracker.sender_id} from MEAA in the ontology.")
 
         if max_mood == "avgNeg":
             text = get_text_from_lang(
@@ -1017,7 +1027,6 @@ class ActionQuestionnaireCompleted(Action):
         MSdomainIV_both = tracker.get_slot("MSdomainIV_both")
 
         q_starting_time = datetime.datetime.now(tz=pytz.utc).timestamp()
-        #customTrackerInstance.setQuestionnaireTempState(tracker.sender_id, datetime.datetime.now(tz=pytz.utc).timestamp(), q_abbreviation)
 
         slots_to_reset = reset_and_save_form_slots(tracker, domain, q_abbreviation, True)
 

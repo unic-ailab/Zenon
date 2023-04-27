@@ -22,6 +22,7 @@ unic_iam_credentials.json
 archived_stories.yml
 refresh_generated_token.py
 generatedTokens.csv
+zenon.log
 
 # Folders
 __pycache__/
