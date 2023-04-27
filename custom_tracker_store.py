@@ -1210,7 +1210,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 if response.status_code == 200 or 201:
                     logger.debug("Scores successfully stored in ontology")
                 else:
-                    logger.debug(f"Failed to store scores in ontology for\UserID: {sender_id}\nQuestionnaire: {questionnaire_name}\nwith {response}")                
+                    logger.debug(f"Failed to store scores in ontology for\nUserID: {sender_id}\nQuestionnaire: {questionnaire_name}\nwith {response}")                
             except TypeError as error:
                 logger.error("In custom_tracker_store function sendQuestionnaireScoreToOntology", exc_info=True)
                 print(f"in line 1208\n{error}")
