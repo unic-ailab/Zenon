@@ -23,6 +23,8 @@ archived_stories.yml
 refresh_generated_token.py
 generatedTokens.csv
 zenon.log
+query_MEAA_ontology.py
+meaa-queries.log
 
 # Folders
 __pycache__/
