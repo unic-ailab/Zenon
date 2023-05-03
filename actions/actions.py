@@ -34,7 +34,7 @@ f_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message
 f_handler.setFormatter(f_format)
 logger.addHandler(f_handler)
 
-customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="local-alameda.db") # Remember to change the db name in endpoints.yml
+customTrackerInstance = CustomSQLTrackerStore(dialect="sqlite", db="alameda.db") # Remember to change the db name in endpoints.yml
 endpoints_df = pd.read_csv("alameda_endpoints.csv")     
 generatedTokens = pd.read_csv("generatedTokens.csv")
 
