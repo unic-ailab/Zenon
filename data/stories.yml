@@ -29,6 +29,8 @@ stories:
                   - slot_was_set:
                             - is_first_time: false
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: User click on a notification for questionnaire but doesn't want to start questionnaire #does this work for all cases?
           steps:
@@ -156,7 +158,7 @@ stories:
         # STORIES WITH CHECKPOINTS
         ##########################
 
-        - story: Greeting, first time of the day using the agent, Agent receives positive sentiment
+        - story: Greeting, first time of the day using the agent, Agent receives positive sentiment, user declines to add anything for the doctors
           steps:
                   - intent: greet
                   - action: action_utter_greet
@@ -167,9 +169,14 @@ stories:
                   - slot_was_set:
                             - sentiment: pos
                   - action: utter_glad_to_hear
+                  - action: utter_inform_doctor_extra
+                  - or:
+                            - intent: deny
+                            - intent: cancel
+                  - action: utter_no_problem
                   - action: action_ontology_store_sentiment
 
-        - story: Greeting, first time of the day using the agent, Agent receives neutral sentiment
+        - story: Greeting, first time of the day using the agent, Agent receives neutral sentiment, user declines to add anything for the doctors
           steps:
                   - intent: greet
                   - action: action_utter_greet
@@ -179,6 +186,42 @@ stories:
                   - intent: inform
                   - slot_was_set:
                             - sentiment: neu
+                  - action: utter_inform_doctor_extra
+                  - or:
+                            - intent: deny
+                            - intent: cancel
+                  - action: utter_no_problem
+                  - action: action_ontology_store_sentiment
+
+        - story: Greeting, first time of the day using the agent, Agent receives positive sentiment, user agrees to add something for the doctors
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - slot_was_set:
+                            - is_first_time: true
+                  - action: action_utter_how_are_you
+                  - intent: inform
+                  - slot_was_set:
+                            - sentiment: pos
+                  - action: utter_glad_to_hear
+                  - action: utter_inform_doctor_extra
+                  - intent: affirm
+                  - action: utter_confirm_doctor
+                  - action: action_ontology_store_sentiment
+
+        - story: Greeting, first time of the day using the agent, Agent receives neutral sentiment, user agrees to add something for the doctors
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - slot_was_set:
+                            - is_first_time: true
+                  - action: action_utter_how_are_you
+                  - intent: inform
+                  - slot_was_set:
+                            - sentiment: neu
+                  - action: utter_inform_doctor_extra
+                  - intent: affirm
+                  - action: utter_confirm_doctor
                   - action: action_ontology_store_sentiment
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user agrees to put the information in their report.
@@ -352,6 +395,8 @@ stories:
           steps:
                   - intent: available_questionnaires
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
                   - intent: options_menu
                   - action: action_options_menu
 
@@ -370,6 +415,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: ACTIVLIM Questionnaire - cancellation
           steps:
@@ -410,6 +457,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: ACTIVLIM Questionnaire - Interruption - Bot Challenge
           steps:
@@ -429,6 +478,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: PSQI Questionnaire - fully completed
           steps:
@@ -445,6 +496,8 @@ stories:
                   - action: action_calculate_psqi_score
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: PSQI Questionnaire - cancellation
           steps:
@@ -484,6 +537,8 @@ stories:
                   - action: action_calculate_psqi_score
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: PSQI Questionnaire - Interruption - Bot Challenge
           steps:
@@ -503,6 +558,8 @@ stories:
                   - action: action_calculate_psqi_score
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Dizziness and Balance Questionnaire - fully completed
           steps:
@@ -518,6 +575,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Dizziness and Balance Questionnaire - cancellation denied
           steps:
@@ -537,6 +596,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Dizziness and Balance Questionnaire - cancellation
           steps:
@@ -574,6 +635,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Eating Habits Questionnaire - fully completed
           steps:
@@ -589,6 +652,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Eating Habits Questionnaire - cancellation denied
           steps:
@@ -608,6 +673,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Eating Habits Questionnaire - cancellation
           steps:
@@ -645,6 +712,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Muscle Tone Questionnaire - fully completed
           steps:
@@ -660,6 +729,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Muscle Tone Questionnaire - cancellation denied
           steps:
@@ -679,6 +750,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Muscle Tone Questionnaire - cancellation
           steps:
@@ -716,6 +789,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Stroke Domain III relevant questions - fully completed
           steps:
@@ -731,6 +806,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Stroke Domain V relevant questions - fully completed
           steps:
@@ -746,6 +823,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Stroke Domain IV relevant questions - fully completed
           steps:
@@ -761,6 +840,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Coast Questionnaire - fully completed
           steps:
@@ -776,6 +857,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Coast Questionnaire - cancellation denied
           steps:
@@ -795,6 +878,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: Coast Questionnaire - cancellation
           steps:
@@ -832,6 +917,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: MS Domain V relevant questions - fully completed
           steps:
@@ -847,6 +934,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: false
 
         - story: MS Domain IV weekly relevant questions - fully completed
           steps:
@@ -862,6 +951,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: false
 
         - story: MS Domain IV daily relevant questions - fully completed
           steps:
@@ -879,6 +970,8 @@ stories:
                   - slot_was_set:
                             - MSdomainIII_both: False
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: MS Domain IV daily and weekly relevant questions - fully completed
           steps:
@@ -904,6 +997,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: MS Domain III weekly relevant questions - fully completed
           steps:
@@ -921,6 +1016,8 @@ stories:
                   - slot_was_set:
                             - MSdomainIII_both: False
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
 
         - story: MS Domain III weekly and biweekly relevant questions - fully completed
           steps:
@@ -946,6 +1043,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: false
 
         - story: MS Domain III biweekly relevant questions - fully completed
           steps:
@@ -961,6 +1060,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: false
 
         - story: MS Domain II monthly relevant questions - fully completed
           steps:
@@ -978,6 +1079,8 @@ stories:
                   - slot_was_set:
                             - MSdomainII_both: False
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: false
 
         - story: MS Domain II monthly and every 3 months relevant questions - fully completed
           steps:
@@ -1003,6 +1106,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: false
 
         - story: MS Domain II every 3 month relevant questions - fully completed
           steps:
@@ -1018,6 +1123,8 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: false
 
         - story: MS Domain I relevant questions - fully completed
           steps:
@@ -1033,3 +1140,5 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true

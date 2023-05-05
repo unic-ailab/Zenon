@@ -486,14 +486,14 @@ class ActionContinueLatestQuestionnaire(Action):
 
             if isAvailable: 
                 q_name = get_text_from_lang(tracker, questionnaire_abbreviations[q_abbreviation])
-                #TODO fix translation
+
                 text = get_text_from_lang(
                     tracker,
                     [
                         "Do you want to continue the {} questionnaire?".format(q_name),
                         " ",
                         "Vuoi continuare il questionario {}?".format(q_name),
-                        "Doriți să continuați chestionarul {}?".format(q_name),
+                        "Dorești să continui chestionarul {}?".format(q_name),
                     ]
                 )
                 buttons = []
@@ -512,14 +512,13 @@ class ActionContinueLatestQuestionnaire(Action):
                 dispatcher.utter_message(text=text, buttons=buttons)
                 return []
             else:
-                #TODO Add translations if this will stay here
                 text = get_text_from_lang(
                     tracker,
                     [
                         "The latest questionnaire you were completing is not currently available",
                         " ",
-                        "The latest questionnaire you were completing is not currently available",
-                        "The latest questionnaire you were completing is not currently available",
+                        "Il questionario che stavi completando non è attualmente disponibile.",
+                        "Chestionarul pe care îl completai nu este momentan disponibil.",
                     ]
                 )
                 dispatcher.utter_message(text=text)
@@ -595,7 +594,6 @@ class ActionOptionsMenuExtra(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-#TODO translate
 class ActionConfirmTechIssue(Action):
     def name(self) -> Text:
         return "action_confirm_tech_issue"
@@ -608,15 +606,14 @@ class ActionConfirmTechIssue(Action):
             [
                 "Thank you for your feedback!! I will do my best to fix it as soon as possible.",
                 "",
-                "Grazie per il tuo feedback!! Farò del mio meglio per risolverlo il prima possibile.",
-                "Multumim pentru feedback-ul dvs!! Voi face tot posibilul să o repar cât mai curând posibil."]
+                "Grazie per il tuo feedback! Farò del mio meglio per correggerlo il prima possibile.",
+                "Mulțumesc pentru feedback-ul tău! Voi face tot posibilul să-l rezolv cât mai curând posibil."]
             )
         issue = tracker.get_slot("report_tech_issue_Q1")
         customTrackerInstance.logTechIssue(issue, tracker.sender_id)
         dispatcher.utter_message(text=text)
         return []
 
-#TODO translate
 class ActionHealthUpdateMenu(Action):
     def name(self) -> Text:
         return "action_health_update_menu"
@@ -631,8 +628,8 @@ class ActionHealthUpdateMenu(Action):
                 [
                     "Choose domain:",
                     "",
-                    "Scegli dominio:",
-                    "Alege domeniul:"
+                    "Scegli il dominio:",
+                    "Alegeți domeniul:"
                 ]
             )
             buttons = get_buttons_from_lang(
@@ -642,14 +639,13 @@ class ActionHealthUpdateMenu(Action):
                 )
             dispatcher.utter_message(text=text, buttons=buttons)
         else:
-            #TODO translate
             text = get_text_from_lang(
                 tracker, 
                 [
                     "Something went wrong, you were not assigned a valid usecase.",
                     "",
-                    "Qualcosa è andato storto, non ti è stato assegnato un caso d'uso valido. Per favore, dillo al tuo medico.",
-                    "A apărut o eroare, nu vi s-a atribuit un caz de utilizare valid. Vă rugăm să spuneți acest lucru asistentului medical."
+                    "Qualcosa è andato storto, non ti è stato assegnato un caso d'uso valido.",
+                    "Ceva nu a mers bine, nu ți-a fost atribuit un caz de utilizare valid."
                 ]
             )
             dispatcher.utter_message(text=text)
@@ -665,7 +661,6 @@ class ActionMobilityStatus(Action):
         
         # return await super().run(dispatcher, tracker, domain)
 
-#TODO translate
 class ActionSleepStatus(Action):
     def name(self) -> Text:
         return "action_get_sleep_status_fitbit"
@@ -802,8 +797,8 @@ class ActionSleepStatus(Action):
                     [
                         "According to the Fitbit measurements, the last 7 days your average sleep duration score was %s. Meaning you were %s getting enough hours of sleep at night. Compared to the 7 days before that, your average sleep duration has %s %s.".format(average_score_text, average_score_text2, comparison_text, comparison_text2),
                         "",
-                        "Secondo le misurazioni Fitbit, negli ultimi 7 giorni il punteggio medio della durata del sonno è stato %s. Significa che %s dormivi abbastanza ore di notte. Rispetto ai 7 giorni precedenti, la durata media del sonno è %s %s.".format(average_score_text, average_score_text2, comparison_text, comparison_text2),
-                        "Conform măsurătorilor Fitbit, în ultimele 7 zile, scorul tău mediu al duratei de somn a fost %s. Înseamnă că %s dormi destule ore noaptea. Comparativ cu cele 7 zile de dinainte, durata medie de somn a %s %s.".format(average_score_text, average_score_text2, comparison_text2, comparison_text),
+                        "Secondo le misurazioni di Fitbit, negli ultimi 7 giorni il tuo punteggio medio di durata del sonno è stato %s. Ciò significa che durante la notte non hai dormito abbastanza ore. Rispetto ai 7 giorni precedenti, la durata media del sonno è %s %s.".format(average_score_text, average_score_text2, comparison_text, comparison_text2),
+                        "Conform măsurătorilor Fitbit, în ultimele 7 zile scorul tău mediu de durată a somnului a fost %s. Acest lucru înseamnă că nu ai dormit suficiente ore pe noapte. Comparativ cu cele 7 zile anterioare, durata medie a somnului a %s %s.".format(average_score_text, average_score_text2, comparison_text2, comparison_text),
                     ]
                 )
             except:
@@ -822,8 +817,8 @@ class ActionSleepStatus(Action):
                 [
                     "There no update from the Fitbit sleep data.",
                     "",
-                    "Non ci sono aggiornamenti dai dati sul sonno di Fitbit.",
-                    "Nu există nicio actualizare de la datele de somn Fitbit."
+                    "Non ci sono aggiornamenti dai dati del sonno di Fitbit.",
+                    "Nu există actualizări din datele de somn ale Fitbit."
                 ]
             )
 
@@ -899,36 +894,33 @@ class ActionUtterHowAreYou(Action):
 
         # Get stored access_token from csv file
         ca_accessToken = generatedTokens["access_token"].iloc[-1]
-
+        response = requests.get(
+            ontology_meaa_endpoint,
+            params={"userId": tracker.sender_id, "startDate":yesterday, "endDate":today},
+            timeout=10,
+            auth=BearerAuth(ca_accessToken)
+        )
+        response.close()
         try:
-            response = requests.get(
-                ontology_meaa_endpoint,
-                params={"userId": tracker.sender_id, "startDate":yesterday, "endDate":today},
-                timeout=10,
-                auth=BearerAuth(ca_accessToken)
-            )
-            response.close()
-            logger.debug(f"MEAA data collected from ontology\n{response.text}")
-            average_score_per_mood = json.loads(response.text)[0]
-            average_score_per_mood.pop("userId")
-
-            # returned classes ["avgPos","avgNeg","avgNeut","avgOth"]
-            max_mood = max(average_score_per_mood, key=average_score_per_mood.get)
+            # returned classes Negative, Positive, Neutral, Other
+            overallSentiment = json.loads(response.text)[0]["overallSentiment"]
+            # logger.debug(f"MEAA data collected from ontology\n{response.text}")
+            print(f"MEAA data collected from ontology\n{response.text}")            
         except:
             # This should happen when no previous MEAA measurements
             # stored in the database.
             logger.error("Couldn't retrieve MEEA data", exc_info=True)
-            max_mood = ""
+            overallSentiment = ""
             print(f"Error: no such entry {tracker.sender_id} from MEAA in the ontology.")
 
-        if max_mood == "avgNeg":
+        if overallSentiment == "Negative":
             text = get_text_from_lang(
                 tracker,
                 [
                     "From you facial expressions, I have noticed you were feeling down yesterday. Is there something troubling you?",
                     " ",
-                    " ",
-                    " ",
+                    "Dalle tue espressioni facciali ho notato che ieri ti sentivi giù. C'è qualcosa che ti preoccupa?",
+                    "După expresia ta facială, am observat că te simțeai descurajat ieri. Există ceva care te neliniștește?",
                 ],
             )
             meaa_mood = "neg"
@@ -1055,6 +1047,9 @@ class ActionOntologyStoreSentiment(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
+
+        # try to save here to catch up the _sentiment_query call
+        customTrackerInstance.save(tracker)
 
         customTrackerInstance.saveToOntology(tracker, tracker.sender_id)
         return [FollowupAction("action_options_menu")]
@@ -1976,7 +1971,7 @@ class ActionAskPSQIQ1(Action):
                 " when have you usually go to bed at night?",
                 " ",
                 " ",
-                " la ce ora ati adormit noaptea?",
+                " la ce ora ati adormit noaptea? Ora obisnuita la care adormiti..",
             ],
         )
 
@@ -1987,7 +1982,7 @@ class ActionAskPSQIQ1(Action):
 
 class ActionAskPSQIQ2(Action):
     def name(self) -> Text:
-        return "action_ask_psqi_Q4"
+        return "action_ask_psqi_Q2"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -1999,10 +1994,10 @@ class ActionAskPSQIQ2(Action):
         text = get_text_from_lang(
             tracker,
             [
-                " how many hours of actual sleep did you get at night? (This may be different than the number of hours you spend in bed.)",
+                " how long (in minutes) has it usually take you to fall asleep each night?",
                 " ",
                 " ",
-                " cate ore de somn ati avut pe parcursul noptii? (poate fi diferit de numarul de ore pe care le petreceti doar stand intins in pat)",
+                " cat de mult ati sesizat ca dureaza pana reusiti sa adormiti in fiecare noapte. ",
             ],
         )
 
@@ -2039,7 +2034,7 @@ class ActionAskPSQIQ3(Action):
 
 class ActionAskPSQIQ4(Action):
     def name(self) -> Text:
-        return "action_ask_psqi_Q2"
+        return "action_ask_psqi_Q4"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         announce(self, tracker)
@@ -2051,10 +2046,10 @@ class ActionAskPSQIQ4(Action):
         text = get_text_from_lang(
             tracker,
             [
-                " how long (in minutes) has it usually take you to fall asleep each night?",
+                " how many hours of actual sleep did you get at night? (This may be different than the number of hours you spend in bed.)",
                 " ",
                 " ",
-                " cat de mult ati sesizat ca dureaza pana reusiti sa adormiti in fiecare noapte. ",
+                " cate ore de somn ati avut pe parcursul noptii? (poate fi diferit de numarul de ore pe care le petreceti doar stand intins in pat)",
             ],
         )
 

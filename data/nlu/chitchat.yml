@@ -537,6 +537,12 @@ nlu:
       - so sad
       - I'm sad
       - tired
+      - often
+      - very often
+      - always
+      - rarely
+      - sometimes
+      - never
       # Italian
       - quando sono in ritardo
       - male

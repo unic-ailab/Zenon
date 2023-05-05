@@ -54,13 +54,16 @@ from rasa.core.tracker_store import TrackerStore, _create_sequence, create_engin
 
 from connect_to_iam import BearerAuth, VerifyAuthentication
 
+# logger = logging.getLogger(__name__)
+# f_handler = logging.FileHandler("zenon.log", mode="a")
+# f_handler.setLevel(logging.DEBUG)
+# f_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+# f_handler.setFormatter(f_format)
+# logger.addHandler(f_handler)
+
+logging.basicConfig(filename='zenon.log', level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 logger = logging.getLogger(__name__)
-f_handler = logging.FileHandler("zenon.log", mode="a")
-f_handler.setLevel(logging.DEBUG)
-f_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
-f_handler.setFormatter(f_format)
-logger.addHandler(f_handler)
 
 # will relevant questions be available from the chatbot outside notifications?
 questionnaire_per_usecase = {
@@ -692,7 +695,7 @@ class CustomSQLTrackerStore(TrackerStore):
             self.SQLEvent.timestamp >= session_start_timestamp,
         ).order_by(self.SQLEvent.timestamp).first()
 
-        logger.debug(f"For userID:{sender_id}\n{message_entry}")
+        print(f"_sentiment_query --- For userID:{sender_id}\n{message_entry}")
 
         # if there is no second message, it means the first message had positive or neutral sentiment
         # and is not included in the report
@@ -705,7 +708,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 ).order_by(self.SQLEvent.timestamp.desc()).first()[0]
         except:
             include_in_report_intent = "deny"
-            print(f"This is from line 701 in customTrackerStore. Print here the variable include_in_report: {include_in_report_intent}")
+            print(f"_sentiment_query --- For userID:{sender_id}\ninclude_in_report: {include_in_report_intent}")
 
         # get second message, question: Is there anything else you would like ot report..?
         if message_entry:
@@ -845,8 +848,7 @@ class CustomSQLTrackerStore(TrackerStore):
                             #if isSaved and not isDemo: self.sendQuestionnaireStatus(sender_id, questionnaire_name, "COMPLETED")             
 
             session.commit()
-
-        logger.debug(f"Tracker with sender_id '{tracker.sender_id}' stored to database")
+        print(f"Tracker with sender_id '{tracker.sender_id}' stored to database")        
 
     def _additional_events(
         self, session: "Session", tracker: DialogueStateTracker
@@ -981,7 +983,7 @@ class CustomSQLTrackerStore(TrackerStore):
             elif not isDemo and isFinished: 
                 self.sendQuestionnaireStatus(tracker, sender_id, questionnaire_abbreviation, "COMPLETED")
 
-        logger.debug(f"Questionnaire answers with sender_id '{tracker.sender_id}' stored to database")
+        print(f"Questionnaire answers with sender_id '{tracker.sender_id}' stored to database")        
         return slots_to_reset
 
     def getSpecificQuestionnaireAvailability(self, sender_id: str, current_timestamp: int, questionnaire_name: str) -> bool:
@@ -1208,14 +1210,14 @@ class CustomSQLTrackerStore(TrackerStore):
                 response.close()
 
                 if response.status_code == 200 or 201:
-                    logger.debug("Scores successfully stored in ontology")
+                    print("Scores successfully stored in ontology")                    
                 else:
-                    logger.debug(f"Failed to store scores in ontology for\nUserID: {sender_id}\nQuestionnaire: {questionnaire_name}\nwith {response}")                
+                    print(f"Failed to store scores in ontology for\nUserID: {sender_id}\nQuestionnaire: {questionnaire_name}\nwith {response}")                                    
             except TypeError as error:
                 logger.error("In custom_tracker_store function sendQuestionnaireScoreToOntology", exc_info=True)
-                print(f"in line 1208\n{error}")
+                print(f"In custom_tracker_store function sendQuestionnaireScoreToOntology\n{error}")
         else:
-            logger.debug(f"Failed to verify user access token in sendQuestionnaireScoreToOntology for\nUserID: {sender_id}\nwith response {verification_status_code}")
+            print(f"Failed to verify user access token in sendQuestionnaireScoreToOntology for\nUserID: {sender_id}\nwith response {verification_status_code}")            
 
     def saveToOntology(self, tracker: DialogueStateTracker, sender_id: str) -> None:
         """
@@ -1277,6 +1279,7 @@ class CustomSQLTrackerStore(TrackerStore):
         # Building ontology payload
         ontology_data = {"user_id": sender_id, "source": "Conversational Agent", "observations" : []}
         with self.session_scope() as session:
+            print("Quering the database to get sentiment")
             message_entries, include_in_report_intents = self._sentiment_query(session, sender_id)
             intent_to_bool = {"affirm": True, "deny": False, "cancel": False}
 
@@ -1284,7 +1287,11 @@ class CustomSQLTrackerStore(TrackerStore):
                 if msg_type == "message":
                     try:
                         message_data = json.loads(message.data)
-                    except AttributeError as error:
+                    except (
+                        AttributeError,
+                        ValueError,
+                        TypeError
+                    ) as error:
                         logger.error("Couldn't retrieve message data.", exc_info=True)
                         print(f"in line 1281 {error}")
                         message_text = {}
@@ -1430,6 +1437,7 @@ class CustomSQLTrackerStore(TrackerStore):
                             auth=BearerAuth(ca_accessToken)
                         )
                         logger.debug(f"Get data from WCS for userid {sender_id} - {response}")
+                        print(f"Get data from WCS for userid {sender_id} - {response}")                        
                         response.close()
                         resp = response.json()
                         partner = resp["partner"]
