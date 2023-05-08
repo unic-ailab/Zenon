@@ -419,16 +419,16 @@ class ActionGetAvailableQuestionnaires(Action):
             text = get_text_from_lang(
                 tracker, 
                 [
-                    "Currently there are no available questionnaires. Would you like to be redirected to the main menu?",
+                    "Currently there are no available questionnaires.",
                     "",
-                    "Al momento non ci sono questionari disponibili. Vuoi essere reindirizzato al menu principale?",
-                    "Momentan nu este disponibil niciun chestionar. Dorești redirecționarea către meniul principal?"
+                    "Al momento non ci sono questionari disponibili.",
+                    "Momentan nu este disponibil niciun chestionar."
                     ]
             )
 
             dispatcher.utter_message(text=text)
             availableQuestionnaires = False
-            return [SlotSet("availableQuestionnaires", availableQuestionnaires)]
+            return [SlotSet("availableQuestionnaires", availableQuestionnaires), FollowupAction("action_options_menu_extra")]
         else :
             text = get_text_from_lang(
                 tracker,
@@ -886,33 +886,56 @@ class ActionUtterHowAreYou(Action):
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
 
-        # query the ontology for MEAA results of the previous day
-        today = datetime.datetime.combine(datetime.datetime.now(tz=pytz.utc), datetime.datetime.min.time())
-        yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
-        ontology_meaa_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_MEAA_ENDPOINT"]["endpoint"].values[0]
+        # TODO below code block should become a function on its own.
+        ############################################################
+        # TO BE CONVERTED INTO A NEW FUNCTION
+        ############################################################
+        # # query the ontology for MEAA results of the previous day
+        # today = datetime.datetime.combine(datetime.datetime.now(tz=pytz.utc), datetime.datetime.min.time())
+        # yesterday = (today - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ") #TODO to remove this line
+        # today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
+        # ontology_meaa_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_MEAA_ENDPOINT"]["endpoint"].values[0]
 
-        # Get stored access_token from csv file
-        ca_accessToken = generatedTokens["access_token"].iloc[-1]
-        response = requests.get(
-            ontology_meaa_endpoint,
-            params={"userId": tracker.sender_id, "startDate":yesterday, "endDate":today},
-            timeout=10,
-            auth=BearerAuth(ca_accessToken)
-        )
-        response.close()
-        try:
-            # returned classes Negative, Positive, Neutral, Other
-            overallSentiment = json.loads(response.text)[0]["overallSentiment"]
-            # logger.debug(f"MEAA data collected from ontology\n{response.text}")
-            print(f"MEAA data collected from ontology\n{response.text}")            
-        except:
-            # This should happen when no previous MEAA measurements
-            # stored in the database.
-            logger.error("Couldn't retrieve MEEA data", exc_info=True)
-            overallSentiment = ""
-            print(f"Error: no such entry {tracker.sender_id} from MEAA in the ontology.")
+        # # Get stored access_token from csv file
+        # ca_accessToken = generatedTokens["access_token"].iloc[-1]
+        # response = requests.get(
+        #     ontology_meaa_endpoint,
+        #     params={
+        #         "userId": tracker.sender_id, 
+        #         # "startDate":yesterday, 
+        #         "endDate":today
+        #     },
+        #     timeout=20,
+        #     auth=BearerAuth(ca_accessToken)
+        # )
+        # response.close()
+        # try:
+        #     date_of_last_meaa_entry = json.loads(response.text)[0]["sessionStarted"]
+        #     # # returned classes Negative, Positive, Neutral, Other
+        #     # overallSentiment = json.loads(response.text)[0]["overallSentiment"]
+        #     print(f"MEAA data collected from ontology for {tracker.sender_id}")
+        # except:
+        #     # This should happen when no previous MEAA measurements
+        #     # stored in the database.
+        #     print(f"Error: no such entry {tracker.sender_id} from MEAA in the ontology.")
+        #     overallSentiment = ""
+        #     logger.error("Couldn't retrieve MEEA data", exc_info=True)
 
+        # # if the userID exists in MEAA then we should got the date of the last entry session.
+        # if date_of_last_meaa_entry:
+        #     date_of_last_meaa_entry = datetime.datetime.strptime(date_of_last_meaa_entry, "%Y-%m-%dT%H:%M:%S.%fZ")            
+        #     date_of_last_meaa_entry = date_of_last_meaa_entry.strftime("%Y-%m-%dT%H:%M:%SZ")
+        #     date_of_last_meaa_entry = datetime.datetime.strptime(date_of_last_meaa_entry, "%Y-%m-%dT%H:%M:%SZ")
+
+        #     today = datetime.datetime.strptime(today, "%Y-%m-%dT%H:%M:%SZ")
+        #     delta = today - date_of_last_meaa_entry
+        #     if 0 < delta.days + (delta.seconds / (24 * 3600)) < 2:
+        #         # returned classes Negative, Positive, Neutral, Other
+        #         overallSentiment = json.loads(response.text)[0]["overallSentiment"]                
+        ############################################################
+        # TO BE CONVERTED INTO A NEW FUNCTION
+        ############################################################
+        overallSentiment = ""
         if overallSentiment == "Negative":
             text = get_text_from_lang(
                 tracker,
@@ -1047,9 +1070,6 @@ class ActionOntologyStoreSentiment(Action):
 
     def run(self, dispatcher, tracker, domain):
         announce(self, tracker)
-
-        # try to save here to catch up the _sentiment_query call
-        customTrackerInstance.save(tracker)
 
         customTrackerInstance.saveToOntology(tracker, tracker.sender_id)
         return [FollowupAction("action_options_menu")]

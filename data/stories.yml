@@ -168,6 +168,8 @@ stories:
                   - intent: inform
                   - slot_was_set:
                             - sentiment: pos
+                  - slot_was_set:
+                            - meaa_mood: non_neg
                   - action: utter_glad_to_hear
                   - action: utter_inform_doctor_extra
                   - or:
@@ -186,6 +188,8 @@ stories:
                   - intent: inform
                   - slot_was_set:
                             - sentiment: neu
+                  - slot_was_set:
+                            - meaa_mood: non_neg
                   - action: utter_inform_doctor_extra
                   - or:
                             - intent: deny
@@ -203,6 +207,8 @@ stories:
                   - intent: inform
                   - slot_was_set:
                             - sentiment: pos
+                  - slot_was_set:
+                            - meaa_mood: non_neg
                   - action: utter_glad_to_hear
                   - action: utter_inform_doctor_extra
                   - intent: affirm
@@ -219,6 +225,8 @@ stories:
                   - intent: inform
                   - slot_was_set:
                             - sentiment: neu
+                  - slot_was_set:
+                            - meaa_mood: non_neg
                   - action: utter_inform_doctor_extra
                   - intent: affirm
                   - action: utter_confirm_doctor
@@ -332,15 +340,15 @@ stories:
                             - is_first_time: false
                   - action: action_options_menu
 
-        - story: NO available questionnaires, user doesnt want to go back to main menu
-          steps:
-                  - intent: available_questionnaires
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: false
-                  - or:
-                            - intent: deny
-                            - intent: cancel
+        # - story: NO available questionnaires, user doesnt want to go back to main menu
+        #   steps:
+        #           - intent: available_questionnaires
+        #           - action: action_get_available_questionnaires
+        #           - slot_was_set:
+        #                     - availableQuestionnaires: false
+        #           - or:
+        #                     - intent: deny
+        #                     - intent: cancel
 
         - story: NO available questionnaires, user wants to go back to main menu
           steps:
@@ -348,8 +356,6 @@ stories:
                   - action: action_get_available_questionnaires
                   - slot_was_set:
                             - availableQuestionnaires: false
-                  - intent: affirm
-                  - action: action_options_menu_extra
 
         - story: Tutorial
           steps:
@@ -397,6 +403,30 @@ stories:
                   - action: action_get_available_questionnaires
                   - slot_was_set:
                             - availableQuestionnaires: true
+                  - slot_was_set:
+                            - MSdomainIII_both: true
+                  - intent: options_menu
+                  - action: action_options_menu
+
+        - story: Pressing cancel after being shown the available_questionnaires
+          steps:
+                  - intent: available_questionnaires
+                  - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
+                  - slot_was_set:
+                            - MSdomainII_both: false
+                  - intent: options_menu
+                  - action: action_options_menu
+
+        - story: Pressing cancel after being shown the available_questionnaires
+          steps:
+                  - intent: available_questionnaires
+                  - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
+                  - slot_was_set:
+                            - MSdomainIV_both: false
                   - intent: options_menu
                   - action: action_options_menu
 
@@ -936,6 +966,8 @@ stories:
                   - action: action_get_available_questionnaires
                   - slot_was_set:
                             - availableQuestionnaires: false
+                  - slot_was_set:
+                            - MSdomainII_both: false
 
         - story: MS Domain IV weekly relevant questions - fully completed
           steps:
@@ -953,6 +985,8 @@ stories:
                   - action: action_get_available_questionnaires
                   - slot_was_set:
                             - availableQuestionnaires: false
+                  - slot_was_set:
+                            - MSdomainIII_both: true
 
         - story: MS Domain IV daily relevant questions - fully completed
           steps:
@@ -968,10 +1002,12 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - slot_was_set:
-                            - MSdomainIII_both: False
+                            - MSdomainIII_both: false
                   - action: action_get_available_questionnaires
                   - slot_was_set:
                             - availableQuestionnaires: true
+                  - slot_was_set:
+                            - MSdomainII_both: true
 
         - story: MS Domain IV daily and weekly relevant questions - fully completed
           steps:
@@ -987,7 +1023,7 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - slot_was_set:
-                            - MSdomainIV_both: True
+                            - MSdomainIV_both: true
                   - slot_was_set:
                             - questionnaire: MSdomainIV_1W
                   - action: MSdomainIV_1W_form
@@ -1014,7 +1050,7 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - slot_was_set:
-                            - MSdomainIII_both: False
+                            - MSdomainIII_both: false
                   - action: action_get_available_questionnaires
                   - slot_was_set:
                             - availableQuestionnaires: true
@@ -1033,7 +1069,7 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - slot_was_set:
-                            - MSdomainIII_both: True
+                            - MSdomainIII_both: true
                   - slot_was_set:
                             - questionnaire: MSdomainIII_2W
                   - action: MSdomainIII_2W_form
@@ -1077,7 +1113,7 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - slot_was_set:
-                            - MSdomainII_both: False
+                            - MSdomainII_both: false
                   - action: action_get_available_questionnaires
                   - slot_was_set:
                             - availableQuestionnaires: false
@@ -1096,7 +1132,7 @@ stories:
                             - requested_slot: null
                   - action: action_questionnaire_completed
                   - slot_was_set:
-                            - MSdomainII_both: True
+                            - MSdomainII_both: true
                   - slot_was_set:
                             - questionnaire: MSdomainII_3M
                   - action: MSdomainII_3M_form
