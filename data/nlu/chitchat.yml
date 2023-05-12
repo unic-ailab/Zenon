@@ -4,51 +4,44 @@ nlu:
     examples: |
       - onboarding
       - onboarding user
+      - user onboard
   - intent: health_update_menu
     examples: |
-      # English
       - How am i doing?
       - how am i progressing
       - how is my health
       - health update
-      # Italian
       - Come lo sto facendo?
       - Come sto progredendo
       - Com'è la mia salute
       - Aggiornamento per la salute
-      # Romanian
       - Cum mă descurc?
       - Cum progresez
       - Cum este starea mea de sănătate
       - Actualizare a stării de sănătate
   - intent: sleep_status_fitbit
     examples: |
-      # English
       - fitbit sleep score
-      # Italian
-      # Romanian
+      - I want my fitbit sleep score
+      - what is my sleep status based on fitbit score?
+      - Scorul de somn Fitbit
+      - Punteggio del sonno Fitbit
+      - Voglio il mio punteggio del sonno Fitbit
+      - Vreau scorul meu de somn Fitbit
+      - care este starea mea de somn pe baza scorului Fitbit?
+      - qual è il mio stato del sonno in base al punteggio Fitbit?
   - intent: sleep_status
     examples: |
-      # English
       - sleep status
-      # Italian
-      # Romanian
   - intent: mobility_status
     examples: |
-      # English
       - mobility status
-      # Italian
-      # Romanian
   - intent: qol_status
     examples: |
-      # English
       - quality of life status
       - daily living status
-      # Italian
-      # Romanian
   - intent: close_questionnaire
     examples: |
-      # English
       - app closed
       - the app is now closed
       - app is stopped
@@ -60,24 +53,19 @@ nlu:
       - close the questionnaire
       - questionnaire deactivated
       - the questionnaire is stopped
-      # Italian
-      # Romanian
   - intent: available_questionnaires
     examples: |
-      # English
       - available questionnaires
       - answer questionnaire
       - go to questionnaires
       - I want to see the questionnaires
       - other questionnaires
-      # Italian
       - hai domande per me?
       - Questionari disponibili
       - Rispondi al questionario
       - Vai ai questionari
       - Voglio vedere i questionari
       - Altri questionari
-      # Romanian
       - chestionare disponibile
       - Răspunde la chestionar
       - Mergeți la chestionare
@@ -86,7 +74,6 @@ nlu:
   - intent: options_menu_extra
   - intent: options_menu
     examples: |
-      # English
       - options menu
       - menu
       - go to main menu
@@ -96,7 +83,6 @@ nlu:
       - start menu
       - start options
       - other options
-      # Italian
       - Menu Opzioni
       - menu
       - Vai al menu principale
@@ -106,7 +92,6 @@ nlu:
       - menu iniziale
       - Opzioni di inizio
       - altre opzioni
-      # Romanian
       - Meniu Opțiuni
       - meniu
       - Accesați meniul principal
@@ -118,33 +103,27 @@ nlu:
       - alte optiuni
   - intent: tutorials
     examples: |
-      # English
       - I want to see the tutorials
       - can you show me the tutorial page
       - tutorials
-      # Italian
       - Visualizza i tutorial
       - Puoi mostrarmi la pagina del tutorial
       - Tutorial
-      # Romanian
       - Vreau să văd tutorialele
       - Poți să-mi arăți pagina tutorialului
       - tutoriale
   - intent: continue
     examples: |
-      # English
       - I want to resume the questionnaire
       - resume questionnaire
       - continue the questionnaire
       - can i continue the questionnaire
       - i want to continue the questionnaire
-      # Italian
       - Voglio riprendere il questionario
       - riprendi il questionario
       - Continua il questionario
       - Posso continuare il questionario
       - Voglio continuare il questionario
-      # Romanian
       - Vreau să reiau chestionarul
       - Reia chestionarul
       - continua chestionarul
@@ -152,7 +131,6 @@ nlu:
       - vreau să continui chestionarul
   - intent: report_tech_issue
     examples: |
-      # English
       - I would like to report a problem
       - I have a tech issue
       - I have a technical issue
@@ -162,7 +140,6 @@ nlu:
       - report
       - pass on a problem
       - i am having problems
-      # Italian
       - Vorrei segnalare un problema
       - Ho un problema tecnico
       - Ho un problema tecnico
@@ -172,7 +149,6 @@ nlu:
       - rapporto
       - il passaggio è un problema
       - Ho dei problemi
-      # Romanian
       - Aș dori să raportez o problemă
       - Am o problemă de tehnologie
       - Am o problemă tehnică
@@ -184,7 +160,6 @@ nlu:
       - Am probleme
   - intent: greet
     examples: |
-      # English
       - hey
       - hello
       - hi
@@ -204,7 +179,6 @@ nlu:
       - Hello
       - Goodmorning
       - good day
-      # Greek
       - καλημέρα
       - χαίρεται
       - τι γίνεται;
@@ -213,7 +187,6 @@ nlu:
       - τι λέει;
       - όλα καλά;
       - γεια σας
-      # Italian
       - Hey
       - ciao
       - Buondì
@@ -228,7 +201,6 @@ nlu:
       - Come va?
       - Uè
       - Salve
-      # Romanian
       - hei
       - Bună
       - Salut
@@ -249,7 +221,6 @@ nlu:
       - Salutare
   - intent: goodbye
     examples: |
-      # English
       - au revoir
       - cu
       - good by
@@ -263,7 +234,6 @@ nlu:
       - see you later
       - cya around
       - bb
-      # Greek
       - αντίο
       - τα λέμε
       - καλό απόγευμα
@@ -272,7 +242,6 @@ nlu:
       - μιλάμε
       - μιλάμε αργότερα
       - θα μιλήσουμε
-      # Italian
       - arrivederci
       - a più tardi
       - Buona Notte
@@ -282,7 +251,6 @@ nlu:
       - A dopo 
       - ci vediamo dopo
       - Ci vediamo     
-      # Romanian
       - pa
       - La revedere
       - Pe mai târziu
@@ -295,7 +263,6 @@ nlu:
       - pa pa
   - intent: affirm
     examples: |
-      # English
       - fire away
       - yes
       - y
@@ -317,7 +284,6 @@ nlu:
       - yes please
       - lets do it
       - go on!
-      # Greek
       - προχώρα
       - ναι
       - προχωράμε
@@ -327,7 +293,6 @@ nlu:
       - εννοείται
       - έγινε
       - σύμφωνοι
-      # Italian
       - sì
       - infatti
       - certamente
@@ -346,7 +311,6 @@ nlu:
       - vai
       - continua!
       - Certo, vai avanti
-      # Romanian
       - da
       - intr-adevar
       - desigur
@@ -367,12 +331,10 @@ nlu:
       - Sigur, continuă
   - intent: deny
     examples: |
-      # English
       - no
       - nah
       - better not
       - not now
-      - never
       - I don't think so
       - don't like that
       - no way
@@ -381,7 +343,6 @@ nlu:
       - not in mood
       - i prefer not
       - nope
-      # Greek
       - δεν θέλω
       - όχι
       - όχι καλύτερα
@@ -392,7 +353,6 @@ nlu:
       - δε νομίζω
       - μπα
       - ουτε γι' αστείο
-      # Italian
       - No
       - meglio di no
       - non adesso
@@ -405,7 +365,6 @@ nlu:
       - non in vena
       - preferisco di no
       - no      
-      # Romanian
       - nop
       - Nah
       - Nu
@@ -422,7 +381,6 @@ nlu:
       - nu
   - intent: bot_challenge
     examples: |
-      # English
       - are you a bot?
       - are you a human?
       - am I talking to a bot?
@@ -432,14 +390,12 @@ nlu:
       - am I talking to an actual person?
       - you're a bot aren't you?
       - are you even a real person?
-      # Greek
       - μιλάω σε άνθρωπο;
       - είσαι άνθρωπος;
       - μιλάω με ρομπότ;
       - με ποιον μιλάω;
       - ποιος είσαι
       - σε τι μιλάω
-      # Italian
       - sei un robot?
       - Sei umano?
       - sto parlando con un robot?
@@ -449,7 +405,6 @@ nlu:
       - Sto parlando con una persona reale?
       - Sei un robot, vero?
       - Sei anche una persona reale?      
-      # Romanian
       - Esti un robot?
       - Esti un om?
       - Vorbesc cu un bot?
@@ -461,7 +416,6 @@ nlu:
       - Ești măcar o persoană reală?
   - intent: inform
     examples: |
-      # English
       - thirty
       - six
       - sudden
@@ -543,7 +497,6 @@ nlu:
       - rarely
       - sometimes
       - never
-      # Italian
       - quando sono in ritardo
       - male
       - Oggi sono andato al parco e improvvisamente mi hanno ceduto le gambe, mi sono sentito imbarazzato.
@@ -609,7 +562,6 @@ nlu:
       - Sono caduto dalle scale e ho battuto la testa
       - un mese fa      
       - stanca
-      # Romanian
       - Astăzi, m-am dus în parc și picioarele mi-au cedat dat brusc, m-am simțit jenat.
       - Ieri, în timp ce mă jucam cu copiii, mâinile mele au început să tremure prea mult. M -am simțit groaznic și copiii mei erau foarte triști.
       - Am plecat în plimbare și după un timp nu mi-am mai dat seama cum am ajuns unde eram. A fost teribil. Am fost frustrat și nu am putut înțelege ce s-a întâmplat. A fost o situație foarte grea.
@@ -673,7 +625,6 @@ nlu:
       - Am căzut pe scări și mi -am lovit capul
       - acum o lună      
       - obosit
-      # General
       - early   
       - at sunday    
       - surgical, injury 
@@ -743,7 +694,6 @@ nlu:
       - Nostalgia
   - intent: cancel
     examples: |
-      # English
       - I changed my mind, cancel it.
       - Cancel the process.
       - Don't want to continue
@@ -767,7 +717,6 @@ nlu:
       - I changed my mind
       - stop
       - i want to stop
-      # Greek
       - σταματάμε
       - θέλω να σταματήσω
       - ακύρωσε
@@ -776,7 +725,6 @@ nlu:
       - παράτα το
       - βαρεθηκα
       - κλείστο
-      # Italian
       - Ho cambiato idea, annullalo.
       - Annulla il processo.
       - Non voglio continuare
@@ -800,7 +748,6 @@ nlu:
       - Voglio fermarmi
       - Pausa
       - aspetta      
-      # Romanian
       - M-am răzgândit, anulează.
       - Anulează procesul.
       - Nu vreau să continui
@@ -826,29 +773,24 @@ nlu:
       - așteaptă
   - intent: thank_you
     examples: |
-      # English
       - thank you
       - thanks
       - thank you!
       - ok thank you.
-      # Greek
       - ευχαριστώ
       - σ' ευχαριστω
       - να 'σαι καλα
       - νιώθω υπόχρεος
-      # Italian
       - grazie
       - Grazie
       - grazie!
       - ok grazie      
-      # Romanian
       - mulțumesc
       - Mulțumiri
       - mulțumesc!
       - bine, mulțumesc.
   - intent: out_of_scope
     examples: |
-      # English
       - fkkh
       - asgkjin
       - wen
@@ -894,7 +836,6 @@ nlu:
       - do you make coffe?
       - I want ice cream
       - cafe please.
-      # Greek
       - τι καιρό κάνει τώρα;
       - πόσο ήρθε χθες το παιχνίδι;
       - όχι άλλο κάρβουνο
@@ -902,7 +843,6 @@ nlu:
       - θέλω πίτες
       - ασξκηφγλξκησ
       - ηρθε το τελος του κοσμου
-      # Italian
       - Qual è la radice quadrata di 5
       - Vorrei sapere il meteo
       - La mia lavatrice non funziona
@@ -915,7 +855,6 @@ nlu:
       - Puoi chiamarmi un taxi?
       - Sai preparare il caffè?
       - voglio un gelato     
-      # Romanian
       - Cât este rădăcina pătrată din 5
       - Vreau să știu cum e vremea
       - Mașina mea de spălat nu funcționează
@@ -930,19 +869,16 @@ nlu:
       - vreau inghetata
   - intent: need_help
     examples: |
-      # English
       - help
       - need some help here
       - I don't know what to do
       - what should I answer here?
       - any suggestions?
-      # Italian
       - aiuto
       - Hai bisogno di aiuto per farlo
       - Io non so cosa fare
       - Cosa dovrei rispondere qui?
       - hai suggerimenti?      
-      # Romanian
       - Ajutor
       - Am nevoie de niște ajutor
       - Nu știu ce să fac

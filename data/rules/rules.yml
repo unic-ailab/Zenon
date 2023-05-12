@@ -7,9 +7,39 @@ rules:
       - action: action_utter_set_questionnaire
 
   - rule: Questionnaire opened from notification
+    condition:
+      - slot_was_set:
+          - notification_questionnaire_start: true
     steps:
       - intent: notification_questionnaire_open
       - action: action_utter_notification_greet
+      - action: action_utter_ask_questionnaire_start
+
+  - rule: Questionnaire opened from notification but it isn't available
+    condition:
+      - slot_was_set:
+          - notification_questionnaire_start: false
+      - slot_was_set:
+          - questionnaire: None
+      - slot_was_set:
+          - is_first_time: false
+    steps:
+      - intent: notification_questionnaire_open
+      - action: action_utter_notification_greet
+      - action: action_get_available_questionnaires
+
+  - rule: Questionnaire opened from notification but it isn't available and is the first time open the app
+    condition:
+      - slot_was_set:
+          - notification_questionnaire_start: false
+      - slot_was_set:
+          - questionnaire: None
+      - slot_was_set:
+          - is_first_time: true
+    steps:
+      - intent: notification_questionnaire_open
+      - action: action_utter_notification_greet
+      - action: action_utter_how_are_you
 
   - rule: Onboard user
     steps:
