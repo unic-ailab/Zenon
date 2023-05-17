@@ -416,6 +416,9 @@ nlu:
       - Ești măcar o persoană reală?
   - intent: inform
     examples: |
+      - cercando di fare battute in risposta a cose dette da altri
+      - trying to make jokes in response to things said by others
+      - in regula
       - thirty
       - six
       - sudden

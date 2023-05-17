@@ -193,6 +193,14 @@ eatingHabits_buttons = [
     ["Niciodată", "Rareori", "Uneori", "Adesea", "Foarte des", "Întotdeauna"]
 ]
 
+# Yes/No buttons
+yes_no_buttons = [
+    ["Yes", "No"],
+    [" ", " "],
+    ["Si", "No"],
+    ["Da", "Nu"]
+]
+
 ####################################################################################################
 # DEBUGGING                                                                                        #
 ####################################################################################################
@@ -397,6 +405,30 @@ class ActionOnboardUser(Action):
 ####################################################################################################
 # General                                                                                          #
 ####################################################################################################
+
+class ActionAskConfirmationForDashboard(Action):
+    def name(self) -> Text:
+        return "action_ask_confirmation_for_dashboard"
+
+    def run(self, dispatcher, tracker, domain):
+        announce(self, tracker)
+        
+        text = get_text_from_lang(
+            tracker, 
+            [
+                "Do you confirm that you want to add it to your report?",
+                "",
+                "Confermi di volerlo aggiungere alla tua segnalazione?",
+                "Confirmați că doriți să îl adăugați la raportul dvs.?"]
+            )
+
+        buttons = get_buttons_from_lang(
+                tracker,
+                yes_no_buttons,
+                ["/affirm", "/deny"]
+            )
+        dispatcher.utter_message(text=text, buttons=buttons)
+        return []
 
 class ActionGetAvailableQuestionnaires(Action):
     def name(self) -> Text:

@@ -562,6 +562,7 @@ responses:
           value: Italian
       text: Mi dispiace sapere che stai avendo complicazioni tecniche. Descrivi il problema.
 actions:
+  - action_ask_confirmation_for_dashboard
   - action_utter_greet
   - action_utter_how_are_you
   - action_options_menu
@@ -585,7 +586,6 @@ actions:
   - action_utter_set_language
   - action_utter_set_questionnaire
   - action_onboard_user
-  #- action_ask_how_are_you_Q1
 forms:
   report_form:
     required_slots:

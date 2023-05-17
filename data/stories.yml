@@ -158,7 +158,7 @@ stories:
         # STORIES WITH CHECKPOINTS
         ##########################
 
-        - story: Greeting, first time of the day using the agent, Agent receives positive sentiment, user declines to add anything for the doctors
+        - story: Greeting, first time of the day using the agent, Agent receives positive sentiment
           steps:
                   - intent: greet
                   - action: action_utter_greet
@@ -171,14 +171,9 @@ stories:
                   - slot_was_set:
                             - meaa_mood: non_neg
                   - action: utter_glad_to_hear
-                  - action: utter_inform_doctor_extra
-                  - or:
-                            - intent: deny
-                            - intent: cancel
-                  - action: utter_no_problem
                   - action: action_ontology_store_sentiment
 
-        - story: Greeting, first time of the day using the agent, Agent receives neutral sentiment, user declines to add anything for the doctors
+        - story: Greeting, first time of the day using the agent, Agent receives neutral sentiment
           steps:
                   - intent: greet
                   - action: action_utter_greet
@@ -190,47 +185,36 @@ stories:
                             - sentiment: neu
                   - slot_was_set:
                             - meaa_mood: non_neg
-                  - action: utter_inform_doctor_extra
-                  - or:
-                            - intent: deny
-                            - intent: cancel
-                  - action: utter_no_problem
                   - action: action_ontology_store_sentiment
 
-        - story: Greeting, first time of the day using the agent, Agent receives positive sentiment, user agrees to add something for the doctors
-          steps:
-                  - intent: greet
-                  - action: action_utter_greet
-                  - slot_was_set:
-                            - is_first_time: true
-                  - action: action_utter_how_are_you
-                  - intent: inform
-                  - slot_was_set:
-                            - sentiment: pos
-                  - slot_was_set:
-                            - meaa_mood: non_neg
-                  - action: utter_glad_to_hear
-                  - action: utter_inform_doctor_extra
-                  - intent: affirm
-                  - action: utter_confirm_doctor
-                  - action: action_ontology_store_sentiment
+        # - story: Greeting, first time of the day using the agent, Agent receives positive sentiment
+        #   steps:
+        #           - intent: greet
+        #           - action: action_utter_greet
+        #           - slot_was_set:
+        #                     - is_first_time: true
+        #           - action: action_utter_how_are_you
+        #           - intent: inform
+        #           - slot_was_set:
+        #                     - sentiment: pos
+        #           - slot_was_set:
+        #                     - meaa_mood: non_neg
+        #           - action: utter_glad_to_hear
+        #           - action: action_ontology_store_sentiment
 
-        - story: Greeting, first time of the day using the agent, Agent receives neutral sentiment, user agrees to add something for the doctors
-          steps:
-                  - intent: greet
-                  - action: action_utter_greet
-                  - slot_was_set:
-                            - is_first_time: true
-                  - action: action_utter_how_are_you
-                  - intent: inform
-                  - slot_was_set:
-                            - sentiment: neu
-                  - slot_was_set:
-                            - meaa_mood: non_neg
-                  - action: utter_inform_doctor_extra
-                  - intent: affirm
-                  - action: utter_confirm_doctor
-                  - action: action_ontology_store_sentiment
+        # - story: Greeting, first time of the day using the agent, Agent receives neutral sentiment
+        #   steps:
+        #           - intent: greet
+        #           - action: action_utter_greet
+        #           - slot_was_set:
+        #                     - is_first_time: true
+        #           - action: action_utter_how_are_you
+        #           - intent: inform
+        #           - slot_was_set:
+        #                     - sentiment: neu
+        #           - slot_was_set:
+        #                     - meaa_mood: non_neg
+        #           - action: action_ontology_store_sentiment
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user agrees to put the information in their report.
           steps:
@@ -246,7 +230,27 @@ stories:
                             - meaa_mood: non_neg
                   - action: utter_inform_doctor
                   - intent: affirm
+                  - action: action_ask_confirmation_for_dashboard
+                  - intent: affirm
                   - action: utter_confirm_doctor
+                  - action: action_ontology_store_sentiment
+
+        - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user agrees to put the information in their report but responses negative to confirmation.
+          steps:
+                  - intent: greet
+                  - action: action_utter_greet
+                  - slot_was_set:
+                            - is_first_time: true
+                  - action: action_utter_how_are_you
+                  - intent: inform
+                  - slot_was_set:
+                            - sentiment: neg
+                  - slot_was_set:
+                            - meaa_mood: non_neg
+                  - action: utter_inform_doctor
+                  - intent: affirm
+                  - action: action_ask_confirmation_for_dashboard
+                  - intent: deny
                   - action: action_ontology_store_sentiment
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report.
@@ -290,32 +294,17 @@ stories:
                             - intent: cancel
                   - action: utter_inform_doctor_extra
                   - intent: affirm
-                  #- action: utter_inform_doctor_go_on
                   - action: report_extra_form
                   - active_loop: report_extra_form
                   - active_loop: null
                   - slot_was_set:
                             - requested_slot: null
-                  - action: utter_confirm_doctor
-                  - action: action_ontology_store_sentiment
-
-        - story: Greeting, first time of the day using the agent, Agent receives negative sentiment from the ontoloy, user agrees to put the information in their report.
-          steps:
-                  - intent: greet
-                  - action: action_utter_greet
-                  - slot_was_set:
-                            - is_first_time: true
-                  - action: action_utter_how_are_you
-                  - intent: inform
-                  - slot_was_set:
-                            - meaa_mood: neg
-                  - action: utter_inform_doctor
+                  - action: action_ask_confirmation_for_dashboard
                   - intent: affirm
                   - action: utter_confirm_doctor
                   - action: action_ontology_store_sentiment
 
-        # all above in test_stories
-        - story: Greeting, first time of the day using the agent, Agent receives negative sentiment from the ontoloy, user doesn't agree to put the information in their report.
+        - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report but want to report smothing extra but responses negative to confirmation.
           steps:
                   - intent: greet
                   - action: action_utter_greet
@@ -324,13 +313,56 @@ stories:
                   - action: action_utter_how_are_you
                   - intent: inform
                   - slot_was_set:
-                            - meaa_mood: neg
+                            - sentiment: neg
+                  - slot_was_set:
+                            - meaa_mood: non_neg
                   - action: utter_inform_doctor
                   - or:
                             - intent: deny
                             - intent: cancel
-                  - action: utter_no_problem
+                  - action: utter_inform_doctor_extra
+                  - intent: affirm
+                  - action: report_extra_form
+                  - active_loop: report_extra_form
+                  - active_loop: null
+                  - slot_was_set:
+                            - requested_slot: null
+                  - action: action_ask_confirmation_for_dashboard
+                  - intent: deny
                   - action: action_ontology_store_sentiment
+
+        # - story: Greeting, first time of the day using the agent, Agent receives negative sentiment from the ontoloy, user agrees to put the information in their report.
+        #   steps:
+        #           - intent: greet
+        #           - action: action_utter_greet
+        #           - slot_was_set:
+        #                     - is_first_time: true
+        #           - action: action_utter_how_are_you
+        #           - intent: inform
+        #           - slot_was_set:
+        #                     - meaa_mood: neg
+        #           - action: utter_inform_doctor
+        #           - intent: affirm
+        #           - action: utter_confirm_doctor
+        #           - action: action_ontology_store_sentiment
+
+        # all above in test_stories
+        # - story: Greeting, first time of the day using the agent, Agent receives negative sentiment from the ontoloy, user doesn't agree to put the information in their report.
+        #   steps:
+        #           - intent: greet
+        #           - action: action_utter_greet
+        #           - slot_was_set:
+        #                     - is_first_time: true
+        #           - action: action_utter_how_are_you
+        #           - intent: inform
+        #           - slot_was_set:
+        #                     - meaa_mood: neg
+        #           - action: utter_inform_doctor
+        #           - or:
+        #                     - intent: deny
+        #                     - intent: cancel
+        #           - action: utter_no_problem
+        #           - action: action_ontology_store_sentiment
 
         - story: Greeting, not first time of the day using the agent - agent doesn't ask again for how the user is feeling
           steps:
