@@ -50,11 +50,12 @@ class SentimentAnalyzer(Component):
             and append the prediction results to the message class."""
 
         try:
-            str = message.data['text']
+            user_text = message.data['text']
+            accessToken = message.data["metadata"]["accessToken"]
 
-            data = {"text": str}
+            data = {"text": user_text, "accessToken": accessToken}
             response = requests.post(
-                "http://91.184.203.22:5050/classes", json=data
+                "https://csat.alamedaproject.eu/classes", json=data
             )   
             resp = response.json()  # This returns {"sentiment_classes":[{"sentiment_class":"positive","sentiment_score":<score>}, {"sentiment_class":"neutral","sentiment_score":<score>}, {"sentiment_class":"negative","sentiment_score":<score>}]}
             response.close()

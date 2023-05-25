@@ -2,7 +2,7 @@ language: en
 
 pipeline:
   - name: sentiment.SentimentAnalyzer
-    url: "http://91.184.203.22:5050"
+    url: "https://csat.alamedaproject.eu"
   - name: WhitespaceTokenizer
   - name: RegexFeaturizer
   - name: LexicalSyntacticFeaturizer
