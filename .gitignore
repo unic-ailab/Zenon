@@ -25,6 +25,7 @@ generatedTokens.csv
 zenon.log
 query_MEAA_ontology.py
 meaa-queries.log
+alameda_validation_server.py
 
 # Folders
 __pycache__/
