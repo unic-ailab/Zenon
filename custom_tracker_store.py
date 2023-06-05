@@ -695,7 +695,7 @@ class CustomSQLTrackerStore(TrackerStore):
             self.SQLEvent.timestamp >= session_start_timestamp,
         ).order_by(self.SQLEvent.timestamp).first()
 
-        print(f"_sentiment_query --- For userID:{sender_id}\n{message_entry}")
+        # print(f"_sentiment_query --- For userID:{sender_id}\n{message_entry}")
 
         # if there is no second message, it means the first message had positive or neutral sentiment
         # and is not included in the report
@@ -708,7 +708,7 @@ class CustomSQLTrackerStore(TrackerStore):
                 ).order_by(self.SQLEvent.timestamp.desc()).first()[0]
         except:
             include_in_report_intent = "deny"
-            print(f"_sentiment_query --- For userID:{sender_id}\ninclude_in_report: {include_in_report_intent}")
+        print(f"_sentiment_query --- For userID:{sender_id}\ninclude_in_report: {include_in_report_intent}")
 
         # get second message, question: Is there anything else you would like ot report..?
         if message_entry:

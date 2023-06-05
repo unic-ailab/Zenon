@@ -3,8 +3,10 @@ from rasa.nlu import utils
 from rasa.nlu.model import Metadata
 
 import requests
-
+import pandas as pd
 import os
+
+generatedTokens = pd.read_csv("generatedTokens.csv")
 
 class SentimentAnalyzer(Component):
     """A pre-trained sentiment component"""
@@ -51,9 +53,11 @@ class SentimentAnalyzer(Component):
 
         try:
             user_text = message.data['text']
-            accessToken = message.data["metadata"]["accessToken"]
+            # Get stored access_token from csv file
+            ca_accessToken = generatedTokens["access_token"].iloc[-1]
+            # accessToken = message.data["metadata"]["accessToken"]
 
-            data = {"text": user_text, "accessToken": accessToken}
+            data = {"text": user_text, "accessToken": ca_accessToken}
             response = requests.post(
                 "https://csat.alamedaproject.eu/classes", json=data
             )   
