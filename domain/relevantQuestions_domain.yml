@@ -179,7 +179,7 @@ forms:
         - type: from_text
           not_intent:
             - cancel
-            - out_of_scope
+            # - out_of_scope
             - options_menu
       MSdomainI_RQ1b:
         - entity: given_answer
@@ -198,7 +198,7 @@ forms:
         - type: from_text
           not_intent:
             - cancel
-            - out_of_scope
+            # - out_of_scope
             - options_menu
       MSdomainI_RQ2b:
         - entity: given_answer
@@ -247,7 +247,7 @@ forms:
         - type: from_text
           not_intent:
             - cancel
-            - out_of_scope
+            # - out_of_scope
             - options_menu
       MSdomainIII_1W_RQ3:
         - entity: given_answer
@@ -262,7 +262,7 @@ forms:
         - type: from_text
           not_intent:
             - cancel
-            - out_of_scope
+            # - out_of_scope
             - options_menu
   MSdomainIII_2W_form:
     required_slots:

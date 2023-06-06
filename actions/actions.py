@@ -7729,7 +7729,7 @@ class ActionMSDomainIII1WRQ1(Action):
                 '/inform{"given_answer":"never"}',
                 '/inform{"given_answer":"rarely"}',
                 '/inform{"given_answer":"sometimes"}',
-                '/inform{"given_answer":"often}'
+                '/inform{"given_answer":"often"}'
             ]
         )
 
@@ -7804,7 +7804,7 @@ class ActionMSDomainIII1WRQ3(Action):
                 '/inform{"given_answer":"never"}',
                 '/inform{"given_answer":"rarely"}',
                 '/inform{"given_answer":"sometimes"}',
-                '/inform{"given_answer":"often}'
+                '/inform{"given_answer":"often"}'
             ]
         )
 
@@ -7839,7 +7839,7 @@ class ActionMSDomainIII1WRQ4(Action):
                 '/inform{"given_answer":"never"}',
                 '/inform{"given_answer":"rarely"}',
                 '/inform{"given_answer":"sometimes"}',
-                '/inform{"given_answer":"often}'
+                '/inform{"given_answer":"often"}'
             ]
         )
 
@@ -8260,7 +8260,7 @@ class ActionMSDomainVRQ1(Action):
                 '/inform{"given_answer":"never"}',
                 '/inform{"given_answer":"rarely"}',
                 '/inform{"given_answer":"sometimes"}',
-                '/inform{"given_answer":"often}'
+                '/inform{"given_answer":"often"}'
             ]
         )
 
@@ -8295,7 +8295,7 @@ class ActionMSDomainVRQ2(Action):
                 '/inform{"given_answer":"never"}',
                 '/inform{"given_answer":"rarely"}',
                 '/inform{"given_answer":"sometimes"}',
-                '/inform{"given_answer":"often}'
+                '/inform{"given_answer":"often"}'
             ]
         )
 
