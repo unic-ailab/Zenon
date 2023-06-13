@@ -5179,8 +5179,10 @@ class ValidateDnBForm(FormValidationAction):
                 ]
             )
 
-            dispatcher.utter_message(text="Please provide an answer in the form of '# hours/days/weeks/months'\ne.g. 3 days or 1 month")
+            dispatcher.utter_message(text=text)
             return {"dizzNbalance_Q4a": None}
+        else:
+            return {"dizzNbalance_Q4a": slot_value}
 
     def validate_dizzNbalance_Q11i(
         self,
