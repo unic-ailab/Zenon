@@ -26,9 +26,9 @@ class IAMLogin(object):
         """Service logs in against IAM backend"""
 
         with open("unic_iam_credentials.json", "r") as file:
-            data = json.load(file)
+            credentials = json.load(file)
             
-        response = requests.post(self.url_base + self.request_url, json=data)
+        response = requests.post(self.url_base + self.request_url, json=credentials)
 
         if response.status_code == 200:
             data = json.loads(response.text)

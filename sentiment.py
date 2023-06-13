@@ -5,8 +5,13 @@ from rasa.nlu.model import Metadata
 import requests
 import pandas as pd
 import os
+import json
 
 generatedTokens = pd.read_csv("generatedTokens.csv")
+
+with open("unic_subdomains.json", "r") as file:
+    data = json.load(file)
+csat_classes = data["csat.alamedaproject.eu"]
 
 class SentimentAnalyzer(Component):
     """A pre-trained sentiment component"""
@@ -59,7 +64,7 @@ class SentimentAnalyzer(Component):
 
             data = {"text": user_text, "accessToken": ca_accessToken}
             response = requests.post(
-                "https://csat.alamedaproject.eu/classes", json=data
+                csat_classes, json=data
             )   
             resp = response.json()  # This returns {"sentiment_classes":[{"sentiment_class":"positive","sentiment_score":<score>}, {"sentiment_class":"neutral","sentiment_score":<score>}, {"sentiment_class":"negative","sentiment_score":<score>}]}
             response.close()

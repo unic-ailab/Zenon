@@ -27,6 +27,7 @@ query_MEAA_ontology.py
 meaa-queries.log
 alameda_validation_server.py
 get_from_wcs_info.py
+unic_subdomains.json
 
 # Folders
 __pycache__/
