@@ -590,9 +590,17 @@ class ActionOptionsMenu(Action):
         dispatcher.utter_message(text=text, buttons=buttons)
         return []
 
-# used when user ends up in the options menu more than once after greeting
 class ActionOptionsMenuExtra(Action):
     def name(self) -> Text:
+        """
+        The custom action "action_options_menu_extra" is used when user ends 
+        up in the options menu more than once after greeting. It duplicates
+        the functionality of "action_options_menu" and differs on introductory
+        text.
+
+        #TODO To check if we can avoid using it. Otherwise we need to add training examples in 'chichat.yml' file
+        under the intent: options_menu_extra
+        """
         return "action_options_menu_extra"
 
     def run(self, dispatcher, tracker, domain):
