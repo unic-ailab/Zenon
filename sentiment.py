@@ -1,7 +1,6 @@
 from rasa.nlu.components import Component
 from rasa.nlu import utils
 from rasa.nlu.model import Metadata
-from connect_to_iam import VerifyAuthentication
 
 import requests
 import pandas as pd
@@ -57,55 +56,43 @@ class SentimentAnalyzer(Component):
         """Retrieve the text message, pass it to the classifier
             and append the prediction results to the message class."""
 
-        # Get stored access_token from csv file
-        ca_accessToken = generatedTokens["access_token"].iloc[-1]
-        # accessToken = message.data["metadata"]["accessToken"]
-        with open("unic_subdomains.json", "r") as file:
-            subdomains = json.load(file)
-        csat_classes = subdomains["csat.alamedaproject.eu"]
-
         try:
             user_text = message.data['text']
-        except KeyError:
-            print("No 'text' key in message.data received from CSAT")
-            user_text = " "
+            # Get stored access_token from csv file
+            ca_accessToken = generatedTokens["access_token"].iloc[-1]
+            # accessToken = message.data["metadata"]["accessToken"]
+            with open("unic_subdomains.json", "r") as file:
+                subdomains = json.load(file)
+            csat_classes = subdomains["csat.alamedaproject.eu"]
 
-        data = {"text": user_text, "accessToken": ca_accessToken}
-        response = requests.post(
-            csat_classes, json=data
-        )   
-        resp = response.json()  # This returns {"sentiment_classes":[{"sentiment_class":"positive","sentiment_score":<score>}, {"sentiment_class":"neutral","sentiment_score":<score>}, {"sentiment_class":"negative","sentiment_score":<score>}]}
-        response.close()
-        
-        try:
+            data = {"text": user_text, "accessToken": ca_accessToken}
+            response = requests.post(
+                csat_classes, json=data
+            )   
+            resp = response.json()  # This returns {"sentiment_classes":[{"sentiment_class":"positive","sentiment_score":<score>}, {"sentiment_class":"neutral","sentiment_score":<score>}, {"sentiment_class":"negative","sentiment_score":<score>}]}
+            response.close()
+            
             sentiment_classes = resp.get("sentiment_classes")
-
+            
             max_score = sentiment_classes[0].get("sentiment_score")
             max_sentiment = sentiment_classes[0].get("sentiment_class")
-        except TypeError:
-            print("CSAT didn't provide any response")
-            verification_status_code = VerifyAuthentication().verification(ca_accessToken)
-            print(verification_status_code)
-            d_temp = {"sentiment_classes":[{"sentiment_class":"positive","sentiment_score":10}, {"sentiment_class":"neutral","sentiment_score":80}, {"sentiment_class":"negative","sentiment_score":10}]}
-            sentiment_classes = d_temp.get("sentiment_classes")
+            for sentiment in sentiment_classes:
+                if sentiment.get("sentiment_score") > max_score:
+                    max_score = sentiment.get("sentiment_score")
+                    max_sentiment = sentiment.get("sentiment_class")
 
-        for sentiment in sentiment_classes:
-            if sentiment.get("sentiment_score") > max_score:
-                max_score = sentiment.get("sentiment_score")
-                max_sentiment = sentiment.get("sentiment_class")
+            if max_sentiment == "positive":
+                max_sentiment = "pos"
+            elif max_sentiment == "negative":
+                max_sentiment = "neg"
+            else:
+                max_sentiment = "neu"
 
-        if max_sentiment == "positive":
-            max_sentiment = "pos"
-        elif max_sentiment == "negative":
-            max_sentiment = "neg"
-        else:
-            max_sentiment = "neu"
-
-        sentiment_entity = self.convert_to_rasa(max_sentiment, max_score)
-        sentiment_classes_entity = self.convert_to_rasa_classes(sentiment_classes)
-        message.set("entities", [sentiment_entity, sentiment_classes_entity], add_to_output=True)  
-        # except KeyError:
-        #     pass
+            sentiment_entity = self.convert_to_rasa(max_sentiment, max_score)
+            sentiment_classes_entity = self.convert_to_rasa_classes(sentiment_classes)
+            message.set("entities", [sentiment_entity, sentiment_classes_entity], add_to_output=True)  
+        except KeyError:
+            pass
 
 
     def persist(self, file_name, dir_name):
