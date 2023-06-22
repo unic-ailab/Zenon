@@ -4050,6 +4050,43 @@ class ActionAskDnBMedicalTestsOther(Action):
 
         dispatcher.utter_message(text=text)
         return []
+    
+class ActionAskDnBVestibularTests(Action):
+    def name(self) -> Text:
+        return "action_ask_dizzNbalance_VestibularTests"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        
+        text = get_text_from_lang(
+            tracker, [
+                "Vestibular Tests:",
+                " ",
+                " ",
+                "Teste Vestibular :"
+            ]
+        )
+
+        if tracker.get_slot("language") == "Romanian":
+            data = {
+                "choices": [
+                    "VNG", "Roational Chair", "VAT", "CDP", "VEMP", "vHIT"    # TODO To be changed to romanian version
+                ]
+            }
+         # this shouldn't happen but just in case
+        elif tracker.get_slot("language") == "Italian":
+            data = {
+                "choices": ["", ""]
+            }
+        else:
+            data = {
+                    "choices": [
+                        "VNG", "Roational Chair", "VAT", "CDP", "VEMP", "vHIT"
+                    ]
+                }
+
+
+        dispatcher.utter_message(text=text, json_message=data)
+        return []    
 
 class ActionAskDnBOnSetType(Action):
     def name(self) -> Text:

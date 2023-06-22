@@ -91,6 +91,9 @@ slots:
   dizzNbalance_MedicalTestsOther:
     type: any
     influence_conversation: false
+  dizzNbalance_VestibularTests:
+    type: any
+    influence_conversation: false
   dizzNbalance_OnSetType:
     type: any
     influence_conversation: false
@@ -219,6 +222,7 @@ actions:
   - action_ask_dizzNbalance_PastMedicalHistoryOther
   - action_ask_dizzNbalance_MedicalTests
   - action_ask_dizzNbalance_MedicalTestsOther
+  - action_ask_dizzNbalance_VestibularTests
   - action_ask_dizzNbalance_OnSetType
   - action_ask_dizzNbalance_EarSymptomI
   - action_ask_dizzNbalance_EarSymptomIa
@@ -268,7 +272,7 @@ forms:
           value: false
       dizzNbalance_Q2i:
         - type: from_text
-          not_intent: [cancel, out_of_scope]
+          not_intent: [cancel]
       dizzNbalance_Q3:
         - type: from_intent
           intent: affirm
@@ -278,7 +282,7 @@ forms:
           value: false
       dizzNbalance_Q3i:
         - type: from_text
-          not_intent: [cancel, out_of_scope]
+          not_intent: [cancel]
       dizzNbalance_Q4:
         - type: from_intent
           intent: affirm
@@ -288,7 +292,7 @@ forms:
           value: false
       dizzNbalance_Q4a:
         - type: from_text
-          not_intent: [cancel, out_of_scope]
+          not_intent: [cancel]
       dizzNbalance_Q4b:
         - entity: given_answer
           type: from_entity
@@ -301,10 +305,10 @@ forms:
           value: false
       dizzNbalance_Q4ci:
         - type: from_text
-          not_intent: [cancel, out_of_scope]
+          not_intent: [cancel]
       dizzNbalance_Q4d:
         - type: from_text
-          not_intent: [cancel, out_of_scope]
+          not_intent: [cancel]
       dizzNbalance_Q5:
         - type: from_intent
           intent: affirm
@@ -332,7 +336,7 @@ forms:
           value: false
       dizzNbalance_Q7i:
         - type: from_text
-          not_intent: [cancel, out_of_scope]
+          not_intent: [cancel]
       dizzNbalance_Q8:
         - entity: given_answer
           type: from_entity
@@ -345,7 +349,7 @@ forms:
           value: false
       dizzNbalance_Q9i:
         - type: from_text
-          not_intent: [cancel, out_of_scope]
+          not_intent: [cancel]
       dizzNbalance_Q10:
         - entity: given_answer
           type: from_entity
@@ -358,7 +362,7 @@ forms:
           value: false
       dizzNbalance_Q11i:
         # - type: from_text
-        #   not_intent: [cancel, out_of_scope]
+        #   not_intent: [cancel]
         - type: from_entity
           entity: number
       dizzNbalance_Q12:
@@ -370,7 +374,7 @@ forms:
           value: false
       dizzNbalance_Q12i:
         - type: from_text
-          not_intent: [cancel, out_of_scope]
+          not_intent: [cancel]
       dizzNbalance_PastMedicalHistory:
         - type: from_text
       dizzNbalance_PastMedicalHistoryOther:
@@ -378,6 +382,8 @@ forms:
       dizzNbalance_MedicalTests:
         - type: from_text
       dizzNbalance_MedicalTestsOther:
+        - type: from_text
+      dizzNbalance_VestibularTests:
         - type: from_text
       dizzNbalance_OnSetType:
         - type: from_text
@@ -393,7 +399,7 @@ forms:
           type: from_entity
       dizzNbalance_EarSymptomIb:
         - type: from_text
-          not_intent: [cancel, out_of_scope]
+          not_intent: [cancel]
       dizzNbalance_EarSymptomII:
         - type: from_intent
           intent: affirm
@@ -429,7 +435,7 @@ forms:
           value: false
       dizzNbalance_EarSymptomIIIa3i:
         - type: from_text
-          not_intent: [cancel, out_of_scope]
+          not_intent: [cancel]
       dizzNbalance_EarSymptomIV:
         - entity: given_answer
           type: from_entity
@@ -459,13 +465,13 @@ forms:
           type: from_entity
       dizzNbalance_Social_ai:
         - type: from_text
-          not_intent: [cancel, out_of_scope]
+          not_intent: [cancel]
       dizzNbalance_Social_b:
         - entity: given_answer
           type: from_entity
       dizzNbalance_Social_bi:
         - type: from_text
-          not_intent: [cancel, out_of_scope]
+          not_intent: [cancel]
       dizzNbalance_Social_c:
         - type: from_text
       dizzNbalance_Habits_caffeine:
