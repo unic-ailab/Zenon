@@ -71,6 +71,7 @@ nlu:
       - Mergeți la chestionare
       - Vreau să văd chestionarele
       - Alte chestionare
+      - vreau chestionar
   - intent: options_menu_extra
   - intent: options_menu
     examples: |

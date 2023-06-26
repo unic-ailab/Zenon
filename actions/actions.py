@@ -3498,8 +3498,7 @@ class ActionAskDnBSymptoms(Action):
                 "choices": [
                     "Ameteala", "Senzatie de urechi infundate", "Tulburare de vedere", "Senzatie de ‘cap tulbure’",
                     "Caderi ", "Senzatia de rotire a lucrurilor din jur", "Pierdere a auzului", "Rau de miscare", "Durere de cap",
-                    "Nesiguranta la mers", "Zgomote in urechi", "Oboseala", "Vedere dubla", "Tulburare de echilibru", "Brain fog",
-                    "Imbalance/Disequilibrium"
+                    "Nesiguranta la mers", "Zgomote in urechi", "Oboseala", "Vedere dubla", "Tulburare de echilibru"
                 ]
             }
         # this shouldn't happen but just in case
@@ -5657,10 +5656,10 @@ class ActionAskeatinghabitsQ14(Action):
         text = get_text_from_lang(
             tracker,
             [
-                "How frequently did you consume eatinghabitsary products (low-fat foods0 or eatinghabitsary cheese)?",
+                "How frequently did you consume dietary products (low-fat foods0 or dietary cheese)?",
                 " ",
                 " ",
-                "Cat de frecvent consumati produse eatinghabitsetice (alimente cu continut redus de grasimi sau branza eatinghabitsetica)?"
+                "Cat de frecvent consumati produse dietetice (alimente cu continut redus de grasimi sau branza dietetica)?"
             ]
         )
 
