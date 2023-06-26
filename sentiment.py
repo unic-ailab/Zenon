@@ -7,12 +7,6 @@ import pandas as pd
 import os
 import json
 
-generatedTokens = pd.read_csv("generatedTokens.csv")
-
-with open("unic_subdomains.json", "r") as file:
-    data = json.load(file)
-csat_classes = data["csat.alamedaproject.eu"]
-
 class SentimentAnalyzer(Component):
     """A pre-trained sentiment component"""
 
@@ -55,6 +49,8 @@ class SentimentAnalyzer(Component):
     def process(self, message, **kwargs):
         """Retrieve the text message, pass it to the classifier
             and append the prediction results to the message class."""
+        
+        generatedTokens = pd.read_csv("generatedTokens.csv")
 
         try:
             user_text = message.data['text']
