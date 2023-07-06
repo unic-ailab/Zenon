@@ -341,12 +341,12 @@ stories:
         #                     - intent: deny
         #                     - intent: cancel
 
-        - story: NO available questionnaires, user wants to go back to main menu
-          steps:
-                  - intent: available_questionnaires
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: false
+        # - story: NO available questionnaires, user wants to go back to main menu
+        #   steps:
+        #           - intent: available_questionnaires
+        #           - action: action_get_available_questionnaires
+        #           - slot_was_set:
+        #                     - availableQuestionnaires: false
 
         - story: Tutorial
           steps:
@@ -388,7 +388,7 @@ stories:
                   - action: action_confirm_tech_issue
                   - action: action_options_menu_extra
 
-        - story: Pressing cancel after being shown the available_questionnaires
+        - story: Pressing cancel after being shown the available_questionnaires - MSdomainIII_both
           steps:
                   - intent: available_questionnaires
                   - action: action_get_available_questionnaires
@@ -399,7 +399,18 @@ stories:
                   - intent: options_menu
                   - action: action_options_menu
 
-        - story: Pressing cancel after being shown the available_questionnaires
+        - story: Pressing cancel after being shown the available_questionnaires - MSdomainIII_both
+          steps:
+                  - intent: available_questionnaires
+                  - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
+                  - slot_was_set:
+                            - MSdomainIII_both: false
+                  - intent: options_menu
+                  - action: action_options_menu
+
+        - story: Pressing cancel after being shown the available_questionnaires - MSdomainII_both
           steps:
                   - intent: available_questionnaires
                   - action: action_get_available_questionnaires
@@ -410,7 +421,18 @@ stories:
                   - intent: options_menu
                   - action: action_options_menu
 
-        - story: Pressing cancel after being shown the available_questionnaires
+        - story: Pressing cancel after being shown the available_questionnaires - MSdomainII_both
+          steps:
+                  - intent: available_questionnaires
+                  - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
+                  - slot_was_set:
+                            - MSdomainII_both: true
+                  - intent: options_menu
+                  - action: action_options_menu
+
+        - story: Pressing cancel after being shown the available_questionnaires - MSdomainIV_both
           steps:
                   - intent: available_questionnaires
                   - action: action_get_available_questionnaires
@@ -418,6 +440,17 @@ stories:
                             - availableQuestionnaires: true
                   - slot_was_set:
                             - MSdomainIV_both: false
+                  - intent: options_menu
+                  - action: action_options_menu
+
+        - story: Pressing cancel after being shown the available_questionnaires - MSdomainIV_both
+          steps:
+                  - intent: available_questionnaires
+                  - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
+                  - slot_was_set:
+                            - MSdomainIV_both: true
                   - intent: options_menu
                   - action: action_options_menu
 
@@ -435,9 +468,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: ACTIVLIM Questionnaire - cancellation
           steps:
@@ -477,9 +511,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: ACTIVLIM Questionnaire - Interruption - Bot Challenge
           steps:
@@ -498,9 +533,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: PSQI Questionnaire - fully completed
           steps:
@@ -516,9 +552,10 @@ stories:
                             - requested_slot: null
                   - action: action_calculate_psqi_score
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: PSQI Questionnaire - cancellation
           steps:
@@ -557,9 +594,10 @@ stories:
                             - requested_slot: null
                   - action: action_calculate_psqi_score
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: PSQI Questionnaire - Interruption - Bot Challenge
           steps:
@@ -578,9 +616,10 @@ stories:
                             - requested_slot: null
                   - action: action_calculate_psqi_score
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Dizziness and Balance Questionnaire - fully completed
           steps:
@@ -595,9 +634,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Dizziness and Balance Questionnaire - cancellation denied
           steps:
@@ -616,9 +656,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Dizziness and Balance Questionnaire - cancellation
           steps:
@@ -655,9 +696,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Eating Habits Questionnaire - fully completed
           steps:
@@ -672,9 +714,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Eating Habits Questionnaire - cancellation denied
           steps:
@@ -693,9 +736,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Eating Habits Questionnaire - cancellation
           steps:
@@ -732,9 +776,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Muscle Tone Questionnaire - fully completed
           steps:
@@ -749,9 +794,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Muscle Tone Questionnaire - cancellation denied
           steps:
@@ -770,9 +816,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Muscle Tone Questionnaire - cancellation
           steps:
@@ -809,9 +856,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Stroke Domain III relevant questions - fully completed
           steps:
@@ -826,9 +874,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Stroke Domain V relevant questions - fully completed
           steps:
@@ -843,9 +892,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Stroke Domain IV relevant questions - fully completed
           steps:
@@ -860,9 +910,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Coast Questionnaire - fully completed
           steps:
@@ -877,9 +928,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Coast Questionnaire - cancellation denied
           steps:
@@ -898,9 +950,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: Coast Questionnaire - cancellation
           steps:
@@ -937,9 +990,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: MS Domain V relevant questions - fully completed
           steps:
@@ -954,11 +1008,7 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: false
-                  - slot_was_set:
-                            - MSdomainII_both: false
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
 
         - story: MS Domain IV weekly relevant questions - fully completed
           steps:
@@ -973,11 +1023,12 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: false
-                  - slot_was_set:
-                            - MSdomainIII_both: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: false
+                  #   - slot_was_set:
+                  #             - MSdomainIII_both: true
 
         - story: MS Domain IV daily relevant questions - fully completed
           steps:
@@ -992,13 +1043,14 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - slot_was_set:
-                            - MSdomainIII_both: false
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
-                  - slot_was_set:
-                            - MSdomainII_both: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - slot_was_set:
+                  #             - MSdomainIII_both: false
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
+                  #   - slot_was_set:
+                  #             - MSdomainII_both: true
 
         - story: MS Domain IV daily and weekly relevant questions - fully completed
           steps:
@@ -1023,9 +1075,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: MS Domain III weekly relevant questions - fully completed
           steps:
@@ -1040,11 +1093,12 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - slot_was_set:
-                            - MSdomainIII_both: false
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: true
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - slot_was_set:
+                  #             - MSdomainIII_both: false
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
 
         - story: MS Domain III weekly and biweekly relevant questions - fully completed
           steps:
@@ -1069,9 +1123,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: false
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: false
 
         - story: MS Domain III biweekly relevant questions - fully completed
           steps:
@@ -1086,9 +1141,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: false
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: false
 
         - story: MS Domain II monthly relevant questions - fully completed
           steps:
@@ -1103,11 +1159,12 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - slot_was_set:
-                            - MSdomainII_both: false
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: false
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - slot_was_set:
+                  #             - MSdomainII_both: false
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: false
 
         - story: MS Domain II monthly and every 3 months relevant questions - fully completed
           steps:
@@ -1132,9 +1189,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: false
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: false
 
         - story: MS Domain II every 3 month relevant questions - fully completed
           steps:
@@ -1149,9 +1207,10 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
-                  - action: action_get_available_questionnaires
-                  - slot_was_set:
-                            - availableQuestionnaires: false
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: false
 
         - story: MS Domain I relevant questions - fully completed
           steps:
@@ -1166,6 +1225,72 @@ stories:
                   - slot_was_set:
                             - requested_slot: null
                   - action: action_questionnaire_completed
+                  - checkpoint: get_available_questionnaires # Goes to stories that start with "checkpoint: get_available_questionnaires"
+                  #   - action: action_get_available_questionnaires
+                  #   - slot_was_set:
+                  #             - availableQuestionnaires: true
+
+        - story: Get available questionnaires - first scenario
+          steps:
+                  - checkpoint: get_available_questionnaires
+                  - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: false
+                  - slot_was_set:
+                            - MSdomainII_both: false
+                  - slot_was_set:
+                            - MSdomainIII_both: false
+                  - slot_was_set:
+                            - MSdomainIV_both: false
+
+        - story: Get available questionnaires - second scenario
+          steps:
+                  - checkpoint: get_available_questionnaires
                   - action: action_get_available_questionnaires
                   - slot_was_set:
                             - availableQuestionnaires: true
+                  - slot_was_set:
+                            - MSdomainII_both: true
+                  - slot_was_set:
+                            - MSdomainIII_both: true
+                  - slot_was_set:
+                            - MSdomainIV_both: true
+
+        - story: Get available questionnaires - third scenario
+          steps:
+                  - checkpoint: get_available_questionnaires
+                  - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
+                  - slot_was_set:
+                            - MSdomainII_both: false
+                  - slot_was_set:
+                            - MSdomainIII_both: true
+                  - slot_was_set:
+                            - MSdomainIV_both: false
+
+        - story: Get available questionnaires - fourth scenario
+          steps:
+                  - checkpoint: get_available_questionnaires
+                  - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
+                  - slot_was_set:
+                            - MSdomainII_both: true
+                  - slot_was_set:
+                            - MSdomainIII_both: false
+                  - slot_was_set:
+                            - MSdomainIV_both: false
+
+        - story: Get available questionnaires - fifth scenario
+          steps:
+                  - checkpoint: get_available_questionnaires
+                  - action: action_get_available_questionnaires
+                  - slot_was_set:
+                            - availableQuestionnaires: true
+                  - slot_was_set:
+                            - MSdomainII_both: false
+                  - slot_was_set:
+                            - MSdomainIII_both: true
+                  - slot_was_set:
+                            - MSdomainIV_both: true
