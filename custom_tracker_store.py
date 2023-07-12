@@ -1196,13 +1196,13 @@ class CustomSQLTrackerStore(TrackerStore):
         print(f"*****Store scores to ontology: {ontology_data}*****")
         ontology_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_SEND_SCORE_ENDPOINT"]["endpoint"].values[0]
         user_accessToken = tracker.get_slot("user_accessToken")
-
+        #TODO Might remove the verification step below
         try:
             verification_status_code = VerifyAuthentication().verification(user_accessToken)
         except TypeError as error:
             logger.error(f"Couldn't vefify accessToken for\nUserID: {sender_id}", exc_info=True)
             print(f"in line 1194\n{error}")
-            verification_status_code == None
+            verification_status_code == None    #TODO this should be changed to verification_status_code = None
 
         if verification_status_code == 200 or 201:
             try:
@@ -1323,13 +1323,13 @@ class CustomSQLTrackerStore(TrackerStore):
         print(f"*****Store data to ontology*****")
         ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
         user_accessToken = tracker.get_slot("user_accessToken")
-
+        #TODO Might remove the verification step below
         try:
             verification_status_code = VerifyAuthentication().verification(user_accessToken)
         except TypeError as error:
             logger.error(f"Couldn't verify userID:{sender_id}", exc_info=True)
             print(f"in line 1321\n{error}")
-            verification_status_code == None
+            verification_status_code == None    #TODO need to be changed to verification_status_code = None
 
         if verification_status_code == 200 or 201:            
             try:
@@ -1661,6 +1661,7 @@ class CustomSQLTrackerStore(TrackerStore):
         print(10*"="+" Sending questionaire data to WCS "+10*"=")
         wcs_status_endpoint= endpoints_df[endpoints_df["name"]=="WCS_STATUS_ENDPOINT"]["endpoint"].values[0]
         user_accessToken = tracker.get_slot("user_accessToken")
+        #TODO Might remove the step below
         try:
             verification_status_code = VerifyAuthentication().verification(user_accessToken)
         except TypeError as error:

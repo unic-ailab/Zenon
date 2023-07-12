@@ -264,6 +264,7 @@ nlu:
       - pa pa
   - intent: affirm
     examples: |
+      - completez formular
       - fire away
       - yes
       - y
@@ -383,6 +384,8 @@ nlu:
   - intent: bot_challenge
     examples: |
       - are you a bot?
+      - ciao alameda, qual è la tua funzione?
+      - what are you
       - are you a human?
       - am I talking to a bot?
       - am I talking to a human?
@@ -417,6 +420,40 @@ nlu:
       - Ești măcar o persoană reală?
   - intent: inform
     examples: |
+      - statul nemiscat pe canapea
+      - with a cane
+      - odihna pe canapea
+      - Hearing loss, Double vision
+      - Dezechilibru
+      - Imbalance
+      - AVC/AIT
+      - I use glasses
+      - a friend helps me
+      - cercando di fare battute in risposta a cose dette da altri
+      - trying to make jokes in response to things said by others
+      - Senzatia de rotire a lucrurilor din jur, Zgomote in urechi
+      - The sensation of rotating things around, Noises in the ears
+      - reading
+      - avrei bisogno di pace
+      - I need peace
+      - incepe sa-mi amorteasca piciorul drept
+      - my right leg is starting to go numb
+      - La trecerea din pozitia culcat in sezut, La privirea in sus, cu capul pe spate, Senzatia de rotire a corpului catre stanga
+      - When moving from a lying position to a sitting position, When looking up, with the head back, The feeling of turning the body to the left
+      - Tulburare de echilibru
+      - stato emotivo
+      - emotional status
+      - ho dei giramenti di testa
+      - I have dizzy spells
+      - medio
+      - half
+      - balance disorder
+      - in palestra usando un peso
+      - at the gym using a weight
+      - camminando
+      - walking
+      - mentre parlo con qualcuno
+      - while talking to someone
       - cercando di fare battute in risposta a cose dette da altri
       - trying to make jokes in response to things said by others
       - in regula
@@ -698,6 +735,7 @@ nlu:
       - Nostalgia
   - intent: cancel
     examples: |
+      - exit
       - I changed my mind, cancel it.
       - Cancel the process.
       - Don't want to continue
@@ -795,6 +833,16 @@ nlu:
       - bine, mulțumesc.
   - intent: out_of_scope
     examples: |
+      - hai altro da chiedermi?
+      - ai
+      - what are the symptoms of a stroke
+      - Its not going well
+      - ma sei fuori
+      - riparti
+      - restart
+      - sei stupido
+      - you are stupid
+      - are you crazy
       - fkkh
       - asgkjin
       - wen
