@@ -18,7 +18,7 @@ stories:
                             - is_first_time: true
                   - action: action_utter_how_are_you
 
-        - story: User click on a notification for questionnaire but the questionnaire is not available and is not the first time of the day using the agent #this shouldn't happen
+        - story: User click on a notification for questionnaire but the questionnaire is not available and is not the first time of the day using the agent
           steps:
                   - intent: notification_questionnaire_open
                   - action: action_utter_notification_greet
@@ -32,7 +32,7 @@ stories:
                   - slot_was_set:
                             - availableQuestionnaires: true
 
-        - story: User click on a notification for questionnaire but doesn't want to start questionnaire #does this work for all cases?
+        - story: User click on a notification for questionnaire but doesn't want to start questionnaire
           steps:
                   - intent: notification_questionnaire_open
                   - action: action_utter_notification_greet
@@ -44,7 +44,7 @@ stories:
                             - intent: cancel
                   - action: action_options_menu
 
-        - story: User click on a notification for questionnaire and wants to start questionnaire #does this work for all cases?
+        - story: User click on a notification for questionnaire and wants to start questionnaire
           steps:
                   - intent: notification_questionnaire_open
                   - action: action_utter_notification_greet
@@ -108,6 +108,7 @@ stories:
                   - intent: affirm
                   - action: action_ask_confirmation_for_dashboard
                   - intent: deny
+                  - action: utter_no_problem
                   - action: action_ontology_store_sentiment
 
         - story: Greeting, first time of the day using the agent, Agent receives neutral sentiment doesn't agree to add it to ED
@@ -126,6 +127,7 @@ stories:
                   - intent: affirm
                   - action: action_ask_confirmation_for_dashboard
                   - intent: deny
+                  - action: utter_no_problem
                   - action: action_ontology_store_sentiment
 
         - story: Greeting, first time of the day using the agent, Agent receives positive sentiment doesn't agree to infrom doctor
@@ -145,10 +147,6 @@ stories:
                   - or:
                             - intent: deny
                             - intent: cancel
-                  - action: utter_inform_doctor_extra
-                  - or:
-                            - intent: deny
-                            - intent: cancel
                   - action: utter_no_problem
                   - action: action_ontology_store_sentiment
 
@@ -165,10 +163,6 @@ stories:
                   - slot_was_set:
                             - meaa_mood: non_neg
                   - action: utter_inform_doctor
-                  - or:
-                            - intent: deny
-                            - intent: cancel
-                  - action: utter_inform_doctor_extra
                   - or:
                             - intent: deny
                             - intent: cancel
@@ -210,6 +204,7 @@ stories:
                   - intent: affirm
                   - action: action_ask_confirmation_for_dashboard
                   - intent: deny
+                  - action: utter_no_problem
                   - action: action_ontology_store_sentiment
 
         - story: Greeting, first time of the day using the agent, Agent receives negative sentiment, user doesn't agree to put the information in their report.
@@ -288,22 +283,8 @@ stories:
                             - requested_slot: null
                   - action: action_ask_confirmation_for_dashboard
                   - intent: deny
+                  - action: utter_no_problem
                   - action: action_ontology_store_sentiment
-
-        # - story: Greeting, first time of the day using the agent, Agent receives negative sentiment from the ontoloy, user agrees to put the information in their report.
-        #   steps:
-        #           - intent: greet
-        #           - action: action_utter_greet
-        #           - slot_was_set:
-        #                     - is_first_time: true
-        #           - action: action_utter_how_are_you
-        #           - intent: inform
-        #           - slot_was_set:
-        #                     - meaa_mood: neg
-        #           - action: utter_inform_doctor
-        #           - intent: affirm
-        #           - action: utter_confirm_doctor
-        #           - action: action_ontology_store_sentiment
 
         # all above in test_stories
         # - story: Greeting, first time of the day using the agent, Agent receives negative sentiment from the ontoloy, user doesn't agree to put the information in their report.

@@ -1349,7 +1349,7 @@ class ActionAskACTIVLimWalking(Action):
                 '/inform{"given_answer":"impossible"}', 
                 '/inform{"given_answer":"difficult"}', 
                 '/inform{"given_answer":"easy"}', 
-                '/inform{"given_answer":"?"}'   #TODO To send help intent for ACTIVLim
+                '/inform{"given_answer":"?"}'   # this is for unfamiliar activities that patient can't specify
             ]
         )
 

@@ -1196,28 +1196,18 @@ class CustomSQLTrackerStore(TrackerStore):
         print(f"*****Store scores to ontology: {ontology_data}*****")
         ontology_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_SEND_SCORE_ENDPOINT"]["endpoint"].values[0]
         user_accessToken = tracker.get_slot("user_accessToken")
-        #TODO Might remove the verification step below
+
         try:
-            verification_status_code = VerifyAuthentication().verification(user_accessToken)
+            response = requests.post(ontology_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_accessToken))
+            response.close()
+
+            if response.status_code == 200 or 201:
+                print("Scores successfully stored in ontology")                    
+            else:
+                print(f"Failed to store scores in ontology for\nUserID: {sender_id}\nQuestionnaire: {questionnaire_name}\nwith {response}")                                    
         except TypeError as error:
-            logger.error(f"Couldn't vefify accessToken for\nUserID: {sender_id}", exc_info=True)
-            print(f"in line 1194\n{error}")
-            verification_status_code == None    #TODO this should be changed to verification_status_code = None
-
-        if verification_status_code == 200 or 201:
-            try:
-                response = requests.post(ontology_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_accessToken))
-                response.close()
-
-                if response.status_code == 200 or 201:
-                    print("Scores successfully stored in ontology")                    
-                else:
-                    print(f"Failed to store scores in ontology for\nUserID: {sender_id}\nQuestionnaire: {questionnaire_name}\nwith {response}")                                    
-            except TypeError as error:
-                logger.error("In custom_tracker_store function sendQuestionnaireScoreToOntology", exc_info=True)
-                print(f"In custom_tracker_store function sendQuestionnaireScoreToOntology\n{error}")
-        else:
-            print(f"Failed to verify user access token in sendQuestionnaireScoreToOntology for\nUserID: {sender_id}\nwith response {verification_status_code}")            
+            logger.error("In custom_tracker_store function sendQuestionnaireScoreToOntology", exc_info=True)
+            print(f"In custom_tracker_store function sendQuestionnaireScoreToOntology\n{error}")
 
     def saveToOntology(self, tracker: DialogueStateTracker, sender_id: str) -> None:
         """
@@ -1294,8 +1284,20 @@ class CustomSQLTrackerStore(TrackerStore):
                     ) as error:
                         logger.error("Couldn't retrieve message data.", exc_info=True)
                         print(f"in line 1281 {error}")
-                        message_text = {}
-                        message_data = {}
+                        message_text = {"message": "Default"}
+                        message_data = {
+                            "parse_data": {
+                                "entities": [
+                                    {"value": "neu", "confidence": 80, "entity": "sentiment", "extractor": "sentiment_extractor"},    # dummy data
+                                    # add default data
+                                    {"value": [
+                                        {"sentiment_class": "positive", "sentiment_score": 10.0}, 
+                                        {"sentiment_class": "neutral", "sentiment_score": 80.0}, 
+                                        {"sentiment_class": "negative", "sentiment_score": 10.0}
+                                    ]}
+                                ]
+                            }
+                        }
 
                     message_sentiment = message_data.get("parse_data", {}).get("entities", {})[1].get("value")
                     timestamp = datetime.datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -1323,28 +1325,18 @@ class CustomSQLTrackerStore(TrackerStore):
         print(f"*****Store data to ontology*****")
         ontology_ca_endpoint= endpoints_df[endpoints_df["name"]=="ONTOLOGY_CA_ENDPOINT"]["endpoint"].values[0]
         user_accessToken = tracker.get_slot("user_accessToken")
-        #TODO Might remove the verification step below
+
         try:
-            verification_status_code = VerifyAuthentication().verification(user_accessToken)
+            response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_accessToken))
+            response.close()
+
+            if response.status_code == 200 or 201:
+                print("Successfully stored data to ontology")
+            else:
+                print(f"Failed to store data to ontology with {response}")                
         except TypeError as error:
-            logger.error(f"Couldn't verify userID:{sender_id}", exc_info=True)
-            print(f"in line 1321\n{error}")
-            verification_status_code == None    #TODO need to be changed to verification_status_code = None
-
-        if verification_status_code == 200 or 201:            
-            try:
-                response = requests.post(ontology_ca_endpoint, json=ontology_data, timeout=30, auth=BearerAuth(user_accessToken))
-                response.close()
-
-                if response.status_code == 200 or 201:
-                    print("Successfully stored data to ontology")
-                else:
-                    print(f"Failed to store data to ontology with {response}")                
-            except TypeError as error:
-                logger.error(f"Couldn't store data on to ontology", exc_info=True)
-                print(f"In custom_tracker_store function saveToOntology\n{error}")
-        else:
-            print(f"Failed to verify user access token in sendQuestionnaireScoreToOntology with verification response:{verification_status_code}")
+            logger.error(f"Couldn't store data on to ontology", exc_info=True)
+            print(f"In custom_tracker_store function saveToOntology\n{error}")
         
     def registerUserIDdemo(self, sender_id: str, usecase: str) -> str:
         """Checks if the specific user id is in the database. If not, it adds it.
@@ -1661,26 +1653,17 @@ class CustomSQLTrackerStore(TrackerStore):
         print(10*"="+" Sending questionaire data to WCS "+10*"=")
         wcs_status_endpoint= endpoints_df[endpoints_df["name"]=="WCS_STATUS_ENDPOINT"]["endpoint"].values[0]
         user_accessToken = tracker.get_slot("user_accessToken")
-        #TODO Might remove the step below
+
         try:
-            verification_status_code = VerifyAuthentication().verification(user_accessToken)
+            response = requests.post(wcs_status_endpoint, json=questionnaire_data, timeout=30, auth=BearerAuth(user_accessToken))
+            response.close()
+
+            if response.status_code == 200 or 201:
+                print("Successfully sent data to WCS")
+            else:
+                print(f"Failed to send data to WCS with {response}")                
         except TypeError as error:
-            print(f"in line 1653\n{error}")
-            verification_status_code = None
-
-        if verification_status_code == 200 or 201:
-            try:
-                response = requests.post(wcs_status_endpoint, json=questionnaire_data, timeout=30, auth=BearerAuth(user_accessToken))
-                response.close()
-
-                if response.status_code == 200 or 201:
-                    print("Successfully sent data to WCS")
-                else:
-                    print(f"Failed to send data to WCS with {response}")                
-            except TypeError as error:
-                print(f"Sending questionnaire data to WCS failed in sendQuestionnaireStatus\n{error}")
-        else:
-            print(f"Failed to verify user access token - Response [{verification_status_code}] --- sendQuestionnaireStatus")
+            print(f"Sending questionnaire data to WCS failed in sendQuestionnaireStatus\n{error}")
 
     def getDizzinessNbalanceNewSymptoms(self, sender_id: str) -> List[(str)]:
         """
