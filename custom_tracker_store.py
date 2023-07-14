@@ -1300,6 +1300,7 @@ class CustomSQLTrackerStore(TrackerStore):
                         }
 
                     message_sentiment = message_data.get("parse_data", {}).get("entities", {})[1].get("value")
+                    #TODO Add here a try/except block in case there is no message object to add a default timestamp
                     timestamp = datetime.datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
                     message_text = message.message                    
                 elif msg_type == "slot":

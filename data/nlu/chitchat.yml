@@ -264,6 +264,7 @@ nlu:
       - pa pa
   - intent: affirm
     examples: |
+      - in regula
       - completez formular
       - fire away
       - yes
@@ -420,6 +421,7 @@ nlu:
       - Ești măcar o persoană reală?
   - intent: inform
     examples: |
+      - a volte
       - statul nemiscat pe canapea
       - with a cane
       - odihna pe canapea
