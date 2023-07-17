@@ -421,6 +421,30 @@ nlu:
       - Ești măcar o persoană reală?
   - intent: inform
     examples: |
+      - Contuzie
+      - Hipertensiune/ Hipotensiune arteriala
+      - Ataxie
+      - Crize epileptice
+      - Diabet zaharat/Neuropatie
+      - Migrena
+      - Accident rutier
+      - Insuficienta cardiaca/Infarct
+      - Astm
+      - AVC/AIT
+      - Cancer
+      - Istoric de infectie sau tromboze
+      - Scleroza multipla 
+      - Boala vasculara periferica 
+      - Interventie chirurgicala la nivelul coloanei vertebrale
+      - Boala Parkinson 
+      - Depresie/atac de panica 
+      - Traumatism la nivelul coapsei, genunchiului/umarului/spatelui
+      - Glaucom/degenerescenta maculara 
+      - Afectare articulara la nivel cervical 
+      - Nivel crescut colesterol
+      - Fibromialgie
+      - Sindromul oboselii cronice 
+      - Boala autoimuna
       - a volte
       - statul nemiscat pe canapea
       - with a cane
