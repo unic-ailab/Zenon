@@ -19,13 +19,13 @@ from connect_to_iam import VerifyAuthentication
 
 logger = logging.getLogger(__name__)
 
-class RestMetadataInput(RestInput):
 
+class RestMetadataInput(RestInput):
     @staticmethod
     def name() -> Text:
         """Name of your custom channel."""
         return "rest_metadata"
-    
+
     def blueprint(
         self, on_new_message: Callable[[UserMessage], Awaitable[None]]
     ) -> Blueprint:
@@ -48,11 +48,14 @@ class RestMetadataInput(RestInput):
             )
             input_channel = self._extract_input_channel(request)
             metadata = self.get_metadata(request)
+            # TODO Add a try/except block to handle cases in which 'metadata' key won't appear
             accessToken = metadata.get("accessToken", None)
 
             if accessToken:
                 # Verify the provided access token
-                verification_status = VerifyAuthentication().verification(access_token=accessToken)
+                verification_status = VerifyAuthentication().verification(
+                    access_token=accessToken
+                )
                 if verification_status == 200:
                     if should_use_stream:
                         return response.stream(
@@ -76,21 +79,27 @@ class RestMetadataInput(RestInput):
                             )
                         except CancelledError:
                             logger.error(
-                                f"Message handling timed out for " f"user message '{text}'."
+                                f"Message handling timed out for "
+                                f"user message '{text}'."
                             )
                         except Exception:
                             logger.exception(
                                 f"An exception occured while handling "
-                                f"user message '{text}'."
+                                f"user message '{text}'.",
+                                exc_info=True,
                             )
                         return response.json(collector.messages)
                 else:
-                    return response.text("You are not authorized", status=HTTPStatus.UNAUTHORIZED)
+                    return response.text(
+                        "You are not authorized", status=HTTPStatus.UNAUTHORIZED
+                    )
             else:
-                return response.text("You are not authorized", status=HTTPStatus.UNAUTHORIZED)
+                return response.text(
+                    "You are not authorized", status=HTTPStatus.UNAUTHORIZED
+                )
 
-        return custom_webhook    
-    
+        return custom_webhook
+
     def stream_response(
         self,
         on_new_message: Callable[[UserMessage], Awaitable[None]],
@@ -114,8 +123,8 @@ class RestMetadataInput(RestInput):
                     await resp.write(json.dumps(result) + "\n")
             await task
 
-        return stream    
-    
+        return stream
+
     def get_metadata(self, req: Request) -> Optional[Dict[Text, Any]]:
         """Extracts the metadata from a user message.
         Args:
