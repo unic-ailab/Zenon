@@ -2124,7 +2124,7 @@ class CustomSQLTrackerStore(TrackerStore):
                     if answer["number"] == "Symptoms"
                 ]
                 previous_symptoms = [
-                    answer["answers"]
+                    answer["answer"]
                     for answer in previous_answers
                     if answer["number"] == "Symptoms"
                 ]
