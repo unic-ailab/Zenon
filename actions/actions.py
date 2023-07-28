@@ -913,9 +913,69 @@ class ActionMobilityStatus(Action):
         self, dispatcher: "CollectingDispatcher", tracker: Tracker, domain: "Dict"
     ) -> List[Dict[Text, Any]]:
         announce(self, tracker)
-        pass
 
-        # return await super().run(dispatcher, tracker, domain)
+        accessToken = generatedTokens["access_token"].iloc[-1]
+
+        # Testing the mobility status update method
+        # MSWS-12 frequency is 2 weeks
+        today = datetime.datetime.now(tz=pytz.utc)
+        fourteen_days_ago = (today - datetime.timedelta(weeks=2)).strftime(
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
+        today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        wcs_get_score_endpoint = endpoints_df[
+            endpoints_df["name"] == "ONTOLOGY_GET_SCORE_WM_ENDPOINT"
+        ]["endpoint"].values[0]
+
+        userId = "08e9d802-70d6-466f-a655-c8c49a7cce02"
+        response = requests.get(
+            wcs_get_score_endpoint,
+            params={
+                "userId": userId,
+                "startDate": fourteen_days_ago,
+                "endDate": today,
+            },
+            timeout=10,
+            auth=BearerAuth(accessToken),
+        )
+        response.close()
+
+        # response.json() returns a list of dictionaries. Each dictionary holds information for a specific questionnaire.
+        # questionnaires are shown the most recently first.
+        msws12 = [
+            d
+            for d in response.json()
+            if d["abbreviation"] == "ScalaDiDeambulazionePerLaSclerosiMultipla"
+        ]
+
+        if len(msws12) >= 2:
+            most_recent_score = msws12[0]["scores"][0]["score"]
+            latest_date = datetime.datetime.strptime(
+                msws12[0]["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ"
+            )
+
+            previous_score = most_recent_score
+            for d in msws12:
+                if (
+                    latest_date
+                    - datetime.datetime.strptime(
+                        d["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ"
+                    )
+                ).days > 14:
+                    previous_score = d["scores"][0]["score"]
+                    break
+            text = get_text_from_lang(
+                tracker, []
+            )  # TODO To add text for the three languages
+        elif len(msws12) == 1:
+            most_recent_score = msws12[0]["scores"][0]["score"]
+            print(f"There is only one entry for {userId=} in the last two weeks.")
+            previous_score = None
+        else:
+            print(f"There are no entries for {userId=} for the last two weeks")
+            most_recent_score = None
+            previous_score = None
 
 
 class ActionSleepStatus(Action):
@@ -8517,7 +8577,7 @@ class ActionAskMSDomainIV1WRQ2a(Action):
                 [" ", " "],
             ],
             [
-                '/inform{"given_answer":"Level 1: "daily life" stress (work, home, family management)"}',
+                '/inform{"given_answer":"Level 1: «daily life» stress (work, home, family management)"}',
                 '/inform{"given_answer":"Level 2: stress from overlapping commitments and difficulties in managing things to do with respect to my mental energies"}',
                 '/inform{"given_answer":"Level 3: stress from the onset of worries or aggravation of existing ones (e.g. economic difficulties, conflicts at work or in the family, etc ...)"}',
                 '/inform{"given_answer":"Level 4: stress from strong destabilizing events (e.g. a radical change of life, bereavement, etc ...)"}',
