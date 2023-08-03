@@ -59,16 +59,9 @@ from rasa.core.tracker_store import (
 
 from connect_to_iam import BearerAuth, VerifyAuthentication
 
-# logger = logging.getLogger(__name__)
-# f_handler = logging.FileHandler("zenon.log", mode="a")
-# f_handler.setLevel(logging.DEBUG)
-# f_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
-# f_handler.setFormatter(f_format)
-# logger.addHandler(f_handler)
-
 logging.basicConfig(
     filename="zenon.log",
-    level=logging.DEBUG,
+    level=logging.WARNING,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 

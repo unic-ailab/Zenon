@@ -30,8 +30,8 @@ class IAMLogin(object):
             
         response = requests.post(self.url_base + self.request_url, json=credentials)
 
+        data = json.loads(response.text)
         if response.status_code == 200:
-            data = json.loads(response.text)
             return response.status_code, data["access_token"], data["refresh_token"]
         elif response.status_code != 200:
             print(f"****Service failed to log in against IAM with code {response}****")
@@ -89,11 +89,11 @@ class RefreshAccessToken(object):
             url=self.url_base+self.request_url,
             json=payload
         )
-        print(response.json())
+        # print(response.json())
 
+        data = json.loads(response.text)
         if response.status_code == 200:
             print("****Token successfully refreshed****")
-            data = json.loads(response.text)
             return response.status_code, data["access_token"], data["refresh_token"]
         else:
             print(f"****Failed to refresh token with code {response.status_code}****")
