@@ -1208,6 +1208,26 @@ class ActionUtterHowAreYou(Action):
             print(
                 f"MEAA data collected from ontology:\n{date_of_last_meaa_entry=}\n{overallSentiment=}"
             )
+
+            # if the userID exists in MEAA then we should got the date of the last entry session.
+            if date_of_last_meaa_entry:
+                date_of_last_meaa_entry = datetime.datetime.strptime(
+                    date_of_last_meaa_entry, "%Y-%m-%dT%H:%M:%S.%fZ"
+                )
+                date_of_last_meaa_entry = date_of_last_meaa_entry.strftime(
+                    "%Y-%m-%dT%H:%M:%SZ"
+                )
+                date_of_last_meaa_entry = datetime.datetime.strptime(
+                    date_of_last_meaa_entry, "%Y-%m-%dT%H:%M:%SZ"
+                )
+
+                # We measure the difference between today and the last date we got a MEAA measure in ontology
+                today = datetime.datetime.strptime(today, "%Y-%m-%dT%H:%M:%SZ")
+                delta = today - date_of_last_meaa_entry
+                if 0 < delta.days + (delta.seconds / (24 * 3600)) < 2:
+                    # returned classes Negative, Positive, Neutral, Other
+                    overallSentiment = response.json()[0]["overallSentiment"]
+                    print(f"MEAA entry from yesterday: {overallSentiment=}")            
         except:
             # This should happen when no previous MEAA measurements
             # stored in the database.
@@ -1216,26 +1236,6 @@ class ActionUtterHowAreYou(Action):
             )
             overallSentiment = ""
             logger.error("Couldn't retrieve MEEA data", exc_info=True)
-
-        # if the userID exists in MEAA then we should got the date of the last entry session.
-        if date_of_last_meaa_entry:
-            date_of_last_meaa_entry = datetime.datetime.strptime(
-                date_of_last_meaa_entry, "%Y-%m-%dT%H:%M:%S.%fZ"
-            )
-            date_of_last_meaa_entry = date_of_last_meaa_entry.strftime(
-                "%Y-%m-%dT%H:%M:%SZ"
-            )
-            date_of_last_meaa_entry = datetime.datetime.strptime(
-                date_of_last_meaa_entry, "%Y-%m-%dT%H:%M:%SZ"
-            )
-
-            # We measure the difference between today and the last date we got a MEAA measure in ontology
-            today = datetime.datetime.strptime(today, "%Y-%m-%dT%H:%M:%SZ")
-            delta = today - date_of_last_meaa_entry
-            if 0 < delta.days + (delta.seconds / (24 * 3600)) < 2:
-                # returned classes Negative, Positive, Neutral, Other
-                overallSentiment = response.json()[0]["overallSentiment"]
-                print(f"MEAA entry from yesterday: {overallSentiment=}")
 
         if overallSentiment == "Negative":
             text = get_text_from_lang(
