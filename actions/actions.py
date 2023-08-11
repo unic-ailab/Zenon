@@ -928,7 +928,7 @@ class ActionMobilityStatus(Action):
             endpoints_df["name"] == "ONTOLOGY_GET_SCORE_WM_ENDPOINT"
         ]["endpoint"].values[0]
 
-        userId = "08e9d802-70d6-466f-a655-c8c49a7cce02"
+        userId = "" #TODO add the value of userId
         response = requests.get(
             wcs_get_score_endpoint,
             params={
@@ -1122,11 +1122,6 @@ class ActionUtterGreet(Action):
         )
         print(25 * "=")
 
-        # # Perform verification for the received `accessToken`
-        # status_code = VerifyAuthentication().verification(user_accessToken)
-
-        # If status_code is 200 move forward.
-        # if status_code == 200:
         text = get_text_from_lang(
             tracker,
             [
@@ -1171,9 +1166,6 @@ class ActionUtterGreet(Action):
             return [SlotSet("is_first_time", isFirstTime)] + [
                 SlotSet("user_accessToken", user_accessToken)
             ]
-        # else:
-        #     print(25 * "*")
-        #     print(f"AccessToken verification failed with code {status_code}")
 
 
 class ActionUtterHowAreYou(Action):
@@ -1184,9 +1176,10 @@ class ActionUtterHowAreYou(Action):
         announce(self, tracker)
 
         # query the ontology for MEAA results of the previous day
-        today = datetime.datetime.combine(
-            datetime.datetime.now(tz=pytz.utc), datetime.datetime.min.time()
-        )
+        # today = datetime.datetime.combine(
+        #     datetime.datetime.now(tz=pytz.utc), datetime.datetime.min.time()
+        # )
+        today = datetime.datetime.now(tz=pytz.utc)
         today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
         ontology_meaa_endpoint = endpoints_df[
             endpoints_df["name"] == "ONTOLOGY_MEAA_ENDPOINT"
@@ -1228,7 +1221,7 @@ class ActionUtterHowAreYou(Action):
                     # returned classes Negative, Positive, Neutral, Other
                     overallSentiment = response.json()[0]["overallSentiment"]
                     print(f"MEAA entry from yesterday: {overallSentiment=}")            
-        except:
+        except KeyError:
             # This should happen when no previous MEAA measurements
             # stored in the database.
             print(
