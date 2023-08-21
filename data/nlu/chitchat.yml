@@ -421,6 +421,11 @@ nlu:
       - Ești măcar o persoană reală?
   - intent: inform
     examples: |
+      - Blood, MRI
+      - da quando ho smesso di assumere duloxetina e palexia ho più energie e dormo leggermente meglio.
+      - since I stopped taking duloxetine and palexia I have more energy and sleep slightly better.
+      - inceput de cataracta la ambii ochi.
+      - onset of cataracts in both eyes.
       - Contuzie
       - Hipertensiune/ Hipotensiune arteriala
       - Ataxie

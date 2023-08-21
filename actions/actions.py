@@ -362,17 +362,18 @@ def announce(action, tracker=None):
 
             # Add Entities section
             if len(msg["entities"]) > 0:
-                if "value" in msg["entities"][0].keys():
-                    output += (
-                        "\n- Entities:   "
-                        + str(msg["entities"][0]["entity"])
-                        + ", Value: "
-                        + str(msg["entities"][0]["value"])
-                    )
-                else:
-                    output += "\n- Entities:   " + str(msg["entities"][0]["entity"])
+                for i in range(len(msg["entities"])):
+                    if "value" in msg["entities"][i].keys():
+                        output += (
+                            "\n- Entity:   "
+                            + str(msg["entities"][i]["entity"])
+                            + ", Value: "
+                            + str(msg["entities"][i]["value"])
+                        )
+                    else:
+                        output += "\n- Entity:   " + str(msg["entities"][i]["entity"])
             else:
-                output += "\n- Entities:   "
+                output += "\n- Entity:   "
         except Exception as e:
             print(
                 f"\n> announce: [ERROR] occured when tried to retrieve entities from latest message \n>{e}"
@@ -1196,7 +1197,7 @@ class ActionUtterHowAreYou(Action):
         response.close()
         try:
             date_of_last_meaa_entry = response.json()[0]["sessionStarted"]
-            # # returned classes Negative, Positive, Neutral, Other
+            # returned classes Negative, Positive, Neutral, Other
             overallSentiment = response.json()[0]["overallSentiment"]
             print(
                 f"MEAA data collected from ontology:\n{date_of_last_meaa_entry=}\n{overallSentiment=}"
@@ -1217,7 +1218,7 @@ class ActionUtterHowAreYou(Action):
                 # We measure the difference between today and the last date we got a MEAA measure in ontology
                 today = datetime.datetime.strptime(today, "%Y-%m-%dT%H:%M:%SZ")
                 delta = today - date_of_last_meaa_entry
-                if 0 < delta.days + (delta.seconds / (24 * 3600)) < 2:
+                if 0 < delta.days + (delta.seconds / (24 * 3600)) < 1:
                     # returned classes Negative, Positive, Neutral, Other
                     overallSentiment = response.json()[0]["overallSentiment"]
                     print(f"MEAA entry from yesterday: {overallSentiment=}")            
@@ -1293,9 +1294,6 @@ class ActionUtterNotificationGreet(Action):
         # onboard the user here in case the first time users open the app from a notification
         _ = customTrackerInstance.checkUserID(tracker.sender_id, ca_accessToken)
 
-        # Verify token received from WM
-        # TODO this maybe is better to happen within app, NOT here
-
         metadata = tracker.latest_message.get("metadata")
         print("***** METADATA *****")
         user_accessToken = metadata["accessToken"]
@@ -1304,9 +1302,6 @@ class ActionUtterNotificationGreet(Action):
             user_accessToken == metadata["accessToken"],
         )
         print(25 * "=")
-
-        # Perform verification for the received `accessToken`
-        status_code = VerifyAuthentication().verification(user_accessToken)
 
         q_abbreviation = tracker.get_slot("questionnaire")
         try:
@@ -3900,6 +3895,7 @@ class ActionAskDnBSymptoms(Action):
                     "Oboseala",
                     "Vedere dubla",
                     "Tulburare de echilibru",
+                    "Nimic de verificat"
                 ]
             }
         # this shouldn't happen but just in case
@@ -3923,7 +3919,7 @@ class ActionAskDnBSymptoms(Action):
                     "Hearing loss",
                     "Double vision",
                     "Brain fog",
-                    "Imbalance/Disequilibrium",
+                    "Imbalance/Disequilibrium"
                 ]
             }
 
