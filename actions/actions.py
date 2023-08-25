@@ -816,8 +816,6 @@ class ActionOptionsMenuExtra(Action):
         return "action_options_menu_extra"
 
     def run(self, dispatcher, tracker, domain):
-        # time.sleep(5) # 5 second delay before the next action
-        # smthg missing here but i dont remember
         text = get_text_from_lang(
             tracker,
             [
@@ -1196,32 +1194,27 @@ class ActionUtterHowAreYou(Action):
         )
         response.close()
         try:
-            date_of_last_meaa_entry = response.json()[0]["sessionStarted"]
-            # returned classes Negative, Positive, Neutral, Other
-            overallSentiment = response.json()[0]["overallSentiment"]
-            print(
-                f"MEAA data collected from ontology:\n{date_of_last_meaa_entry=}\n{overallSentiment=}"
-            )
+            today = datetime.datetime.strptime(today, "%Y-%m-%dT%H:%M:%SZ")
 
-            # if the userID exists in MEAA then we should got the date of the last entry session.
-            if date_of_last_meaa_entry:
-                date_of_last_meaa_entry = datetime.datetime.strptime(
-                    date_of_last_meaa_entry, "%Y-%m-%dT%H:%M:%S.%fZ"
+            for i in range(len(response.json())):
+                meaa_entry = response.json()[i]["sessionStarted"]
+                meaa_entry = datetime.datetime.strptime(
+                    meaa_entry, "%Y-%m-%dT%H:%M:%S.%fZ"
                 )
-                date_of_last_meaa_entry = date_of_last_meaa_entry.strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                )
-                date_of_last_meaa_entry = datetime.datetime.strptime(
-                    date_of_last_meaa_entry, "%Y-%m-%dT%H:%M:%SZ"
+                meaa_entry = meaa_entry.strftime("%Y-%m-%dT%H:%M:%SZ")
+                meaa_entry = datetime.datetime.strptime(
+                    meaa_entry, "%Y-%m-%dT%H:%M:%SZ"
                 )
 
-                # We measure the difference between today and the last date we got a MEAA measure in ontology
-                today = datetime.datetime.strptime(today, "%Y-%m-%dT%H:%M:%SZ")
-                delta = today - date_of_last_meaa_entry
-                if 0 < delta.days + (delta.seconds / (24 * 3600)) < 1:
+                delta = today - meaa_entry
+                if 1 <= delta.days + (delta.seconds / (24 * 3600)) < 2:
                     # returned classes Negative, Positive, Neutral, Other
-                    overallSentiment = response.json()[0]["overallSentiment"]
-                    print(f"MEAA entry from yesterday: {overallSentiment=}")            
+                    overallSentiment = response.json()[i]["overallSentiment"]
+                    date_of_last_meaa_entry = response.json()[i]["sessionStarted"]
+                    print(
+                        f"MEAA data collected from ontology:\n{date_of_last_meaa_entry=}\n{overallSentiment=}"
+                    )
+                    break            
         except KeyError:
             # This should happen when no previous MEAA measurements
             # stored in the database.
