@@ -48,8 +48,11 @@ class RestMetadataInput(RestInput):
             )
             input_channel = self._extract_input_channel(request)
             metadata = self.get_metadata(request)
-            # TODO Add a try/except block to handle cases in which 'metadata' key won't appear
-            accessToken = metadata.get("accessToken", None)
+
+            try:
+                accessToken = metadata.get("accessToken", None)
+            except:
+                accessToken = ""
 
             if accessToken:
                 # Verify the provided access token
@@ -80,7 +83,8 @@ class RestMetadataInput(RestInput):
                         except CancelledError:
                             logger.error(
                                 f"Message handling timed out for "
-                                f"user message '{text}'."
+                                f"user message '{text}'.",
+                                exc_info=True
                             )
                         except Exception:
                             logger.exception(

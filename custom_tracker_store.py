@@ -484,7 +484,6 @@ class CustomSQLTrackerStore(TrackerStore):
             Query to get the questions and responses events.
         """
 
-        # TODO this might not always be true, might need start as well as completed
         if questionnaire_name in ["MSdomainIII_2W", "MSdomainII_3M"]:
             # Subquery to find the timestamp of the latest `Questionnaire_Start` event
             latest_questionnaire_sub_query = (
@@ -1781,7 +1780,7 @@ class CustomSQLTrackerStore(TrackerStore):
                         response = requests.get(
                             wcs_endpoint,
                             params={"patient_uuid": sender_id},
-                            timeout=10,
+                            timeout=30,
                             auth=BearerAuth(ca_accessToken),
                         )
                         logger.debug(

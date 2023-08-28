@@ -927,7 +927,7 @@ class ActionMobilityStatus(Action):
             endpoints_df["name"] == "ONTOLOGY_GET_SCORE_WM_ENDPOINT"
         ]["endpoint"].values[0]
 
-        userId = "" #TODO add the value of userId
+        userId = tracker.sender_id
         response = requests.get(
             wcs_get_score_endpoint,
             params={
@@ -935,7 +935,7 @@ class ActionMobilityStatus(Action):
                 "startDate": fourteen_days_ago,
                 "endDate": today,
             },
-            timeout=10,
+            timeout=30,
             auth=BearerAuth(accessToken),
         )
         response.close()
@@ -1003,7 +1003,7 @@ class ActionSleepStatus(Action):
                     "startDate": seven_days_ago,
                     "endDate": today,
                 },
-                timeout=10,
+                timeout=30,
                 auth=BearerAuth(ca_accessToken),
             )
             response.close()
@@ -1036,7 +1036,7 @@ class ActionSleepStatus(Action):
                         "startDate": fourteen_days_ago,
                         "endDate": seven_days_ago,
                     },
-                    timeout=10,
+                    timeout=30,
                     auth=BearerAuth(ca_accessToken),
                 )
                 response.close()
@@ -1189,12 +1189,13 @@ class ActionUtterHowAreYou(Action):
         response = requests.get(
             ontology_meaa_endpoint,
             params={"userId": tracker.sender_id, "endDate": today},
-            timeout=20,
+            timeout=30,
             auth=BearerAuth(ca_accessToken),
         )
         response.close()
         try:
             today = datetime.datetime.strptime(today, "%Y-%m-%dT%H:%M:%SZ")
+            overallSentiment = ""
 
             for i in range(len(response.json())):
                 meaa_entry = response.json()[i]["sessionStarted"]
@@ -1207,7 +1208,7 @@ class ActionUtterHowAreYou(Action):
                 )
 
                 delta = today - meaa_entry
-                if 1 <= delta.days + (delta.seconds / (24 * 3600)) < 2:
+                if .8 <= delta.days + (delta.seconds / (24 * 3600)) < 1.1:
                     # returned classes Negative, Positive, Neutral, Other
                     overallSentiment = response.json()[i]["overallSentiment"]
                     date_of_last_meaa_entry = response.json()[i]["sessionStarted"]
@@ -4400,7 +4401,7 @@ class ActionAskDnBMedicalTests(Action):
                     "MRA",
                     "CT",
                     "X-Ray",
-                    "Blood",  # TODO To be changed to romanian version
+                    "Blood",
                 ]
             }
         # this shouldn't happen but just in case
