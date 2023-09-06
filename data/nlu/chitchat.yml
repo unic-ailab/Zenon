@@ -766,6 +766,8 @@ nlu:
       - Nostalgia
   - intent: cancel
     examples: |
+      - inchide programul
+      - iesire din program
       - exit
       - I changed my mind, cancel it.
       - Cancel the process.
