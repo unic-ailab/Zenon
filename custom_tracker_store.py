@@ -1598,7 +1598,6 @@ class CustomSQLTrackerStore(TrackerStore):
                         message_data = json.loads(message.data)
                     except (AttributeError, ValueError, TypeError) as error:
                         logger.error("Couldn't retrieve message data.", exc_info=True)
-                        print(f"in line 1281 {error}")
                         message_text = {"message": "Default"}
                         message_data = {
                             "parse_data": {
@@ -1674,7 +1673,7 @@ class CustomSQLTrackerStore(TrackerStore):
             response = requests.post(
                 ontology_ca_endpoint,
                 json=ontology_data,
-                timeout=30,
+                timeout=45,
                 auth=BearerAuth(user_accessToken),
             )
             response.close()

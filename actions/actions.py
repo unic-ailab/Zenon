@@ -1178,53 +1178,53 @@ class ActionUtterHowAreYou(Action):
         # today = datetime.datetime.combine(
         #     datetime.datetime.now(tz=pytz.utc), datetime.datetime.min.time()
         # )
-        # today = datetime.datetime.now(tz=pytz.utc)
-        # today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
-        # ontology_meaa_endpoint = endpoints_df[
-        #     endpoints_df["name"] == "ONTOLOGY_MEAA_ENDPOINT"
-        # ]["endpoint"].values[0]
+        today = datetime.datetime.now(tz=pytz.utc)
+        today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
+        ontology_meaa_endpoint = endpoints_df[
+            endpoints_df["name"] == "ONTOLOGY_MEAA_ENDPOINT"
+        ]["endpoint"].values[0]
 
-        # # Get stored access_token from csv file
-        # ca_accessToken = generatedTokens["access_token"].iloc[-1]
-        # response = requests.get(
-        #     ontology_meaa_endpoint,
-        #     params={"userId": tracker.sender_id, "endDate": today},
-        #     timeout=45,
-        #     auth=BearerAuth(ca_accessToken),
-        # )
-        # response.close()
-        # try:
-        #     today = datetime.datetime.strptime(today, "%Y-%m-%dT%H:%M:%SZ")
-        #     overallSentiment = ""
+        # Get stored access_token from csv file
+        ca_accessToken = generatedTokens["access_token"].iloc[-1]
+        response = requests.get(
+            ontology_meaa_endpoint,
+            params={"userId": tracker.sender_id, "endDate": today},
+            timeout=45,
+            auth=BearerAuth(ca_accessToken),
+        )
+        response.close()
+        try:
+            today = datetime.datetime.strptime(today, "%Y-%m-%dT%H:%M:%SZ")
+            overallSentiment = ""
 
-        #     for i in range(len(response.json())):
-        #         meaa_entry = response.json()[i]["sessionStarted"]
-        #         meaa_entry = datetime.datetime.strptime(
-        #             meaa_entry, "%Y-%m-%dT%H:%M:%S.%fZ"
-        #         )
-        #         meaa_entry = meaa_entry.strftime("%Y-%m-%dT%H:%M:%SZ")
-        #         meaa_entry = datetime.datetime.strptime(
-        #             meaa_entry, "%Y-%m-%dT%H:%M:%SZ"
-        #         )
+            for i in range(len(response.json())):
+                meaa_entry = response.json()[i]["sessionStarted"]
+                meaa_entry = datetime.datetime.strptime(
+                    meaa_entry, "%Y-%m-%dT%H:%M:%S.%fZ"
+                )
+                meaa_entry = meaa_entry.strftime("%Y-%m-%dT%H:%M:%SZ")
+                meaa_entry = datetime.datetime.strptime(
+                    meaa_entry, "%Y-%m-%dT%H:%M:%SZ"
+                )
 
-        #         delta = today - meaa_entry
-        #         if .8 <= delta.days + (delta.seconds / (24 * 3600)) < 1.1:
-        #             # returned classes Negative, Positive, Neutral, Other
-        #             overallSentiment = response.json()[i]["overallSentiment"]
-        #             date_of_last_meaa_entry = response.json()[i]["sessionStarted"]
-        #             print(
-        #                 f"MEAA data collected from ontology:\n{date_of_last_meaa_entry=}\n{overallSentiment=}"
-        #             )
-        #             break            
-        # except KeyError:
-        #     # This should happen when no previous MEAA measurements
-        #     # stored in the database.
-        #     print(
-        #         f"Error: no such entry {tracker.sender_id} from MEAA in the ontology."
-        #     )
-        #     overallSentiment = ""
-        #     logger.error("Couldn't retrieve MEEA data", exc_info=True)
-        overallSentiment = ""
+                delta = today - meaa_entry
+                if .8 <= delta.days + (delta.seconds / (24 * 3600)) < 1.1:
+                    # returned classes Negative, Positive, Neutral, Other
+                    overallSentiment = response.json()[i]["overallSentiment"]
+                    date_of_last_meaa_entry = response.json()[i]["sessionStarted"]
+                    print(
+                        f"MEAA data collected from ontology:\n{date_of_last_meaa_entry=}\n{overallSentiment=}"
+                    )
+                    break            
+        except KeyError:
+            # This should happen when no previous MEAA measurements
+            # stored in the database.
+            print(
+                f"Error: no such entry {tracker.sender_id} from MEAA in the ontology."
+            )
+            overallSentiment = ""
+            logger.error("Couldn't retrieve MEEA data", exc_info=True)
+        # overallSentiment = ""
         if overallSentiment == "Negative":
             text = get_text_from_lang(
                 tracker,
