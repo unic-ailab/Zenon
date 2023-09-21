@@ -7,7 +7,7 @@ import pandas as pd
 import os
 import json
 
-class SentimentAnalyzer(Component):
+class CustomSentimentAnalyzer(Component):
     """A pre-trained sentiment component"""
 
     name = "sentiment"

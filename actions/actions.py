@@ -1179,6 +1179,7 @@ class ActionUtterHowAreYou(Action):
         #     datetime.datetime.now(tz=pytz.utc), datetime.datetime.min.time()
         # )
         today = datetime.datetime.now(tz=pytz.utc)
+        five_days_ago = (today - datetime.timedelta(days=5)).strftime("%Y-%m-%dT%H:%M:%SZ")        
         today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
         ontology_meaa_endpoint = endpoints_df[
             endpoints_df["name"] == "ONTOLOGY_MEAA_ENDPOINT"
@@ -1188,7 +1189,7 @@ class ActionUtterHowAreYou(Action):
         ca_accessToken = generatedTokens["access_token"].iloc[-1]
         response = requests.get(
             ontology_meaa_endpoint,
-            params={"userId": tracker.sender_id, "endDate": today},
+            params={"userId": tracker.sender_id, "startDate": five_days_ago, "endDate": today},
             timeout=45,
             auth=BearerAuth(ca_accessToken),
         )

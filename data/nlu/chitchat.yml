@@ -421,6 +421,8 @@ nlu:
       - Ești măcar o persoană reală?
   - intent: inform
     examples: |
+      - Ameteala
+      - Acum boi ani
       - Blood, MRI
       - da quando ho smesso di assumere duloxetina e palexia ho più energie e dormo leggermente meglio.
       - since I stopped taking duloxetine and palexia I have more energy and sleep slightly better.
