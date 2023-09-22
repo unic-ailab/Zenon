@@ -19,7 +19,9 @@ nlu:
       - Cum progresez
       - Cum este starea mea de sănătate
       - Actualizare a stării de sănătate
-  - intent: sleep_status_fitbit
+  # - intent: sleep_status_fitbit
+  #   examples: |
+  - intent: sleep_status
     examples: |
       - fitbit sleep score
       - I want my fitbit sleep score
@@ -30,16 +32,14 @@ nlu:
       - Vreau scorul meu de somn Fitbit
       - care este starea mea de somn pe baza scorului Fitbit?
       - qual è il mio stato del sonno in base al punteggio Fitbit?
-  - intent: sleep_status
-    examples: |
       - sleep status
-  - intent: mobility_status
-    examples: |
-      - mobility status
-  - intent: qol_status
-    examples: |
-      - quality of life status
-      - daily living status
+  # - intent: mobility_status
+  #   examples: |
+  #     - mobility status
+  # - intent: qol_status
+  #   examples: |
+  #     - quality of life status
+  #     - daily living status
   - intent: close_questionnaire
     examples: |
       - app closed

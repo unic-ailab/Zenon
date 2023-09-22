@@ -17,7 +17,7 @@ class CustomSentimentAnalyzer(Component):
     language_list = ["en", "el", "ro", "it"]
 
     def __init__(self, component_config=None):
-        super(SentimentAnalyzer, self).__init__(component_config)
+        super(CustomSentimentAnalyzer, self).__init__(component_config)
 
     def train(self, training_data, cfg, **kwargs):
         """Not needed, because the the model is pretrained"""

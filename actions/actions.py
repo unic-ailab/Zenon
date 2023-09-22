@@ -143,22 +143,37 @@ options_menu_buttons_no_reporting = [
 # The helath status update options the agent offers
 health_update_menu_buttons = {
     "MS": [
-        ["Sleep Quality", "Mobility", "Quality of Life", "Cancel"],
+        ["Sleep Quality", 
+        #  "Mobility", 
+        #  "Quality of Life", 
+         "Cancel"],
         ["", "", "", ""],
-        ["Qualità del Sonno", "Mobilità", "Qualità di Vita", "Annulla"],
+        ["Qualità del Sonno", 
+        #  "Mobilità", 
+        #  "Qualità di Vita", 
+         "Annulla"],
         ["", "", "", ""],
     ],
     "STROKE": [
-        ["Sleep Quality", "Mobility", "Cancel"],
+        ["Sleep Quality", 
+        #  "Mobility", 
+         "Cancel"],
         ["", "", ""],
         ["", "", ""],
-        ["Calitatii Somnului ", "Mobilitate", "Anulare"],
+        ["Calitatii Somnului ", 
+        #  "Mobilitate", 
+         "Anulare"],
     ],
 }
 
 health_update_menu_payloads = {
-    "MS": ["/sleep_status", "/mobility_status", "/qol_status", "/options_menu"],
-    "STROKE": ["/sleep_status", "/mobility_status", "/options_menu"],
+    "MS": ["/sleep_status", 
+        #    "/mobility_status", 
+        #    "/qol_status", 
+           "/options_menu"],
+    "STROKE": ["/sleep_status", 
+            #    "/mobility_status", 
+               "/options_menu"],
 }
 
 
@@ -338,7 +353,7 @@ eatingHabits_buttons = [
 yes_no_buttons = [["Yes", "No"], [" ", " "], ["Si", "No"], ["Da", "Nu"]]
 
 ####################################################################################################
-# DEBUGGING                                                                                        #
+# DEBUGGING                                                                                                                                                                                             #
 ####################################################################################################
 
 
@@ -781,9 +796,10 @@ class ActionOptionsMenu(Action):
         usecase = customTrackerInstance.getUserUsecase(tracker.sender_id)
         if usecase == "MS":
             buttons = get_buttons_from_lang(
+
+
                 tracker,
                 options_menu_buttons,
-                # TODO maybe add health_related_report as option
                 [
                     "/available_questionnaires",
                     "/health_update_menu",
@@ -795,7 +811,6 @@ class ActionOptionsMenu(Action):
             buttons = get_buttons_from_lang(
                 tracker,
                 options_menu_buttons_no_reporting,
-                # TODO maybe add health_related_report as option
                 ["/available_questionnaires", "/health_update_menu", "/tutorials"],
             )
         dispatcher.utter_message(text=text, buttons=buttons)
@@ -830,7 +845,6 @@ class ActionOptionsMenuExtra(Action):
             buttons = get_buttons_from_lang(
                 tracker,
                 options_menu_buttons,
-                # TODO maybe add health_related_report as option
                 [
                     "/available_questionnaires",
                     "/health_update_menu",
@@ -842,7 +856,6 @@ class ActionOptionsMenuExtra(Action):
             buttons = get_buttons_from_lang(
                 tracker,
                 options_menu_buttons_no_reporting,
-                # TODO maybe add health_related_report as option
                 ["/available_questionnaires", "/health_update_menu", "/tutorials"],
             )
         dispatcher.utter_message(text=text, buttons=buttons)
@@ -904,77 +917,77 @@ class ActionHealthUpdateMenu(Action):
         return []
 
 
-class ActionMobilityStatus(Action):
-    def name(self) -> Text:
-        return "action_get_mobility_status"
+# class ActionMobilityStatus(Action): #TODO To be removed
+#     def name(self) -> Text:
+#         return "action_get_mobility_status"
 
-    def run(
-        self, dispatcher: "CollectingDispatcher", tracker: Tracker, domain: "Dict"
-    ) -> List[Dict[Text, Any]]:
-        announce(self, tracker)
+#     def run(
+#         self, dispatcher: "CollectingDispatcher", tracker: Tracker, domain: "Dict"
+#     ) -> List[Dict[Text, Any]]:
+#         announce(self, tracker)
 
-        accessToken = generatedTokens["access_token"].iloc[-1]
+#         accessToken = generatedTokens["access_token"].iloc[-1]
 
-        # Testing the mobility status update method
-        # MSWS-12 frequency is 2 weeks
-        today = datetime.datetime.now(tz=pytz.utc)
-        fourteen_days_ago = (today - datetime.timedelta(weeks=2)).strftime(
-            "%Y-%m-%dT%H:%M:%SZ"
-        )
-        today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
+#         # Testing the mobility status update method
+#         # MSWS-12 frequency is 2 weeks
+#         today = datetime.datetime.now(tz=pytz.utc)
+#         fourteen_days_ago = (today - datetime.timedelta(weeks=2)).strftime(
+#             "%Y-%m-%dT%H:%M:%SZ"
+#         )
+#         today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        wcs_get_score_endpoint = endpoints_df[
-            endpoints_df["name"] == "ONTOLOGY_GET_SCORE_WM_ENDPOINT"
-        ]["endpoint"].values[0]
+#         wcs_get_score_endpoint = endpoints_df[
+#             endpoints_df["name"] == "ONTOLOGY_GET_SCORE_WM_ENDPOINT"
+#         ]["endpoint"].values[0]
 
-        userId = tracker.sender_id
-        response = requests.get(
-            wcs_get_score_endpoint,
-            params={
-                "userId": userId,
-                "startDate": fourteen_days_ago,
-                "endDate": today,
-            },
-            timeout=30,
-            auth=BearerAuth(accessToken),
-        )
-        response.close()
+#         userId = tracker.sender_id
+#         response = requests.get(
+#             wcs_get_score_endpoint,
+#             params={
+#                 "userId": userId,
+#                 "startDate": fourteen_days_ago,
+#                 "endDate": today,
+#             },
+#             timeout=30,
+#             auth=BearerAuth(accessToken),
+#         )
+#         response.close()
 
-        # response.json() returns a list of dictionaries. Each dictionary holds information for a specific questionnaire.
-        # questionnaires are shown the most recently first.
-        msws12 = [
-            d
-            for d in response.json()
-            if d["abbreviation"] == "ScalaDiDeambulazionePerLaSclerosiMultipla"
-        ]
+#         # response.json() returns a list of dictionaries. Each dictionary holds information for a specific questionnaire.
+#         # questionnaires are shown the most recently first.
+#         msws12 = [
+#             d
+#             for d in response.json()
+#             if d["abbreviation"] == "ScalaDiDeambulazionePerLaSclerosiMultipla"
+#         ]
 
-        if len(msws12) >= 2:
-            most_recent_score = msws12[0]["scores"][0]["score"]
-            latest_date = datetime.datetime.strptime(
-                msws12[0]["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ"
-            )
+#         if len(msws12) >= 2:
+#             most_recent_score = msws12[0]["scores"][0]["score"]
+#             latest_date = datetime.datetime.strptime(
+#                 msws12[0]["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ"
+#             )
 
-            previous_score = most_recent_score
-            for d in msws12:
-                if (
-                    latest_date
-                    - datetime.datetime.strptime(
-                        d["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ"
-                    )
-                ).days > 14:
-                    previous_score = d["scores"][0]["score"]
-                    break
-            text = get_text_from_lang(
-                tracker, []
-            )  # TODO To add text for the three languages
-        elif len(msws12) == 1:
-            most_recent_score = msws12[0]["scores"][0]["score"]
-            print(f"There is only one entry for {userId=} in the last two weeks.")
-            previous_score = None
-        else:
-            print(f"There are no entries for {userId=} for the last two weeks")
-            most_recent_score = None
-            previous_score = None
+#             previous_score = most_recent_score
+#             for d in msws12:
+#                 if (
+#                     latest_date
+#                     - datetime.datetime.strptime(
+#                         d["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ"
+#                     )
+#                 ).days > 14:
+#                     previous_score = d["scores"][0]["score"]
+#                     break
+#             text = get_text_from_lang(
+#                 tracker, []
+#             )
+#         elif len(msws12) == 1:
+#             most_recent_score = msws12[0]["scores"][0]["score"]
+#             print(f"There is only one entry for {userId=} in the last two weeks.")
+#             previous_score = None
+#         else:
+#             print(f"There are no entries for {userId=} for the last two weeks")
+#             most_recent_score = None
+#             previous_score = None
 
 
 class ActionSleepStatus(Action):
@@ -1114,12 +1127,6 @@ class ActionUtterGreet(Action):
 
         metadata = tracker.latest_message.get("metadata")
         user_accessToken = metadata["accessToken"]
-        # print("***** METADATA *****")
-        # print(
-        #     "User access token is equal to metadata access token",
-        #     user_accessToken == metadata["accessToken"],
-        # )
-        # print(25 * "=")
 
         text = get_text_from_lang(
             tracker,
@@ -1178,54 +1185,55 @@ class ActionUtterHowAreYou(Action):
         # today = datetime.datetime.combine(
         #     datetime.datetime.now(tz=pytz.utc), datetime.datetime.min.time()
         # )
-        today = datetime.datetime.now(tz=pytz.utc)
-        five_days_ago = (today - datetime.timedelta(days=5)).strftime("%Y-%m-%dT%H:%M:%SZ")        
-        today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
-        ontology_meaa_endpoint = endpoints_df[
-            endpoints_df["name"] == "ONTOLOGY_MEAA_ENDPOINT"
-        ]["endpoint"].values[0]
 
-        # Get stored access_token from csv file
-        ca_accessToken = generatedTokens["access_token"].iloc[-1]
-        response = requests.get(
-            ontology_meaa_endpoint,
-            params={"userId": tracker.sender_id, "startDate": five_days_ago, "endDate": today},
-            timeout=45,
-            auth=BearerAuth(ca_accessToken),
-        )
-        response.close()
-        try:
-            today = datetime.datetime.strptime(today, "%Y-%m-%dT%H:%M:%SZ")
-            overallSentiment = ""
+        # today = datetime.datetime.now(tz=pytz.utc)
+        # five_days_ago = (today - datetime.timedelta(days=5)).strftime("%Y-%m-%dT%H:%M:%SZ")        
+        # today = today.strftime("%Y-%m-%dT%H:%M:%SZ")
+        # ontology_meaa_endpoint = endpoints_df[
+        #     endpoints_df["name"] == "ONTOLOGY_MEAA_ENDPOINT"
+        # ]["endpoint"].values[0]
 
-            for i in range(len(response.json())):
-                meaa_entry = response.json()[i]["sessionStarted"]
-                meaa_entry = datetime.datetime.strptime(
-                    meaa_entry, "%Y-%m-%dT%H:%M:%S.%fZ"
-                )
-                meaa_entry = meaa_entry.strftime("%Y-%m-%dT%H:%M:%SZ")
-                meaa_entry = datetime.datetime.strptime(
-                    meaa_entry, "%Y-%m-%dT%H:%M:%SZ"
-                )
+        # # Get stored access_token from csv file
+        # ca_accessToken = generatedTokens["access_token"].iloc[-1]
+        # response = requests.get(
+        #     ontology_meaa_endpoint,
+        #     params={"userId": tracker.sender_id, "startDate": five_days_ago, "endDate": today},
+        #     timeout=45,
+        #     auth=BearerAuth(ca_accessToken),
+        # )
+        # response.close()
+        # try:
+        #     today = datetime.datetime.strptime(today, "%Y-%m-%dT%H:%M:%SZ")
+        #     overallSentiment = ""
 
-                delta = today - meaa_entry
-                if .8 <= delta.days + (delta.seconds / (24 * 3600)) < 1.1:
-                    # returned classes Negative, Positive, Neutral, Other
-                    overallSentiment = response.json()[i]["overallSentiment"]
-                    date_of_last_meaa_entry = response.json()[i]["sessionStarted"]
-                    print(
-                        f"MEAA data collected from ontology:\n{date_of_last_meaa_entry=}\n{overallSentiment=}"
-                    )
-                    break            
-        except KeyError:
-            # This should happen when no previous MEAA measurements
-            # stored in the database.
-            print(
-                f"Error: no such entry {tracker.sender_id} from MEAA in the ontology."
-            )
-            overallSentiment = ""
-            logger.error("Couldn't retrieve MEEA data", exc_info=True)
-        # overallSentiment = ""
+        #     for i in range(len(response.json())):
+        #         meaa_entry = response.json()[i]["sessionStarted"]
+        #         meaa_entry = datetime.datetime.strptime(
+        #             meaa_entry, "%Y-%m-%dT%H:%M:%S.%fZ"
+        #         )
+        #         meaa_entry = meaa_entry.strftime("%Y-%m-%dT%H:%M:%SZ")
+        #         meaa_entry = datetime.datetime.strptime(
+        #             meaa_entry, "%Y-%m-%dT%H:%M:%SZ"
+        #         )
+
+        #         delta = today - meaa_entry
+        #         if .8 <= delta.days + (delta.seconds / (24 * 3600)) < 1.1:
+        #             # returned classes Negative, Positive, Neutral, Other
+        #             overallSentiment = response.json()[i]["overallSentiment"]
+        #             date_of_last_meaa_entry = response.json()[i]["sessionStarted"]
+        #             print(
+        #                 f"MEAA data collected from ontology:\n{date_of_last_meaa_entry=}\n{overallSentiment=}"
+        #             )
+        #             break            
+        # except KeyError:
+        #     # This should happen when no previous MEAA measurements
+        #     # stored in the database.
+        #     print(
+        #         f"Error: no such entry {tracker.sender_id} from MEAA in the ontology."
+        #     )
+        #     overallSentiment = ""
+        #     logger.error("Couldn't retrieve MEEA data", exc_info=True)
+        overallSentiment = ""
         if overallSentiment == "Negative":
             text = get_text_from_lang(
                 tracker,
@@ -1290,14 +1298,7 @@ class ActionUtterNotificationGreet(Action):
         _ = customTrackerInstance.checkUserID(tracker.sender_id, ca_accessToken)
 
         metadata = tracker.latest_message.get("metadata")
-        print("***** METADATA *****")
         user_accessToken = metadata["accessToken"]
-        print(
-            "User access token is equal to metadata access token",
-            user_accessToken == metadata["accessToken"],
-        )
-        print(25 * "=")
-
         q_abbreviation = tracker.get_slot("questionnaire")
         try:
             q_name = get_text_from_lang(
@@ -1504,7 +1505,6 @@ class ActionUtterStartingQuestionnaire(Action):
                     SlotSet("q_starting_time", q_starting_time),
                 ]
         else:
-            # TODO probably change this text
             text = get_text_from_lang(
                 tracker,
                 [
@@ -1626,22 +1626,6 @@ class ActionHandleUserDenyInformDoctors(Action):
         print("\nBOT:", text)
         dispatcher.utter_message(text=text)
         return []
-
-
-####################################################################################################
-# Set Questionnaire Slot Value                                                                     #
-####################################################################################################
-
-# class ActionUtterSetQuestionnaire(Action):
-#     def name(self) -> Text:
-#         return "action_utter_set_questionnaire"
-
-#     def run(self, dispatcher, tracker, domain):
-#         announce(self, tracker)
-
-#         open_questionnaire = tracker.slots["questionnaire"].title()
-
-#         return []
 
 ####################################################################################################
 # Questionnaires                                                                                   #
