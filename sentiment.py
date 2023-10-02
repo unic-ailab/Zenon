@@ -62,15 +62,15 @@ class CustomSentimentAnalyzer(Component):
             csat_classes = subdomains["csat.alamedaproject.eu"]
 
             data = {"text": user_text, "accessToken": ca_accessToken}
-            # response = requests.post(
-            #     csat_classes, json=data
-            # )   
-            # resp = response.json()  # This returns {"sentiment_classes":[{"sentiment_class":"positive","sentiment_score":<score>}, {"sentiment_class":"neutral","sentiment_score":<score>}, {"sentiment_class":"negative","sentiment_score":<score>}]}
-            # response.close()
+            response = requests.post(
+                csat_classes, json=data, timeout=45
+            )   
+            resp = response.json()  # This returns {"sentiment_classes":[{"sentiment_class":"positive","sentiment_score":<score>}, {"sentiment_class":"neutral","sentiment_score":<score>}, {"sentiment_class":"negative","sentiment_score":<score>}]}
+            response.close()
 
-            sentiment_classes = [{"sentiment_class":"positive","sentiment_score": 40}, {"sentiment_class":"neutral","sentiment_score": 51}, {"sentiment_class":"negative","sentiment_score": 9}]            
+            # sentiment_classes = [{"sentiment_class":"positive","sentiment_score": 40}, {"sentiment_class":"neutral","sentiment_score": 51}, {"sentiment_class":"negative","sentiment_score": 9}]            
             
-            # sentiment_classes = resp.get("sentiment_classes")
+            sentiment_classes = resp.get("sentiment_classes")
             
             max_score = sentiment_classes[0].get("sentiment_score")
             max_sentiment = sentiment_classes[0].get("sentiment_class")
