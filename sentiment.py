@@ -56,7 +56,7 @@ class CustomSentimentAnalyzer(Component):
             user_text = message.data['text']
             # Get stored access_token from csv file
             ca_accessToken = generatedTokens["access_token"].iloc[-1]
-            # accessToken = message.data["metadata"]["accessToken"]
+
             with open("unic_subdomains.json", "r") as file:
                 subdomains = json.load(file)
             csat_classes = subdomains["csat.alamedaproject.eu"]
