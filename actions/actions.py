@@ -1217,7 +1217,7 @@ class ActionUtterHowAreYou(Action):
                 )
 
                 delta = today - meaa_entry
-                if .8 <= delta.days + (delta.seconds / (24 * 3600)) < 1.1:
+                if .75 <= delta.days + (delta.seconds / (24 * 3600)) < 1.5:
                     # returned classes Negative, Positive, Neutral, Other
                     overallSentiment = response.json()[i]["overallSentiment"]
                     date_of_last_meaa_entry = response.json()[i]["sessionStarted"]
