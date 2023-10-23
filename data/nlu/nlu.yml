@@ -30,6 +30,7 @@ nlu:
       - romanian
       - ROMANIAN
       - Română
+      - Romana
   - synonym: Greek
     examples: |
       - greek
