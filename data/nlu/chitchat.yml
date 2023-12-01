@@ -412,6 +412,11 @@ nlu:
       - Ești măcar o persoană reală?
   - intent: inform
     examples: |
+      - headache
+      - nu am avut niciodata
+      - sunt zile cind sunt bine si zile cind nu pot sa ma ridic din pat
+      - Durere de cap
+      - au disparut
       - Ameteala
       - Acum boi ani
       - Blood, MRI
@@ -759,6 +764,7 @@ nlu:
       - Nostalgia
   - intent: cancel
     examples: |
+      - inchide aplicatia
       - inchide programul
       - iesire din program
       - exit
